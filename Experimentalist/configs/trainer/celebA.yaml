@@ -1,0 +1,27 @@
+trainer:
+  trainer_type: 'default'
+  train_mode : 'both'
+  loss:
+    criterion : 'kale'
+    penalty_type : 'gradient'
+    penalty_lambda : .1
+  optimizer: 
+    optimizer : Adam
+    beta_1 : 0.5
+    beta_2 : 0.999
+    lr : 0.00001
+    lr_generator: 0.00001
+    sgd_momentum: 0.
+  scheduler:
+    use_scheduler: True
+    scheduler : 'ExponentialLR'
+    milestone: '10,50,70'
+    scheduler_gamma : 0.8
+    lr_decay: 0.8
+  total_epochs: 100
+  b_size : 1000
+  n_iter_d_init: 100
+  n_iter_d : 5
+  total_gen_iter: 150000
+  initialize_log_partition: False
+  noise_factor: 1

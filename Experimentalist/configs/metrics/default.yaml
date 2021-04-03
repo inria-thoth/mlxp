@@ -1,0 +1,11 @@
+metrics:
+  fid:
+    eval_fid : True
+    fid_samples : 50000
+    fid_b_size: 50
+    freq_fid: 2000
+  kale:
+    eval_kale: True
+    freq_kale: 2000
+  disp_freq: 100
+  checkpoint_freq: 1000

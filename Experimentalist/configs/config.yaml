@@ -1,0 +1,26 @@
+defaults:
+  - model: sngan_celebA
+  - data : celebA
+  - sampler : langevin
+  - trainer : celebA
+  - system : default 
+  - metrics : default
+
+logs:
+  log_dir : '/nfs/gatsbystor/michaela/projects/kale/exp/experimentalist'
+  log_name : ''
+  log_to_file : True
+
+
+
+mode : sample
+  
+hydra:
+  #output_subdir: Null
+  run:
+    dir: /nfs/ghome/live/michaela/tmp/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S} 
+    #dir: Null
+
+
+
+

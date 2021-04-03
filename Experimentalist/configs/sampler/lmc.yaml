@@ -1,0 +1,7 @@
+sampler:
+  latent_sampler : 'lmc'
+  temperature : 100.
+   lmc_gamma : .0001
+  lmc_kappa : 100.
+  num_sampler_steps : 1000
+  sample_b_size : 500
