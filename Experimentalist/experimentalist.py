@@ -1,0 +1,69 @@
+# class for running experiments
+import os
+from datetime import datetime
+import pprint
+import socket
+
+#from pytorch_pretrained_biggan import BigGAN
+#from  models.generator import BigGANwrapper
+from MLExp.timer import Timer 
+from MLExp.logger import Logger
+#from hydra import hydra_utils
+import numpy as np
+
+def set_seeds(seeds):
+    keys = seeds.keys()
+    if 'torch'in keys:
+        import torch
+        torch.manual_seed(seeds['torch']) 
+    if 'numpy' in keys:
+        np.random.seed(seeds['numpy'])
+
+
+class Experimentalist(object):
+    def __init__(self,config):
+        self.config = config
+        #self.git_store_commit()
+        self.timer = Timer()
+        #self.git_store_commit()
+        set_seeds(self.config.system.seed)
+        #self.device = assign_device(self.config.device)
+        print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
+        print(f"Time: {datetime.now()}")
+        self.pp = pprint.PrettyPrinter(indent=4)
+        self.pp.pprint(vars(config))
+
+        self.logger = Logger(self.config)
+        self.logger.log_config()
+        #os.chdir(hydra_utils.get_original_cwd()) # Not sure what this is for!
+
+        
+    def display_msg(step, msg):
+            self.timer(step, msg)
+
+    def git_check_commit(self):
+
+        raise NotImplementedError
+        # Checks if all modifs are commited throw error otherwise or make an actuall commit on a dedicated branch
+
+    def git_get_commit(self):
+
+        raise NotImplementedError
+        # returns the current commit
+
+    def git_store_commit(self):
+        
+        # stores the commit name to the config file after ensuring all modifs are commited
+
+        self.git_check_commit()
+        self.config.system.git.commit = self.git_get_commit()
+
+    def log_metrics(self,metrics_dict,step=None):
+        self.logger.log_metrics(metrics_dict,step)
+
+    def log_artifacts(self,artifact, step, art_type='arrays', tag=''):
+        self.logger.log_artifacts(artifact, step, art_type, tag)
+
+
+
+

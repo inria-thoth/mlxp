@@ -1,0 +1,6 @@
+data:
+  dataset_type: 'images'
+  dataset: cifar10
+  #data_path : '/nfs/gatsbystor/michaela/projects/data/'
+
+  

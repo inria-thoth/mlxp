@@ -1,0 +1,14 @@
+# @package _group_
+name: "multi_gpu"
+gpus: 4
+filename: "${launcher.name}.slurm"
+hours: 20
+cmd: "run_imagenet.py"
+partition: null
+ntasks: null
+C: null
+cpus_per_task: 10
+hint: "nomultithread"
+gres: "gpu:${launcher.gpus}"
+ntasks_per_node: ${launcher.gpus}
+nodes: 1

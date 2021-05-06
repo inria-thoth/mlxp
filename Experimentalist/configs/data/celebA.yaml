@@ -1,4 +1,0 @@
-data:
-  dataset_type: 'images'
-  dataset: celebA
-  data_path : '/nfs/gatsbystor/michaela/projects/data/'

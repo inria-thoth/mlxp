@@ -1,0 +1,16 @@
+# @package _group_
+name: "single_gpu_32g"
+gpus: 1
+filename: "${launcher.name}.slurm"
+#time: "12:00:00"
+hours: 12
+#modules: ["pytorch-gpu/py3/1.7.0"]
+cmd: "train.py"
+partition: null
+ntasks: ${launcher.gpus}
+C: "v100-32g"
+cpus_per_task: 10
+hint: "nomultithread"
+gres: "gpu:${launcher.gpus}"
+nodes: 1
+ntasks_per_node: 1

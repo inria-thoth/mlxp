@@ -1,0 +1,14 @@
+system:
+  device : -2
+  seed:
+    torch: 0
+    numpy: 0
+  dtype: 32
+  num_workers: 1
+  slurm_id: ''
+  dataparallel: False
+  experimentalist: True
+  hostname: ''
+  process_id: -1
+  date: ''
+  time: ''

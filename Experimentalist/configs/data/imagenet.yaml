@@ -1,9 +1,0 @@
-
-
-
-data:
-  dataset_type: 'images'
-  dataset: imagenet32
-  data_path : '/nfs/gatsbystor/michaela/projects/data/'
-  imagenet_train_path: /nfs/gatsbystor/michaela/imagenet/imagenet32/out_data_train/
-  imagenet_test_path: /nfs/gatsbystor/michaela/imagenet/imagenet32/out_data_val/

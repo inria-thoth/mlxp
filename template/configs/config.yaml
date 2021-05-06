@@ -1,0 +1,31 @@
+defaults:
+  - model: cifar10
+  - data : cifar10
+  - trainer : cifar10
+  - system : default 
+  - cluster: OAR
+  - launcher: default
+
+logs:
+  log_dir : data
+  log_name : logs
+  log_to_file : True
+  log_id : -1
+
+metrics:
+  disp_freq: 3
+  checkpoint_freq: 11
+
+#hydra/job_logging: disabled
+
+hydra:
+  output_subdir: Null
+  run:
+    dir: .
+  sweep:
+    dir: .
+    subdir: .
+  hydra_logging:
+    disable_existing_loggers: True
+  job_logging:
+    disable_existing_loggers: True

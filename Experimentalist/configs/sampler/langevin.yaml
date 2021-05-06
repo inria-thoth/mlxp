@@ -1,5 +1,0 @@
-sampler:
-  latent_sampler : 'langevin'
-  temperature : 100.
-  num_sampler_steps : 1000
-  sample_b_size : 500

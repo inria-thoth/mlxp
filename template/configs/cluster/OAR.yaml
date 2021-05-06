@@ -1,0 +1,15 @@
+# @package _group_
+user: ${env:USER}
+#workspace: ${env:WORK}
+#tempdir: ${env:JOBSCRATCH}
+engine: "OAR"
+shell:
+  bin_path: "/usr/bin/zsh"
+  config_path: "~/.zshrc"
+directive: "#OAR"
+cleanup: "source gpu_setVisibleDevices.sh"
+cmd: "oarsub -S"
+#launchers: ["default", "besteffort"]
+launchers: "default"
+#node: ${env:ACCESS_NODE}
+conda_env: ${env:CONDA_DEFAULT_ENV}

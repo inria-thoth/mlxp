@@ -1,0 +1,9 @@
+# @package _group_
+name: "default"
+filename: "${launcher.name}.sh"
+hours: 12
+gpumodel: null
+gpumem: null
+besteffort: False
+idempotent: False
+cmd: "train.py"

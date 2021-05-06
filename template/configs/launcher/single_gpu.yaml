@@ -1,0 +1,14 @@
+# @package _group_
+name: "single_gpu"
+gpus: 1
+filename: "${launcher.name}.slurm"
+hours: 12
+cmd: "train.py"
+partition: null
+ntasks: ${launcher.gpus} 
+C: null
+cpus_per_task: 10
+hint: "nomultithread"
+gres: "gpu:${launcher.gpus}"
+nodes: 1
+ntasks_per_node: 1

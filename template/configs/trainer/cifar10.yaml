@@ -1,0 +1,17 @@
+trainer:
+  trainer_type: 'default'
+  train_mode : 'both'
+  optimizer: 
+    optimizer : Adam
+    beta_1 : 0.5
+    beta_2 : 0.999
+    lr : 0.00001
+    weight_decay: 0.
+  scheduler:
+    use_scheduler: True
+    scheduler : 'ExponentialLR'
+    scheduler_gamma : 0.8
+    lr_decay: 0.8
+  total_epochs: 100
+  b_size : 1000
+  total_iter: 150000
