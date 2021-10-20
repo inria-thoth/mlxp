@@ -3,6 +3,7 @@
 
 import logging
 import os
+from stat import S_IREAD
 import shutil
 import subprocess
 
@@ -10,6 +11,7 @@ import hydra
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, ListConfig, OmegaConf
 from datetime import datetime
+from Experimentalist.utils import _make_run_dir
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -45,13 +47,22 @@ def handle_OAR(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     cluster = cfg.cluster
     launcher = cfg.launcher
     # Create OAR folder
-    os.makedirs(os.path.join(dst,cfg.logs.log_dir,cluster.engine), exist_ok=True)
+
     now = datetime.now()
-    date = now.strftime("date_%d_%m_%Y")
-    time = now.strftime("time_%H")
-    job_id = "MAIN" if OmegaConf.is_missing(hydra_cfg.job, "id") else hydra_cfg.job.id
-    log_dir= os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,time,job_id)
-    os.makedirs(log_dir, exist_ok=True)
+    date = now.strftime("date_%d_%m_%Y_time_%H")
+    root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
+    os.makedirs(root, exist_ok=True)
+    job_id = None
+    job_id, log_dir = _make_run_dir(job_id,root)
+
+    #job_id = "MAIN" if OmegaConf.is_missing(hydra_cfg.job, "id") else hydra_cfg.job.id
+    #log_dir= os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,time,job_id)
+    #os.makedirs(log_dir, exist_ok=True)
+
+    
+    
+
+
     # copy config file when job is created
     #shutil.copy2(".hydra/config.yaml", "config.yaml")
 
@@ -65,7 +76,9 @@ def handle_OAR(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     cmd += "\n"
     # NOTE: use hours instead of walltime
     # Walltime
-    cmd += f"{cluster.directive} -l walltime={launcher.hours}:00:00\n"
+    cmd += f"{cluster.directive} -l core={launcher.cpus},walltime={launcher.hours}:00:00\n"
+    if cluster.name:
+        cmd += f"{cluster.directive} -p cluster='{cluster.name}'\n"
     # Remove overrides from launcher/cluster
     overrides = hydra_cfg.overrides.task
     # Job name
@@ -78,6 +91,8 @@ def handle_OAR(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     #with open("id", "w") as f:
     #    f.write(cfg.id)
     # Best effort
+    # cmd += f"{cluster.directive} -c {cluster.name}\n"
+
     if launcher.besteffort:
         cmd += f"{cluster.directive} -t besteffort\n"
     # Idempotent (i.e. automatic restart)
@@ -155,13 +170,12 @@ def handle_SLURM(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     launcher = cfg.launcher
     # Create SLURM folder
     #os.makedirs(os.path.join(os.path.abspath(cfg.logs.log_dir),cluster.engine), exist_ok=True)
-    os.makedirs(os.path.join(dst,cfg.logs.log_dir,cluster.engine), exist_ok=True)
     now = datetime.now()
-    date = now.strftime("date_%d_%m_%Y")
-    time = now.strftime("time_%H")
-    job_id = "MAIN" if OmegaConf.is_missing(hydra_cfg.job, "id") else hydra_cfg.job.id
-    log_dir= os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,time,job_id)
-    os.makedirs(log_dir, exist_ok=True)
+    date = now.strftime("date_%d_%m_%Y_time_%H")
+    root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
+    os.makedirs(root, exist_ok=True)
+    job_id = None
+    job_id, log_dir = _make_run_dir(job_id,root)
     # Copy config file when job is created
     #shutil.copy2(".hydra/config.yaml", "config.yaml")
 
@@ -293,17 +307,31 @@ def create(cfg: DictConfig) -> None:
 
     logging.info(f"Job launched!")
 
-
 def create_working_dir(cfg: DictConfig):
     # creates a copy of the  current dir and returns its path
     src = os.getcwd()
     dirname, filename= os.path.split(src)
     now = datetime.now()
     date = now.strftime("date_%d_%m_%Y")
-    time = now.strftime("time_%H")
+    time = now.strftime("time_%H_%M")
     target_name = '.'+filename+'_' +date+'_'+time
     dst = os.path.join(dirname,target_name)
     if not os.path.exists(dst):
         shutil.copytree(src, dst, symlinks=True, ignore=None)
-
+    #permission_dir(dst)
+    os.chdir(dst)
     return dst
+
+# def permission_dir(path):
+#     try:
+#         for root, dirs, files in os.walk(path):
+#             for d in dirs:
+#                 os.chmod(os.path.join(root, d), S_IWUSR)
+#             for f in files:
+#                 os.chmod(os.path.join(root, f), S_IWUSR)
+#     except:
+#         pass 
+
+
+
+

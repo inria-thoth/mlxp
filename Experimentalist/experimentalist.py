@@ -6,10 +6,12 @@ import socket
 
 #from pytorch_pretrained_biggan import BigGAN
 #from  models.generator import BigGANwrapper
-from MLExp.timer import Timer 
-from MLExp.logger import Logger
+from Experimentalist.timer import Timer 
+from Experimentalist.logger import Logger
 #from hydra import hydra_utils
 import numpy as np
+import random
+
 
 def set_seeds(seeds):
     keys = seeds.keys()
@@ -18,7 +20,7 @@ def set_seeds(seeds):
         torch.manual_seed(seeds['torch']) 
     if 'numpy' in keys:
         np.random.seed(seeds['numpy'])
-
+        random.seed(seeds['numpy'])
 
 class Experimentalist(object):
     def __init__(self,config):
@@ -26,7 +28,7 @@ class Experimentalist(object):
         #self.git_store_commit()
         self.timer = Timer()
         #self.git_store_commit()
-        set_seeds(self.config.system.seed)
+
         #self.device = assign_device(self.config.device)
         print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
         print(f"Time: {datetime.now()}")
@@ -35,6 +37,7 @@ class Experimentalist(object):
 
         self.logger = Logger(self.config)
         self.logger.log_config()
+        set_seeds(self.config.system.seed)
         #os.chdir(hydra_utils.get_original_cwd()) # Not sure what this is for!
 
         

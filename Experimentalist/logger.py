@@ -12,6 +12,10 @@ import omegaconf
 from tinydb.table import Document
 import torch
 from datetime import datetime
+from random import random
+from time import sleep
+from Experimentalist.utils import _make_run_dir
+
 
 
 class Logger(object):
@@ -26,7 +30,7 @@ class Logger(object):
 
     def setup_dir(self):
         os.makedirs(self.root, exist_ok=True)
-        self.db_run_id = self._make_run_dir(self.db_run_id)
+        self.db_run_id, self.dir = _make_run_dir(self.db_run_id, self.root)
         #mlflow.set_tracking_uri("file:/"+self.root )
 
     def update_run_config(self):
@@ -42,7 +46,7 @@ class Logger(object):
         config_dict = set_date_time(config_dict)
 
 
-        with TinyDB(os.path.join(self.root, str(self.db_run_id), "metadata.json"), storage=JSONStorage) as db: 
+        with TinyDB(os.path.join(self.dir, "metadata.json"), storage=JSONStorage) as db: 
             runs = db.table("runs")
             runs.insert(Document(config_dict, doc_id=self.db_run_id ) )
         #for key, value in config_dict.items():
@@ -50,13 +54,13 @@ class Logger(object):
 
     def log_metrics(self,metrics_dict, step=None):
         #mlflow.log_metics(metrics_dict, step=step)
-        file_name = os.path.join(self.root, str(self.db_run_id), f'metrics')
+        file_name = os.path.join(self.dir, f'metrics')
         with open(file_name+'.json','a') as f:
             json.dump(metrics_dict,f)
             f.write(os.linesep)
 
     def log_artifacts(self,artifact, step, art_type, tag=''):
-        subdir= os.path.join(self.root, str(self.db_run_id), art_type)
+        subdir= os.path.join(self.dir, art_type)
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(subdir, f'{tag}_{str(step).zfill(3)}')
         if art_type=='arrays':
@@ -68,42 +72,44 @@ class Logger(object):
 
     def log_file(self):
         if self.config.logs.log_to_file:
-            log_file = open(os.path.join(self.root,str(self.db_run_id), f'log.txt'), 'w', buffering=1)
+            log_file = open(os.path.join(self.dir, f'log.txt'), 'w', buffering=1)
             sys.stdout = log_file
             sys.stderr = log_file
-    def _make_run_dir(self, _id):
-        os.makedirs(self.root, exist_ok=True)
-        self.dir = None
-        if _id is None:
-            fail_count = 0
-            _id = self._maximum_existing_run_id() + 1
-            while self.dir is None:
-                try:
-                    self._make_dir(_id)
-                except FileExistsError:  # Catch race conditions
-                    if fail_count < 1000:
-                        fail_count += 1
-                        _id += 1
-                    else:  # expect that something else went wrong
-                        raise
-        else:
-            self.dir = os.path.join(self.root, str(_id))
-            os.mkdir(self.dir)
-        return _id
-    def _maximum_existing_run_id(self):
-        dir_nrs = [
-            int(d)
-            for d in os.listdir(self.root)
-            if os.path.isdir(os.path.join(self.root, d)) and d.isdigit()
-        ]
-        if dir_nrs:
-            return max(dir_nrs)
-        else:
-            return 0
-    def _make_dir(self, _id):
-        new_dir = os.path.join(self.root, str(_id))
-        os.mkdir(new_dir)
-        self.dir = new_dir  # set only if mkdir is successful
+
+    # def _make_run_dir(self, _id):
+    #     os.makedirs(self.root, exist_ok=True)
+    #     self.dir = None
+    #     if _id is None:
+    #         fail_count = 0
+    #         #_id = self._maximum_existing_run_id() + 1
+    #         while self.dir is None:
+    #             try:
+    #                 _id = self._maximum_existing_run_id() + 1
+    #                 self._make_dir(_id)
+    #             except FileExistsError:  # Catch race conditions
+    #                 sleep(random())
+    #                 if fail_count < 1000:
+    #                     fail_count += 1
+    #                 else:  # expect that something else went wrong
+    #                     raise
+    #     else:
+    #         self.dir = os.path.join(self.root, str(_id))
+    #         os.mkdir(self.dir)
+    #     return _id
+    # def _maximum_existing_run_id(self):
+    #     dir_nrs = [
+    #         int(d)
+    #         for d in os.listdir(self.root)
+    #         if os.path.isdir(os.path.join(self.root, d)) and d.isdigit()
+    #     ]
+    #     if dir_nrs:
+    #         return max(dir_nrs)
+    #     else:
+    #         return 0
+    # def _make_dir(self, _id):
+    #     new_dir = os.path.join(self.root, str(_id))
+    #     os.mkdir(new_dir)
+    #     self.dir = new_dir  # set only if mkdir is successful
 
 def set_date_time(config_dict):
     now = datetime.now()

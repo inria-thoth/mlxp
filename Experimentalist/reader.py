@@ -44,14 +44,19 @@ class Reader(object):
         self.runs = self.db.table("runs")
         self.latest_id =  0
         self.update_base()
-    def search(self, queries_dict):
+    def search(self, queries_dict,operation=lambda x:x):
         """Wrapper to TinyDB's search function."""
         #query_dicts =  {'sampler/latent_sampler': ['lagevin'], 'model/d_model': ['sngan'] }]
         res = []
         all_queries = query_generator(**queries_dict)
+        def default_operation(config_dict): 
+            if config_dict:
+                for p in config_dict:
+                    p['logs']['path'] = os.path.join(self.root_dir,str(p['logs']['log_id']),'metrics.json')
+            return config_dict
         for query_dict in all_queries:
             Q = make_query(query_dict)
-            res += self.runs.search(Q)
+            res += operation(default_operation(self.runs.search(Q)))
         return res
 
     def search_list(self,list_queries_dict, commun_queries=None):
@@ -87,4 +92,8 @@ def query_generator(**kwargs):
 def get_db_file_manager(root_dir):
     db = TinyDB(os.path.join(root_dir, "metadata.json"), storage=JSONStorage,sort_keys=True, indent=4, separators=(',', ': '))
     return db
+
+
+
+
 
