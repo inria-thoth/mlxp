@@ -1,14 +1,19 @@
-system:
-  device : -2
-  seed:
-    torch: 0
-    numpy: 0
-  dtype: 32
-  num_workers: 1
-  slurm_id: ''
-  dataparallel: False
-  experimentalist: True
-  hostname: ''
-  process_id: -1
-  date: ''
-  time: ''
+# @package system
+device : -2
+seed:
+  torch: 0
+  numpy: 0
+dtype: 64
+num_workers: 1
+dataparallel: False
+experimentalist: True
+
+
+user: ${env:USER}
+account: ${env:ACCOUNT}
+env: "conda activate " ${env:CONDA_DEFAULT_ENV}
+shell:
+  bin_path: "/bin/bash"
+  config_path: "~/.bashrc"
+cmd: "run.py" # This should not be in here
+app: "python"

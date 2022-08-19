@@ -11,7 +11,7 @@ import hydra
 from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, ListConfig, OmegaConf
 from datetime import datetime
-from Experimentalist.utils import _make_run_dir
+from Experimentalist.logger import Logger
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -48,23 +48,15 @@ def handle_OAR(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     launcher = cfg.launcher
     # Create OAR folder
 
-    now = datetime.now()
-    date = now.strftime("date_%d_%m_%Y_time_%H")
-    root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
-    os.makedirs(root, exist_ok=True)
-    job_id = None
-    job_id, log_dir = _make_run_dir(job_id,root)
+    # now = datetime.now()
+    # date = now.strftime("date_%d_%m_%Y_time_%H")
+    # root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
+    # os.makedirs(root, exist_ok=True)
+    # job_id = None
+    # job_id, log_dir = _make_run_dir(job_id,root)
 
-    #job_id = "MAIN" if OmegaConf.is_missing(hydra_cfg.job, "id") else hydra_cfg.job.id
-    #log_dir= os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,time,job_id)
-    #os.makedirs(log_dir, exist_ok=True)
-
-    
-    
-
-
-    # copy config file when job is created
-    #shutil.copy2(".hydra/config.yaml", "config.yaml")
+    _logger = Logger(cfg)
+    job_id, log_dir = _logger.get_log_dir()
 
     #####################
     # Construct command #
@@ -146,7 +138,8 @@ def handle_OAR(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     date = now.strftime("%d/%m/%Y")
     time = now.strftime("%H:%M:%S")
 
-    cmd += f"python {launcher.cmd} {args} system.date='{date}' system.time='{time}'"
+    cmd += f"{launcher.app} {launcher.cmd} {args} system.date='{date}' system.time='{time}'"
+    cmd += f" logs.log_id='{job_id}'"
     return cmd,log_dir
 
 
@@ -170,14 +163,17 @@ def handle_SLURM(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     launcher = cfg.launcher
     # Create SLURM folder
     #os.makedirs(os.path.join(os.path.abspath(cfg.logs.log_dir),cluster.engine), exist_ok=True)
-    now = datetime.now()
-    date = now.strftime("date_%d_%m_%Y_time_%H")
-    root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
-    os.makedirs(root, exist_ok=True)
-    job_id = None
-    job_id, log_dir = _make_run_dir(job_id,root)
+    # now = datetime.now()
+    # date = now.strftime("date_%d_%m_%Y_time_%H")
+    # root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
+    # os.makedirs(root, exist_ok=True)
+    # job_id = None
+    # job_id, log_dir = _make_run_dir(job_id,root)
     # Copy config file when job is created
     #shutil.copy2(".hydra/config.yaml", "config.yaml")
+
+    _logger = Logger(cfg)
+    job_id, log_dir = _logger.get_log_dir()
 
     # Shebang
     cmd += f"#!{cluster.shell.bin_path}\n"
@@ -190,8 +186,8 @@ def handle_SLURM(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     job_name = ",".join([a.split(".")[-1] for a in filtered_args])
     cmd += f"{cluster.directive} --job-name={launcher.cmd}|{job_name}\n"
     # Write exp id to file
-    with open("id", "w") as f:
-        f.write(cfg.id)
+    #with open("id", "w") as f:
+    #   f.write(cfg.id)
     # Check if partition
     if launcher.partition is not None:
         cmd += f"{cluster.directive} --partition={launcher.partition}\n"
@@ -256,7 +252,8 @@ def handle_SLURM(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
     date = now.strftime("%d/%m/%Y")
     time = now.strftime("%H:%M:%S")
 
-    cmd += f"srun python -u {launcher.cmd} {args} system.date={date} system.time={time}"
+    cmd += f"srun {launcher.app} -u {launcher.cmd} {args} system.date={date} system.time={time}"
+    cmd += f" logs.log_id='{job_id}'"
     return cmd,log_dir
 
 
@@ -314,23 +311,13 @@ def create_working_dir(cfg: DictConfig):
     now = datetime.now()
     date = now.strftime("date_%d_%m_%Y")
     time = now.strftime("time_%H_%M")
-    target_name = '.'+filename+'_' +date+'_'+time
-    dst = os.path.join(dirname,target_name)
+    target_name = '.'+date+'_'+time
+    dst = os.path.join(dirname,filename,'data','workdirs',filename,target_name)
     if not os.path.exists(dst):
         shutil.copytree(src, dst, symlinks=True, ignore=None)
     #permission_dir(dst)
     os.chdir(dst)
     return dst
-
-# def permission_dir(path):
-#     try:
-#         for root, dirs, files in os.walk(path):
-#             for d in dirs:
-#                 os.chmod(os.path.join(root, d), S_IWUSR)
-#             for f in files:
-#                 os.chmod(os.path.join(root, f), S_IWUSR)
-#     except:
-#         pass 
 
 
 

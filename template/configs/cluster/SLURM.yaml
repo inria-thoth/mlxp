@@ -1,18 +1,13 @@
-# @package _group_
-user: ${env:USER}
-#workspace: ${env:WORK}
-#tempdir: ${env:JOBSCRATCH}
-engine: "SLURM"
-directive: "#SBATCH"
-#account: ${env:ACCOUNT}
-cleanup: "module purge"
-cmd: "sbatch"
-#launchers: ["single_gpu_16g", "single_gpu_32g", "multi_gpu", "single_gpu"]
-launchers: "single_gpu_16g"
-# NOTE: to be launched directly on the access node!
-node: null 
-#conda_path: "${cluster.workspace}/miniconda3/etc/profile.d/conda.sh"
-shell:
-  bin_path: "/usr/bin/bash"
-  config_path: "~/.bashrc"
-conda_env: ${env:CONDA_DEFAULT_ENV}
+# @package cluster
+engine: "OAR"
+options:
+  gpus: 1
+  hours: 12
+  partition: null
+  ntasks: ${cluster.gpus}
+  C: "v100-32g"
+  cpus_per_task: 10
+  hint: "nomultithread"
+  gres: "gpu:${launcher.gpus}"
+  nodes: 1
+  ntasks_per_node: 1
