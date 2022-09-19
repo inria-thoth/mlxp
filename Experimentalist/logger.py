@@ -6,6 +6,7 @@ import sys
 import os
 import socket
 import json
+import yaml
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 import omegaconf
@@ -16,6 +17,7 @@ from random import random
 from time import sleep
 import dill as pkl
 import shutil
+import pprint
 class Logger(object):
     def __init__(self, config, overwrite=None):
         #self.git_store_commit()
@@ -34,7 +36,7 @@ class Logger(object):
         self.update_run_config()
         self.log_file()
         self.log_config()
-        set_seeds(self.config.system.seed)
+        #set_seeds(self.config.system.seed)
         
     def get_log_dir(self):
         return self.db_run_id,self.dir
@@ -58,18 +60,9 @@ class Logger(object):
             self.config.system.time=time
 
     def log_config(self):
-        # config contains only experiment parameters
-        # host_info:  slurm id, hostname, gpu , etc
-        # meta : run_id, starting time, slum id
-        config_dict = config_to_dict(self.config)
-        config_dict = set_date_time(config_dict)
+        _log_config(self.config,"metadata",self.dir)
 
 
-        with TinyDB(os.path.join(self.dir, "metadata.json"), storage=JSONStorage) as db: 
-            runs = db.table("runs")
-            runs.upsert(Document(config_dict, doc_id=self.db_run_id ) )
-        #for key, value in config_dict.items():
-        #    mlflow.log_param(key, value)
 
     def log_metrics(self,metrics_dict, tag='', step=None):
         #mlflow.log_metics(metrics_dict, step=step)
@@ -101,15 +94,8 @@ class Logger(object):
             log_file = open(os.path.join(self.dir, f'log.txt'), 'w', buffering=1)
             sys.stdout = log_file
             sys.stderr = log_file
-def set_date_time(config_dict):
-    now = datetime.now()
-    date = now.strftime("%d/%m/%Y")
-    time = now.strftime("%H:%M:%S")
-    if config_dict['system']['date']=='' or config_dict['system']['time']=='':
-        config_dict['system']['date'] = date
-        config_dict['system']['time'] = time
 
-    return config_dict
+
 def config_to_dict(config):
     done = False
     out_dict = {}
@@ -157,23 +143,32 @@ def _make_dir( _id, root):
     return log_dir  # set only if mkdir is successful
 
 
-def log_config(cfg, file_name, path):
+def _log_config(cfg, file_name, path):
     # config contains only experiment parameters
     # host_info:  slurm id, hostname, gpu , etc
     # meta : run_id, starting time, slum id
-    config_dict = config_to_dict(cfg)
-    config_dict = set_date_time(config_dict)
+    abs_name= os.path.join(path, file_name)
 
+    #config_dict = config_to_dict(cfg)
+    #config_dict = set_date_time(config_dict)
 
-    with TinyDB(os.path.join(path, file_name+".json"), storage=JSONStorage) as db: 
-        runs = db.table("runs")
-        runs.upsert(Document(config_dict, doc_id=self.db_run_id ) )
+    # with TinyDB(abs_name+".json", storage=JSONStorage) as db: 
+    #     runs = db.table("runs")
+    #     runs.upsert(Document(config_dict, doc_id=self.db_run_id ) )
     #for key, value in config_dict.items():
     #    mlflow.log_param(key, value)
+    omegaconf.OmegaConf.save(config=cfg, f=abs_name+".yaml")
+    # yaml_cfg = omegaconf.OmegaConf.to_yaml(cfg)
+    # with open(abs_name+".yaml", 'w') as file: 
+    #     documents = yaml.dump(yaml_cfg, file) 
+    #     print(document)
 
-
-
-
-
+def set_date_time(config_dict):
+    now = datetime.now()
+    date = now.strftime("%d/%m/%Y")
+    time = now.strftime("%H:%M:%S")
+    if config_dict['system']['date']=='' or config_dict['system']['time']=='':
+        config_dict['system']['date'] = date
+        config_dict['system']['time'] = time
 
 

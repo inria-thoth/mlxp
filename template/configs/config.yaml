@@ -1,25 +1,23 @@
+# defaults:
+#   - exp : default
+#   - cluster: OAR
+#   - system: default
+#   - logs: default
+#   - user: default
+
 defaults:
-  - model: cifar10
-  - data : cifar10
-  - trainer : cifar10
   - system : default 
   - cluster: OAR
   - launcher: default
-
-logs:
-  log_dir : data
-  log_name : logs
-  log_to_file : True
-  log_id : -1
-
-metrics:
-  disp_freq: 3
-  checkpoint_freq: 11
-
-#hydra/job_logging: disabled
+  - logs: default
+  - metrics: default
+  - solver : ASIG
+  - data : zeros
+  - loss: quadlin
+  - transfer: wresnet40x2_artbench10_ta
 
 hydra:
-  output_subdir: Null
+  output_subdir: null
   run:
     dir: .
   sweep:

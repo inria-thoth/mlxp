@@ -23,12 +23,31 @@ def set_seeds(seeds):
 
 class Experimentalist(object):
     def __init__(self,config):
+        # self.config = config
+        # #self.git_store_commit()
+        # self.timer = Timer()
+        # #self.git_store_commit()
+
+        # #self.device = assign_device(self.config.device)
+        # print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
+        # print(f"Time: {datetime.now()}")
+        # self.pp = pprint.PrettyPrinter(indent=4)
+        # self.pp.pprint(vars(config))
+
+        # self.logger = Logger(self.config)
+        # self.logger.log_config()
+        # set_seeds(self.config.system.seed)
+        # #os.chdir(hydra_utils.get_original_cwd()) # Not sure what this is for!
         self.config = config
         #self.git_store_commit()
         self.logger = Logger(self.config)
         set_seeds(self.config.system.seed)
         #os.chdir(hydra_utils.get_original_cwd()) # Not sure what this is for!
 
+
+        
+    # def display_msg(step, msg):
+    #         self.timer(step, msg)
 
     def git_check_commit(self):
 
