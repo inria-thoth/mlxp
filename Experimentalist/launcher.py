@@ -1,323 +1,163 @@
-# class for submitting jobs to cluster
-# take inspiration from : https://ai.facebook.com/blog/open-sourcing-submitit-a-lightweight-tool-for-slurm-cluster-computation/
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
+import copy
+import functools
+import pickle
+import warnings
+from pathlib import Path
+from textwrap import dedent
+from typing import Any, Callable, List, Optional
+from types import CodeType
+from omegaconf import DictConfig, open_dict, read_write
 
-import logging
-import os
-from stat import S_IREAD
-import shutil
-import subprocess
-
-import hydra
+from hydra import version
+from hydra._internal.deprecation_warning import deprecation_warning
+from hydra._internal.utils import _run_hydra, get_args_parser
 from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig, ListConfig, OmegaConf
-from datetime import datetime
-from Experimentalist.logger import Logger
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-def filter_fn(x):
-    return not (x.startswith("launcher") or x.startswith("cluster"))
+from hydra.core.utils import _flush_loggers, configure_log
+from hydra.types import TaskFunction
+from Experimentalist.cluster_launcher import submit_job
+from Experimentalist.structured_config import format_config
+import os
 
 
-def handle_OAR(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
+_UNSPECIFIED_: Any = object()
+
+
+def _get_rerun_conf(file_path: str, overrides: List[str]) -> DictConfig:
+    msg = "Experimental rerun CLI option, other command line args are ignored."
+    warnings.warn(msg, UserWarning)
+    file = Path(file_path)
+    if not file.exists():
+        raise ValueError(f"File {file} does not exist!")
+
+    if len(overrides) > 0:
+        msg = "Config overrides are not supported as of now."
+        warnings.warn(msg, UserWarning)
+
+    with open(str(file), "rb") as input:
+        config = pickle.load(input)  # nosec
+    configure_log(config.hydra.job_logging, config.hydra.verbose)
+    HydraConfig.instance().set_config(config)
+    task_cfg = copy.deepcopy(config)
+    with read_write(task_cfg):
+        with open_dict(task_cfg):
+            del task_cfg["hydra"]
+    assert isinstance(task_cfg, DictConfig)
+    return task_cfg
+
+
+hydra_defaults = ['hydra.output_subdir=null',
+                 'hydra.run.dir=.',
+                 'hydra.sweep.dir=.',
+                 'hydra.sweep.subdir=.',
+                 'hydra.hydra_logging.disable_existing_loggers=True',
+                 'hydra.job_logging.disable_existing_loggers=True']
+
+
+
+
+
+
+def fix_co_filename(func, co_filename):
+    fn_code = func.__code__
+    func.__code__ = CodeType(
+        fn_code.co_argcount,
+        fn_code.co_posonlyargcount,
+        fn_code.co_kwonlyargcount,
+        fn_code.co_nlocals,
+        fn_code.co_stacksize,
+        fn_code.co_flags,
+        fn_code.co_code,
+        fn_code.co_consts,
+        fn_code.co_names,
+        fn_code.co_varnames,
+        co_filename,
+        fn_code.co_name,
+        fn_code.co_firstlineno,
+        fn_code.co_lnotab,
+        fn_code.co_freevars,
+        fn_code.co_cellvars)
+
+
+def launch(
+    config_path: Optional[str] = _UNSPECIFIED_,
+    config_name: Optional[str] = None,
+    version_base: Optional[str] = None,
+) -> Callable[[TaskFunction], Any]:
     """
-    Output example:
-    -----------------
-    #!/usr/bin/zsh
-
-    #OAR -l walltime=12:00:00
-    #OAR -n mybigbeautifuljob
-    #OAR -t besteffort
-    #OAR -t idempotent
-    #OAR -p gpumem>'20000'
-    #OAR -p gpumodel='p100' #NOTE: last property takes priority
-    #OAR -d /path/to/dir/
-    #OAR -E /path/to/file.stderr
-    #OAR -O /path/to/file.stdout
-
-    source gpu_setVisibleDevices.sh
-
-    conda activate $my_env
-
-    python train.py $overrides
+    :param config_path: The config path, a directory relative to the declaring python file.
+                        If config_path is None no directory is added to the Config search path.
+    :param config_name: The name of the config (usually the file name without the .yaml extension)
     """
-    # Setup
-    cmd = ""
-    cluster = cfg.cluster
-    launcher = cfg.launcher
-    # Create OAR folder
 
-    # now = datetime.now()
-    # date = now.strftime("date_%d_%m_%Y_time_%H")
-    # root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
-    # os.makedirs(root, exist_ok=True)
-    # job_id = None
-    # job_id, log_dir = _make_run_dir(job_id,root)
+    version.setbase(version_base)
 
-    _logger = Logger(cfg)
-    job_id, log_dir = _logger.get_log_dir()
-
-    #####################
-    # Construct command #
-    #####################
-
-    # Shebang
-    cmd += f"#!{cluster.shell.bin_path}\n"
-    # Space
-    cmd += "\n"
-    # NOTE: use hours instead of walltime
-    # Walltime
-    cmd += f"{cluster.directive} -l core={launcher.cpus},walltime={launcher.hours}:00:00\n"
-    if cluster.name:
-        cmd += f"{cluster.directive} -p cluster='{cluster.name}'\n"
-    # Remove overrides from launcher/cluster
-    overrides = hydra_cfg.overrides.task
-    # Job name
-    filtered_args = list(filter(filter_fn, overrides))
-    job_name = ",".join([a.split(".")[-1] for a in filtered_args])
-    # Limit job_name length
-    job_name = job_name[: min(50, len(job_name))]
-    cmd += f"{cluster.directive} -n {launcher.cmd}|{job_name}\n"
-    # Write exp id to file
-    #with open("id", "w") as f:
-    #    f.write(cfg.id)
-    # Best effort
-    # cmd += f"{cluster.directive} -c {cluster.name}\n"
-
-    if launcher.besteffort:
-        cmd += f"{cluster.directive} -t besteffort\n"
-    # Idempotent (i.e. automatic restart)
-    if launcher.idempotent:
-        cmd += f"{cluster.directive} -t idempotent\n"
-    # GPU memory property
-    # NOTE gpumem is meant to be in Gb
-    gpumem = f"{launcher.gpumem}000"
-    if launcher.gpumem is not None:
-        cmd += f"{cluster.directive} -p gpumem>{gpumem!r}\n"
-    # GPU model property
-    # NOTE: `gpumodel` takes priority over `gpumem` if both are defined
-    if launcher.gpumodel is not None:
-        if type(launcher.gpumodel) == ListConfig:
-            cmd += f"{cluster.directive} -p "
-            cmd += " or ".join([f"gpumodel={m!r}" for m in launcher.gpumodel])
-            cmd += "\n"
+    if config_path is _UNSPECIFIED_:
+        if version.base_at_least("1.2"):
+            config_path = None
+        elif version_base is _UNSPECIFIED_:
+            url = "https://hydra.cc/docs/upgrades/1.0_to_1.1/changes_to_hydra_main_config_path"
+            deprecation_warning(
+                message=dedent(
+                    f"""
+                config_path is not specified in @hydra.main().
+                See {url} for more information."""
+                ),
+                stacklevel=2,
+            )
+            config_path = "."
         else:
-            cmd += f"{cluster.directive} -p gpumodel={launcher.gpumodel!r}\n"
-    # path to dir
-    cmd += f"{cluster.directive} -d {hydra_cfg.runtime.cwd}\n"
-    # Job stderr
-    cwd = dst
-    err_path = os.path.join(log_dir, "log.stderr")
-    cmd += f"{cluster.directive} -E {err_path}\n"
-    # Job stdout
-    out_path = os.path.join(log_dir, "log.stdout")
-    cmd += f"{cluster.directive} -O {out_path}\n"
-    # Space
-    cmd += "\n"
-    cmd += 'echo "Host is `hostname`"\n'
-    # Shell instance
-    cmd += f"source {cluster.shell.config_path}\n"
-    # Space
-    cmd += "\n"
-    # source gpu_setVisibleDevices.sh
-    cmd += f"{cluster.cleanup}\n"
-    # Space
-    cmd += "\n"
-    # conda environment
-    cmd += f"conda activate {cluster.conda_env}\n"
-    # Space
-    cmd += "\n"
-    # Change directory
-    cmd += f"cd {dst}"
-    # Space
-    cmd += "\n"
-    # Python command
-    args = " ".join(filtered_args)
-    now = datetime.now()
-    date = now.strftime("%d/%m/%Y")
-    time = now.strftime("%H:%M:%S")
+            config_path = "."
 
-    cmd += f"{launcher.app} {launcher.cmd} {args} system.date='{date}' system.time='{time}'"
-    cmd += f" logs.log_id='{job_id}'"
-    return cmd,log_dir
+    def main_decorator(task_function: TaskFunction) -> Callable[[], None]:
+        #task_function = launch(task_function)
+        @functools.wraps(task_function)
+        def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
+            if cfg_passthrough is not None:
+                return task_function(cfg_passthrough)
+            else:
+                args_parser = get_args_parser()
+                args = args_parser.parse_args()
+                overrides = args.overrides + hydra_defaults
+                setattr(args, 'overrides', overrides)
 
+                if args.experimental_rerun is not None:
+                    cfg = _get_rerun_conf(args.experimental_rerun, args.overrides)
+                    task_function(cfg)
+                    _flush_loggers()
+                else:
+                    # no return value from run_hydra() as it may sometime actually run the task_function
+                    # multiple times (--multirun)
+                    _run_hydra(
+                        args=args,
+                        args_parser=args_parser,
+                        task_function=task_function,
+                        config_path=config_path,
+                        config_name=config_name,
+                    )
+        return decorated_main
 
-def infer_qos(h):
-    # affect qos based on hours asked
-    if 0 <= h <= 2:
-        return "qos_gpu-dev"
-    elif h <= 20:
-        return "qos_gpu-t3"
-    elif h <= 100:
-        return "qos_gpu-t4"
-    else:
-        raise ValueError(f"hours value cannot exceed 100, here: {h}")
+    def cluster_launcher_decorator(task_function):
+        @functools.wraps(task_function)
+        def decorated_task(cfg):
+            cfg = format_config(cfg)
+            cfg.system.cmd=task_function.__code__.co_filename
+            cfg.system.app=os.environ['_']
+            if cfg.cluster.engine not in ["OAR","SLURM"]:
+                cfg.system.isBatchJob=False
+            if not cfg.system.isBatchJob:
+                return task_function(cfg)            
+            cfg.system.isBatchJob=False
+            submit_job(cfg)
+        fix_co_filename(decorated_task, task_function.__code__.co_filename)        
+        return decorated_task
 
+    def composed_decorator(task_function: TaskFunction) -> Callable[[], None]:
+        task_function = cluster_launcher_decorator(task_function)
+        task_function = main_decorator(task_function)
+        return task_function
 
-def handle_SLURM(cfg: DictConfig, hydra_cfg: DictConfig, dst) -> str:
-    """"""
-    # Setup
-    cmd = ""
-    cluster = cfg.cluster
-    launcher = cfg.launcher
-    # Create SLURM folder
-    #os.makedirs(os.path.join(os.path.abspath(cfg.logs.log_dir),cluster.engine), exist_ok=True)
-    # now = datetime.now()
-    # date = now.strftime("date_%d_%m_%Y_time_%H")
-    # root = os.path.join(dst,cfg.logs.log_dir,cluster.engine,date,cfg.logs.log_name)
-    # os.makedirs(root, exist_ok=True)
-    # job_id = None
-    # job_id, log_dir = _make_run_dir(job_id,root)
-    # Copy config file when job is created
-    #shutil.copy2(".hydra/config.yaml", "config.yaml")
-
-    _logger = Logger(cfg)
-    job_id, log_dir = _logger.get_log_dir()
-
-    # Shebang
-    cmd += f"#!{cluster.shell.bin_path}\n"
-    # Space
-    cmd += "\n"
-    # Remove overrides from launcher/cluster
-    overrides = hydra_cfg.overrides.task
-    # Job name
-    filtered_args = list(filter(filter_fn, overrides))
-    job_name = ",".join([a.split(".")[-1] for a in filtered_args])
-    cmd += f"{cluster.directive} --job-name={launcher.cmd}|{job_name}\n"
-    # Write exp id to file
-    #with open("id", "w") as f:
-    #   f.write(cfg.id)
-    # Check if partition
-    if launcher.partition is not None:
-        cmd += f"{cluster.directive} --partition={launcher.partition}\n"
-    # ntasks
-    if launcher.ntasks is not None:
-        cmd += f"{cluster.directive} --ntasks={launcher.ntasks}\n"
-    # gres
-    cmd += f"{cluster.directive} --gres={launcher.gres}\n"
-    # cpus-per-task
-    cmd += f"{cluster.directive} --cpus-per-task={launcher.cpus_per_task}\n"
-    # nodes
-    if launcher.nodes is not None:
-        cmd += f"{cluster.directive} --nodes={launcher.nodes}\n"
-    # ntasks-per-nodes
-    if launcher.ntasks_per_node is not None:
-        cmd += f"{cluster.directive} --ntasks-per-node={launcher.ntasks_per_node}\n"
-    # C
-    if launcher.C is not None:
-        cmd += f"{cluster.directive} -C {launcher.C}\n"
-    # hint
-    cmd += f"{cluster.directive} --hint={launcher.hint}\n"
-    # change time processing (only consider hours)
-    # time
-    hours = launcher.hours
-    cmd += f"{cluster.directive} --time={hours}:00:00\n"
-    # output
-    cwd = dst
-    out_path = os.path.join(log_dir, "log.stdout")
-    cmd += f"{cluster.directive} --output={out_path}\n"
-    # error
-    err_path = os.path.join(log_dir, "log.stderr")
-    cmd += f"{cluster.directive} --error={err_path}\n"
-    # infer QoS based on hours value
-    # QoS
-    qos = infer_qos(hours)
-    cmd += f"{cluster.directive} --qos={qos}\n"
-    # account
-    cmd += f"{cluster.directive} --account={cluster.account}"
-    # Space
-    cmd += "\n"
-    # Module purge
-    cmd += f"{cluster.cleanup}\n"
-    # Space
-    cmd += "\n"
-    # source conda shell
-    #cmd += f". {cluster.conda_path}"
-    # Space
-    #cmd += "\n"
-    # conda activate
-    cmd += f"conda activate {cluster.conda_env}"
-    # Space
-    cmd += "\n"
-    # Change directory
-    cmd += f"cd {dst}"
-    # Space
-    cmd += "\n"
-    # Code execution
-    args = " ".join(filtered_args)
-    # Script path
-
-    now = datetime.now()
-    date = now.strftime("%d/%m/%Y")
-    time = now.strftime("%H:%M:%S")
-
-    cmd += f"srun {launcher.app} -u {launcher.cmd} {args} system.date={date} system.time={time}"
-    cmd += f" logs.log_id='{job_id}'"
-    return cmd,log_dir
-
-
-def create(cfg: DictConfig) -> None:
-    dst = create_working_dir(cfg)
-    logger.debug(cfg)
-    cluster = cfg.cluster
-    # Some assertions on possible combinations
-    launcher = cfg.launcher
-    assert (
-        launcher.name in cluster.launchers
-    ), f"{launcher.name} not in {cluster.launchers}"
-    # Get Hydra config
-    hydra_cfg = HydraConfig.get()
-    # Construct command
-    if cluster.engine == "OAR":
-        cmd,log_dir = handle_OAR(cfg, hydra_cfg, dst)
-    elif cluster.engine == "SLURM":
-        cmd,log_dir = handle_SLURM(cfg, hydra_cfg, dst)
-    print(cmd)
-    logger.info(f"Selected cluster: {cluster.engine}")
-    logger.info(
-        f"Using {cluster.shell.bin_path!r} for shebang,"
-        f" {cluster.directive!r} as directive"
-    )
-    logger.debug(cmd)
-
-    # Get path to script
-
-    sh_path = os.path.join(log_dir, launcher.filename)
-
-    # Write down .sh file
-    with open(sh_path, "w") as f:
-        f.write(cmd)
-
-    # Make file executable
-    chmod_cmd = f"chmod +x {sh_path!r}"
-    subprocess.check_call(chmod_cmd, shell=True)
-    # Connect to frontal node and invoke launch command
-    #if cluster.node is not None:
-    #    launch_cmd = f'ssh {cluster.node} "{cluster.cmd} {sh_path!r}"'
-    #else:
-    launch_cmd = f"{cluster.cmd} {sh_path!r}"
-    logger.debug(launch_cmd)
-    # Launch job over SSH
-    subprocess.check_call(launch_cmd, shell=True)
-    
-
-    logging.info(f"Job launched!")
-
-def create_working_dir(cfg: DictConfig):
-    # creates a copy of the  current dir and returns its path
-    src = os.getcwd()
-    dirname, filename= os.path.split(src)
-    now = datetime.now()
-    date = now.strftime("date_%d_%m_%Y")
-    time = now.strftime("time_%H_%M")
-    target_name = '.'+date+'_'+time
-    dst = os.path.join(dirname,filename,'data','workdirs',filename,target_name)
-    if not os.path.exists(dst):
-        shutil.copytree(src, dst, symlinks=True, ignore=None)
-    #permission_dir(dst)
-    os.chdir(dst)
-    return dst
+    return composed_decorator
 
 
 

@@ -25,8 +25,7 @@ class Logger(object):
         #self.device = assign_device(self.config.device)
         print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
         print(f"Time: {datetime.now()}")
-        self.pp = pprint.PrettyPrinter(indent=4)
-        self.pp.pprint(vars(config))
+
 
         self.config = config
         self.root = os.path.join(os.path.abspath(self.config.logs.log_dir), self.config.logs.log_name)
@@ -36,6 +35,8 @@ class Logger(object):
         self.update_run_config()
         self.log_file()
         self.log_config()
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(vars(self.config))
         #set_seeds(self.config.system.seed)
         
     def get_log_dir(self):
@@ -57,7 +58,7 @@ class Logger(object):
             self.config.logs.log_id = self.db_run_id
             self.config.logs.path = os.path.join(self.root,str(self.db_run_id))
             self.config.system.date= date
-            self.config.system.time=time
+            self.config.system.time= time
 
     def log_config(self):
         _log_config(self.config,"metadata",self.dir)

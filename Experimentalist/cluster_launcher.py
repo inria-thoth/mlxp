@@ -12,7 +12,6 @@ from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, ListConfig, OmegaConf
 from datetime import datetime
 from Experimentalist.logger import Logger
-from Experimentalist.structured_config import register_configs  
 
 
 logger = logging.getLogger(__name__)
@@ -28,7 +27,7 @@ SLURM_config = {'directive': "#SBATCH",
                 'subission_cmd': "sbatch"}
 
 
-def _launch(cfg):
+def submit_job(cfg):
     work_dir = create_working_dir(cfg)
     #logger.debug(cfg)
     system = cfg.system
@@ -47,9 +46,9 @@ def _launch(cfg):
     cmd,subission_cmd = create_job_string(system,cluster,job_name,job_id,work_dir,log_dir,args)
     print(cmd)
     job_path = save_job(cmd,log_dir)
-    submit_job(job_path,subission_cmd)
+    _submit_job(job_path,subission_cmd)
 
-def submit_job(job_path, subission_cmd):
+def _submit_job(job_path, subission_cmd):
     chmod_cmd = f"chmod +x {job_path!r}"
     subprocess.check_call(chmod_cmd, shell=True)
     launch_cmd = f"{subission_cmd} {job_path!r}"
@@ -101,14 +100,17 @@ def main_command(system,cleanup_cmd, work_dir,args,job_id):
     date = now.strftime("%d/%m/%Y")
     time = now.strftime("%H:%M:%S")
     values = ["",
-              'echo "Host is `hostname`"',
               f"source {system.shell_config_path}",
-              f"{cleanup_cmd}",
-              f"{system.env}",
-              f"cd {work_dir}",
-              f"{system.app} {system.cmd} {args} system.date='{date}' system.time='{time}'  logs.log_id={job_id}"
+              f"{cleanup_cmd}"]
+    try:
+        values+=[f"{system.env}"]
+    except:
+        pass
+
+    values+=  [f"cd {work_dir}",
+              f"{system.app} {system.cmd} {args} ++system.date='{date}' ++system.time='{time}'  ++logs.log_id={job_id}"
               ]
-    values = ["{val}\n" for val in values]
+    values = [f"{val}\n" for val in values]
     return "".join(values)
 
 def make_OAR_command(job_scheduler,job_name, out_path,err_path):
@@ -124,24 +126,6 @@ def make_OAR_command(job_scheduler,job_name, out_path,err_path):
     ]
     values += job_scheduler.cmd
 
-    # values.append(f"-l core={launcher.cpus},walltime={launcher.hours}:00:00")
-
-
-    # if launcher.cluster_name:
-    #     values.append(f"-p cluster='{launcher.cluster_name}",)
-    # if launcher.besteffort:
-    #     values.append(f"-t besteffort")
-    # if launcher.idempotent:
-    #      values.append(f"-t idempotent")
-    # if launcher.gpumem is not None:
-    #     gpumem = f"{launcher.gpumem}000"
-    #     values.append(f"-p gpumem>{gpumem!r}")
-    # if launcher.gpumodel is not None:
-    #     if type(launcher.gpumodel) == ListConfig:
-    #         gpumodel= "-p " + " or ".join([f"gpumodel={m!r}" for m in launcher.gpumodel])
-    #     else:
-    #         gpumodel = f"gpumodel={launcher.gpumodel!r}"
-    #     values.append(gpumodel)
     directive = OAR_config['directive']
     values = [f"{directive} {val}\n" for val in values]
     return "".join(values)
@@ -157,22 +141,6 @@ def make_SLURM_command(job_scheduler,job_name, out_path,err_path):
 
     values += job_scheduler.cmd
 
-    # values += [ f"--gres={launcher.gres}",
-    #             f"--cpus-per-task={launcher.cpus_per_task}",
-    #             f"--hint={launcher.hint}",
-    #             f"--time={launcher.hours}:00:00",
-    #             f"--qos={infer_qos(launcher.hours)}"]
-
-    # if launcher.partition is not None:
-    #     values.append(f"--partition={launcher.partition}")
-    # if launcher.ntasks is not None:
-    #     values.append(f"--ntasks={launcher.ntasks}")
-    # if launcher.nodes is not None:
-    #     values.append(f"--nodes={launcher.nodes}")
-    # if launcher.ntasks_per_node is not None:
-    #     values.append(f"--ntasks-per-node={launcher.ntasks_per_node}")
-    # if launcher.C is not None:
-    #     values.append(f"-C {launcher.C}")
 
     directive = SLURM_config['directive']
     values = [f"{directive} {val}\n" for val in values]
@@ -194,7 +162,7 @@ def create_working_dir(cfg: DictConfig):
     return dst
 
 def filter_fn(x):
-    return not x.startswith("launcher")
+    return not 'system.isBatchJob' in x 
 
 def infer_qos(h):
     # affect qos based on hours asked
