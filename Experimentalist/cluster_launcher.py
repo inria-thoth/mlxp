@@ -12,7 +12,7 @@ from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, ListConfig, OmegaConf
 from datetime import datetime
 from Experimentalist.logger import Logger
-
+import omegaconf
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -27,36 +27,57 @@ SLURM_config = {'directive': "#SBATCH",
                 'subission_cmd': "sbatch"}
 
 
-def submit_job(cfg):
+def submit_job(cfg,logger):
     work_dir = create_working_dir(cfg)
     #logger.debug(cfg)
     system = cfg.system
-    cluster=cfg.cluster
+    cluster= cfg.cluster
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
-
-    job_name = ",".join([a.split(".")[-1] for a in filtered_args])
-    job_name = job_name[: min(50, len(job_name))]
     
-    _logger = Logger(cfg)
-    job_id, log_dir = _logger.get_log_dir()
-        # Shebang
+    logger = Logger(cfg)
+    job_id, log_dir = logger.get_log_dir()
+    job_name = log_dir.split(os.sep)
+    job_name = os.sep.join(job_name[-2:])
     cmd,subission_cmd = create_job_string(system,cluster,job_name,job_id,work_dir,log_dir,args)
     print(cmd)
     job_path = save_job(cmd,log_dir)
-    _submit_job(job_path,subission_cmd)
+    # inline_options = cluster.inline_cmd
+    # inline_options =" ".join(inline_options)
+    process_output,isJobSubmitted = _submit_job(job_path,subission_cmd)
+    if isJobSubmitted:
+        update_job_id(logger,cluster.engine,process_output)
+        logger.log_config()
+
+def update_job_id(logger,engine,process_output):    
+    if engine=="OAR":
+        job_id = process_output.decode("utf-8").split('\n')[-2].split('=')[-1]
+    # job_id_path = os.path.join(job_path,'cluster_job_id.txt')
+    # with open(job_id_path, "w") as f:
+    #     f.write(job_id)
+    omegaconf.OmegaConf.set_struct(logger.config, True)
+    with omegaconf.open_dict(logger.config):
+        logger.config.system.cluster_job_id = job_id
+    omegaconf.OmegaConf.set_struct(logger.config, False)
 
 def _submit_job(job_path, subission_cmd):
     chmod_cmd = f"chmod +x {job_path!r}"
     subprocess.check_call(chmod_cmd, shell=True)
-    launch_cmd = f"{subission_cmd} {job_path!r}"
+    launch_cmd = f"{subission_cmd}  {job_path!r}"
     logger.debug(launch_cmd)
     # Launch job over SSH
     subprocess.check_call(launch_cmd, shell=True)
-    logging.info(f"Job launched!")
-    
+    isJobSubmitted = False
+    try:
+        process_output = subprocess.check_output(launch_cmd, shell=True)
+        isJobSubmitted = True
+        logging.info(f"Job launched!") 
+    except:
+        raise
+    return process_output, isJobSubmitted
+
 def save_job(cmd_string,log_dir):
     job_path = os.path.join(log_dir, 'script.sh')
     with open(job_path, "w") as f:

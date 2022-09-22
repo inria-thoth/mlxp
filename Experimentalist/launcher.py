@@ -17,6 +17,8 @@ from hydra.core.utils import _flush_loggers, configure_log
 from hydra.types import TaskFunction
 from Experimentalist.cluster_launcher import submit_job
 from Experimentalist.structured_config import format_config
+from Experimentalist.logger import Logger
+
 import os
 
 
@@ -58,7 +60,7 @@ hydra_defaults = ['hydra.output_subdir=null',
 
 
 
-def fix_co_filename(func, co_filename):
+def set_co_filename(func, co_filename):
     fn_code = func.__code__
     func.__code__ = CodeType(
         fn_code.co_argcount,
@@ -109,7 +111,7 @@ def launch(
         else:
             config_path = "."
 
-    def main_decorator(task_function: TaskFunction) -> Callable[[], None]:
+    def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
         #task_function = launch(task_function)
         @functools.wraps(task_function)
         def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
@@ -137,7 +139,7 @@ def launch(
                     )
         return decorated_main
 
-    def cluster_launcher_decorator(task_function):
+    def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(cfg):
             cfg = format_config(cfg)
@@ -145,16 +147,27 @@ def launch(
             cfg.system.app=os.environ['_']
             if cfg.cluster.engine not in ["OAR","SLURM"]:
                 cfg.system.isBatchJob=False
+
+            logger = Logger(cfg)
+            logger.set_cluster_job_id()
+            logger.log_config()
             if not cfg.system.isBatchJob:
-                return task_function(cfg)            
+                try:
+                    logger.log_status('RUNNING')
+                    task_function(cfg,logger)
+                    logger.log_status('COMPLETE')
+                except:
+                    logger.log_status('FAILED')
+                    raise
+
             cfg.system.isBatchJob=False
-            submit_job(cfg)
-        fix_co_filename(decorated_task, task_function.__code__.co_filename)        
+            submit_job(cfg,logger)
+        set_co_filename(decorated_task, task_function.__code__.co_filename)        
         return decorated_task
 
     def composed_decorator(task_function: TaskFunction) -> Callable[[], None]:
-        task_function = cluster_launcher_decorator(task_function)
-        task_function = main_decorator(task_function)
+        task_function = launcher_decorator(task_function)
+        task_function = hydra_decorator(task_function)
         return task_function
 
     return composed_decorator

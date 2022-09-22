@@ -34,7 +34,7 @@ class Logger(object):
         self.setup_dir()
         self.update_run_config()
         self.log_file()
-        self.log_config()
+        #self.log_config()
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(vars(self.config))
         #set_seeds(self.config.system.seed)
@@ -59,11 +59,40 @@ class Logger(object):
             self.config.logs.path = os.path.join(self.root,str(self.db_run_id))
             self.config.system.date= date
             self.config.system.time= time
+            self.config.system.status= 'STARTING'
+        omegaconf.OmegaConf.set_struct(self.config, False)
 
     def log_config(self):
-        _log_config(self.config,"metadata",self.dir)
+        abs_name= os.path.join(self.dir, "metadata")
+        omegaconf.OmegaConf.save(config=self.config, f=abs_name+".yaml")
 
+    def log_status(self,status):
+        if status in ['COMPLETE','RUNNING','FAILED']:
+            omegaconf.OmegaConf.set_struct(self.config, True)
+            with omegaconf.open_dict(self.config):
+                self.config.system.status = status
+            omegaconf.OmegaConf.set_struct(self.config, False)
+            self.log_config()
+        else:
+            raise NotImplementedError
+    
 
+        # file_name = os.path.join(self.dir, f'status.txt')
+        # with open(file_name,'w') as f:
+        #     if status in ['COMPLETE','RUNNING','FAILED']:
+        #         f.write(status)
+        #     else:
+        #         raise NotImplementedError            
+    def set_cluster_job_id(self):
+        abs_name= os.path.join(self.dir, "metadata.yaml")
+        if os.path.isfile(abs_name): 
+            with open(abs_name, 'r') as file:
+                configs = yaml.safe_load(file)
+                if 'cluster_job_id' in configs['system']:
+                    omegaconf.OmegaConf.set_struct(self.config, True)
+                    with omegaconf.open_dict(self.config):
+                        self.config.system.cluster_job_id = configs['system']['cluster_job_id']
+                    omegaconf.OmegaConf.set_struct(self.config, False)
 
     def log_metrics(self,metrics_dict, tag='', step=None):
         #mlflow.log_metics(metrics_dict, step=step)
@@ -149,20 +178,7 @@ def _log_config(cfg, file_name, path):
     # host_info:  slurm id, hostname, gpu , etc
     # meta : run_id, starting time, slum id
     abs_name= os.path.join(path, file_name)
-
-    #config_dict = config_to_dict(cfg)
-    #config_dict = set_date_time(config_dict)
-
-    # with TinyDB(abs_name+".json", storage=JSONStorage) as db: 
-    #     runs = db.table("runs")
-    #     runs.upsert(Document(config_dict, doc_id=self.db_run_id ) )
-    #for key, value in config_dict.items():
-    #    mlflow.log_param(key, value)
     omegaconf.OmegaConf.save(config=cfg, f=abs_name+".yaml")
-    # yaml_cfg = omegaconf.OmegaConf.to_yaml(cfg)
-    # with open(abs_name+".yaml", 'w') as file: 
-    #     documents = yaml.dump(yaml_cfg, file) 
-    #     print(document)
 
 def set_date_time(config_dict):
     now = datetime.now()

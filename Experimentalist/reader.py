@@ -2,7 +2,7 @@
 
 import os
 import json
-
+import yaml
 
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
@@ -33,8 +33,8 @@ class Reader(object):
         ]
         for d in dir_nrs:
             try:
-                with open(os.path.join(self.root_dir,str(d),self.file_name+'.json')) as file:
-                    data = json.load(file)
+                with open(os.path.join(self.root_dir,str(d),self.file_name+'.yaml','r')) as file:
+                    data = yaml.safe_load(file)
                     self.runs.insert(Document(data["runs"][str(d)], doc_id=d ) )
             except FileNotFoundError:
                 pass

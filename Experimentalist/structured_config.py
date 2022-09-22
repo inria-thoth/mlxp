@@ -27,6 +27,7 @@ class System:
     env: str="conda activate '${oc.env:CONDA_DEFAULT_ENV}'"
     shell_path: str="/bin/bash"
     shell_config_path: str="~/.bashrc"
+    status: str=MISSING
     cmd: str=MISSING
     app: str=MISSING
     isBatchJob: bool=False
