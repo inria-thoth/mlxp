@@ -12,9 +12,9 @@ from tinydb import Query
 from tinydb.table import Document
 import itertools
 
-from Experimentalist.utils import ConfigsList, flatten_dict
+from experimentalist.collections import ConfigCollection, ConfigList
 
-
+ 
 class Reader(object):
     def __init__(self,root, file_name="metadata", reload=True):
         self.root_dir = os.path.abspath(root)
@@ -33,11 +33,24 @@ class Reader(object):
         ]
         for d in dir_nrs:
             try:
-                with open(os.path.join(self.root_dir,str(d),self.file_name+'.yaml','r')) as file:
-                    data = yaml.safe_load(file)
-                    self.runs.insert(Document(data["runs"][str(d)], doc_id=d ) )
+                self.add_to_base(d)
             except FileNotFoundError:
-                pass
+                self.handle_legacy(d)
+    def add_to_base(self,file_id):
+        with open(os.path.join(self.root_dir,str(file_id),self.file_name+'.yaml'),'r') as file:
+            data = yaml.safe_load(file)
+            self.runs.insert(Document(data, doc_id=file_id) )
+
+    def handle_legacy(self, file_id):
+        file_name = os.path.join(self.root_dir,str(file_id),self.file_name)
+        try:
+            with open(file_name+'.json','r') as file:
+                data = json.load(file)
+            with open(file_name+'.yaml', 'w') as file:
+                yaml.dump(data["runs"][str(file_id)], file, default_flow_style=False)
+            self.add_to_base(file_id)
+        except FileNotFoundError:
+            pass
 
     def constuct_base(self):
         # get all dirs in root greater than latest_id in the db
@@ -53,8 +66,8 @@ class Reader(object):
         for query_dict in all_queries:
             Q = make_query(query_dict)
             res += self.runs.search(Q)
-        res = [{'hierarchical': r, 'flattened': flatten_dict(r,parent_key=self.file_name) } for r in res ]
-        return ConfigsList(res)
+        res = ConfigList(res,root_name=self.file_name)
+        return ConfigCollection([res])
 
     def search_list(self,list_queries_dict, commun_queries=None):
         res = []
@@ -63,7 +76,6 @@ class Reader(object):
                 queries_dict = {**queries_dict, **commun_queries}
             res += self.search(queries_dict)
         return res
-
 
 def preprocess_queries_dict(queries_dict, file_name='metadata'):
     return { '.'.join(key.split('.')[1:]): value 

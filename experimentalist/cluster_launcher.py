@@ -1,21 +1,12 @@
 # class for submitting jobs to cluster
-# take inspiration from : https://ai.facebook.com/blog/open-sourcing-submitit-a-lightweight-tool-for-slurm-cluster-computation/
 
-import logging
 import os
-from stat import S_IREAD
 import shutil
 import subprocess
 
-import hydra
 from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig, ListConfig, OmegaConf
 from datetime import datetime
-from Experimentalist.logger import Logger
 import omegaconf
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 OAR_config = {'directive': "#OAR",
               'cleanup_cmd': "",
@@ -28,7 +19,7 @@ SLURM_config = {'directive': "#SBATCH",
 
 
 def submit_job(cfg,logger):
-    work_dir = create_working_dir(cfg)
+    work_dir = create_working_dir()
     #logger.debug(cfg)
     system = cfg.system
     cluster= cfg.cluster
@@ -36,16 +27,12 @@ def submit_job(cfg,logger):
     overrides = hydra_cfg.overrides.task
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
-    
-    logger = Logger(cfg)
     job_id, log_dir = logger.get_log_dir()
     job_name = log_dir.split(os.sep)
     job_name = os.sep.join(job_name[-2:])
     cmd,subission_cmd = create_job_string(system,cluster,job_name,job_id,work_dir,log_dir,args)
     print(cmd)
     job_path = save_job(cmd,log_dir)
-    # inline_options = cluster.inline_cmd
-    # inline_options =" ".join(inline_options)
     process_output,isJobSubmitted = _submit_job(job_path,subission_cmd)
     if isJobSubmitted:
         update_job_id(logger,cluster.engine,process_output)
@@ -54,9 +41,7 @@ def submit_job(cfg,logger):
 def update_job_id(logger,engine,process_output):    
     if engine=="OAR":
         job_id = process_output.decode("utf-8").split('\n')[-2].split('=')[-1]
-    # job_id_path = os.path.join(job_path,'cluster_job_id.txt')
-    # with open(job_id_path, "w") as f:
-    #     f.write(job_id)
+
     omegaconf.OmegaConf.set_struct(logger.config, True)
     with omegaconf.open_dict(logger.config):
         logger.config.system.cluster_job_id = job_id
@@ -66,14 +51,13 @@ def _submit_job(job_path, subission_cmd):
     chmod_cmd = f"chmod +x {job_path!r}"
     subprocess.check_call(chmod_cmd, shell=True)
     launch_cmd = f"{subission_cmd}  {job_path!r}"
-    logger.debug(launch_cmd)
     # Launch job over SSH
     subprocess.check_call(launch_cmd, shell=True)
     isJobSubmitted = False
     try:
         process_output = subprocess.check_output(launch_cmd, shell=True)
         isJobSubmitted = True
-        logging.info(f"Job launched!") 
+        print(f"Job launched!") 
     except:
         raise
     return process_output, isJobSubmitted
@@ -135,9 +119,6 @@ def main_command(system,cleanup_cmd, work_dir,args,job_id):
     return "".join(values)
 
 def make_OAR_command(job_scheduler,job_name, out_path,err_path):
-    #####################
-    # Construct command #
-    #####################
     
     values = [
                f"-n {job_name}",
@@ -167,7 +148,7 @@ def make_SLURM_command(job_scheduler,job_name, out_path,err_path):
     values = [f"{directive} {val}\n" for val in values]
     return "".join(values)
 
-def create_working_dir(cfg: DictConfig):
+def create_working_dir():
     # creates a copy of the  current dir and returns its path
     src = os.getcwd()
     dirname, filename= os.path.split(src)

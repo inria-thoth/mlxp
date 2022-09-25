@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-setup(name='Experimentalist',
+setup(name='experimentalist',
       version='0.1',
       description='ml exp ',
       url='git@github.com:MichaelArbel/Experimentalist.git',
