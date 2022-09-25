@@ -1,9 +1,0 @@
-# @package _group_
-name: "besteffort"
-filename: "${launcher.name}.sh"
-hours: 24
-gpumodel: null
-gpumem: null
-besteffort: True
-idempotent: True
-cmd: "train.py"
