@@ -7,6 +7,7 @@ import subprocess
 from hydra.core.hydra_config import HydraConfig
 from datetime import datetime
 import omegaconf
+from omegaconf.errors import OmegaConfBaseException
 
 OAR_config = {
     "directive": "#OAR",
@@ -64,8 +65,9 @@ def _submit_job(job_path, subission_cmd):
     try:
         process_output = subprocess.check_output(launch_cmd, shell=True)
         isJobSubmitted = True
-        print(f"Job launched!")
-    except:
+        print("Job launched!")
+    except subprocess.CalledProcessError as e:
+        print(e.output)
         raise
     return process_output, isJobSubmitted
 
@@ -116,12 +118,13 @@ def main_command(system, cleanup_cmd, work_dir, args, job_id):
     values = ["", f"source {system.shell_config_path}", f"{cleanup_cmd}"]
     try:
         values += [f"{system.env}"]
-    except:
+    except OmegaConfBaseException:
         pass
 
     values += [
         f"cd {work_dir}",
-        f"{system.app} {system.cmd} {args} ++system.date='{date}' ++system.time='{time}'  ++logs.log_id={job_id}",
+        f"{system.app} {system.cmd} {args} ++system.date='{date}' \
+            ++system.time='{time}'  ++logs.log_id={job_id}",
     ]
     values = [f"{val}\n" for val in values]
     return "".join(values)
@@ -175,7 +178,7 @@ def create_working_dir():
 
 
 def filter_fn(x):
-    return not "system.isBatchJob" in x
+    return "system.isBatchJob" not in x
 
 
 def infer_qos(h):

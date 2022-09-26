@@ -112,9 +112,12 @@ def launch(
     version_base: Optional[str] = None,
 ) -> Callable[[TaskFunction], Any]:
     """
-    :param config_path: The config path, a directory relative to the declaring python file.
-                        If config_path is None no directory is added to the Config search path.
-    :param config_name: The name of the config (usually the file name without the .yaml extension)
+    :param config_path: The config path, a directory relative
+                        to the declaring python file.
+                        If config_path is None no directory is added
+                        to the Config search path.
+    :param config_name: The name of the config
+                        (usually the file name without the .yaml extension)
     """
 
     hydra_decorator = hydra.main(
@@ -138,7 +141,7 @@ def launch(
                     logger.log_status("RUNNING")
                     task_function(cfg, logger)
                     logger.log_status("COMPLETE")
-                except:
+                except Exception:
                     logger.log_status("FAILED")
                     raise
 

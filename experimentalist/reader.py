@@ -17,7 +17,7 @@ class Reader(object):
     def __init__(self, root, file_name="metadata", reload=True):
         self.root_dir = os.path.abspath(root)
         self.file_name = file_name
-        self.db = get_db_file_manager(self.root_dir, file_name=file_name)
+        self.db = get_db_file_manager_safe(self.root_dir, file_name=file_name)
         self.runs = self.db.table("runs")
         self.latest_id = 0
         if reload:
@@ -64,7 +64,6 @@ class Reader(object):
 
     def search(self, queries_dict):
         """Wrapper to TinyDB's search function."""
-        # query_dicts =  {'sampler/latent_sampler': ['lagevin'], 'model/d_model': ['sngan'] }]
         queries_dict = preprocess_queries_dict(queries_dict)
         res = []
         all_queries = query_generator(**queries_dict)
@@ -112,24 +111,22 @@ def query_generator(**kwargs):
 
 def get_db_file_manager(root_dir, file_name="metadata"):
     file_name = file_name + ".json"
+    return TinyDB(
+        os.path.join(root_dir, file_name),
+        storage=JSONStorage,
+        sort_keys=True,
+        indent=4,
+        separators=(",", ": "),
+    )
+
+
+def get_db_file_manager_safe(root_dir, file_name="metadata"):
     try:
-        db = TinyDB(
-            os.path.join(root_dir, file_name),
-            storage=JSONStorage,
-            sort_keys=True,
-            indent=4,
-            separators=(",", ": "),
-        )
-    except:
-        ### handle case where there is no write priviledges, the database will be created in a subirectory of the working directory
+        return get_db_file_manager(root_dir, file_name)
+    except PermissionError:
+        # Handle case where there is no write privileges,
+        # the database will be created in a subirectory of the working directory
         root, dir_name = os.path.split(root_dir)
         root_dir = os.path.join(os.getcwd(), dir_name)
         os.makedirs(root_dir, exist_ok=True)
-        db = TinyDB(
-            os.path.join(root_dir, file_name),
-            storage=JSONStorage,
-            sort_keys=True,
-            indent=4,
-            separators=(",", ": "),
-        )
-    return db
+        return get_db_file_manager(root_dir, file_name)

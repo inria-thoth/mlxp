@@ -96,7 +96,7 @@ class Logger(object):
 
     def log_metrics(self, metrics_dict, tag="", step=None):
         # mlflow.log_metics(metrics_dict, step=step)
-        file_name = os.path.join(self.dir, tag + f"metrics")
+        file_name = os.path.join(self.dir, tag + "metrics")
         with open(file_name + ".json", "a") as f:
             json.dump(metrics_dict, f)
             f.write(os.linesep)
@@ -125,13 +125,12 @@ class Logger(object):
 
     def log_file(self):
         if self.config.logs.log_to_file:
-            log_file = open(os.path.join(self.dir, f"log.txt"), "w", buffering=1)
+            log_file = open(os.path.join(self.dir, "log.txt"), "w", buffering=1)
             sys.stdout = log_file
             sys.stderr = log_file
 
 
 def config_to_dict(config):
-    done = False
     out_dict = {}
     for key, value in config.items():
         if isinstance(value, omegaconf.dictconfig.DictConfig):

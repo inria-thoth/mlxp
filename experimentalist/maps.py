@@ -8,8 +8,8 @@ class Map:
         self.name = "metadata"
 
     def apply(self, data):
-        ### takes a dict containing data corresponding to a config
-        ### returns a dict of outputs
+        # Input:  Dict containing data corresponding to a config
+        # Output: Dict of outputs
         return NotImplementedError
 
 
@@ -23,8 +23,9 @@ class AggMap:
         self.name = name
 
     def apply(self, data):
-        ### takes a list of dicts where each entry of the list contains data corresponding to a config
-        ### returns a dict of outputs
+        # Input: List of dicts where each entry of the list
+        # contains data corresponding to a config.
+        # Output: Dict of outputs
         return NotImplementedError
 
 
@@ -38,7 +39,6 @@ class Path(Map):
         id_key = self.keys[0]
         path = os.path.join(self.abs_path, str(data[id_key]))
         return {self.name: path}
-        # config['flattened'][path_key]=path
 
 
 class Last(Map):
@@ -50,7 +50,9 @@ class Last(Map):
         key = self.keys[0]
         try:
             return {self.name: data[key][-1]}
-        except:
+        except KeyError:
+            return {}
+        except IndexError:
             return {}
 
 
@@ -61,12 +63,10 @@ class AggMin(AggMap):
 
     def apply(self, data):
         index = -1
-        # selected_data = data[self.keys[0]]
         selected_data = [d[self.keys[0]] for d in data]
         try:
             index = np.nanargmin(np.asarray(selected_data), axis=0)
-
-        except:
+        except ValueError:
             pass
         return {self.name: selected_data[index]}, index
 
@@ -78,12 +78,10 @@ class AggMax(AggMap):
 
     def apply(self, data):
         index = -1
-        # selected_data = data[self.keys[0]]
         selected_data = [d[self.keys[0]] for d in data]
         try:
             index = np.nanargmax(np.asarray(selected_data), axis=0)
-
-        except:
+        except ValueError:
             pass
         return {self.name: selected_data[index]}, index
 

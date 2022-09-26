@@ -1,6 +1,5 @@
 import json
 import os
-from functools import reduce
 from collections import defaultdict
 from collections.abc import MutableMapping
 from experimentalist.maps import Map, AggMap
@@ -31,7 +30,7 @@ class ConfigList(object):
         return pd.DataFrame([config["flattened"] for config in self.config])
 
     def groupBy(self, list_group_keys=[]):
-        ## Need to handle the case when keys are empty
+        # Need to handle the case when keys are empty
         return group_by(self.config, list_group_keys)
 
     def add_data(self, keys_or_maps):
@@ -60,7 +59,7 @@ class ConfigList(object):
         out = {
             key: self.config[0]["flattened"][key]
             for key in keys
-            if not key in protected
+            if key not in protected
         }
         if "group_keys_val" in keys:
             out["group_keys_val"] = self.group_keys_val
@@ -162,12 +161,12 @@ def safe_hierarchical_append(dictionary, val, keys, list_group_keys):
         parent = dico
         try:
             dico = dico[key]
-        except:
+        except KeyError:
             dico[key] = {}
             dico = dico[key]
     try:
         dico.config.append(val)
-    except:
+    except AttributeError:
         collection = ConfigList([val], group_keys_val=keys, group_keys=list_group_keys)
         parent[key] = ConfigCollection([collection])
 
@@ -210,7 +209,7 @@ def aggregate_collection(collection_list, agg_maps):
                 group_keys_val=collection.group_keys_val,
                 group_keys=collection.group_keys,
             )
-            if not agg_map.name in agg_collection:
+            if agg_map.name not in agg_collection:
                 agg_collection[agg_map.name] = [collection]
             else:
                 agg_collection[agg_map.name].append(collection)
@@ -244,8 +243,8 @@ def GroupedConfigs_to_ConfigList(collection):
 
 
 def extract_data_from_collection(collection, value_keys):
-    ### returns a dict (value_key: list[obj] ) where
-    ### the size of the list matches the size of the collection
+    # returns a dict (value_key: list[obj] ) where
+    # the size of the list matches the size of the collection
 
     out = []
     for config_dict in collection.config:
