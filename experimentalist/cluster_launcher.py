@@ -59,13 +59,14 @@ def _submit_job(job_path, subission_cmd):
     chmod_cmd = f"chmod +x {job_path!r}"
     subprocess.check_call(chmod_cmd, shell=True)
     launch_cmd = f"{subission_cmd}  {job_path!r}"
-    # Launch job over SSH
-    subprocess.check_call(launch_cmd, shell=True)
     isJobSubmitted = False
+    # Launch job over SSH
     try:
         process_output = subprocess.check_output(launch_cmd, shell=True)
         isJobSubmitted = True
+        print(process_output)
         print("Job launched!")
+
     except subprocess.CalledProcessError as e:
         print(e.output)
         raise

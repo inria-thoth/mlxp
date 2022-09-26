@@ -141,6 +141,7 @@ def launch(
                     logger.log_status("RUNNING")
                     task_function(cfg, logger)
                     logger.log_status("COMPLETE")
+                    return None
                 except Exception:
                     logger.log_status("FAILED")
                     raise
@@ -149,11 +150,16 @@ def launch(
             submit_job(cfg, logger)
 
         set_co_filename(decorated_task, task_function.__code__.co_filename)
+
         return decorated_task
 
     def composed_decorator(task_function: TaskFunction) -> Callable[[], None]:
-        task_function = launcher_decorator(task_function)
-        task_function = hydra_decorator(task_function)
+        # old_co_filename = task_function.__code__.co_filename
+        decorated_task = launcher_decorator(task_function)
+        # new_co_filename = decorated_task.__code__.co_filename
+        # set_co_filename(decorated_task, old_co_filename)
+        task_function = hydra_decorator(decorated_task)
+        # set_co_filename(task_function, new_co_filename)
         return task_function
 
     return composed_decorator
