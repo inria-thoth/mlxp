@@ -16,17 +16,10 @@ import shutil
 
 class Logger(object):
     def __init__(self, config, overwrite=None):
-
-        # print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
-        # print(f"Time: {datetime.now()}")
-
         self.config = config
-        # if config.logs.log_id is None:
         log_dir = os.path.abspath(
             os.path.join(self.config.logs.root_dir, self.config.logs.log_dir)
         )
-        # else:
-        #    log_dir = self.config.logs.log_dir
         self.root = os.path.join(log_dir, self.config.logs.log_name)
         self.db_run_id = config.logs.log_id
         self.setup_dir()
@@ -69,13 +62,6 @@ class Logger(object):
             self.log_config()
         else:
             raise NotImplementedError
-
-        # file_name = os.path.join(self.dir, f'status.txt')
-        # with open(file_name,'w') as f:
-        #     if status in ['COMPLETE','RUNNING','FAILED']:
-        #         f.write(status)
-        #     else:
-        #         raise NotImplementedError
 
     def set_cluster_job_id(self):
         abs_name = os.path.join(self.dir, "metadata.yaml")
