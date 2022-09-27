@@ -12,26 +12,25 @@ from random import random
 from time import sleep
 import dill as pkl
 import shutil
-import pprint
 
 
 class Logger(object):
     def __init__(self, config, overwrite=None):
 
-        #print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
-        #print(f"Time: {datetime.now()}")
+        # print(f"Process id: {str(os.getpid())} | hostname: {socket.gethostname()}")
+        # print(f"Time: {datetime.now()}")
 
         self.config = config
-        if config.logs.log_id is None:
-            log_dir = os.path.abspath(os.path.join(self.config.logs.root_dir,self.config.logs.log_dir))
-        else:
-            log_dir = self.config.logs.log_dir
-        self.root = os.path.join(
-            log_dir, self.config.logs.log_name
+        # if config.logs.log_id is None:
+        log_dir = os.path.abspath(
+            os.path.join(self.config.logs.root_dir, self.config.logs.log_dir)
         )
+        # else:
+        #    log_dir = self.config.logs.log_dir
+        self.root = os.path.join(log_dir, self.config.logs.log_name)
         self.db_run_id = config.logs.log_id
         self.setup_dir()
-        self.update_run_config(log_dir)
+        self.update_run_config()
         self.log_file()
 
     def get_log_dir(self):
@@ -41,7 +40,7 @@ class Logger(object):
         os.makedirs(self.root, exist_ok=True)
         self.db_run_id, self.dir = _make_run_dir(self.db_run_id, self.root)
 
-    def update_run_config(self,log_dir):
+    def update_run_config(self):
         now = datetime.now()
         date = now.strftime("%d/%m/%Y")
         time = now.strftime("%H:%M:%S")
@@ -54,7 +53,7 @@ class Logger(object):
             self.config.system.date = date
             self.config.system.time = time
             self.config.system.status = "STARTING"
-            self.config.logs.log_dir= log_dir
+        #            self.config.logs.log_dir= log_dir
         omegaconf.OmegaConf.set_struct(self.config, False)
 
     def log_config(self):

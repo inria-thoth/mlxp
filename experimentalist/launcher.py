@@ -1,25 +1,5 @@
-import functools
-from typing import Any, Callable, Optional
-from types import CodeType
-
-import hydra
-from hydra.types import TaskFunction
-from omegaconf import MISSING
-from omegaconf import OmegaConf
-from dataclasses import dataclass, field
-
-
-from experimentalist.cluster_launcher import submit_job
-from experimentalist.logger import Logger
-from experimentalist.utils import flatten_dict 
-import os
-
-
-
-
-
-
 import copy
+import os
 import functools
 import pickle
 import warnings
@@ -27,7 +7,10 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Any, Callable, List, Optional
 from types import CodeType
-from omegaconf import DictConfig, open_dict, read_write
+from dataclasses import dataclass, field
+
+from omegaconf import OmegaConf, DictConfig, open_dict, read_write
+from omegaconf import MISSING
 
 from hydra import version
 from hydra._internal.deprecation_warning import deprecation_warning
@@ -37,38 +20,34 @@ from hydra.core.utils import _flush_loggers, configure_log
 from hydra.types import TaskFunction
 
 
+from experimentalist.cluster_launcher import submit_job
+from experimentalist.logger import Logger
+from experimentalist.utils import flatten_dict
 
 
 _UNSPECIFIED_: Any = object()
 
 
 hydra_defaults_dict = {
-    "hydra":{
-        "mode":"MULTIRUN",
-        "output_subdir":"null",
-        "run":
-        {
-            "dir":".",
-        },
-        "sweep":{
-            "dir":".",
-            "subdir":".",
-        },
-
+    "hydra": {
+        "mode": "MULTIRUN",
+        "output_subdir": "null",
+        "run": {"dir": "."},
+        "sweep": {"dir": ".", "subdir": "."},
     },
-    "hydra/job_logging":"disabled",
-    "hydra/hydra_logging":"disabled",
+    "hydra/job_logging": "disabled",
+    "hydra/hydra_logging": "disabled",
 }
 
 
-
 def remove_hydra_files(sweep_dir):
-    #abs_sweep_dir = os.path.abspath(sweep_dir)
+    # abs_sweep_dir = os.path.abspath(sweep_dir)
     try:
-        os.remove(os.path.join(sweep_dir,"multirun.yaml"))
+        os.remove(os.path.join(sweep_dir, "multirun.yaml"))
     except FileNotFoundError:
         pass
-        
+
+
 def _get_rerun_conf(file_path: str, overrides: List[str]) -> DictConfig:
     msg = "Experimental rerun CLI option, other command line args are ignored."
     warnings.warn(msg, UserWarning)
@@ -90,6 +69,7 @@ def _get_rerun_conf(file_path: str, overrides: List[str]) -> DictConfig:
             del task_cfg["hydra"]
     assert isinstance(task_cfg, DictConfig)
     return task_cfg
+
 
 def set_co_filename(func, co_filename):
     fn_code = func.__code__
@@ -148,9 +128,9 @@ class System:
 
 @dataclass
 class Logs:
-    log_dir: str = "outputs"
-    work_dir: str= "workdir"
-    root_dir: str= "data"
+    log_dir: str = "data/outputs"
+    work_dir: str = "data/.workdir"
+    root_dir: str = "."
     log_name: str = "logs"
     log_to_file: bool = False
     log_id: Any = None
@@ -189,14 +169,14 @@ def launch(
     #     config_path=config_path, config_name=config_name, version_base=version_base
     # )
 
-
     version.setbase(version_base)
 
     if config_path is _UNSPECIFIED_:
         if version.base_at_least("1.2"):
             config_path = None
         elif version_base is _UNSPECIFIED_:
-            url = "https://hydra.cc/docs/upgrades/1.0_to_1.1/changes_to_hydra_main_config_path"
+            url = "https://hydra.cc/docs/upgrades/\
+                    1.0_to_1.1/changes_to_hydra_main_config_path"
             deprecation_warning(
                 message=dedent(
                     f"""
@@ -210,25 +190,29 @@ def launch(
             config_path = "."
 
     def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
-        #task_function = launch(task_function)
+        # task_function = launch(task_function)
         @functools.wraps(task_function)
         def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
                 flattened_hydra_default_dict = flatten_dict(hydra_defaults_dict)
-                hydra_defaults = [ key+"="+value for key,value in flattened_hydra_default_dict.items() ]
+                hydra_defaults = [
+                    key + "=" + value
+                    for key, value in flattened_hydra_default_dict.items()
+                ]
                 args_parser = get_args_parser()
                 args = args_parser.parse_args()
                 overrides = args.overrides + hydra_defaults
-                setattr(args, 'overrides', overrides)
+                setattr(args, "overrides", overrides)
 
                 if args.experimental_rerun is not None:
                     cfg = _get_rerun_conf(args.experimental_rerun, args.overrides)
                     task_function(cfg)
                     _flush_loggers()
                 else:
-                    # no return value from run_hydra() as it may sometime actually run the task_function
+                    # no return value from run_hydra()
+                    # as it may sometime actually run the task_function
                     # multiple times (--multirun)
                     _run_hydra(
                         args=args,
@@ -238,11 +222,8 @@ def launch(
                         config_name=config_name,
                     )
                     remove_hydra_files(hydra_defaults_dict["hydra"]["sweep"]["dir"])
-                    
+
         return decorated_main
-
-
-
 
     def launcher_decorator(task_function):
         @functools.wraps(task_function)

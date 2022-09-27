@@ -1,9 +1,9 @@
-
 import os
 from collections import defaultdict
 from experimentalist.maps import Map, AggMap
 from copy import deepcopy
 from experimentalist.utils import flatten_dict, load_dict_from_json
+
 
 class ConfigList(object):
     # List of configs
@@ -283,5 +283,3 @@ def extract_keys_from_maps(agg_maps):
         ]
 
     return extracted_keys
-
-

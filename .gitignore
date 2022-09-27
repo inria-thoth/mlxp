@@ -1,6 +1,7 @@
 # Custom data folder
 /data
-
+*data/
+*multirun.yaml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,9 +1,7 @@
 # class for submitting jobs to cluster
 
 import os
-import shutil
 import subprocess
-
 from hydra.core.hydra_config import HydraConfig
 from datetime import datetime
 import omegaconf
@@ -23,7 +21,7 @@ SLURM_config = {
 
 
 def submit_job(cfg, logger):
-    work_dir = create_working_dir(cfg)
+    work_dir, root_dir = create_working_dir(cfg)
     # logger.debug(cfg)
     system = cfg.system
     cluster = cfg.cluster
@@ -35,7 +33,7 @@ def submit_job(cfg, logger):
     job_name = log_dir.split(os.sep)
     job_name = os.sep.join(job_name[-2:])
     cmd, subission_cmd = create_job_string(
-        system, cluster, job_name, job_id, work_dir, log_dir, args
+        system, cluster, job_name, job_id, work_dir, root_dir, log_dir, args
     )
     print(cmd)
     job_path = save_job(cmd, log_dir)
@@ -80,7 +78,9 @@ def save_job(cmd_string, log_dir):
     return job_path
 
 
-def create_job_string(system, cluster, job_name, job_id, work_dir, log_dir, args):
+def create_job_string(
+    system, cluster, job_name, job_id, work_dir, root_dir, log_dir, args
+):
     err_path = os.path.join(log_dir, "log.stderr")
     out_path = os.path.join(log_dir, "log.stdout")
     cluster_config, make_cluster_command = get_cluster(cluster)
@@ -88,7 +88,7 @@ def create_job_string(system, cluster, job_name, job_id, work_dir, log_dir, args
     subission_cmd = cluster_config["subission_cmd"]
     cmd = script_header(system.shell_path)
     cmd += make_cluster_command(cluster, job_name, out_path, err_path)
-    cmd += main_command(system, cleanup_cmd, work_dir, args, job_id)
+    cmd += main_command(system, cleanup_cmd, work_dir, root_dir, args, job_id)
     return cmd, subission_cmd
 
 
@@ -111,7 +111,7 @@ def script_header(bin_path):
     return f"#!{bin_path}\n"
 
 
-def main_command(system, cleanup_cmd, work_dir, args, job_id):
+def main_command(system, cleanup_cmd, work_dir, root_dir, args, job_id):
 
     now = datetime.now()
     date = now.strftime("%d/%m/%Y")
@@ -125,7 +125,8 @@ def main_command(system, cleanup_cmd, work_dir, args, job_id):
     values += [
         f"cd {work_dir}",
         f"{system.app} {system.cmd} {args} ++system.date='{date}' \
-            ++system.time='{time}'  ++logs.log_id={job_id}",
+            ++system.time='{time}'  ++logs.log_id={job_id}\
+            ++logs.root_dir={root_dir} ",
     ]
     values = [f"{val}\n" for val in values]
     return "".join(values)
@@ -162,41 +163,50 @@ def make_SLURM_command(job_scheduler, job_name, out_path, err_path):
     return "".join(values)
 
 
+def getGitRepo():
+    import git
+
+    repo = git.Repo(search_parent_directories=True)
+    if repo.is_dirty() or repo.untracked_files:
+        print("uncommited changes or untracked files")
+        # commit or raise error
+
+    return repo
+    # commit_hash = repo.head.object.hexsha
+
+
+# def cloneGitRepo(repo,out_path):
+
+
 def create_working_dir(cfg):
     # creates a copy of the  current dir and returns its path
-    
-    import git
-    repo = git.Repo(search_parent_directories=True)
-    sha = repo.head.object.hexsha
-
-
 
     src = os.getcwd()
-    dirname, filename = os.path.split(src)
-    now = datetime.now()
-    date = now.strftime("date_%d_%m_%Y")
-    time = now.strftime("time_%H_%M")
-    target_name = "." + date + "_" + time
-    work_dir = os.path.join(os.path.abspath(cfg.logs.root_dir),
-                       cfg.logs.work_dir)
-    log_dir  = os.path.join(os.path.abspath(cfg.logs.root_dir),
-                       cfg.logs.log_dir) 
-    dst = os.path.join(work_dir,target_name)
-    # if src==os.path.abspath(cfg.logs.root_dir):
-    #     ignoredPaths=[work_dir,log_dir]
-    # else:
-    #     ignoredPaths = [os.path.abspath(cfg.logs.root_dir)]
-    ignoredPaths=[work_dir,log_dir]
-    #dst = os.path.join(dirname, filename, "data", "workdirs", filename, target_name)
-
+    root_dir = os.path.abspath(cfg.logs.root_dir)
+    work_dir = os.path.join(root_dir, cfg.logs.work_dir)
+    repo = getGitRepo()
+    repo_root = repo.git.rev_parse("--show-toplevel")
+    relpath = os.path.relpath(src, repo_root)
+    repo_name = repo.working_tree_dir.split("/")[-1]
+    commit_hash = repo.head.object.hexsha
+    target_name = os.path.join(repo_name, commit_hash)
+    dst = os.path.join(work_dir, target_name)
     if not os.path.exists(dst):
-        shutil.copytree(src, dst, symlinks=True, ignore=ignorePath(ignoredPaths))
-    return dst
+        repo.clone(dst)
+    return os.path.join(dst, relpath), root_dir
+
 
 def ignorePath(paths):
-  def ignoref(directory, contents):
-    return (f for f in contents if os.path.abspath(os.path.join(directory, f)) in paths or f=='multirun.yaml')
-  return ignoref
+    def ignoref(directory, contents):
+        return (
+            f
+            for f in contents
+            if os.path.abspath(os.path.join(directory, f)) in paths
+            or f == "multirun.yaml"
+        )
+
+    return ignoref
+
 
 def filter_fn(x):
     return "system.isBatchJob" not in x

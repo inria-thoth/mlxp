@@ -1,6 +1,7 @@
 import json
 from collections.abc import MutableMapping
 
+
 def flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
     return dict(_flatten_dict_gen(d, parent_key, sep))
 
