@@ -117,7 +117,7 @@ class System:
     shell_path: str = "/bin/bash"
     shell_config_path: str = "~/.bashrc"
     isBatchJob: bool = False
-    isForceGitClean: bool = True
+    isForceGitClean: bool = False
     status: str = MISSING
     cmd: str = MISSING
     app: str = MISSING

@@ -2,7 +2,6 @@
 
 import os
 import subprocess
-import warnings
 from hydra.core.hydra_config import HydraConfig
 from datetime import datetime
 import omegaconf
@@ -173,7 +172,7 @@ def getGitRepo(isForceGitClean):
         if isForceGitClean:
             raise Exception(msg)
         else:
-            warnings.warn(msg)
+            print("Warning: "+msg)
     return repo
 
 
