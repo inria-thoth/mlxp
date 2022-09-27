@@ -165,9 +165,9 @@ def make_SLURM_command(job_scheduler, job_name, out_path, err_path):
 def create_working_dir(cfg):
     # creates a copy of the  current dir and returns its path
     
-    # import git
-    # repo = git.Repo(search_parent_directories=True)
-    # sha = repo.head.object.hexsha
+    import git
+    repo = git.Repo(search_parent_directories=True)
+    sha = repo.head.object.hexsha
 
 
 
