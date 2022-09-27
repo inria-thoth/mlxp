@@ -1,0 +1,159 @@
+hydra:
+  run:
+    dir: .
+  sweep:
+    dir: .
+    subdir: .
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+    params: null
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
+  hydra_logging:
+    version: 1
+    root:
+      level: ERROR
+    disable_existing_loggers: true
+  job_logging:
+    version: 1
+    root:
+      level: ERROR
+    disable_existing_loggers: true
+  env: {}
+  mode: MULTIRUN
+  searchpath: []
+  callbacks: {}
+  output_subdir: null
+  overrides:
+    hydra:
+    - hydra.mode=MULTIRUN
+    - hydra.output_subdir=null
+    - hydra.run.dir=.
+    - hydra.sweep.dir=.
+    - hydra.sweep.subdir=.
+    - hydra/job_logging=disabled
+    - hydra/hydra_logging=disabled
+    task:
+    - optimizer=adam
+    - ++logs.log_name=test
+    - ++system.seed=3
+    - ++max_iter=100
+    - ++system.date=27/09/2022
+    - ++system.time=11:33:25
+    - ++logs.log_id=8
+  job:
+    name: main
+    chdir: null
+    override_dirname: ++logs.log_id=8,++logs.log_name=test,++max_iter=100,++system.date=27/09/2022,++system.seed=3,++system.time=11:33:25,optimizer=adam
+    id: ???
+    num: ???
+    config_name: config.yaml
+    env_set: {}
+    env_copy: []
+    config:
+      override_dirname:
+        kv_sep: '='
+        item_sep: ','
+        exclude_keys: []
+  runtime:
+    version: 1.2.0
+    version_base: '1.2'
+    cwd: /home/marbel/Documents/projects/Experimentalist/examples/data/workdir/.date_27_09_2022_time_11_33
+    config_sources:
+    - path: hydra.conf
+      schema: pkg
+      provider: hydra
+    - path: /home/marbel/Documents/projects/Experimentalist/examples/configs
+      schema: file
+      provider: main
+    - path: ''
+      schema: structured
+      provider: schema
+    output_dir: ???
+    choices:
+      optimizer: adam
+      cluster: OAR
+      hydra/env: default
+      hydra/callbacks: null
+      hydra/job_logging: disabled
+      hydra/hydra_logging: disabled
+      hydra/hydra_help: default
+      hydra/help: default
+      hydra/sweeper: basic
+      hydra/launcher: basic
+      hydra/output: default
+  verbose: false
+cluster:
+  engine: OAR
+  cleanup_cmd: source gpu_setVisibleDevices.sh
+  cmd:
+  - -l core=1,walltime=15:00:00
+  - -t besteffort
+  - -t idempotent
+  - -p gpumem>'16000' and not host like 'gpuhost26' and not host like 'gpuhost27'
+optimizer:
+  lr: 0.001
+logs:
+  log_name: test
+  log_id: 8
+system:
+  seed: 3
+  date: 27/09/2022
+  time: '11:33:25'
+max_iter: 100

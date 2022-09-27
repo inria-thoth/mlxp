@@ -1,0 +1,34 @@
+system:
+  user: marbel
+  env: conda activate 'default'
+  shell_path: /bin/bash
+  shell_config_path: ~/.bashrc
+  isBatchJob: false
+  status: STARTING
+  cmd: /home/marbel/Documents/projects/Experimentalist/examples/main.py
+  app: /scratch/clear/marbel/anaconda3/bin/python
+  hostname: edgar
+  process_id: 28742
+  date: 27/09/2022
+  time: '11:33:23'
+  seed: 1
+  cluster_job_id: '668461'
+logs:
+  log_dir: /home/marbel/Documents/projects/Experimentalist/examples/data/outputs
+  work_dir: workdir
+  root_dir: data
+  log_name: test
+  log_to_file: false
+  log_id: 6
+  path: /home/marbel/Documents/projects/Experimentalist/examples/data/outputs/test/6
+cluster:
+  engine: OAR
+  cleanup_cmd: source gpu_setVisibleDevices.sh
+  cmd:
+  - -l core=1,walltime=15:00:00
+  - -t besteffort
+  - -t idempotent
+  - -p gpumem>'16000' and not host like 'gpuhost26' and not host like 'gpuhost27'
+optimizer:
+  lr: 0.001
+max_iter: 100

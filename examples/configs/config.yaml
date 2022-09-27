@@ -1,0 +1,6 @@
+defaults:
+  - cluster: OAR
+  - optimizer: sgd  
+
+
+

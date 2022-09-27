@@ -1,0 +1,5 @@
+# @package cluster
+
+engine: "SLURM"
+cleanup_cmd: ""
+cmd: []

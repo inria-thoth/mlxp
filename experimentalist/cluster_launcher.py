@@ -23,7 +23,7 @@ SLURM_config = {
 
 
 def submit_job(cfg, logger):
-    work_dir = create_working_dir()
+    work_dir = create_working_dir(cfg)
     # logger.debug(cfg)
     system = cfg.system
     cluster = cfg.cluster
@@ -162,21 +162,41 @@ def make_SLURM_command(job_scheduler, job_name, out_path, err_path):
     return "".join(values)
 
 
-def create_working_dir():
+def create_working_dir(cfg):
     # creates a copy of the  current dir and returns its path
+    
+    # import git
+    # repo = git.Repo(search_parent_directories=True)
+    # sha = repo.head.object.hexsha
+
+
+
     src = os.getcwd()
     dirname, filename = os.path.split(src)
     now = datetime.now()
     date = now.strftime("date_%d_%m_%Y")
     time = now.strftime("time_%H_%M")
     target_name = "." + date + "_" + time
-    dst = os.path.join(dirname, filename, "data", "workdirs", filename, target_name)
+    work_dir = os.path.join(os.path.abspath(cfg.logs.root_dir),
+                       cfg.logs.work_dir)
+    log_dir  = os.path.join(os.path.abspath(cfg.logs.root_dir),
+                       cfg.logs.log_dir) 
+    dst = os.path.join(work_dir,target_name)
+    # if src==os.path.abspath(cfg.logs.root_dir):
+    #     ignoredPaths=[work_dir,log_dir]
+    # else:
+    #     ignoredPaths = [os.path.abspath(cfg.logs.root_dir)]
+    ignoredPaths=[work_dir,log_dir]
+    #dst = os.path.join(dirname, filename, "data", "workdirs", filename, target_name)
+
     if not os.path.exists(dst):
-        shutil.copytree(src, dst, symlinks=True, ignore=None)
-    # permission_dir(dst)
-    os.chdir(dst)
+        shutil.copytree(src, dst, symlinks=True, ignore=ignorePath(ignoredPaths))
     return dst
 
+def ignorePath(paths):
+  def ignoref(directory, contents):
+    return (f for f in contents if os.path.abspath(os.path.join(directory, f)) in paths or f=='multirun.yaml')
+  return ignoref
 
 def filter_fn(x):
     return "system.isBatchJob" not in x
