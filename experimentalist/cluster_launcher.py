@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import warnings
 from hydra.core.hydra_config import HydraConfig
 from datetime import datetime
 import omegaconf
@@ -163,19 +164,17 @@ def make_SLURM_command(job_scheduler, job_name, out_path, err_path):
     return "".join(values)
 
 
-def getGitRepo():
+def getGitRepo(isForceGitClean):
     import git
 
     repo = git.Repo(search_parent_directories=True)
     if repo.is_dirty() or repo.untracked_files:
-        print("uncommited changes or untracked files")
-        # commit or raise error
-
+        msg = "uncommited changes or untracked files"
+        if isForceGitClean:
+            raise Exception(msg)
+        else:
+            warnings.warn(msg)
     return repo
-    # commit_hash = repo.head.object.hexsha
-
-
-# def cloneGitRepo(repo,out_path):
 
 
 def create_working_dir(cfg):
@@ -184,7 +183,7 @@ def create_working_dir(cfg):
     src = os.getcwd()
     root_dir = os.path.abspath(cfg.logs.root_dir)
     work_dir = os.path.join(root_dir, cfg.logs.work_dir)
-    repo = getGitRepo()
+    repo = getGitRepo(cfg.system.isForceGitClean)
     repo_root = repo.git.rev_parse("--show-toplevel")
     relpath = os.path.relpath(src, repo_root)
     repo_name = repo.working_tree_dir.split("/")[-1]
