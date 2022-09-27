@@ -1,8 +1,0 @@
-Error executing job with overrides: ['optimizer=sgd', '++logs.log_name=test', '++system.seed=3', '++max_iter=100', '++system.date=27/09/2022', '++system.time=11\\:33\\:22', '++logs.log_id=4']
-Traceback (most recent call last):
-  File "/home/marbel/Documents/projects/Experimentalist/examples/main.py", line 258, in decorated_task
-  File "/home/marbel/Documents/projects/Experimentalist/experimentalist/logger.py", line 62, in log_config
-    omegaconf.OmegaConf.save(config=self.config, f=abs_name + ".yaml")
-FileNotFoundError: [Errno 2] No such file or directory: '/home/marbel/Documents/projects/Experimentalist/examples/data/workdir/.date_27_09_2022_time_11_33/outputs/test/4/metadata.yaml'
-
-Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
