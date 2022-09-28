@@ -1,3 +1,4 @@
 # @package optimizer
+name: sgd
 lr: 0.01
 momentum: 0.9
