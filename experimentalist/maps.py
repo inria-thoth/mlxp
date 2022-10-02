@@ -10,7 +10,7 @@ class Map:
     def apply(self, data):
         # Input:  Dict containing data corresponding to a config
         # Output: Dict of outputs
-        return NotImplementedError
+        raise NotImplementedError
 
 
 class AggMap:
@@ -26,7 +26,7 @@ class AggMap:
         # Input: List of dicts where each entry of the list
         # contains data corresponding to a config.
         # Output: Dict of outputs
-        return NotImplementedError
+        raise NotImplementedError
 
 
 class Path(Map):

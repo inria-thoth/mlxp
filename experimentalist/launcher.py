@@ -40,58 +40,6 @@ hydra_defaults_dict = {
 }
 
 
-def remove_hydra_files(sweep_dir):
-    # abs_sweep_dir = os.path.abspath(sweep_dir)
-    try:
-        os.remove(os.path.join(sweep_dir, "multirun.yaml"))
-    except FileNotFoundError:
-        pass
-
-
-def _get_rerun_conf(file_path: str, overrides: List[str]) -> DictConfig:
-    msg = "Experimental rerun CLI option, other command line args are ignored."
-    warnings.warn(msg, UserWarning)
-    file = Path(file_path)
-    if not file.exists():
-        raise ValueError(f"File {file} does not exist!")
-
-    if len(overrides) > 0:
-        msg = "Config overrides are not supported as of now."
-        warnings.warn(msg, UserWarning)
-
-    with open(str(file), "rb") as input:
-        config = pickle.load(input)  # nosec
-    configure_log(config.hydra.job_logging, config.hydra.verbose)
-    HydraConfig.instance().set_config(config)
-    task_cfg = copy.deepcopy(config)
-    with read_write(task_cfg):
-        with open_dict(task_cfg):
-            del task_cfg["hydra"]
-    assert isinstance(task_cfg, DictConfig)
-    return task_cfg
-
-
-def set_co_filename(func, co_filename):
-    fn_code = func.__code__
-    func.__code__ = CodeType(
-        fn_code.co_argcount,
-        fn_code.co_posonlyargcount,
-        fn_code.co_kwonlyargcount,
-        fn_code.co_nlocals,
-        fn_code.co_stacksize,
-        fn_code.co_flags,
-        fn_code.co_code,
-        fn_code.co_consts,
-        fn_code.co_names,
-        fn_code.co_varnames,
-        co_filename,
-        fn_code.co_name,
-        fn_code.co_firstlineno,
-        fn_code.co_lnotab,
-        fn_code.co_freevars,
-        fn_code.co_cellvars,
-    )
-
 
 @dataclass
 class Cluster:
@@ -145,11 +93,6 @@ class Config:
     cluster: Cluster = Cluster()
 
 
-def format_config(cfg):
-    base_conf = OmegaConf.structured(Config)
-    conf_dict = OmegaConf.to_container(base_conf, resolve=True)
-    base_conf = OmegaConf.create(conf_dict)
-    return OmegaConf.merge(base_conf, cfg)
 
 
 def launch(
@@ -157,7 +100,30 @@ def launch(
     config_name: Optional[str] = None,
     version_base: Optional[str] = None,
 ) -> Callable[[TaskFunction], Any]:
-    """
+    """Decorator of a function 'main' to be executed.  
+    This function allows to use hydra to excute python code 
+    and enables most of the functionalities provided by hydra: 
+    composing configs from multiple files, overriding configs form the command line 
+    and sweeping over multiple values of a given configuration.
+    See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
+    It behaves similarly as the decorator hydra.main provided in the hydra-core package:
+    https://github.com/facebookresearch/hydra/blob/main/hydra/main.py .
+    When it comes to passing the configs to the run: 
+    The configs are contained in a yaml file 'config_name' 
+    within the directory 'config_path' passed as argument to this function.
+    Overrides of the configs from the command line are also supported 
+    as well as sweeping over multiple values of a given configuration.
+    The main difference is that it decorates functions taking 
+    a Logger object as input ( ex.: main(logger: Logger)) 
+    instead of an OmegaConf object as in hydra.main.
+
+    
+    Notes
+    -----
+
+    
+
+    The logger is created from the configs that are passed in a similar way as Hydra config:
     :param config_path: The config path, a directory relative
                         to the declaring python file.
                         If config_path is None no directory is added
@@ -166,9 +132,6 @@ def launch(
                         (usually the file name without the .yaml extension)
     """
 
-    # hydra_decorator = hydra.main(
-    #     config_path=config_path, config_name=config_name, version_base=version_base
-    # )
 
     version.setbase(version_base)
 
@@ -222,46 +185,98 @@ def launch(
                         config_path=config_path,
                         config_name=config_name,
                     )
-                    remove_hydra_files(hydra_defaults_dict["hydra"]["sweep"]["dir"])
+
+                    sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
+                    try:
+                        os.remove(os.path.join(sweep_dir, "multirun.yaml"))
+                    except FileNotFoundError:
+                        pass
 
         return decorated_main
 
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(cfg):
-            cfg = format_config(cfg)
+            base_conf = OmegaConf.structured(Config)
+            conf_dict = OmegaConf.to_container(base_conf, resolve=True)
+            base_conf = OmegaConf.create(conf_dict)
+            cfg = OmegaConf.merge(base_conf, cfg)
+
             cfg.system.cmd = task_function.__code__.co_filename
             cfg.system.app = os.environ["_"]
             if cfg.cluster.engine not in ["OAR", "SLURM"]:
                 cfg.system.isBatchJob = False
 
             logger = Logger(cfg)
-            logger.set_cluster_job_id()
+            logger._set_cluster_job_id()
             logger.log_config()
             if not cfg.system.isBatchJob:
                 try:
-                    logger.log_status("RUNNING")
-                    task_function(cfg, logger)
-                    logger.log_status("COMPLETE")
+                    logger._log_status("RUNNING")
+                    task_function(logger)
+                    logger._log_status("COMPLETE")
                     return None
                 except Exception:
-                    logger.log_status("FAILED")
+                    logger._log_status("FAILED")
                     raise
 
             cfg.system.isBatchJob = False
-            submit_job(cfg, logger)
+            submit_job(logger)
 
-        set_co_filename(decorated_task, task_function.__code__.co_filename)
+        _set_co_filename(decorated_task, task_function.__code__.co_filename)
 
         return decorated_task
 
     def composed_decorator(task_function: TaskFunction) -> Callable[[], None]:
-        # old_co_filename = task_function.__code__.co_filename
         decorated_task = launcher_decorator(task_function)
-        # new_co_filename = decorated_task.__code__.co_filename
-        # set_co_filename(decorated_task, old_co_filename)
         task_function = hydra_decorator(decorated_task)
-        # set_co_filename(task_function, new_co_filename)
         return task_function
 
     return composed_decorator
+
+
+def _get_rerun_conf(file_path: str, overrides: List[str]) -> DictConfig:
+    msg = "Experimental rerun CLI option, other command line args are ignored."
+    warnings.warn(msg, UserWarning)
+    file = Path(file_path)
+    if not file.exists():
+        raise ValueError(f"File {file} does not exist!")
+
+    if len(overrides) > 0:
+        msg = "Config overrides are not supported as of now."
+        warnings.warn(msg, UserWarning)
+
+    with open(str(file), "rb") as input:
+        config = pickle.load(input)  # nosec
+    configure_log(config.hydra.job_logging, config.hydra.verbose)
+    HydraConfig.instance().set_config(config)
+    task_cfg = copy.deepcopy(config)
+    with read_write(task_cfg):
+        with open_dict(task_cfg):
+            del task_cfg["hydra"]
+    assert isinstance(task_cfg, DictConfig)
+    return task_cfg
+
+
+def _set_co_filename(func, co_filename):
+    fn_code = func.__code__
+    func.__code__ = CodeType(
+        fn_code.co_argcount,
+        fn_code.co_posonlyargcount,
+        fn_code.co_kwonlyargcount,
+        fn_code.co_nlocals,
+        fn_code.co_stacksize,
+        fn_code.co_flags,
+        fn_code.co_code,
+        fn_code.co_consts,
+        fn_code.co_names,
+        fn_code.co_varnames,
+        co_filename,
+        fn_code.co_name,
+        fn_code.co_firstlineno,
+        fn_code.co_lnotab,
+        fn_code.co_freevars,
+        fn_code.co_cellvars,
+    )
+
+

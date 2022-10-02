@@ -61,7 +61,7 @@ class ConfigList(object):
             if key not in protected
         }
         if "group_keys_val" in keys:
-            out["group_keys_val"] = self.group_keys_val
+            out["group_keys_val"] = '-'.join(self.group_keys_val)
         if "group_keys" in keys:
             key_name = "-".join(
                 ["-".join([el.split(".")[-1] for el in key]) for key in self.group_keys]

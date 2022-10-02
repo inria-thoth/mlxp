@@ -20,16 +20,17 @@ SLURM_config = {
 }
 
 
-def submit_job(cfg, logger):
+def submit_job(logger):
+    cfg= logger.config
     work_dir, root_dir = create_working_dir(cfg)
-    # logger.debug(cfg)
     system = cfg.system
     cluster = cfg.cluster
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
-    job_id, log_dir = logger.get_log_dir()
+    log_dir = logger.run_dir
+    job_id = logger.run_id
     job_name = log_dir.split(os.sep)
     job_name = os.sep.join(job_name[-2:])
     cmd, subission_cmd = create_job_string(
