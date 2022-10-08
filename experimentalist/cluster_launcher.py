@@ -19,6 +19,10 @@ SLURM_config = {
     "subission_cmd": "sbatch",
 }
 
+class JobSubmissionError(Exception):
+    """Raised when failed to submit a job using a scheduler"""
+    pass
+
 
 def submit_job(logger):
     cfg= logger.config
@@ -68,7 +72,7 @@ def _submit_job(job_path, subission_cmd):
 
     except subprocess.CalledProcessError as e:
         print(e.output)
-        raise
+        raise JobSubmissionError(f"Failed to launch the job! Might need to check the scheduler's command")
     return process_output, isJobSubmitted
 
 

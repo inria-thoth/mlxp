@@ -22,7 +22,7 @@ from hydra.types import TaskFunction
 
 from experimentalist.cluster_launcher import submit_job
 from experimentalist.logger import Logger
-from experimentalist.utils import flatten_dict
+from experimentalist.utils import _flatten_dict
 
 
 _UNSPECIFIED_: Any = object()
@@ -39,7 +39,7 @@ hydra_defaults_dict = {
     "hydra/hydra_logging": "disabled",
 }
 
-
+valid_schedulers = ["OAR", "SLURM"]
 
 @dataclass
 class Cluster:
@@ -97,15 +97,16 @@ class Config:
 
 def launch(
     config_path: Optional[str] = _UNSPECIFIED_,
-    config_name: Optional[str] = None,
-    version_base: Optional[str] = None,
+    config_name: Optional[str] = None
 ) -> Callable[[TaskFunction], Any]:
-    """Decorator of a function 'main' to be executed.  
-    This function allows to use hydra to excute python code 
-    and enables most of the functionalities provided by hydra: 
+    """Decorator of the main function to be executed.  
+    
+    Notes
+    -----
+    This function allows to use hydra for excuting python code 
+    and enables most of the functionalities provided by the hydra-core package: 
     composing configs from multiple files, overriding configs form the command line 
     and sweeping over multiple values of a given configuration.
-    See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
     It behaves similarly as the decorator hydra.main provided in the hydra-core package:
     https://github.com/facebookresearch/hydra/blob/main/hydra/main.py .
     When it comes to passing the configs to the run: 
@@ -113,26 +114,34 @@ def launch(
     within the directory 'config_path' passed as argument to this function.
     Overrides of the configs from the command line are also supported 
     as well as sweeping over multiple values of a given configuration.
-    The main difference is that it decorates functions taking 
-    a Logger object as input ( ex.: main(logger: Logger)) 
-    instead of an OmegaConf object as in hydra.main.
-
+    See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra. 
+    Unlike hydra.main which decorates functions taking an OmegaConf object, 
+    this function decorates functions with the following signature: main(logger: Logger).
+    The logger object, can then be used to log outputs of the current run. 
+    Finally, this function also supports batch submission to a cluster using a scheduler. 
+    This is acheived by setting the config parameter: logger.config.system.isBatchJob to True 
+    and configuring the scheduler by specifying a config file cluster. 
+    Two job schedulers are currently supported: ['OAR', 'SLURM' ]. 
+ 
     
-    Notes
-    -----
-
-    
-
-    The logger is created from the configs that are passed in a similar way as Hydra config:
-    :param config_path: The config path, a directory relative
+    Parameters
+    ----------
+    config_path: The config path, a directory relative
                         to the declaring python file.
                         If config_path is None no directory is added
                         to the Config search path.
-    :param config_name: The name of the config
+    config_name: The name of the config
                         (usually the file name without the .yaml extension)
+
+    Raises
+    ------
+    `AssertionError`
+        Raised if no valid job scheduler is specifyed when submitting in batch mode, i.e. logger.config.system.isBatchJob=True.
+    `JobSubmissionError`
+        Raised if the launcher failed to submit a job in batch mode.
     """
 
-
+    version_base= None # by default set the version base for hydra to None.
     version.setbase(version_base)
 
     if config_path is _UNSPECIFIED_:
@@ -160,7 +169,7 @@ def launch(
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
-                flattened_hydra_default_dict = flatten_dict(hydra_defaults_dict)
+                flattened_hydra_default_dict = _flatten_dict(hydra_defaults_dict)
                 hydra_defaults = [
                     key + "=" + value
                     for key, value in flattened_hydra_default_dict.items()
@@ -210,7 +219,11 @@ def launch(
             logger = Logger(cfg)
             logger._set_cluster_job_id()
             logger.log_config()
-            if not cfg.system.isBatchJob:
+
+            if cfg.system.isBatchJob:
+                if cfg.cluster.engine not in valid_schedulers:
+                    raise AssertionError(f"No valid job scheduler found! Supported schedulers are {str(valid_schedulers)}")
+            else:
                 try:
                     logger._log_status("RUNNING")
                     task_function(logger)

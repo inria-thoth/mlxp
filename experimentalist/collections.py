@@ -1,8 +1,11 @@
 import os
+import json
+
 from collections import defaultdict
-from experimentalist.maps import Map, AggMap
 from copy import deepcopy
-from experimentalist.utils import flatten_dict, load_dict_from_json
+from experimentalist.maps import Map, AggMap
+from experimentalist.utils import _flatten_dict
+
 
 
 class ConfigList(object):
@@ -13,7 +16,7 @@ class ConfigList(object):
             self.config = config
         else:
             self.config = [
-                {"hierarchical": r, "flattened": flatten_dict(r, parent_key=root_name)}
+                {"hierarchical": r, "flattened": _flatten_dict(r, parent_key=root_name)}
                 for r in config
             ]
 
@@ -271,8 +274,23 @@ def load_data_from_config(config_dict, file_name):
     path = os.path.join(
         config_dict["flattened"]["metadata.logs.path"], file_name + ".json"
     )
-    return load_dict_from_json(path, prefix=file_name)
+    return _load_dict_from_json(path, prefix=file_name)
 
+def _load_dict_from_json(json_file_name, prefix="metrics"):
+    out_dict = {}
+    try:
+        with open(json_file_name) as f:
+            for line in f:
+                cur_dict = json.loads(line)
+                keys = cur_dict.keys()
+                for key in keys:
+                    if prefix + "." + key in out_dict:
+                        out_dict[prefix + "." + key].append(cur_dict[key])
+                    else:
+                        out_dict[prefix + "." + key] = [cur_dict[key]]
+    except Exception as e:
+        print(str(e))
+    return out_dict
 
 def extract_keys_from_maps(agg_maps):
     seen = set()
@@ -283,3 +301,7 @@ def extract_keys_from_maps(agg_maps):
         ]
 
     return extracted_keys
+
+
+
+
