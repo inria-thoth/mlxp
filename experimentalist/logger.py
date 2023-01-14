@@ -15,6 +15,7 @@ import shutil
 from dataclasses import dataclass
 from typing import Any, Type
 import abc
+from experimentalist.utils import config_to_dict
 
 @dataclass
 class Artifact(abc.ABC):
@@ -152,13 +153,17 @@ class Logger(object):
             sys.stderr = log_file
 
     @property
-    def config(self,is_mutable=False):
-        """Returns the config. By default the configs are immutable.
+    def config(self):
+        """Returns the config. By default the config is immutable.
         """
-        if is_mutable:
-            return utils.config_to_dict(self._config)
-        else:
-            return self._config
+
+        return self._config
+
+    @property
+    def config_dict(self):
+        """Returns the config. By default the config_dict is mutable.
+        """
+        return config_to_dict(self._config)
 
 
     @property
@@ -334,7 +339,7 @@ def _make_run_dir(_id, root):
             try:
                 _id = _maximum_existing_run_id(root) + 1
                 log_dir_tmp = os.path.join(root, str(_id))
-                os.mkdir(log_dir)
+                os.mkdir(log_dir_tmp)
                 log_dir = log_dir_tmp # set log_dir only if successful creation
             except FileExistsError:  # Catch race conditions
                 sleep(random())
