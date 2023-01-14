@@ -18,10 +18,12 @@ log_name = 'test'
 out_dir = 'data/outputs'
 reader = expy.Reader(os.path.join(out_dir,log_name), reload=True)
 
-query = {'metadata.max_iter' : [100],
-        }
+query = 'metadata.max_iter == 100'
+        
 out = reader.search(query)
 
+
+out 
 
 out.add([expy.maps.Last("metrics.loss")
           ])

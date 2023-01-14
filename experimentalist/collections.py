@@ -22,6 +22,8 @@ class ConfigList(object):
 
         self.group_keys_val = group_keys_val
         self.group_keys = group_keys
+    def __repr__(self):
+        return self.toPandasDF()
 
     def append(self, val):
         self.config.append(val)
@@ -76,6 +78,7 @@ class ConfigList(object):
 class ConfigCollection(object):
     def __init__(self, collection_list):
         self.collection_list = collection_list
+        self.pandas = None
 
     def __getitem__(self, items):
         return self.collection_list[items]
@@ -86,6 +89,18 @@ class ConfigCollection(object):
 
     def __len__(self):
         return len(self.collection_list)
+    def __repr__(self):
+        if self.pandas is None:
+            self.pandas = self.toPandasDF()
+        # representation = self.pandas._repr_html_()
+        # if representation is None:
+        #     representation = self.pandas.__repr__()
+        return repr(self.pandas)
+
+    def _repr_html_(self):
+        if self.pandas is None:
+            self.pandas = self.toPandasDF()
+        return self.pandas._repr_html_()    
 
     def add(self, keys_or_maps):
         for collection in self.collection_list:

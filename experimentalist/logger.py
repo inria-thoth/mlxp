@@ -152,10 +152,14 @@ class Logger(object):
             sys.stderr = log_file
 
     @property
-    def config(self):
-        """Returns the config. Allows the config to be immutable.
+    def config(self,is_mutable=False):
+        """Returns the config. By default the configs are immutable.
         """
-        return self._config
+        if is_mutable:
+            return utils.config_to_dict(self._config)
+        else:
+            return self._config
+
 
     @property
     def root(self):

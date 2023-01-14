@@ -12,6 +12,7 @@ import itertools
 
 from experimentalist.collections import ConfigCollection, ConfigList
 from operator import eq, ge, gt, le, lt, ne
+import functools
 
 class Reader(object):
     def __init__(self, root, file_name="metadata", reload=True):
@@ -32,30 +33,31 @@ class Reader(object):
     #def search(self, filter="", output_format='pandas'):
 
 
-    def _search(self, queries_dict):
-        """Wrapper to TinyDB's search function."""
-        res = []
-        queries_dict = _preprocess_queries_dict(queries_dict)
-        all_queries = _query_generator(**queries_dict)
-        for query_dict in all_queries:
-            Q = _make_query(query_dict)
-            res += self.runs.search(Q)
-        res = ConfigList(res, root_name=self.file_name)
-        return ConfigCollection([res])
-
-    def search(self, query_string):
-        res = []
-        or_querie_str_list = s.split('|')
-        for or_query_str in or_querie_str_list:
-            and_queries_str_list = or_query_str.split("&")
-            and_queries = make_and_queries(and_queries_str_list)
-            for query in and_queries:
-                Q = _make_query(query)
-                res += self.runs.search(Q)        
-        res = ConfigList(res, root_name=self.file_name)
-        return ConfigCollection([res])
-
-
+    def search(self, query_string="", output_format="configcollection"):
+        if query_string:
+            res = []
+            or_querie_str_list = query_string.split('|')
+            for or_query_str in or_querie_str_list:
+                and_queries_str_list = or_query_str.split("&")
+                query_list_unsafe = [token.split() for token in and_queries_str_list]
+                query_list = [token for token in query_list_unsafe if len(token)==3]
+                try:
+                    assert len(query_list_unsafe)>0
+                    assert len(query_list_unsafe) == len(query_list)
+                except AssertionError:
+                    raise SyntaxError(" The query string contains an error! Please check the syntax.")
+                and_queries = make_and_queries(query_list)
+                for query in and_queries:
+                    if query:
+                        Q = _make_query(query)
+                        res += self.runs.search(Q)
+        else:
+            res = self.runs.all()
+        res = ConfigCollection([ConfigList(res, root_name=self.file_name)])
+        if output_format=="pandas":
+            return res.toPandasDF()
+        elif output_format=="configcollection":
+            return res
 
     def _handle_legacy(self, file_id):
         file_name = os.path.join(self.root_dir, str(file_id), self.file_name)
@@ -103,17 +105,8 @@ ops = {
     ">": gt,
 }
 
-def parse_query(s):
-    all_queries = []
-    and_queries = s.split('|')
-    for and_query in and_queries:
-        tokens = and_query.split("&")
-        all_queries += make_or_queries(tokens)
-
 
 def make_and_queries(tokens):
-    tokens = map(str.strip, tokens)
-    tokens = [token.split(" ", 3) for token in tokens]
     tokens_and = [token for token in tokens if token[1] == "!=" ]
     tokens_or  = [token for token in tokens if token[1] != "!=" ]
     or_queries = _product_queries(tokens_or)
@@ -134,11 +127,36 @@ def _product_queries(tokens):
 
     return prod_queries
 
-def _eval_str(v):      
-    if isfloat(v):
-        v = float(v)
-    elif isint(v):
+def isfloat(v):
+    try:
+        float(v)
+        return True
+    except:
+        return False
+def isint(v):
+    try:
+        int(v)
+        return True
+    except:
+        return False    
+
+def isbool(v):
+    return v in ["True","False"]
+
+def tobool(v):
+    if v=="True":
+        return True
+    elif v=="False":
+        return False
+    else:
+        raise ValueError
+def _eval_str(v):
+    if isint(v):
         v = int(v)
+    elif isfloat(v):
+        v = float(v)
+    elif isbool(v):
+        v = tobool(v)
     return v
 
 
@@ -149,40 +167,25 @@ def _process_query_value(value):
 
 
 def _build_field_struct(key):
-    keys = k.split(".")
+    keys = key.split(".")
     field = Query()
     for k in keys[1:]:
         field = field[k]
     return field
 
 def _make_query(query_list):
+    qs = []
     for query in query_list:
         k, op, v = query['key'], query['op'], query['value']
         opf = ops.get(op, None)
         if opf is None:
             print("Unknown operator: {0:s}".format(op))
             return where(None)
-        field = _build_field_struct(key)
+        field = _build_field_struct(k)
 
         qs.append(opf(field, v))
 
-    return reduce(lambda a, b: a & b, qs)
-
-# def _make_query(query_dict):
-#     Q = None
-#     User = Query()
-#     for key, value in query_dict.items():
-#         keys = key.split(".")
-#         field = User[keys[0]]
-#         for k in keys[1:]:
-#             field = field[k]
-#         if Q is None:
-#             Q = field.one_of([value])
-#         else:
-#             Q &= field.one_of([value])
-
-#     return Q
-
+    return functools.reduce(lambda a, b: a & b, qs)
 
 def _query_generator(**kwargs):
     keys = kwargs.keys()
