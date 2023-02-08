@@ -172,8 +172,12 @@ def getGitRepo(isForceGitClean):
     import git
 
     repo = git.Repo(search_parent_directories=True)
-    if repo.is_dirty() or repo.untracked_files:
-        msg = "uncommited changes or untracked files"
+    if repo.untracked_files:
+        msg = "Untracked files"
+        print("Warning: " +msg)
+
+    if repo.is_dirty():
+        msg = "Uncommited changes"
         if isForceGitClean:
             raise Exception(msg)
         else:

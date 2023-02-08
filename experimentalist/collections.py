@@ -37,7 +37,7 @@ class ConfigList(object):
         # Need to handle the case when keys are empty
         return group_by(self.config, list_group_keys)
 
-    def add_data(self, keys_or_maps):
+    def add_data(self, keys_or_maps, lazy=False):
         all_keys = set()
         for el in keys_or_maps:
             if isinstance(el, Map) or isinstance(el, AggMap):
@@ -45,7 +45,7 @@ class ConfigList(object):
             elif isinstance(el, str):
                 all_keys.add(el)
         all_keys = list(all_keys)
-        all_data = extract_data_from_collection(self, all_keys)
+        all_data = extract_data_from_collection(self, all_keys, lazy=lazy)
         for el in keys_or_maps:
             if isinstance(el, AggMap):
                 out_data, _ = el.apply(all_data)
@@ -59,6 +59,7 @@ class ConfigList(object):
                     config["flattened"].update({el: data[el]})
 
     def get_data(self, keys):
+
         protected = ["group_keys_val", "group_keys"]
         out = {
             key: self.config[0]["flattened"][key]
@@ -76,7 +77,7 @@ class ConfigList(object):
 
 
 class ConfigCollection(object):
-    def __init__(self, collection_list):
+    def __init__(self, collection_list=None):
         self.collection_list = collection_list
         self.pandas = None
 
@@ -84,18 +85,16 @@ class ConfigCollection(object):
         return self.collection_list[items]
 
     def __add__(self, coll_list):
-        collection_list = self.collection_list + coll_list.collection_list
+        if self.collection_list is None:
+            collection_list = coll_list.collection_list
+        else:
+            collection_list = self.collection_list + coll_list.collection_list
         return ConfigCollection(collection_list)
 
     def __len__(self):
         return len(self.collection_list)
     def __repr__(self):
-        if self.pandas is None:
-            self.pandas = self.toPandasDF()
-        # representation = self.pandas._repr_html_()
-        # if representation is None:
-        #     representation = self.pandas.__repr__()
-        return repr(self.pandas)
+        return repr(self.toPandasDF())
 
     def _repr_html_(self):
         if self.pandas is None:
@@ -181,11 +180,14 @@ def safe_hierarchical_append(dictionary, val, keys, list_group_keys):
         except KeyError:
             dico[key] = {}
             dico = dico[key]
+    collection = ConfigList([val], group_keys_val=keys, group_keys=list_group_keys)
+    config_collection = ConfigCollection([collection])
+    #if dico:
+    #    print(dico)
     try:
-        dico.config.append(val)
-    except AttributeError:
-        collection = ConfigList([val], group_keys_val=keys, group_keys=list_group_keys)
-        parent[key] = ConfigCollection([collection])
+        parent[key] = dico + config_collection
+    except TypeError:
+        parent[key] = config_collection
 
 
 def aggregate(collection_dict, aggregation_maps):
@@ -259,18 +261,18 @@ def GroupedConfigs_to_ConfigList(collection):
     return list_config
 
 
-def extract_data_from_collection(collection, value_keys):
+def extract_data_from_collection(collection, value_keys, lazy=False):
     # returns a dict (value_key: list[obj] ) where
     # the size of the list matches the size of the collection
 
     out = []
     for config_dict in collection.config:
-        data = extract_data_from_config(config_dict, value_keys)
+        data = extract_data_from_config(config_dict, value_keys, lazy=lazy)
         out.append(data)
     return out
 
 
-def extract_data_from_config(config_dict, value_keys):
+def extract_data_from_config(config_dict, value_keys,lazy=False):
     group_keys = defaultdict(list)
     for key in value_keys:
         path = key.split(".")[0]
@@ -278,7 +280,10 @@ def extract_data_from_config(config_dict, value_keys):
 
     data_dict = {}
     for key_path, key_list in group_keys.items():
-        data = load_data_from_config(config_dict, key_path)
+        if lazy:
+            data = {key: None for key in  key_list}
+        else:
+            data = load_data_from_config(config_dict, key_path)
         data_dict.update({key: data[key] for key in key_list})
     return data_dict
 
@@ -286,6 +291,7 @@ def extract_data_from_config(config_dict, value_keys):
 def load_data_from_config(config_dict, file_name):
     if file_name == "metadata":
         return config_dict["flattened"]
+
     path = os.path.join(
         config_dict["flattened"]["metadata.logs.path"], file_name + ".json"
     )

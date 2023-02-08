@@ -87,6 +87,7 @@ class Checkpoint(Artifact):
     """An subclass of Artifact for saving any python object that is serializable. 
     """
     ext= ".pkl"
+
     def save(self, fname):
         with open(f"{fname}{self.ext}", "wb") as f:
                     pkl.dump(self.obj, f)

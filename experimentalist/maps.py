@@ -98,7 +98,7 @@ class AggAvgStd(AggMap):
         return out, None
 
 
-def _compute_mean_and_std(data_list):
+def _compute_mean_and_std(data_list, log_scale=False):
     index = None  # mean and std does not result an index unlike min and max.
     if len(data_list) == 1:
         out = {key + "_avg": value for key, value in data_list[0].items()}
@@ -118,10 +118,14 @@ def _compute_mean_and_std(data_list):
                 len_data = min(out[key + "_avg"].size, len(p[key]))
 
             new_array = np.asarray(p[key])[:len_data]
+            if log_scale:
+                new_array = np.log(new_array)
             out[key + "_avg"] = out[key + "_avg"][:len_data] + new_array
             out[key + "_std"] = out[key + "_std"][:len_data] + new_array ** 2
 
     for key in keys:
         out[key + "_avg"] = out[key + "_avg"] / (i + 1)
         out[key + "_std"] = out[key + "_std"] / (i + 1) - (out[key + "_avg"]) ** 2
+        out[key + "_std"] = np.sqrt(out[key + "_std"])
+
     return out, index
