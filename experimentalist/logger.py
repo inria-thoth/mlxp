@@ -148,6 +148,7 @@ class Logger(object):
                                                     self._root)
         
         self._update_config()
+        self.metric_dict_keys = []
         if self._config.logs.log_to_file:
             log_file = open(os.path.join(self._run_dir, "log.txt"), "w", buffering=1)
             sys.stdout = log_file
@@ -213,7 +214,7 @@ class Logger(object):
         file_name: `str`
             name of the file
         """
-
+        self._log_metrics_key(metric_dict,file_name=file_name)
         file_name = os.path.join(self._run_dir, file_name)
         with open(file_name + ".json", "a") as f:
             json.dump(metric_dict, f)
@@ -314,7 +315,25 @@ class Logger(object):
             self._config.system.status = "STARTING"
         omegaconf.OmegaConf.set_struct(self._config, False)
 
-
+    def _log_metrics_key(self,metrics_dict, file_name="metrics"):
+        new_keys = []
+        for key in metrics_dict.keys():
+            if key not in self.metric_dict_keys:
+                new_keys.append(key)
+        self.metric_dict_keys += new_keys
+        dict_file = {key: "" for key in new_keys}
+        keys_dir = os.path.join(self._run_dir, '.keys')
+        os.makedirs(keys_dir, exist_ok=True)
+        file_name = os.path.join(keys_dir , file_name)
+        cur_yaml = {}
+        try:
+            with open(file_name + ".yaml", "r") as f:
+                cur_yaml = yaml.safe_load(f)
+        except:
+            pass
+        cur_yaml.update(dict_file)
+        with open(file_name + ".yaml", "w") as f:
+            yaml.dump(cur_yaml, f)  
 
     def _set_cluster_job_id(self):
         abs_name = os.path.join(self._run_dir, "metadata.yaml")

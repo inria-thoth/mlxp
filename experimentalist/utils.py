@@ -1,6 +1,29 @@
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping, Mapping
 import omegaconf
 import importlib
+
+
+class LazyDict(MutableMapping):
+    def __init__(self, *args, **kw):
+        self._raw_dict = dict(*args, **kw)
+
+    def __getitem__(self, key):
+        obj = self._raw_dict.__getitem__(key)
+        if callable(obj):
+            return obj(key)
+        else:
+            return obj
+
+    def __iter__(self):
+        return iter(self._raw_dict)
+
+    def __len__(self):
+        return len(self._raw_dict)
+
+    def __delitem__(self,key):
+        del self._raw_dict[key]
+    def __setitem__(self,key,value):
+        self._raw_dict[key]=value
 
 def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
     return dict(_flatten_dict_gen(d, parent_key, sep))

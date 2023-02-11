@@ -14,14 +14,15 @@ class Map:
 
 
 class AggMap:
-    def __init__(self, func, value_keys, args={}, name=None):
+    def __init__(self, func, keys, args={},map_name=""):
         self.func = func
-        self.value_keys = value_keys
+        self.keys = keys
         self.args = args
-        if not name:
-            name = "_".join(value_keys)
-        self.name = name
-
+        self.map_name = map_name
+        self.name = self.make_name()
+    def make_name(self):
+        return self.map_name + "(" + ",".join(self.keys) + ")"
+    
     def apply(self, data):
         # Input: List of dicts where each entry of the list
         # contains data corresponding to a config.
@@ -59,7 +60,7 @@ class Last(Map):
 class AggMin(AggMap):
     def __init__(self, key):
         self.keys = [key]
-        self.name = key + "_aggmin"
+        self.map_name = "aggmin"
 
     def apply(self, data):
         index = -1
@@ -74,7 +75,7 @@ class AggMin(AggMap):
 class AggMax(AggMap):
     def __init__(self, key):
         self.keys = [key]
-        self.name = key + "_aggmax"
+        self.map_name = "aggmax"
 
     def apply(self, data):
         index = -1
@@ -88,9 +89,7 @@ class AggMax(AggMap):
 
 class AggAvgStd(AggMap):
     def __init__(self, key):
-        self.keys = [key]
-        self.name = key + "_avgstd"
-
+        super().__init__(None, [key], map_name="avgstd")
     def apply(self, data):
 
         data = [{key: d[key] for key in self.keys} for d in data]

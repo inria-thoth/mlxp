@@ -10,7 +10,7 @@ from tinydb import Query
 from tinydb.table import Document
 import itertools
 
-from experimentalist.collections import ConfigCollection, ConfigList
+from experimentalist.collections import ConfigList, Config
 from operator import eq, ge, gt, le, lt, ne
 import functools
 
@@ -30,8 +30,6 @@ class Reader(object):
         self.runs = self.db.table("runs")
         self._construct_base() # constructing the database from the run directory
 
-    #def search(self, filter="", output_format='pandas'):
-
 
     def search(self, query_string="", output_format="configcollection"):
         if query_string:
@@ -45,7 +43,7 @@ class Reader(object):
                     assert len(query_list_unsafe)>0
                     assert len(query_list_unsafe) == len(query_list)
                 except AssertionError:
-                    raise SyntaxError(" The query string contains an error! Please check the syntax.")
+                    raise SyntaxError(" The query string contains an error! Please check the syntax. ex: key == True")
                 and_queries = make_and_queries(query_list)
                 for query in and_queries:
                     if query:
@@ -53,11 +51,14 @@ class Reader(object):
                         res += self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = ConfigCollection([ConfigList(res, root_name=self.file_name)])
+        res = [ Config(r,parent_key=self.file_name) for r in res ]
+        #res = ConfigCollection([ConfigList(res)])
+        res = ConfigList(res)
+        config_diff = res.config_diff()
         if output_format=="pandas":
-            return res.toPandasDF()
-        elif output_format=="configcollection":
-            return res
+            res = res.toPandasDF()
+        #elif output_format=="configcollection":
+        return res, config_diff
 
     def _handle_legacy(self, file_id):
         file_name = os.path.join(self.root_dir, str(file_id), self.file_name)
@@ -93,6 +94,8 @@ class Reader(object):
             except FileNotFoundError:
                 self._handle_legacy(d)
 
+
+        
 
 
 

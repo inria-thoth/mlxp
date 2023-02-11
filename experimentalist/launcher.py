@@ -85,13 +85,13 @@ class Logs:
     log_id: Any = None
     path: str = MISSING
 
-
+    
 @dataclass
 class Config:
     system: System = System()
     logs: Logs = Logs()
     cluster: Cluster = Cluster()
-
+    custom: Any = MISSING
 
 
 

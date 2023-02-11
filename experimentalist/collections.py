@@ -1,176 +1,240 @@
 import os
 import json
-
+import yaml
 from collections import defaultdict
 from copy import deepcopy
 from experimentalist.maps import Map, AggMap
-from experimentalist.utils import _flatten_dict
+from experimentalist.utils import _flatten_dict, LazyDict
+from pathlib import Path
+import itertools
+from functools import reduce
+
+from collections.abc import Mapping, MutableSequence
 
 
 
-class ConfigList(object):
-    # List of configs
 
-    def __init__(self, config, root_name="", group_keys_val="", group_keys=[]):
-        if "hierarchical" in config[0]:
-            self.config = config
-        else:
-            self.config = [
-                {"hierarchical": r, "flattened": _flatten_dict(r, parent_key=root_name)}
-                for r in config
-            ]
+class Config(Mapping):
 
-        self.group_keys_val = group_keys_val
-        self.group_keys = group_keys
+    def __init__(self,config_dict,parent_key=""):
+        flattened_dict = _flatten_dict(config_dict, parent_key=parent_key) 
+        self.config = {"hierarchical": config_dict, 
+                        "flattened": flattened_dict,
+                        "lazy": flattened_dict}
+        self.parent_key = parent_key
+        self.all_data = {}
+        if self.parent_key:
+            self.parent_key += "."
+        self._load_keys()
+        self._raw_dict = self.config["lazy"]
+
+    def __getitem__(self,key):
+        return self.config['lazy'][key]
+    def __iter__(self):
+        return iter(self.config['lazy'])
+
+    def __len__(self):
+        return len(self.config['lazy'])
     def __repr__(self):
-        return self.toPandasDF()
+        return repr(self.config['flattened'])
 
-    def append(self, val):
-        self.config.append(val)
+    def _repr_html_(self):
+        import pandas as pd
+        df = pd.DataFrame([self.config['flattened']])
+        return df._repr_html_() 
+    def flattened(self):
+        return self.config['flattened']
+    def hierarchical(self):
+        return self.config['hierarchical']
+    def lazy(self):
+        return self.config['lazy']
+    def update(self, new_dict):
+        copy_dict = {key: "Lazy eval" if callable(value) 
+                        else value 
+                        for key,value in new_dict.items()  }
+        lazy_dict = LazyDict(new_dict)
+        lazy_dict.update(self.config["lazy"])
+        self.config["lazy"] = lazy_dict
+        #flat_dict = { file+'.'+key: "Lazy loading"  for key in keys_dict.keys()}
+        self.config["flattened"].update(copy_dict)        
+        
+    def _load_keys(self):
+        path = os.path.join(self.config["flattened"][self.parent_key+"logs.path"], ".keys" )
+        files = []
+        try:
+            files = [
+                Path(d).stem
+                for d in os.listdir(path)
+                if d.endswith('.yaml')
+            ]
+            self.all_data = {file: Data(self,file) for file in files }
+        except:
+            pass 
+        
+        for file in files:
+            file_name = os.path.join(path, file+'.yaml')
+            with open(file_name, "r") as f:
+                keys_dict = yaml.safe_load(f)
+            flat_dict = { file+'.'+key: self.all_data[file].get_data for key in keys_dict.keys()}
+            self.update(flat_dict)
+    def add_data(self, data):
+        self.config["flattened"].update(data)
+
+    def free_unused(self):
+        for key, data in self.all_data.items():
+            data.free_unused()
+
+
+class Data(object):
+    def __init__(self,config, file_name):
+        self.config = config
+        self.file_name = file_name
+        self._data = None
+        self.used_keys = set()
+    def get_data(self, key):
+        if self._data is None or key not in self.used_keys:
+            if self.file_name == "metadata":
+                self._data = self.config.flattened()
+            else:
+                path = os.path.join(self.config.flattened()["metadata.logs.path"], 
+                                    self.file_name + ".json")
+                self._data = _load_dict_from_json(path, prefix=self.file_name)
+            self.used_keys.add(key)
+        return self._data[key]
+    def free_unused(self):
+        all_keys = set(self._data.keys())
+        unused_keys = all_keys.difference(self.used_keys)
+        for key in unused_keys:
+            del self._data[key]
+
+
+class ConfigList(list):
+    # List of configs
+    def __init__(self, iterable):
+        if iterable:
+            for config in iterable:
+                assert isinstance(config, Config) 
+        super().__init__(item for item in iterable)
+        self.pandas=None
+
+
+    def __repr__(self):
+        return str(self.toPandasDF())
+
+    def _repr_html_(self):
+        return self.toPandasDF()._repr_html_()  
 
     def toPandasDF(self):
         import pandas as pd
-
-        return pd.DataFrame([config["flattened"] for config in self.config])
+        if self.pandas is None:
+            self.pandas = pd.DataFrame([config.flattened() for config in self])
+        return self.pandas
+    def keys(self):
+        return self.toPandasDF().keys()
 
     def groupBy(self, list_group_keys=[]):
         # Need to handle the case when keys are empty
-        return group_by(self.config, list_group_keys)
+        collection_dict, group_keys, group_vals = _group_by(self, list_group_keys)
+        #pandas_grouped_df = deepcopy(self.toPandasDF()).set_index(list_group_keys)
+        grouped_config = GroupedConfigs(collection_dict, group_keys, group_vals)
+        #grouped_config.pandas = pandas_grouped_df
+        return grouped_config
 
-    def add_data(self, keys_or_maps, lazy=False):
-        all_keys = set()
-        for el in keys_or_maps:
-            if isinstance(el, Map) or isinstance(el, AggMap):
-                all_keys.add(*el.keys)
-            elif isinstance(el, str):
-                all_keys.add(el)
-        all_keys = list(all_keys)
-        all_data = extract_data_from_collection(self, all_keys, lazy=lazy)
-        for el in keys_or_maps:
-            if isinstance(el, AggMap):
-                out_data, _ = el.apply(all_data)
-                for config in self.config:
-                    config["flattened"].update(out_data)
-            elif isinstance(el, Map):
-                for data, config in zip(all_data, self.config):
-                    config["flattened"].update(el.apply(data))
-            elif isinstance(el, str):
-                for data, config in zip(all_data, self.config):
-                    config["flattened"].update({el: data[el]})
+    def config_diff(self):
+        diff_keys = []
+        ref_dict = self[0].hierarchical()["custom"]
+        ref_dict = _flatten_dict(ref_dict, parent_key="metadata")
+        
+        for config in self:
+            config_dict = config.hierarchical()["custom"]
+            config_dict = _flatten_dict(config_dict, parent_key="metadata")
+            for key in config_dict.keys():
+                if key in ref_dict:
+                    if ref_dict[key] != config_dict[key]:
+                        if key not in diff_keys:
+                            diff_keys.append(key)
+                else:
+                    if key not in diff_keys:
+                        diff_keys.append(key)
+        return diff_keys
 
-    def get_data(self, keys):
-
-        protected = ["group_keys_val", "group_keys"]
-        out = {
-            key: self.config[0]["flattened"][key]
-            for key in keys
-            if key not in protected
-        }
-        if "group_keys_val" in keys:
-            out["group_keys_val"] = '-'.join(self.group_keys_val)
-        if "group_keys" in keys:
-            key_name = "-".join(
-                ["-".join([el.split(".")[-1] for el in key]) for key in self.group_keys]
-            )
-            out["group_keys"] = key_name
-        return out
-
-
-class ConfigCollection(object):
-    def __init__(self, collection_list=None):
-        self.collection_list = collection_list
-        self.pandas = None
-
-    def __getitem__(self, items):
-        return self.collection_list[items]
-
-    def __add__(self, coll_list):
-        if self.collection_list is None:
-            collection_list = coll_list.collection_list
-        else:
-            collection_list = self.collection_list + coll_list.collection_list
-        return ConfigCollection(collection_list)
-
-    def __len__(self):
-        return len(self.collection_list)
-    def __repr__(self):
-        return repr(self.toPandasDF())
-
-    def _repr_html_(self):
-        if self.pandas is None:
-            self.pandas = self.toPandasDF()
-        return self.pandas._repr_html_()    
-
-    def add(self, keys_or_maps):
-        for collection in self.collection_list:
-            collection.add_data(keys_or_maps)
-
-    def get(self, keys):
-        return [collection.get_data(keys) for collection in self.collection_list]
-
-    def groupBy(self, list_group_keys=[]):
-        val_dict = defaultdict(list)
-        for collection in self.collection_list:
-            val_dict[collection.group_keys_val] += collection.config
-        groups = {
-            key: ConfigList(value).groupBy(list_group_keys)
-            for key, value in val_dict.items()
-        }
-        all_group_keys = list(groups.keys())
-        if len(all_group_keys) == 1:
-            return groups[all_group_keys[0]]
-        else:
-            return groups
-
-    def toPandasDF(self):
-        import pandas as pd
-
-        all_configs = []
-        for collection in self.collection_list:
-            all_configs += collection.config
-        return pd.DataFrame([config["flattened"] for config in all_configs])
-
-
-class GroupedConfigs(dict):
+class GroupedConfigs:
     # a hierarchical dictionary whose leafs are instances of ConfigList
 
-    def toConfigCollection(self):
-        collection_list = GroupedConfigs_to_ConfigList(self)
-        return ConfigCollection(collection_list)
+    def __init__(self, grouped_configs, group_keys, group_vals):   
+        #self.grouped_configs = grouped_configs
+        #self.group_vals = group_vals
+        self.group_keys = group_keys
+        self.grouped_dict = { key: ConfigList(reduce(dict.get, key, grouped_configs)) 
+                                for key in group_vals }
+        self.group_vals = list(self.grouped_dict.keys())
+        self._current_index = 0
+        self.groups_size = len(self.group_vals)
+        self.pandas = None
+    def __iter__(self):
+            return self
+    def __next__(self):
+        if self._current_index < self.groups_size:
+            keys = self.group_vals[self._current_index]
+            # key_dict = dict(zip(self.group_keys, keys))
+            dict_val = self.__getitem__(keys)
+            self._current_index += 1
+            return keys, dict_val
+        self._current_index = 0
+        raise StopIteration
 
-    def agg(self, aggregation_maps):
+    def toPandasDF(self):
+        if self.pandas is None:
+            all_configs = []
+            for key, value in self.grouped_dict.items():
+                all_configs+=[el for el in value ]
+            self.pandas = ConfigList(all_configs).toPandasDF().set_index(list(self.group_keys))
+        return self.pandas
+
+    def __getitem__(self, keys):
+        #key_dict = dict(zip(self.group_keys, keys))
+        return self.grouped_dict[keys]
+    def items(self):
+        return self.grouped_dict.items()
+    def keys(self):
+        return self.group_vals  
+    def __repr__(self):
+        
+        return str(self.toPandasDF())
+
+    def aggregate(self, aggregation_maps):
         return aggregate(self, aggregation_maps)
 
     def apply(self, map):
         raise NotImplementedError
 
 
-class AggregatedConfigs(dict):
-    def toConfigCollection(self):
-        return {key: value.toConfigCollection() for key, value in self.items()}
-
-
-def group_by(config_dicts, list_group_keys):
-    # list_group_keys: list of list of tuples hierarchical keys
-    # Returns a hierarchical dictionary whose leafs are instances of ConfigCollection
-    collection_dict = GroupedConfigs({})
+def _group_by(config_dicts, list_group_keys):
+    # list_group_keys: list of flattened keys
+    # Returns a hierarchical dictionary whose leafs are instances of ConfigList
+    #collection_dict = GroupedConfigs({})
+    collection_dict = {}
+    group_vals = set()
+    group_keys = tuple(list_group_keys)
     for config_dict in config_dicts:
 
-        pkey_list = [
-            [config_dict["flattened"][key] for key in group_keys]
-            for group_keys in list_group_keys
+        pkey_list = [ config_dict.flattened()[group_key] 
+            for group_key in list_group_keys
         ]
-        pkey_list = [[str(v) for v in pkey if v is not None] for pkey in pkey_list]
-        pkey_val = ["_".join(pkey) for pkey in pkey_list]
-
-        safe_hierarchical_append(
-            collection_dict, config_dict, pkey_val, list_group_keys
+        pkey_val = [str(pkey) for pkey in pkey_list if pkey is not None]
+        group_vals.add(tuple(pkey_val))
+        add_nested_keys_val(
+            collection_dict,  pkey_val, [config_dict]
         )
+    group_vals = list(group_vals)
+    
+    return collection_dict, group_keys, group_vals
+    
 
-    return collection_dict
 
 
-def safe_hierarchical_append(dictionary, val, keys, list_group_keys):
+
+def add_nested_keys_val(dictionary,keys,val):
     dico = dictionary
     parent = None
     for key in keys:
@@ -180,122 +244,53 @@ def safe_hierarchical_append(dictionary, val, keys, list_group_keys):
         except KeyError:
             dico[key] = {}
             dico = dico[key]
-    collection = ConfigList([val], group_keys_val=keys, group_keys=list_group_keys)
-    config_collection = ConfigCollection([collection])
-    #if dico:
-    #    print(dico)
     try:
-        parent[key] = dico + config_collection
-    except TypeError:
-        parent[key] = config_collection
+        parent[key] = dico + val
+    except TypeError as e:
+        #print(e)
+        parent[key] = val
+     
 
-
-def aggregate(collection_dict, aggregation_maps):
+def aggregate(groupedconfigs, aggregation_maps):
     # Returns a hierarchical dictionary whose leafs are instances of ConfigList
 
-    agg_dict = AggregatedConfigs({})
-    if not isinstance(collection_dict, ConfigCollection):
-        for pkey_val, next_collection in collection_dict.items():
-            agg_dict[pkey_val] = aggregate(next_collection, aggregation_maps)
-        agg_dict = permute_keys(agg_dict)
-        agg_dict = AggregatedConfigs(
-            {key: GroupedConfigs(value) for key, value in agg_dict.items()}
-        )
-    else:
-        agg_dict = aggregate_collection(collection_dict, aggregation_maps)
-    return agg_dict
+    #agg_dict = AggregatedConfigs({})
+    agg_config_dict = {agg_map.name: {} for agg_map in  aggregation_maps}
+    for keys, config_list in groupedconfigs.items():
+        
+        agg_config = aggregate_collection(config_list, aggregation_maps)
+        #keys = list(keys_vals.values())
+        for agg_map in aggregation_maps:
+            add_nested_keys_val(agg_config_dict[agg_map.name], keys, agg_config[agg_map.name])
+
+            
+    return {agg_map.name : GroupedConfigs(agg_config_dict[agg_map.name], 
+                                        groupedconfigs.group_keys, 
+                                        groupedconfigs.group_vals) for agg_map in aggregation_maps}
 
 
-def aggregate_collection(collection_list, agg_maps):
-    value_keys = extract_keys_from_maps(agg_maps)
+def aggregate_collection(collection, agg_maps):
+    value_keys = _extract_keys_from_maps(agg_maps)
     agg_collection = {}
-    for collection in collection_list:
 
-        val_array = extract_data_from_collection(collection, value_keys)
+    val_array = []
+    for config_dict in collection:
+        data = {key: config_dict[key] for key in value_keys}
+        val_array.append(data)
+        config_dict.free_unused()
 
-        for agg_map in agg_maps:
-            agg_val, index = agg_map.apply(val_array)
-            config = (
-                [deepcopy(collection.config[index])]
-                if index >= 0
-                else deepcopy(collection.config)
-            )
-            for config_dict in config:
-                config_dict["flattened"].update(agg_val)
-
-            collection = ConfigList(
-                config,
-                group_keys_val=collection.group_keys_val,
-                group_keys=collection.group_keys,
-            )
-            if agg_map.name not in agg_collection:
-                agg_collection[agg_map.name] = [collection]
-            else:
-                agg_collection[agg_map.name].append(collection)
-
-    for key in agg_collection.keys():
-        agg_collection[key] = ConfigCollection(agg_collection[key])
-    return AggregatedConfigs(agg_collection)
-
-
-def permute_keys(dictionary):
-    permuted_dict = {}
-    for outer_key, outer_value in dictionary.items():
-        for inner_key, inner_value in outer_value.items():
-            if inner_key not in permuted_dict:
-                permuted_dict[inner_key] = {}
-            permuted_dict[inner_key][outer_key] = inner_value
-    return permuted_dict
-
-
-def GroupedConfigs_to_ConfigList(collection):
-    assert isinstance(collection, GroupedConfigs) or isinstance(
-        collection, ConfigCollection
-    )
-    list_config = []
-    if not isinstance(collection, ConfigCollection):
-        for pkey_val, next_collection in collection.items():
-            list_config += GroupedConfigs_to_ConfigList(next_collection)
-    else:
-        list_config = collection
-    return list_config
-
-
-def extract_data_from_collection(collection, value_keys, lazy=False):
-    # returns a dict (value_key: list[obj] ) where
-    # the size of the list matches the size of the collection
-
-    out = []
-    for config_dict in collection.config:
-        data = extract_data_from_config(config_dict, value_keys, lazy=lazy)
-        out.append(data)
-    return out
-
-
-def extract_data_from_config(config_dict, value_keys,lazy=False):
-    group_keys = defaultdict(list)
-    for key in value_keys:
-        path = key.split(".")[0]
-        group_keys[path].append(key)
-
-    data_dict = {}
-    for key_path, key_list in group_keys.items():
-        if lazy:
-            data = {key: None for key in  key_list}
+    for agg_map in agg_maps:
+        agg_val, index = agg_map.apply(val_array)
+        if index is not None:
+            new_collection= ConfigList([deepcopy(collection[index])])
         else:
-            data = load_data_from_config(config_dict, key_path)
-        data_dict.update({key: data[key] for key in key_list})
-    return data_dict
+            new_collection = deepcopy(collection)
+        for config_dict in new_collection:
+            config_dict.update(agg_val)
+        agg_collection[agg_map.name] = new_collection
 
+    return agg_collection
 
-def load_data_from_config(config_dict, file_name):
-    if file_name == "metadata":
-        return config_dict["flattened"]
-
-    path = os.path.join(
-        config_dict["flattened"]["metadata.logs.path"], file_name + ".json"
-    )
-    return _load_dict_from_json(path, prefix=file_name)
 
 def _load_dict_from_json(json_file_name, prefix="metrics"):
     out_dict = {}
@@ -313,7 +308,7 @@ def _load_dict_from_json(json_file_name, prefix="metrics"):
         print(str(e))
     return out_dict
 
-def extract_keys_from_maps(agg_maps):
+def _extract_keys_from_maps(agg_maps):
     seen = set()
     extracted_keys = []
     for agg_map in agg_maps:
