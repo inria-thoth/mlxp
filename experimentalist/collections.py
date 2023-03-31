@@ -4,7 +4,7 @@ import yaml
 from collections import defaultdict
 from copy import deepcopy
 from experimentalist.maps import Map, AggMap
-from experimentalist.utils import _flatten_dict, LazyDict
+from experimentalist.utils import _flatten_dict
 from pathlib import Path
 import itertools
 from functools import reduce
@@ -12,7 +12,7 @@ from functools import reduce
 from collections.abc import Mapping, MutableSequence
 
 
-
+  
 
 class Config(Mapping):
 
@@ -85,6 +85,29 @@ class Config(Mapping):
             data.free_unused()
 
 
+class LazyDict(MutableMapping):
+    def __init__(self, *args, **kw):
+        self._raw_dict = dict(*args, **kw)
+
+    def __getitem__(self, key):
+        obj = self._raw_dict.__getitem__(key)
+        if callable(obj):
+            return obj(key)
+        else:
+            return obj
+
+    def __iter__(self):
+        return iter(self._raw_dict)
+
+    def __len__(self):
+        return len(self._raw_dict)
+
+    def __delitem__(self,key):
+        del self._raw_dict[key]
+    def __setitem__(self,key,value):
+        self._raw_dict[key]=value
+
+
 class Data(object):
     def __init__(self,config, file_name):
         self.config = config
@@ -143,11 +166,11 @@ class ConfigList(list):
     def config_diff(self):
         diff_keys = []
         ref_dict = self[0].hierarchical()["custom"]
-        ref_dict = _flatten_dict(ref_dict, parent_key="metadata")
+        ref_dict = _flatten_dict(ref_dict, parent_key="metadata.custom")
         
         for config in self:
             config_dict = config.hierarchical()["custom"]
-            config_dict = _flatten_dict(config_dict, parent_key="metadata")
+            config_dict = _flatten_dict(config_dict, parent_key="metadata.custom")
             for key in config_dict.keys():
                 if key in ref_dict:
                     if ref_dict[key] != config_dict[key]:
