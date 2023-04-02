@@ -9,7 +9,7 @@ from pathlib import Path
 import itertools
 from functools import reduce
 
-from collections.abc import Mapping, MutableSequence
+from collections.abc import Mapping, MutableSequence, MutableMapping
 
 
   

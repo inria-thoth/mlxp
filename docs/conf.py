@@ -10,19 +10,48 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
+from urllib.request import urlopen
+
+_conf_url = \
+        "https://raw.githubusercontent.com/inducer/sphinxconfig/main/sphinxconfig.py"
+with urlopen(_conf_url) as _inf:
+    exec(compile(_inf.read(), _conf_url, "exec"), globals())
+
+copyright = '2023, Michael Arbel'
+
+ver_dic = {}
+exec(
+    compile(
+        open("../experimentalist/__init__.py").read(), "../experimentalist/__init__.py", "exec"
+    ),
+    ver_dic,
+)
+version = ".".join(str(x) for x in ver_dic["VERSION"])
+# The full version, including alpha/beta/rc tags.
+release = ver_dic["VERSION_TEXT"]
+
+
+intersphinx_mapping = {
+    "https://docs.python.org/3": None,
+    "https://numpy.org/doc/stable/": None,
+    "https://documen.tician.de/codepy/": None,
+}
+
+
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'Experimentalist'
-copyright = '2022, Michael Arbel'
+
 author = 'Michael Arbel'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1' 
 
 
 # -- General configuration ---------------------------------------------------
@@ -30,28 +59,17 @@ release = '0.1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-	'sphinx.ext.napoleon'
-]
-napoleon_google_docstring = False
-
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+extensions = ['sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.githubpages']
 
 
-# -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-html_theme = 'alabaster'
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+
+
+
+
+

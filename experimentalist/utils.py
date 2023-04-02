@@ -1,4 +1,4 @@
-from collections.abc import MutableMapping, Mapping
+from collections.abc import MutableMapping
 import omegaconf
 import importlib
 
