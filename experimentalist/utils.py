@@ -1,7 +1,6 @@
 from collections.abc import MutableMapping
-import omegaconf
 import importlib
-
+import os
 
 
 def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
@@ -17,15 +16,52 @@ def _flatten_dict_gen(d, parent_key, sep):
             yield new_key, v
 
 
-def config_to_dict(config):
-    done = False
-    out_dict = {}
-    for key, value in config.items():
-        if isinstance(value, omegaconf.dictconfig.DictConfig):
-            out_dict[key] = config_to_dict(value)
-        else:
-            out_dict[key] = value
-    return Config(out_dict)
+
+def import_module(module_name):
+    module, attr = os.path.splitext(module_name)
+    try:
+        module = importlib.import_module(module)
+        return getattr(module, attr[1:])
+    except:
+        try:
+            module = import_module(module)
+            return getattr(module, attr[1:])
+        except:
+            return eval(module+attr[1:])
+
+
+def config_to_instance(config_module_name="class_name",**config):
+    module_name = config.pop(config_module_name)
+    args = config.args
+    attr = import_module(module_name)
+    if config:
+        attr = attr(**args)
+    return attr
+
+
+def isfloat(v):
+    try:
+        float(v)
+        return True
+    except:
+        return False
+def isint(v):
+    try:
+        int(v)
+        return True
+    except:
+        return False    
+
+def isbool(v):
+    return v in ["True","False"]
+
+def tobool(v):
+    if v=="True":
+        return True
+    elif v=="False":
+        return False
+    else:
+        raise ValueError
 
 
 

@@ -68,8 +68,8 @@ extensions = ['sphinx.ext.autodoc',
 
 
 
-
-
+autodoc_member_order = 'bysource'
+autodoc_inherit_docstrings = True
 
 
 

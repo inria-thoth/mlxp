@@ -2,19 +2,15 @@ import os
 import numpy as np
 
 
-class Map:
-    def __init__(self):
-        self.keys = []
-        self.name = "metadata"
 
-    def apply(self, data):
-        # Input:  Dict containing data corresponding to a config
-        # Output: Dict of outputs
-        raise NotImplementedError
+class AggregationMap:
+    """
+    An abstract class whose children can perform aggregations on arrays. 
+    
+    """
 
 
-class AggMap:
-    def __init__(self, func, keys, args={},map_name=""):
+    def __init__(self, keys, func=None, args={}, map_name=""):
         self.func = func
         self.keys = keys
         self.args = args
@@ -28,25 +24,12 @@ class AggMap:
         # contains data corresponding to a config.
         # Output: Dict of outputs
         raise NotImplementedError
+    
 
 
-class Path(Map):
-    def __init__(self, abs_path):
-        self.abs_path = abs_path
-        self.keys = ["metadata.logs.log_id"]
-        self.name = "metadata.logs.path"
-
-    def apply(self, data):
-        id_key = self.keys[0]
-        path = os.path.join(self.abs_path, str(data[id_key]))
-        return {self.name: path}
-
-
-class Last(Map):
+class Last(AggregationMap):
     def __init__(self, key):
-        self.keys = [key]
-        self.name = "metadata." + key + "_last"
-
+        super().__init__([key], map_name="last")
     def apply(self, data):
         key = self.keys[0]
         try:
@@ -57,10 +40,9 @@ class Last(Map):
             return {}
 
 
-class AggMin(AggMap):
+class Min(AggregationMap):
     def __init__(self, key):
-        self.keys = [key]
-        self.map_name = "aggmin"
+        super().__init__([key], map_name="min")
 
     def apply(self, data):
         index = -1
@@ -72,10 +54,9 @@ class AggMin(AggMap):
         return {self.name: selected_data[index]}, index
 
 
-class AggMax(AggMap):
+class Max(AggregationMap):
     def __init__(self, key):
-        self.keys = [key]
-        self.map_name = "aggmax"
+        super().__init__([key], map_name="max")
 
     def apply(self, data):
         index = -1
@@ -87,9 +68,9 @@ class AggMax(AggMap):
         return {self.name: selected_data[index]}, index
 
 
-class AggAvgStd(AggMap):
+class AvgStd(AggregationMap):
     def __init__(self, key):
-        super().__init__(None, [key], map_name="avgstd")
+        super().__init__([key], map_name="avgstd")
     def apply(self, data):
 
         data = [{key: d[key] for key in self.keys} for d in data]
