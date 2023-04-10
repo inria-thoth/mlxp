@@ -37,7 +37,7 @@ def Lexer():
 
 
     reserved = {
-        'in': 'IN',
+        'in': 'IN'
     }
 
         # Define regular expressions for each token
@@ -62,6 +62,20 @@ def Lexer():
         t.value = ast.literal_eval(t.value)  # Evaluate the list literal to create a list object
         return t
 
+    def t_BOOL(t):
+        r'(?i)(true|false)'
+        # Update the token type to 'LIST' and convert scalar value to a list object
+        t.type = 'SCALAR'
+        t.value = ast.literal_eval(t.value)
+        return t
+    def t_STRING(t):
+        r'\'(.*?)\''
+        # Update the token type to 'LIST' and convert scalar value to a list object
+        t.type = 'SCALAR'
+        t.value = ast.literal_eval(t.value)
+        return t
+
+
     # Define a rule for scalar values (including integers, floats, and strings)
     def t_SCALAR(t):
         r'[0-9]+(\.[0-9]+)?|\'[^\']*\'|\"[^\"]*\"'
@@ -70,9 +84,11 @@ def Lexer():
         t.value = ast.literal_eval(t.value)
         return t
 
+
     # A regular expression rule with some action code
     def t_ID(t):
-        r'[a-zA-Z][\w._-]*'
+        #r'[a-zA-Z][\w._-]*'
+        r'[a-zA-Z_\d]+(\.[a-zA-Z_\d]+)*'
         t.type = reserved.get(t.value, 'ID')  # Check for reserved words
         return t
 
@@ -165,10 +181,8 @@ def notOp(expr):
 
 
 def _build_field_struct(key):
-    keys = key.split(".")
     field = Query()
-    for k in keys:
-        field = field[k]
+    field = field[key]
     return field
 
 

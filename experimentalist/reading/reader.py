@@ -121,7 +121,7 @@ class Reader(object):
                         indent=4,
                         separators=(",", ": "))        
         self.runs = self.db.table("runs")
-        self.fields = self.db.table("fields")
+        self._fields = self.db.table("fields")
 
         if not self.db.tables() or reload:
             self._create_base()
@@ -146,10 +146,10 @@ class Reader(object):
 
         if query_string:
             Q = self.parser.parse(query_string)
-            res += self.runs.search(Q)
+            res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [ Config(r,parend_dir=r[self.file_name+".logs.path"]) for r in res ]
+        res = [ Config(r,parent_dir=r[self.file_name+".logs.path"]) for r in res ]
         res = ConfigList(res)
         if asPandasDF:
             res = res.toPandasDF()
@@ -163,7 +163,7 @@ class Reader(object):
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame
         """
-        fields_dict = {k: v for d in self.fields.all() for k, v in d.items()}
+        fields_dict = {k: v for d in self._fields.all() for k, v in d.items()}
         df = pd.DataFrame(list(fields_dict.items()), columns=['Fields', 'Type'])
         df.set_index('Fields', inplace=True)
         return df
@@ -171,7 +171,7 @@ class Reader(object):
     def _create_base(self):
         self.db.drop_table("runs")
         self.db.drop_table("fields")
-        all_fields = set()
+        all_fields = {}
         dir_nrs = [
             int(d)
             for d in os.listdir(self.src_dir)
@@ -189,34 +189,38 @@ class Reader(object):
                 files_not_found.append(path)
         
         for key, value in all_fields.items():
-            self.fields.insert({key: value})
+            self._fields.insert({key: value})
 
         if files_not_found:
             print("Warning: The following files were not found:")
             print(files_not_found)
 
-    def _get_data( path, metadata_file):
-        fname = os.path.join(path, metadata_file + ".yaml")
-        with open(fname, "r") as file:
-            data = yaml.safe_load(file)
-        metadata_dict = _flatten_dict(data, metadata_file)
-        fields = {key: type(value) 
-                        for key, value in metadata_dict.items()}
-        keys_dir = os.path.join(path, ".keys" )
-        lazydata_dict = {}
+def _get_data( path, metadata_file):
+    fname = os.path.join(path, metadata_file + ".yaml")
+    with open(fname, "r") as file:
+        data = yaml.safe_load(file)
+    metadata_dict = _flatten_dict(data, metadata_file)
+    fields = {key: str(type(value)) 
+                    for key, value in metadata_dict.items()}
+    keys_dir = os.path.join(path, ".keys" )
+    lazydata_dict = {}
+    try:
         for file_name in os.listdir(keys_dir):
             if file_name.endswith('.yaml'):
-                with open(file_name, "r") as f:
+                prefix = os.path.splitext(file_name)[0]
+                full_file_name = os.path.join(keys_dir,file_name)
+                with open(full_file_name, "r") as f:
                     keys_dict = yaml.safe_load(f)
-                lazydata_dict.update({ file+'.'+key: LAZYDATA 
+                lazydata_dict.update({ prefix+'.'+key: LAZYDATA 
                                     for key in keys_dict.keys()})
+    except FileNotFoundError:
+        pass
 
+    fields.update({key: LAZYDATA 
+            for key, value in lazydata_dict.items()})
 
-        fields.update({key: LAZYDATA 
-                for key, value in lazydata_dict.items()})
-
-        metadata_dict.update(lazydata_dict)
-        return metadata_dict, fields
+    metadata_dict.update(lazydata_dict)
+    return metadata_dict, fields
 
 
 def _ensure_writable(dst_dir):
@@ -226,7 +230,7 @@ def _ensure_writable(dst_dir):
     except PermissionError:
         message = f"Unable to create the destination directory {dst_dir}.\n"
         raise PermissionError(message + err_msg)
-    if os.access(dst_dir, os.W_OK):
+    if not os.access(dst_dir, os.W_OK):
         message = f"Unable to access the destination directory {dst_dir}.\n"
         raise PermissionError(message + err_msg)            
     return dst_dir

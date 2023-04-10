@@ -34,12 +34,12 @@ class Config(Mapping):
     """
 
 
-    def __init__(self,flattened_dict, parend_dir):
+    def __init__(self,flattened_dict, parent_dir):
         #flattened_dict = _flatten_dict(config_dict, parent_key=parent_key) 
         self.config = { "flattened": flattened_dict,
                         "lazy": LazyDict(flattened_dict)}
         #parent_dir = self.config["flattened"][self.parent_key+"logs.path"]
-        self.parend_dir = parend_dir
+        self.parent_dir = parent_dir
         self._make_lazydict()
 
     def __getitem__(self,key):
@@ -72,11 +72,11 @@ class Config(Mapping):
         all_keys = [ key for key,value in self.config["flattened"].items() 
                             if value==LAZYDATA ]
         parent_keys = set([key.split('.')[0] for  key in all_keys]) 
-        try:
-            self.lazydata_dict = {parent_key: LazyData(self.parent_dir,parent_key) 
+        #try:
+        self.lazydata_dict = {parent_key: LazyData(self.parent_dir,parent_key) 
                                     for parent_key in parent_keys }
-        except:
-            pass
+        #except:
+        #    pass
         
         self.config['lazy'].update({ key: self.lazydata_dict[key.split('.')[0]].get_data 
                                     for key in all_keys})
@@ -205,13 +205,19 @@ class ConfigList(list):
 
         """
         # Check if keys are valid
+        valid_keys = self.keys()
         for key in list_group_keys:
-            _check_valid_key(self.keys, key)
+            try:
+                assert key in valid_keys
+            except AssertionError:
+                message = f"The provided key {key} is invalid! Valid keys are: {str(valid_keys)}"
+                raise InvalidKeyError(message)
+
 
         # Need to handle the case when keys are empty
         collection_dict, group_keys, group_vals = _group_by(self, list_group_keys)
         # pandas_grouped_df = deepcopy(self.toPandasDF()).set_index(list_group_keys)
-        grouped_config = GroupedConfigs(collection_dict, group_keys, group_vals)
+        grouped_config = GroupedConfigs(group_keys, collection_dict)
         #grouped_config.pandas = pandas_grouped_df
         return grouped_config
 
@@ -440,12 +446,14 @@ def _aggregate(groupedconfigs, aggregation_maps):
         agg_config = _aggregate_collection(config_list, aggregation_maps)
         #keys = list(keys_vals.values())
         for agg_map in aggregation_maps:
+            tmp_agg_config_dict = {}
             _add_nested_keys_val(agg_config_dict[agg_map.name], keys, agg_config[agg_map.name])
 
-            
-    return {agg_map.name : GroupedConfigs(agg_config_dict[agg_map.name], 
-                                        groupedconfigs.group_keys, 
-                                        groupedconfigs.group_vals) for agg_map in aggregation_maps}
+    for agg_map in aggregation_maps:
+        agg_config_dict[agg_map.name] = { key: ConfigList(reduce(dict.get, key, agg_config_dict[agg_map.name])) 
+                                        for key in groupedconfigs.group_vals }
+    return {agg_map.name : GroupedConfigs(groupedconfigs.group_keys,
+                                            agg_config_dict[agg_map.name]) for agg_map in aggregation_maps}
 
 
 def _aggregate_collection(collection, agg_maps):
@@ -499,13 +507,6 @@ def _extract_keys_from_maps(agg_maps):
     return extracted_keys
 
 
-
-def _check_valid_key(valid_keys,key):
-    try:
-        assert key in valid_keys
-    except AssertionError:
-        message = f"The provided key {key} is invalid! Valid keys are: {str(valid_keys)}"
-        raise InvalidKeyError(message)
 
 def _assert_valid_map(agg_map):
     try:
