@@ -14,7 +14,7 @@ from experimentalist.reading.aggregation_maps import AggregationMap
 
 from typing import List, Dict, Tuple
 
-LAZYDATA="LAZYDATA"
+LAZYDATA="LAZYDATA" 
 
 
 class Config(Mapping):
