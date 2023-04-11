@@ -26,7 +26,7 @@ from hydra.types import TaskFunction
 
 
 from experimentalist.logging.logger import Logger, Status
-from experimentalist.utils import _flatten_dict
+from experimentalist.utils import _flatten_dict, config_to_instance
 from experimentalist.launching.schemas import Config
 from experimentalist.launching.schedulers import JobSubmissionError
 
@@ -179,7 +179,7 @@ def launch(
                     return None
                 except Exception:
                     logger._log_status(Status.FAILED)
-                raise 
+                    raise 
 
             else:
                 scheduler = config_to_instance(config_module_name="class_name", **cfg.scheduler) 
@@ -189,11 +189,12 @@ def launch(
                 cmd = _make_job_command(scheduler,
                                         cfg.system,
                                         work_dir,
-                                        logger.run_dir,
-                                        logger.run_id)
+                                        logger.parent_log_dir,
+                                        logger.log_dir,
+                                        logger.log_id)
                 print(cmd)
 
-                job_path = _save_job_command(cmd, logger.run_dir)
+                job_path = _save_job_command(cmd, logger.log_dir)
                 process_output = scheduler.submit_job(job_path)
                 scheduler_job_id = scheduler.get_job_id(process_output) 
 
@@ -262,11 +263,12 @@ def _set_co_filename(func, co_filename):
 def _make_job_command(scheduler,
                   system, 
                   work_dir,
+                  parent_log_dir,
                   log_dir,
                   job_id,
                   ):
     ## Writing job command
-    job_command = [_job_command(system, work_dir, job_id)]
+    job_command = [_job_command(system,parent_log_dir, work_dir, job_id)]
 
     ## Setting shell   
     shell_cmd = [f"#!{system.shell_path}\n"]
@@ -298,17 +300,17 @@ def _save_job_command(cmd_string, log_dir):
 
 
 
-def _job_command(system, work_dir, job_id):
+def _job_command(system, parent_log_dir, work_dir, job_id):
     args = _get_overrides()
 
     now = datetime.now()
     date = now.strftime("%d/%m/%Y")
     time = now.strftime("%H:%M:%S")
-    values += [
+    values = [
         f"cd {work_dir}",
         f"{system.app} {system.cmd} {args} ++system.date='{date}' \
             ++system.time='{time}'  ++logs.log_id={job_id}\
-            ++scheduler.use_scheduler={False}",
+            ++logs.parent_log_dir={parent_log_dir} ++scheduler.use_scheduler={False}",
     ]
     values = [f"{val}\n" for val in values]
     return "".join(values)
@@ -317,7 +319,7 @@ def _get_overrides():
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
     def filter_fn(x):
-        return "scheduler.use_scheduler" not in x
+        return ("scheduler.use_scheduler" not in x) and ("logs.parent_log_dir" not in x)
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args

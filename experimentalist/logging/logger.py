@@ -73,15 +73,15 @@ class Logger:
 
         self.config = config
 
-        parent_log_dir = self.config.logs.parent_log_dir
-        self._root = os.path.join(parent_log_dir, self.config.logs.log_name)
-        self._run_id, self._run_dir = _make_run_dir(config.logs.log_id, 
+        self.parent_log_dir = self.config.logs.parent_log_dir
+        self._root = os.path.join(self.parent_log_dir, self.config.logs.log_name)
+        self._log_id, self._log_dir = _make_log_dir(config.logs.log_id, 
                                                     self._root)
         
         self._update_config()
         self._metric_dict_keys = []
         if self.config.logs.log_to_file:
-            log_file = open(os.path.join(self._run_dir, "log.txt"), "w", buffering=1)
+            log_file = open(os.path.join(self._log_dir, "log.txt"), "w", buffering=1)
             sys.stdout = log_file
             sys.stderr = log_file
 
@@ -107,43 +107,43 @@ class Logger:
         return self._root
 
     @property
-    def run_id(self):
-        """Returns the uniquely assigned id of the run. Ensures the run_id to be immutable.
+    def log_id(self):
+        """Returns the uniquely assigned id of the run. Ensures the log_id to be immutable.
         
         :rtype: int
         :return: The id of the run.
         """
-        return self._run_id
+        return self._log_id
 
     @property
-    def run_dir(self):
+    def log_dir(self):
         """Returns the path to the directory where outputs of the run are saved. 
-        Ensures the run_dir to be immutable.
+        Ensures the log_dir to be immutable.
         
         :rtype: str
         :return: The path to the output directory of the run.
         """
-        return self._run_dir
+        return self._log_dir
 
 
     def log_config(self, file_name: str ="metadata")->None:
         """
         Saves the config attribute corresponding to the current run  
-        into a yaml file run_dir/file_name+'.yaml'. 
+        into a yaml file log_dir/file_name+'.yaml'. 
 
         :param file_name: Name of the target file.
         :type file_name: str (default "metadata")
         :return: None
         """
 
-        abs_name = os.path.join(self._run_dir, file_name)
+        abs_name = os.path.join(self._log_dir, file_name)
         omegaconf.OmegaConf.save(config=self.config, f=abs_name + ".yaml")
 
 
     def log_metric(self, metric_dict: Dict[str, Union[int, float, str]], 
                         file_name: str ="metrics")->None:
         """Saves a dictionary of scalars to a json file named 
-        file_name+'.json' in the directory run_dir. If the file exists already, 
+        file_name+'.json' in the directory log_dir. If the file exists already, 
         the dictionary is appended at the end of the file. 
 
         :param metric_dict:  Dictonary of scalars values to be saved, the values can be either int, float of string.
@@ -153,14 +153,14 @@ class Logger:
         :return: None
         """
         self._log_metrics_key(metric_dict,file_name=file_name)
-        file_name = os.path.join(self._run_dir, file_name)
+        file_name = os.path.join(self._log_dir, file_name)
         with open(file_name + ".json", "a") as f:
             json.dump(metric_dict, f)
             f.write(os.linesep)
 
     def log_artifact(self, artifact: Artifact, file_name: str)-> None:
         """Saves the attribute obj of an instance inheriting from the abstract class Artifact 
-        into a destination file: 'run_dir/artifact_class_name/file_name'. 
+        into a destination file: 'log_dir/artifact_class_name/file_name'. 
         The directory 'artifact_class_name' is named after 
         the child class inheriting from Artifact.   
 
@@ -173,7 +173,7 @@ class Logger:
         """
 
         assert isinstance(artifact,Artifact)
-        subdir = os.path.join(self._run_dir, type(artifact).__name__)
+        subdir = os.path.join(self._log_dir, type(artifact).__name__)
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(subdir, file_name)
         artifact.save(fname)
@@ -181,8 +181,8 @@ class Logger:
     def copy_artifact(self, src_name:str, dst_name: str, 
                             artifact_class: Artifact) -> None:
         """Copies an already existing artifact obj 
-        from a source file: run_dir/artifact_class_name/src_name 
-        to a destination file run_dir/artifact_class_name/dst_name, 
+        from a source file: log_dir/artifact_class_name/src_name 
+        to a destination file log_dir/artifact_class_name/dst_name, 
         where artifact_class_name is the name of the class artifact_class.  
         
         .. note:: The source file name needs to have the same extension as the attribute ext of the class artifact_class.
@@ -200,7 +200,7 @@ class Logger:
         assert issubclass(artifact_class, Artifact)
         ckpt_dir_name = artifact_class.__name__
         ext = getattr(artifact_class, 'ext')
-        subdir = os.path.join(self._run_dir, ckpt_dir_name)
+        subdir = os.path.join(self._log_dir, ckpt_dir_name)
         fname = os.path.join(subdir, src_name)
         copy_fname = os.path.join(subdir, dst_name)
         try:
@@ -235,8 +235,8 @@ class Logger:
         with omegaconf.open_dict(self.config):
             self.config.system.hostname = socket.gethostname()
             self.config.system.process_id = os.getpid()
-            self.config.logs.log_id = self._run_id
-            self.config.logs.path = os.path.join(self._root, str(self._run_id))
+            self.config.logs.log_id = self._log_id
+            self.config.logs.path = self._log_dir
             self.config.system.date = date
             self.config.system.time = time
             self.config.system.status = Status.STARTING.name
@@ -257,7 +257,7 @@ class Logger:
                 new_keys.append(key)
         self._metric_dict_keys += new_keys
         dict_file = {key: "" for key in new_keys}
-        keys_dir = os.path.join(self._run_dir, '.keys')
+        keys_dir = os.path.join(self._log_dir, '.keys')
         os.makedirs(keys_dir, exist_ok=True)
         file_name = os.path.join(keys_dir , file_name)
         cur_yaml = {}
@@ -271,7 +271,7 @@ class Logger:
             yaml.dump(cur_yaml, f)  
 
     def _set_scheduler_job_id(self):
-        abs_name = os.path.join(self._run_dir, "metadata.yaml")
+        abs_name = os.path.join(self._log_dir, "metadata.yaml")
         if os.path.isfile(abs_name):
             with open(abs_name, "r") as file:
                 configs = yaml.safe_load(file)
@@ -301,19 +301,19 @@ def DictConfig_to_dict(config: omegaconf.dictconfig.DictConfig)-> ConfigDict:
     out_dict = {}
     for key, value in config.items():
         if isinstance(value, omegaconf.dictconfig.DictConfig):
-            out_dict[key] = config_to_dict(value)
+            out_dict[key] = DictConfig_to_dict(value)
         else:
             out_dict[key] = value
     return ConfigDict(out_dict)
 
-def _make_run_dir(_id, root):
+def _make_log_dir(_id, root):
     os.makedirs(root, exist_ok=True)
     log_dir = None
     if _id is None:
         fail_count = 0
         while log_dir is None:
             try:
-                _id = _maximum_existing_run_id(root) + 1
+                _id = _maximum_existing_log_id(root) + 1
                 log_dir_tmp = os.path.join(root, str(_id))
                 os.mkdir(log_dir_tmp)
                 log_dir = log_dir_tmp # set log_dir only if successful creation
@@ -325,11 +325,11 @@ def _make_run_dir(_id, root):
                     raise
     else:
         log_dir = os.path.join(root, str(_id))
-        os.makedirs(root, exist_ok=True)
+        os.makedirs(log_dir, exist_ok=True)
     return _id, log_dir
 
 
-def _maximum_existing_run_id(root):
+def _maximum_existing_log_id(root):
     dir_nrs = [
         int(d)
         for d in os.listdir(root)

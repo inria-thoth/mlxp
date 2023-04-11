@@ -1,7 +1,7 @@
 import abc
 from typing import Any, Type
 from dataclasses import dataclass
-
+import dill as pkl
 
 @dataclass
 class Artifact(abc.ABC):

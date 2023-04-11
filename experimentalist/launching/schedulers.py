@@ -125,7 +125,7 @@ class Scheduler(abc.ABC):
             print("Job launched!")
         except subprocess.CalledProcessError as e:
             print(e.output)
-            raise JobSubmissionError(f"Failed to launch the job! Might need to check the scheduler's command")
+            raise JobSubmissionError(e.output)
 
         return process_output
             

@@ -32,37 +32,11 @@ def import_module(module_name):
 
 def config_to_instance(config_module_name="class_name",**config):
     module_name = config.pop(config_module_name)
-    args = config.args
+    args = config['args']
     attr = import_module(module_name)
     if config:
         attr = attr(**args)
     return attr
-
-
-def isfloat(v):
-    try:
-        float(v)
-        return True
-    except:
-        return False
-def isint(v):
-    try:
-        int(v)
-        return True
-    except:
-        return False    
-
-def isbool(v):
-    return v in ["True","False"]
-
-def tobool(v):
-    if v=="True":
-        return True
-    elif v=="False":
-        return False
-    else:
-        raise ValueError
-
 
 
 

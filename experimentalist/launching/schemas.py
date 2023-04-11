@@ -322,6 +322,6 @@ class Config:
 
 	system: System = System()
 	logs: Logs = Logs()
-	scheduler: Scheduler = NoScheduler()
+	scheduler: Scheduler = OARScheduler()
 	wd_manager: WDManager = LastGitCommitWD()
 	custom: Any = None
