@@ -1,6 +1,7 @@
 from collections.abc import MutableMapping
 import importlib
 import os
+import experimentalist
 
 
 def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
@@ -19,15 +20,18 @@ def _flatten_dict_gen(d, parent_key, sep):
 
 def import_module(module_name):
     module, attr = os.path.splitext(module_name)
-    try:
-        module = importlib.import_module(module)
-        return getattr(module, attr[1:])
-    except:
+    if not attr:
+        return  getattr(experimentalist, module)
+    else:
         try:
-            module = import_module(module)
+            module = importlib.import_module(module)
             return getattr(module, attr[1:])
         except:
-            return eval(module+attr[1:])
+            try:
+                module = import_module(module)
+                return getattr(module, attr[1:])
+            except:
+                return eval(module+attr[1:])
 
 
 def config_to_instance(config_module_name="class_name",**config):

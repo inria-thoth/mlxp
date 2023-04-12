@@ -117,6 +117,14 @@ def launch(
             config_path = "."
         else:
             config_path = "."
+    
+    os.makedirs(config_path, exist_ok=True)
+    custom_config_file = os.path.join(config_path,config_name)
+    if not os.path.exists(custom_config_file):
+        custom_config = {'custom':MISSING,'seed':MISSING}
+        omegaconf.OmegaConf.save(config=custom_config, f=custom_config_file)
+
+
 
     def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
         # task_function = launch(task_function)
@@ -162,10 +170,7 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(cfg):
-            base_conf = OmegaConf.structured(Config)
-            conf_dict = OmegaConf.to_container(base_conf, resolve=True)
-            base_conf = OmegaConf.create(conf_dict)
-            cfg = OmegaConf.merge(base_conf, cfg)
+            cfg = _process_default_user_config(cfg, config_path, config_name)
 
             cfg.system.cmd = task_function.__code__.co_filename
             cfg.system.app = os.environ["_"]
@@ -207,7 +212,6 @@ def launch(
                 except Exception:
                     logger._log_status(Status.FAILED)
                     raise
-                
 
         _set_co_filename(decorated_task, task_function.__code__.co_filename)
 
@@ -297,8 +301,40 @@ def _make_job_command(scheduler,
     return cmd
 
 
+def _process_default_user_config(cfg, config_path, config_name):
+    default_config = OmegaConf.structured(Config)
+    conf_dict = OmegaConf.to_container(default_config, resolve=True)
+    default_config = OmegaConf.create(conf_dict)
+    
+    os.makedirs(config_path, exist_ok=True)
+    base_config_file = os.path.join(config_path,"base_config.yaml")
+
+    if os.path.exists(base_config_file):
+        import yaml
+        with open(base_config_file, "r") as file:
+            base_config = OmegaConf.create(yaml.safe_load(file))
+        default_config = OmegaConf.merge(default_config, base_config)
+    
+    else:
+        system_custom = {'shell_config_cmd': default_config['system']['shell_config_cmd'],
+                           'shell_path': default_config['system']['shell_path'],
+                            'env': default_config['system']['env'] }
+         
+        logs_custom = copy.deepcopy(default_config['logs'])
+        del logs_custom['log_id']
+        del logs_custom['path']
+        
+        base_config = OmegaConf.create({'scheduler': default_config['scheduler'],
+                                        'wd_manager': default_config['wd_manager'],
+                                        'system': system_custom,
+                                        'logs':logs_custom})
+
+        omegaconf.OmegaConf.save(config=base_config, f=base_config_file)
 
 
+    cfg = OmegaConf.merge(default_config, cfg)
+    
+    return cfg
 
 def _save_job_command(cmd_string, log_dir):
     job_path = os.path.join(log_dir, "script.sh")

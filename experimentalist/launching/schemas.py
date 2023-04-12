@@ -61,11 +61,11 @@ class OARScheduler(Scheduler):
 	Configs for OAR job scheduler. See documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs 
 	"""
 
-	class_name: str = "experimentalist.launching.schedulers.OARScheduler"
+	class_name: str = "OARScheduler"
 
 @dataclass
 class NoScheduler(Scheduler):
-	class_name: str = "experimentalist.launching.schedulers.NoScheduler"
+	class_name: str = "NoScheduler"
 	use_scheduler: bool = False
 
 @dataclass
@@ -74,7 +74,7 @@ class SLURMScheduler(Scheduler):
 	Configs for SLURM job scheduler. See documentation in: https://slurm.schedmd.com/documentation.html
 	"""
 
-	class_name: str = "experimentalist.launching.schedulers.SLURMScheduler"
+	class_name: str = "SLURMScheduler"
 
 
 
@@ -139,7 +139,7 @@ class LastGitCommitWD(WDManager):
 	as argument during instantiation.
 	"""
 
-	class_name: str="experimentalist.launching.wd_manager.LastGitCommitWD"
+	class_name: str="LastGitCommitWD"
 	args: Any = GitWDMangerArgs()
 
 
@@ -151,7 +151,7 @@ class CWD(WDManager):
 	Configs for using the CWD working directory manager.
 	"""
 
-	class_name: str="experimentalist.launching.wd_manager.CWD"
+	class_name: str="CWD"
 	args: Any = None
 
 
