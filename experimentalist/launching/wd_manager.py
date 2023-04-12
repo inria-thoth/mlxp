@@ -111,7 +111,9 @@ class LastGitCommitWD(WDManager):
         parent_work_dir = self.parent_target_work_dir
         self.dst = os.path.join(parent_work_dir, target_name)
         if not os.path.exists(self.dst):
+            print("Cloning the repository")
             repo.clone(self.dst)
+            print("Getting the requirements using pipreqs")
             self._make_requirements_file()
         work_dir = os.path.join(self.dst, relpath)
         return work_dir
@@ -224,7 +226,7 @@ class LastGitCommitWD(WDManager):
 
     def _make_requirements_file(self):
         # Create a new updated requirement file.
-        reqs_cmd = f"pipreqs {self.dst}" 
+        reqs_cmd = f"pipreqs --force {self.dst}" 
         subprocess.check_call(reqs_cmd, shell=True)
         #raise NotImplementedError
     def _get_requirements(self):
