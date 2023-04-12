@@ -56,14 +56,12 @@ class LastGitCommitWD(WDManager):
     .. py:attribute:: handleUntrackedFiles
         :type: bool 
 
-        When set to true, throws an error if there 
-        are untracked files in the git repo of the current working directory 
+        When set to true, offers interactive options to handle untracked files. 
 
     .. py:attribute:: handleUncommitedChanges
         :type: bool 
 
-        When set to true, throws an error if there 
-        are uncommited changes in the git repo of the current working directory 
+        When set to true, offers interactive options to handle uncommitted changes. 
     
     """
 
@@ -102,10 +100,6 @@ class LastGitCommitWD(WDManager):
 
         :rtype: str
         :return: A path to the target working directory
-        :raises UncommitedChangesError: if there are uncommited changes in the git repository 
-            containing the current working directory.
-        :raises UntrackedFilesError: if there are untracked files in the git repository 
-            containing the current working directory.
         """
         repo = self._getGitRepo()
         repo_root = repo.git.rev_parse("--show-toplevel")
@@ -264,29 +258,8 @@ class LastGitCommitWD(WDManager):
         status = repo.git.status()
         print(status)
 
-        # if repo.untracked_files:
-            
-        #     if self.handleUntrackedFiles:
-        #         self._handle_untracked_files(repo)
-        #         #raise UntrackedFilesError(error_msg)
-        #     else:
-        #         msg ="\033[91m Warning:\033[0m There are untracked files! \n"
-        #         msg +="\033[91m Warning:\033[0m Untracked files will not be accessible during execution of the jobs!"
-        #         print(msg)
         self._handle_untracked_files(repo)
         self._handle_commit_state(repo)
-        # if repo.is_dirty():
-        #     msg = "There are uncommited changes"
-        #     if self.handleUncommitedChanges:
-                
-        #         #error_msg = error_msg = msg  + "\n" + "Make sure all changes are commited!"
-        #         #raise UncommitedChangesError(error_msg)
-        #     else:
-        #         msg = "\033[91m Warning:\033[0m There are uncommited changes \n"
-        #         msg += "\033[91m Warning:\033[0m Uncommited changes will not be taken into account during execution of the jobs!\n"
-        #         msg += "\033[91m Warning:\033[0m Jobs will be executed from the latest commit"
-
-        #         print(msg)
         return repo
 
 class CWD(WDManager):
@@ -306,19 +279,6 @@ class CWD(WDManager):
 
         return os.getcwd()
 
-
-class UncommitedChangesError(Exception):
-    """
-    Raised when there are uncommited changes in the git repository 
-    containing the current working directory
-    """
-    pass
-
-class UntrackedFilesError(Exception):
-    """Raised when there are untracked files in the git repository 
-    containing the current working directory
-    """
-    pass
 
 def _disp_uncommited_files(repo):
     unstaged_files = repo.index.diff(None)
