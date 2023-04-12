@@ -34,8 +34,10 @@ def config_to_instance(config_module_name="class_name",**config):
     module_name = config.pop(config_module_name)
     args = config['args']
     attr = import_module(module_name)
-    if config:
+    if args:
         attr = attr(**args)
+    else:
+        attr = attr()
     return attr
 
 

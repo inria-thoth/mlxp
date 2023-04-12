@@ -80,6 +80,9 @@ def launch(
         It also allows recovering exactly the code used for a given run.
         This behavior can be modified by using a different working directory manager WDManager (default LastGitCommitWD). 
         
+        .. note:: Currently, this functionality expects 
+        the executed python file to part of the git repository. 
+
     :param config_path: The config path, a directory relative
                         to the declaring python file.
                         If config_path is None no directory is added
@@ -166,26 +169,16 @@ def launch(
 
             cfg.system.cmd = task_function.__code__.co_filename
             cfg.system.app = os.environ["_"]
-
-            logger = Logger(cfg)
-            logger._set_scheduler_job_id()
-            logger.log_config()
-
-            if not cfg.scheduler.use_scheduler:
-                try:
-                    logger._log_status(Status.RUNNING)
-                    task_function(logger)
-                    logger._log_status(Status.COMPLETE)
-                    return None
-                except Exception:
-                    logger._log_status(Status.FAILED)
-                    raise 
-
-            else:
+            ## Ensuring parent_log_dir is an absolute path
+            cfg.logs.parent_log_dir = os.path.abspath(cfg.logs.parent_log_dir)
+            
+            if cfg.scheduler.use_scheduler:
                 scheduler = config_to_instance(config_module_name="class_name", **cfg.scheduler) 
                 wd_manager = config_to_instance(config_module_name="class_name", **cfg.wd_manager)
                 work_dir = wd_manager.make_working_directory()
-                
+                wd_manager.update_configs(cfg.wd_manager)
+
+                logger = Logger(cfg)
                 cmd = _make_job_command(scheduler,
                                         cfg.system,
                                         work_dir,
@@ -200,6 +193,21 @@ def launch(
 
                 logger._update_scheduler_job_id(scheduler_job_id)
                 logger.log_config()
+                
+            else:
+
+                logger = Logger(cfg)
+                logger._set_scheduler_job_id() # Checks if a metadata file exists and loads some of its content.
+                logger.log_config()
+                try:
+                    logger._log_status(Status.RUNNING)
+                    task_function(logger)
+                    logger._log_status(Status.COMPLETE)
+                    return None
+                except Exception:
+                    logger._log_status(Status.FAILED)
+                    raise
+                
 
         _set_co_filename(decorated_task, task_function.__code__.co_filename)
 
@@ -301,14 +309,17 @@ def _save_job_command(cmd_string, log_dir):
 
 
 def _job_command(system, parent_log_dir, work_dir, job_id):
-    args = _get_overrides()
+    #exec_file = system.cmd
+    exec_file = os.path.relpath(system.cmd, os.getcwd())
+    
 
+    args = _get_overrides()
     now = datetime.now()
     date = now.strftime("%d/%m/%Y")
     time = now.strftime("%H:%M:%S")
     values = [
         f"cd {work_dir}",
-        f"{system.app} {system.cmd} {args} ++system.date='{date}' \
+        f"{system.app} {exec_file} {args} ++system.date='{date}' \
             ++system.time='{time}'  ++logs.log_id={job_id}\
             ++logs.parent_log_dir={parent_log_dir} ++scheduler.use_scheduler={False}",
     ]
@@ -323,18 +334,4 @@ def _get_overrides():
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args
-
-def _submit_job(job_path,submission_cmd):
-    try:
-        chmod_cmd = f"chmod +x {job_path!r}"
-        subprocess.check_call(chmod_cmd, shell=True)
-        launch_cmd = f"{submission_cmd}  {job_path!r}"
-        process_output = subprocess.check_output(launch_cmd, shell=True).decode("utf-8")
-        print(process_output)
-        print("Job launched!")
-    except subprocess.CalledProcessError as e:
-        print(e.output)
-        raise JobSubmissionError(f"Failed to launch the job! Might need to check the scheduler's command")
-
-    return process_output
 

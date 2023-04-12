@@ -3,6 +3,8 @@ import os
 
 from typing import Any, Callable, List
 from omegaconf import MISSING
+from hydra.core.config_store import ConfigStore
+
 
 @dataclass
 class SchedulerArgs:
@@ -64,7 +66,7 @@ class OARScheduler(Scheduler):
 @dataclass
 class NoScheduler(Scheduler):
 	class_name: str = "experimentalist.launching.schedulers.NoScheduler"
-
+	use_scheduler: bool = False
 
 @dataclass
 class SLURMScheduler(Scheduler):
@@ -111,22 +113,22 @@ class GitWDMangerArgs:
 		Name of the parent directory of the target working directory to be created.
 
 
-	.. py:attribute:: forceCommit
+	.. py:attribute:: handleUncommitedChanges
 		:type: bool
 		
 	   When set to true, raises an error if there are uncommited changes. 
 	   Displays a warning otherwise. 
 
-	.. py:attribute:: forceTracking
+	.. py:attribute:: handleUntrackedFiles
 		:type: bool
 		
 	   When set to true, raises an error if there are untracked files. 
 	   Displays a warning otherwise. 
 	"""
 
-	parent_target_work_dir: str = os.path.join(os.getcwd(), "data/.workdir") 
-	forceCommit: bool = True
-	forceTracking: bool = True
+	parent_target_work_dir: str = MISSING #os.path.join(os.getcwd(), "data/.workdir") 
+	handleUncommitedChanges: bool = True
+	handleUntrackedFiles: bool = True
 
 @dataclass
 class LastGitCommitWD(WDManager):
@@ -278,10 +280,10 @@ class Logs:
 	"""
 
 
-	parent_log_dir: str = os.path.join(os.getcwd(),"data/outputs")
-	log_name: str = "logs"
-	log_id: Any = None
+	parent_log_dir: str = MISSING #os.path.join(os.getcwd(),"data","outputs")
+	log_name: str = MISSING
 	path: str = MISSING
+	log_id: Any = None
 	log_to_file: bool = False
 	
  
@@ -312,6 +314,13 @@ class Config:
 		:type: WDManager
 		
 		Contains config information for the working directory manager  (default LastGitCommitWD) 
+
+	.. py:attribute:: seed
+		:type: Any
+		
+		Contains user defined parameters for seeding the code.
+		Can a number or a more complex structure following hydra configs options.
+
   
 	.. py:attribute:: custom
 		:type: Any
@@ -319,9 +328,20 @@ class Config:
 		Contains user custom configs
 
 	"""
-
+	scheduler: Scheduler = NoScheduler()
 	system: System = System()
 	logs: Logs = Logs()
-	scheduler: Scheduler = OARScheduler()
 	wd_manager: WDManager = LastGitCommitWD()
+	seed: Any = None
 	custom: Any = None
+
+
+cs = ConfigStore.instance()
+#cs.store(name="config", node=Config)
+cs.store(group="scheduler", name="OAR", node=OARScheduler)
+cs.store(group="scheduler", name="SLURM", node=SLURMScheduler)
+cs.store(group="scheduler", name="NONE", node=NoScheduler)
+cs.store(group="wd_manager", name="LastGitCommit", node=LastGitCommitWD)
+cs.store(group="wd_manager", name="CWD", node=CWD)
+
+
