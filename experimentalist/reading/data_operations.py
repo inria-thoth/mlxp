@@ -10,11 +10,34 @@ import itertools
 from functools import reduce
 import pandas as pd
 from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, ItemsView
-from experimentalist.reading.aggregation_maps import AggregationMap
 
 from typing import List, Dict, Tuple
 
 LAZYDATA="LAZYDATA" 
+
+
+class AggregationMap:
+    """
+    An abstract class whose children can perform aggregations on arrays. 
+    
+    """
+
+
+    def __init__(self, keys, func=None, args={}, map_name=""):
+        self.func = func
+        self.keys = keys
+        self.args = args
+        self.map_name = map_name
+        self.name = self.make_name()
+    def make_name(self):
+        return self.map_name + "(" + ",".join(self.keys) + ")"
+    
+    def apply(self, data):
+        # Input: List of dicts where each entry of the list
+        # contains data corresponding to a config.
+        # Output: Dict of outputs
+        raise NotImplementedError
+
 
 
 class Config(Mapping):
