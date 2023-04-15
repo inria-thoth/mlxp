@@ -5,7 +5,7 @@ from datetime import datetime
 import omegaconf
 from omegaconf.errors import OmegaConfBaseException
 import abc
-from typing import List
+from typing import List, Union
 
 
 
@@ -47,7 +47,10 @@ class Scheduler(abc.ABC):
     def __init__(self, 
                 directive: str, 
                 submission_cmd: str,
-                cleanup_cmd: str, 
+                shell_path: str ="/bin/bash", 
+                shell_config_cmd:str ="",
+                env_cmd:str="",
+                cleanup_cmd: str ="", 
                 option_cmd:List[str]=[]):
         """
         Constructor
@@ -71,6 +74,9 @@ class Scheduler(abc.ABC):
         self.cleanup_cmd = cleanup_cmd
         self.submission_cmd = submission_cmd
         self.option_cmd = option_cmd
+        self.shell_config_cmd = shell_config_cmd
+        self.shell_path = shell_path
+        self.env_cmd = env_cmd
 
     @abc.abstractmethod
     def option_command(self, log_dir:str)->str:
@@ -128,27 +134,7 @@ class Scheduler(abc.ABC):
             raise JobSubmissionError(e)
 
         return process_output
-            
-class NoScheduler(abc.ABC):
-    """
-        This class can be used when no scheduler is available. 
 
-    """
-
-
-    def __init__(self,cleanup_cmd:str ="", option_cmd:List[str]=[]):
-        super().__init__(
-                        directive="", 
-                        submission_cmd="",
-                        cleanup_cmd=cleanup_cmd, 
-                        option_cmd = option_cmd)
-    
-    def get_job_id(self,process_output):
-        raise NotImplementedError
-
-    def option_command(self, log_dir:str)->str:
-        
-        return ""
 
 
 
@@ -158,10 +144,17 @@ class OARScheduler(Scheduler):
     """
 
 
-    def __init__(self,cleanup_cmd="", option_cmd = []):
+    def __init__(self,shell_path="/bin/bash", 
+                      shell_config_cmd="",
+                      env_cmd="", 
+                      cleanup_cmd="", 
+                      option_cmd = []):
         super().__init__(
                         directive="#OAR", 
                         submission_cmd="oarsub -S",
+                        shell_path=shell_path, 
+                        shell_config_cmd=shell_config_cmd,
+                        env_cmd=env_cmd,
                         cleanup_cmd=cleanup_cmd, 
                         option_cmd = option_cmd)
     
@@ -199,10 +192,17 @@ class SLURMScheduler(Scheduler):
     """
 
 
-    def __init__(self,cleanup_cmd="module purge", option_cmd=[]):
+    def __init__(self,shell_path="/bin/bash", 
+                      shell_config_cmd="",
+                      env_cmd="", 
+                      cleanup_cmd="module purge", 
+                      option_cmd=[]):
         super().__init__(
                         directive="#SBATCH", 
                         submission_cmd="sbatch",
+                        shell_path=shell_path, 
+                        shell_config_cmd=shell_config_cmd,
+                        env_cmd=env_cmd,
                         cleanup_cmd=cleanup_cmd, 
                         option_cmd= option_cmd)
 

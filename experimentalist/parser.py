@@ -3,6 +3,43 @@ import ply.yacc as yacc
 import ast
 from operator import eq, ge, gt, le, lt, ne
 from tinydb import TinyDB, where, Query
+from tinydb.queries import QueryInstance
+import abc
+
+
+class Parser(abc.ABC):
+    """
+    An abstract class for parsing queries. Any parser used by the class Reader must inherit 
+        from this abstract class. 
+    
+    """
+
+    @abc.abstractmethod
+    def parse(self,query: str)->QueryInstance:
+        
+        """
+        A method for parsin a query string into a tinydb QueryInstance object. 
+        
+        :param query: A query in the form of a string
+        :type query: str
+        :return: A instance of a QueryInstance class representing the query
+        :rtype: QueryInstance
+        :raises SyntaxError: if the query string does not follow expected syntax.  
+        """
+
+class DefaultParser(Parser):
+
+    """
+        A simple parser based on python syntax.
+    """
+
+    def __init__(self):
+        self.lexer = Lexer()
+        self.parser = YaccParser()
+    def parse(self,query: str)->QueryInstance:
+        return self.parser.parse(query, lexer=self.lexer)
+
+
 
 
 ops = {
@@ -99,7 +136,7 @@ def Lexer():
 
 #lexer = lex.lex()
 
-def Parser():
+def YaccParser():
 
     precedence = (
         ('left', 'OR'),

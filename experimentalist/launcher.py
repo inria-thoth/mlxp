@@ -6,7 +6,7 @@ import pickle
 import warnings
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Union
 from types import CodeType
 from dataclasses import dataclass, field
 
@@ -14,22 +14,20 @@ import omegaconf
 from omegaconf import OmegaConf, DictConfig, open_dict, read_write
 from omegaconf import MISSING
 from omegaconf.errors import OmegaConfBaseException
-from datetime import datetime
-
+from enum import Enum
 
 from hydra import version
 from hydra._internal.deprecation_warning import deprecation_warning
 from hydra._internal.utils import _run_hydra, get_args_parser
 from hydra.core.hydra_config import HydraConfig
-from hydra.core.utils import _flush_loggers, configure_log
 from hydra.types import TaskFunction
 
 
-from experimentalist.logging.logger import Logger, Status
 from experimentalist.utils import _flatten_dict, config_to_instance
-from experimentalist.launching.schemas import Config
-from experimentalist.launching.schedulers import JobSubmissionError
+from experimentalist.data_structures.schemas import Metadata
+from experimentalist.data_structures.config_dict import convert_dict, ConfigDict
 
+import sys
 
 _UNSPECIFIED_: Any = object()
 
@@ -45,11 +43,33 @@ hydra_defaults_dict = {
     "hydra/hydra_logging": "disabled",
 }
 
+class Status(Enum):
+    """
+        Status of a run. 
+
+        The status can take the following values:
+
+        - STARTING: The metadata for the run have been created.
+
+        - RUNNING: The experiment is currently running. 
+        
+        - COMPLETE: The run is  complete and did not through any error.
+        
+        - FAILED: The run stoped due to an error.
+    """
+
+
+    STARTING = "STARTING"
+    COMPLETE = "COMPLETE"
+    RUNNING = "RUNNING"
+    FAILED = "FAILED"
+
 
 
 def launch(
     config_path: Optional[str] = _UNSPECIFIED_,
-    config_name: Optional[str] = None
+    config_name: Optional[str] = None,
+    seeding_function: Union[Callable[Any, None],None] = None
 ) -> Callable[[TaskFunction], Any]:
     """Decorator of the main function to be executed.  
 
@@ -67,8 +87,8 @@ def launch(
         See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
     
         - Submitting jobs the a scheduler's queue in a cluster. 
-        This is achieved by setting the config value scheduler.use_scheduler=True. 
-        Two job schedulers are currently supported by default: ['OAR', 'SLURM' ]. 
+        This is achieved by setting the config value scheduler.name to the name of the scheduler instead of None. 
+        Two job schedulers are currently supported by default: ['OARScheduler', 'SLURMScheduler' ]. 
         It is possible to support other schedulers by 
         defining a subclass of the abstract class Scheduler.
 
@@ -92,9 +112,6 @@ def launch(
     
     :type config_path: str
     :type config_name: str (default "None")
-    :raises JobSubmissionError: when using a scheduler if the job submission fails in batch mode.
-    :raises git.exc.InvalidGitRepositoryError: when using the LastGitCommitWD manager 
-                if the executed code does not have a git repository.
     """
 
     version_base= None # by default set the version base for hydra to None.
@@ -121,7 +138,7 @@ def launch(
     os.makedirs(config_path, exist_ok=True)
     custom_config_file = os.path.join(config_path,config_name)
     if not os.path.exists(custom_config_file):
-        custom_config = {'custom':MISSING,'seed':MISSING}
+        custom_config = {'user_config':MISSING}
         omegaconf.OmegaConf.save(config=custom_config, f=custom_config_file)
 
 
@@ -133,84 +150,114 @@ def launch(
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
+                args_parser = get_args_parser()
+                args = args_parser.parse_args()
+
+                ### Setting hydra defaults 
                 flattened_hydra_default_dict = _flatten_dict(hydra_defaults_dict)
                 hydra_defaults = [
                     key + "=" + value
                     for key, value in flattened_hydra_default_dict.items()
                 ]
-                args_parser = get_args_parser()
-                args = args_parser.parse_args()
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
 
-                if args.experimental_rerun is not None:
-                    cfg = _get_rerun_conf(args.experimental_rerun, args.overrides)
-                    task_function(cfg)
-                    _flush_loggers()
-                else:
-                    # no return value from run_hydra()
-                    # as it may sometime actually run the task_function
-                    # multiple times (--multirun)
-                    _run_hydra(
-                        args=args,
-                        args_parser=args_parser,
-                        task_function=task_function,
-                        config_path=config_path,
-                        config_name=config_name,
-                    )
-
-                    sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
-                    try:
-                        os.remove(os.path.join(sweep_dir, "multirun.yaml"))
-                    except FileNotFoundError:
-                        pass
+                _run_hydra(
+                    args=args,
+                    args_parser=args_parser,
+                    task_function=task_function,
+                    config_path=config_path,
+                    config_name=config_name,
+                )
 
         return decorated_main
 
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(cfg):
-            cfg = _process_default_user_config(cfg, config_path, config_name)
+            cfg = _build_config(cfg, config_path, config_name)
 
-            cfg.system.cmd = task_function.__code__.co_filename
-            cfg.system.app = os.environ["_"]
-            ## Ensuring parent_log_dir is an absolute path
-            cfg.logs.parent_log_dir = os.path.abspath(cfg.logs.parent_log_dir)
+            cfg.update_dict({'run_info': {'cmd':task_function.__code__.co_filename,
+                                        'app': os.environ["_"]}})
             
-            if cfg.scheduler.use_scheduler:
-                scheduler = config_to_instance(config_module_name="class_name", **cfg.scheduler) 
-                wd_manager = config_to_instance(config_module_name="class_name", **cfg.wd_manager)
-                work_dir = wd_manager.make_working_directory()
-                wd_manager.update_configs(cfg.wd_manager)
+            cfg.update_dict({'run_info':{'status':Status.STARTING.name}})
 
-                logger = Logger(cfg)
+            if cfg.base_config.use_version_manager:
+                version_manager = config_to_instance(config_module_name="name", **cfg.base_config.version_manager)
+                work_dir = version_manager.make_working_directory()
+                cfg.update_dict({'base_config':version_manager.get_configs()})
+            else:
+                work_dir = os.getcwd()
+
+            if cfg.base_config.use_logger:
+                logger = config_to_instance(config_module_name="name", **cfg.base_config.logger)
+                log_id = logger.log_id
+                log_dir = logger.log_dir
+                parent_log_dir = logger.parent_log_dir
+                cfg.update_dict({'run_info':{'log_id':log_id, 'log_dir':log_dir}})
+            else:
+                logger = None
+            
+            if cfg.base_config.use_scheduler:
+                try:
+                    assert logger
+                except AssertionError:
+                    raise Exception("To use the scheduler, you must also use a logger, otherwise results might not be stored!")
+                scheduler = config_to_instance(config_module_name="name", **cfg.base_config.scheduler) 
+
                 cmd = _make_job_command(scheduler,
-                                        cfg.system,
+                                        cfg.run_info,
                                         work_dir,
-                                        logger.parent_log_dir,
-                                        logger.log_dir,
-                                        logger.log_id)
+                                        parent_log_dir,
+                                        log_dir,
+                                        log_id)
                 print(cmd)
 
-                job_path = _save_job_command(cmd, logger.log_dir)
+                job_path = _save_job_command(cmd, log_dir)
                 process_output = scheduler.submit_job(job_path)
                 scheduler_job_id = scheduler.get_job_id(process_output) 
 
-                logger._update_scheduler_job_id(scheduler_job_id)
-                logger.log_config()
+                cfg.update({'base_config':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
+
+
+                logger._log_configs(cfg)
                 
             else:
+                ## Setting up the working directory
+                os.chdir(work_dir)
+                sys.path.insert(0, work_dir)
+                cfg.update_dict({'run_info': {'work_dir':work_dir}})
 
-                logger = Logger(cfg)
-                logger._set_scheduler_job_id() # Checks if a metadata file exists and loads some of its content.
-                logger.log_config()
+                if logger:
+                    
+                    cfg.update_dict(
+                        _get_scheduler_configs(log_dir,
+                                                logger.config_file_name)) # Checks if a metadata file exists and loads the scheduler configs
                 try:
-                    logger._log_status(Status.RUNNING)
-                    task_function(logger)
-                    logger._log_status(Status.COMPLETE)
+                    
+                    cfg.update_dict({'run_info':{'status':Status.RUNNING.name}})
+                    if logger:
+                        logger._log_configs(cfg)
+                    if seeding_function:
+                        try:
+                            assert 'seed' in cfg.user_config.keys()
+                        except AssertionError:
+                            msg = "Missing field: The 'user_config' must contain a field 'seed'\n"
+                            msg+= "provided as argument to the function 'seeding_function' "
+                            raise Exception(msg)
+                        seeding_function(cfg.user_config.seed)
+                    task_function(cfg,logger)
+                    cfg.update_dict({'run_info':{'status':Status.COMPLETE.name}})
+                    
+                    if logger:
+                        logger._log_configs(cfg)
+                    
                     return None
                 except Exception:
-                    logger._log_status(Status.FAILED)
+                    cfg.update_dict({'run_info':{'status':Status.FAILED.name}})
+
+                    if logger:
+                        logger._log_configs(cfg)
                     raise
 
         _set_co_filename(decorated_task, task_function.__code__.co_filename)
@@ -220,32 +267,15 @@ def launch(
     def composed_decorator(task_function: TaskFunction) -> Callable[[], None]:
         decorated_task = launcher_decorator(task_function)
         task_function = hydra_decorator(decorated_task)
+        sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
+        try:
+            os.remove(os.path.join(sweep_dir, "multirun.yaml"))
+        except FileNotFoundError:
+            pass
+
         return task_function
 
     return composed_decorator
-
-
-def _get_rerun_conf(file_path: str, overrides: List[str]) -> DictConfig:
-    msg = "Experimental rerun CLI option, other command line args are ignored."
-    warnings.warn(msg, UserWarning)
-    file = Path(file_path)
-    if not file.exists():
-        raise ValueError(f"File {file} does not exist!")
-
-    if len(overrides) > 0:
-        msg = "Config overrides are not supported as of now."
-        warnings.warn(msg, UserWarning)
-
-    with open(str(file), "rb") as input:
-        config = pickle.load(input)  # nosec
-    configure_log(config.hydra.job_logging, config.hydra.verbose)
-    HydraConfig.instance().set_config(config)
-    task_cfg = copy.deepcopy(config)
-    with read_write(task_cfg):
-        with open_dict(task_cfg):
-            del task_cfg["hydra"]
-    assert isinstance(task_cfg, DictConfig)
-    return task_cfg
 
 
 def _set_co_filename(func, co_filename):
@@ -270,29 +300,38 @@ def _set_co_filename(func, co_filename):
     )
 
 
+def _get_scheduler_configs(log_dir, config_file_name):
+    abs_name = os.path.join(log_dir, config_file_name +".yaml")
+    scheduler_configs = {}
+    import yaml
+    if os.path.isfile(abs_name):
+        with open(abs_name, "r") as file:
+            configs = yaml.safe_load(file)
+            scheduler_configs = {'base_config':{'scheduler':configs['base_config']['scheduler']}}
+    return  scheduler_configs
 
 
 def _make_job_command(scheduler,
-                  system, 
+                  run_info, 
                   work_dir,
                   parent_log_dir,
                   log_dir,
                   job_id,
                   ):
     ## Writing job command
-    job_command = [_job_command(system,parent_log_dir, work_dir, job_id)]
+    job_command = [_job_command(run_info,parent_log_dir, work_dir, job_id)]
 
     ## Setting shell   
-    shell_cmd = [f"#!{system.shell_path}\n"]
+    shell_cmd = [f"#!{scheduler.shell_path}\n"]
     
     ## Setting scheduler options
     sheduler_option_command = [scheduler.option_command(log_dir)]
     
     ## Setting environment
-    env_cmds = [f"{system.shell_config_cmd}\n", 
+    env_cmds = [f"{scheduler.shell_config_cmd}\n", 
                 f"{scheduler.cleanup_cmd}\n"]
     try:
-        env_cmds += [f"{system.env}\n"]
+        env_cmds += [f"{scheduler.env_cmd}\n"]
     except OmegaConfBaseException:
         pass
 
@@ -301,8 +340,12 @@ def _make_job_command(scheduler,
     return cmd
 
 
-def _process_default_user_config(cfg, config_path, config_name):
-    default_config = OmegaConf.structured(Config)
+def _configure_experimentalist():
+    raise NotImplementedError
+
+
+def _build_config(cfg, config_path, config_name):
+    default_config = OmegaConf.structured(Metadata)
     conf_dict = OmegaConf.to_container(default_config, resolve=True)
     default_config = OmegaConf.create(conf_dict)
     
@@ -312,28 +355,43 @@ def _process_default_user_config(cfg, config_path, config_name):
     if os.path.exists(base_config_file):
         import yaml
         with open(base_config_file, "r") as file:
-            base_config = OmegaConf.create(yaml.safe_load(file))
+            base_config = OmegaConf.create({'base_config':yaml.safe_load(file)})
+        valid_keys = ['logger','version_manager','scheduler',
+                        'use_version_manager',
+                        'use_logger',
+                        'use_scheduler']
+        for key in base_config['base_config'].keys():
+            try: 
+                assert key in valid_keys 
+            except AssertionError:
+                msg =f'In the file {base_config_file},'
+                msg += f'the following field is invalid: {key}\n'
+                msg += f'Valid fields are {valid_keys}\n'
+                raise AssertionError(msg)
+
         default_config = OmegaConf.merge(default_config, base_config)
     
     else:
-        system_custom = {'shell_config_cmd': default_config['system']['shell_config_cmd'],
-                           'shell_path': default_config['system']['shell_path'],
-                            'env': default_config['system']['env'] }
-         
-        logs_custom = copy.deepcopy(default_config['logs'])
-        del logs_custom['log_id']
-        del logs_custom['path']
-        
-        base_config = OmegaConf.create({'scheduler': default_config['scheduler'],
-                                        'wd_manager': default_config['wd_manager'],
-                                        'system': system_custom,
-                                        'logs':logs_custom})
+        #_configure_experimentalist(default_config)        
+        base_config = OmegaConf.create(default_config['base_config'])
 
         omegaconf.OmegaConf.save(config=base_config, f=base_config_file)
 
+    # for key in cfg.keys():
+    #     try: 
+    #         assert key in  default_config.keys()
+    #     except AssertionError:
+    #         msg = f'The following field is invalid: {key}\n'
+    #         msg += f'Valid fields are {default_config.keys()}\n'
+    #         msg += "Consider using 'user_config' field for user defined options"
+    #         raise AssertionError(msg)
 
     cfg = OmegaConf.merge(default_config, cfg)
-    
+
+    cfg = convert_dict(cfg, 
+                        src_class=omegaconf.dictconfig.DictConfig, 
+                        dst_class=ConfigDict)
+    cfg.set_starting_run_info()
     return cfg
 
 def _save_job_command(cmd_string, log_dir):
@@ -344,21 +402,21 @@ def _save_job_command(cmd_string, log_dir):
 
 
 
-def _job_command(system, parent_log_dir, work_dir, job_id):
-    #exec_file = system.cmd
-    exec_file = os.path.relpath(system.cmd, os.getcwd())
+def _job_command(run_info, parent_log_dir, work_dir, job_id):
+    #exec_file = run_info.cmd
+    exec_file = os.path.relpath(run_info.cmd, os.getcwd())
     
 
     args = _get_overrides()
-    now = datetime.now()
-    date = now.strftime("%d/%m/%Y")
-    time = now.strftime("%H:%M:%S")
     values = [
         f"cd {work_dir}",
-        f"{system.app} {exec_file} {args} ++system.date='{date}' \
-            ++system.time='{time}'  ++logs.log_id={job_id}\
-            ++logs.parent_log_dir={parent_log_dir} ++scheduler.use_scheduler={False}",
+        f"{run_info.app} {exec_file} {args} \
+            ++base_config.logger.forced_log_id={job_id}\
+            ++base_config.logger.parent_log_dir={parent_log_dir} \
+            ++base_config.use_scheduler={False}\
+            ++base_config.use_version_manager={False}"
     ]
+
     values = [f"{val}\n" for val in values]
     return "".join(values)
 
@@ -366,7 +424,7 @@ def _get_overrides():
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
     def filter_fn(x):
-        return ("scheduler.use_scheduler" not in x) and ("logs.parent_log_dir" not in x)
+        return ("scheduler" not in x) and ("logger.parent_log_dir" not in x)
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args

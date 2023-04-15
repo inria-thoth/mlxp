@@ -4,29 +4,29 @@ The launching package
 This package allows launching multiple experiments on a cluster using hydra.
 
 
-The :class:`~experimentalist.launching.launcher.launch` Function
+The :class:`~experimentalist.launcher.launch` Function
 -------------------------
 
 
-.. automodule:: experimentalist.launching.launcher
+.. automodule:: experimentalist.launcher
    :members:
    :show-inheritance:
 
 
-The :class:`~experimentalist.launching.schedulers.Scheduler` Class
+The :class:`~experimentalist.scheduler.Scheduler` Class
 -------------------------
 
 
-.. automodule:: experimentalist.launching.schedulers
+.. automodule:: experimentalist.scheduler
    :members:
    :show-inheritance:
 
 
-The :class:`~experimentalist.launching.wd_manager.WDManager` Class
+The :class:`~experimentalist.version_manager.WDManager` Class
 -------------------------
 
 
-.. automodule:: experimentalist.launching.wd_manager
+.. automodule:: experimentalist.version_manager
    :members:
    :show-inheritance:
 

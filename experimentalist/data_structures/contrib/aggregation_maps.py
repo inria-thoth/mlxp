@@ -2,10 +2,8 @@ import os
 import numpy as np
 
 
-from experimentalist.reading.data_operations import AggregationMap
+from experimentalist.data_structures import AggregationMap
     
-
-
 class Last(AggregationMap):
     def __init__(self, key):
         super().__init__([key], map_name="last")

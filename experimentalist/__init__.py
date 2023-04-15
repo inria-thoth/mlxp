@@ -1,18 +1,16 @@
-from experimentalist.launching.launcher import launch
-from experimentalist.reading.reader import Reader
-from experimentalist.logging.logger import Logger
+from experimentalist.launcher import launch
+from experimentalist.reader import Reader
+from experimentalist.logger import DefaultLogger
 
-from experimentalist.launching.schedulers import NoScheduler, SLURMScheduler, OARScheduler
+from experimentalist.scheduler import  SLURMScheduler, OARScheduler
 
-from experimentalist.logging.artifacts import Artifact, Checkpoint
-from experimentalist.logging.contrib.artifacts import NumpyArray, PNGImage, TorchModel
-from experimentalist.launching.wd_manager import LastGitCommitWD, CWD 
+from experimentalist.version_manager import GitVM 
 
 
 __all__ = [
     "launch",
     "Reader",
-    "Logger",
+    "DefaultLogger",
     "OARScheduler",
     "SLURMScheduler",
     "NoScheduler"

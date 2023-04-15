@@ -4,7 +4,6 @@ import json
 import yaml
 from collections import defaultdict
 from copy import deepcopy
-from experimentalist.utils import _flatten_dict
 from pathlib import Path
 import itertools
 from functools import reduce
@@ -12,6 +11,10 @@ import pandas as pd
 from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, ItemsView
 
 from typing import List, Dict, Tuple
+
+from experimentalist.utils import _flatten_dict
+
+
 
 LAZYDATA="LAZYDATA" 
 
@@ -39,7 +42,6 @@ class AggregationMap:
         raise NotImplementedError
 
 
-
 class Config(Mapping):
     """
     A dictionary containing the configs and logs of a given a single run.
@@ -47,7 +49,7 @@ class Config(Mapping):
     By default the keys corresponding to configs are preceeded by the prefix "metadata.", 
     while those corresponding to a user defined output are preceeded by the file name 
     containing such output (e.g. "metrics."). Example of keys:
-    - "metadata.system.status"
+    - "metadata.run_info.status"
     - "metrics.loss"
 
     .. note:: Except for configuration information stored in the file "metadata.yaml", 
@@ -61,7 +63,6 @@ class Config(Mapping):
         #flattened_dict = _flatten_dict(config_dict, parent_key=parent_key) 
         self.config = { "flattened": flattened_dict,
                         "lazy": LazyDict(flattened_dict)}
-        #parent_dir = self.config["flattened"][self.parent_key+"logs.path"]
         self.parent_dir = parent_dir
         self._make_lazydict()
 
@@ -244,13 +245,13 @@ class ConfigList(list):
         #grouped_config.pandas = pandas_grouped_df
         return grouped_config
 
-    def config_diff(self, start_key="metadata.custom")->List[str]:
+    def config_diff(self, start_key="metadata.user_config")->List[str]:
         """
             Returns a list of colums keys starting with 'start_key' 
             and whose value varies in the dataframe.
             
             :param start_key: A string with which all column names to be considered must start. 
-            :type start_key: str (default 'metadata.custom')
+            :type start_key: str (default 'metadata.user_config')
             :return: A list of strings containing the column names 
             starting with 'start_key' and whose values vary in the dataframe.
             :rtype: List[str]
@@ -262,8 +263,6 @@ class ConfigList(list):
         ref_dict = None
         
         for config in self:
-            #config_dict = config.hierarchical()["custom"]
-            #config_dict = _flatten_dict(config_dict, parent_key="metadata.custom")
             if ref_dict is None:
                 ref_dict = config
             else:

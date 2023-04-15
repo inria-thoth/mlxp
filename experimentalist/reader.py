@@ -8,46 +8,14 @@ from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb import Query
 from tinydb.table import Document
-from tinydb.queries import QueryInstance
 
-from experimentalist.reading.data_operations import ConfigList, Config, LAZYDATA
-from experimentalist.reading.parser import Lexer, Parser
+from experimentalist.data_structures.data_operations import ConfigList, Config, LAZYDATA
+from experimentalist.parser import Parser, DefaultParser
 from experimentalist.utils import _flatten_dict
 from typing import Union, Optional, List
 import pandas as pd
 import abc
 
-class QueryParser(abc.ABC):
-    """
-    An abstract class for parsing queries. Any parser used by the class Reader must inherit 
-        from this abstract class. 
-    
-    """
-
-    @abc.abstractmethod
-    def parse(self,query: str)->QueryInstance:
-        
-        """
-        A method for parsin a query string into a tinydb QueryInstance object. 
-        
-        :param query: A query in the form of a string
-        :type query: str
-        :return: A instance of a QueryInstance class representing the query
-        :rtype: QueryInstance
-        :raises SyntaxError: if the query string does not follow expected syntax.  
-        """
-
-class SimpleQueryParser(QueryParser):
-
-    """
-        A simple parser based on python syntax.
-    """
-
-    def __init__(self):
-        self.lexer = Lexer()
-        self.parser = Parser()
-    def parse(self,query: str)->QueryInstance:
-        return self.parser.parse(query, lexer=self.lexer)
 
 
 class Reader(object):
@@ -56,10 +24,10 @@ class Reader(object):
     Once, created, it is possible to query the database using the method 'search'
     to get the results matching to a specific configuration setting. 
     The result of the query is returned either as a ConfigList object or a pandas dataframe.
-    The queries are processed using a parser inheriting form the abstract class QueryParser. 
-    By default, the parser is SimpleQueryParser. 
+    The queries are processed using a parser inheriting form the abstract class Parser. 
+    By default, the parser is DefaultParser. 
     However, the user can provide a custom parser with a custom syntax 
-    inheriting from the class QueryParser.
+    inheriting from the class Parser.
 
     .. py:attribute:: src_dir
         :type: str
@@ -85,7 +53,7 @@ class Reader(object):
     def __init__(self,  src_dir: str,
                         dst_dir: Optional[str] = None,
                         file_name: str="metadata", 
-                        parser: QueryParser = SimpleQueryParser(),
+                        parser: Parser = DefaultParser(),
                         reload: bool = False):
         """
         Constructor
@@ -100,7 +68,7 @@ class Reader(object):
         :type src_dir: str
         :type dst_dir: str (default None)
         :type file_name: str (default 'metadata')
-        :type parser: QueryParser (default SimpleQueryParser)
+        :type parser: Parser (default DefaultParser)
         :type reload: bool (default False)
     
         :raises PermissionError: if user has no writing priviledges on dst_dir  
@@ -149,7 +117,7 @@ class Reader(object):
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [ Config(r,parent_dir=r[self.file_name+".logs.path"]) for r in res ]
+        res = [ Config(r,parent_dir=r[self.file_name+".run_info.log_dir"]) for r in res ]
         res = ConfigList(res)
         if asPandasDF:
             res = res.toPandasDF()
