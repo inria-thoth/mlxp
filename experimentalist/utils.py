@@ -2,7 +2,7 @@ from collections.abc import MutableMapping
 import importlib
 import os
 import experimentalist
-
+import copy
 
 def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
     return dict(_flatten_dict_gen(d, parent_key, sep))
@@ -34,12 +34,12 @@ def import_module(module_name):
                 return eval(module+attr[1:])
 
 
-def config_to_instance(config_module_name="class_name",**config):
+def config_to_instance(config_module_name="name",**config):
+    config = copy.deepcopy(config)
     module_name = config.pop(config_module_name)
-    args = config['args']
     attr = import_module(module_name)
-    if args:
-        attr = attr(**args)
+    if config:
+        attr = attr(**config)
     else:
         attr = attr()
     return attr

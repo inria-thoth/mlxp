@@ -4,14 +4,17 @@ from omegaconf import OmegaConf
 import omegaconf
 import subprocess
 
+from typing import Any, Dict
 
-class WDManager(abc.ABC):
+
+
+class VersionManager(abc.ABC):
     """
     An abstract class whose children allow custumizing the working directory of the run.
     
     """
     @abc.abstractmethod
-    def update_configs(self,cfg: OmegaConf)->None:
+    def get_configs(self)->Dict[str, Any]:
         """
             Updates the config with the new updated 
             info on the working directory
@@ -39,9 +42,9 @@ class WDManager(abc.ABC):
 
 
 
-class LastGitCommitWD(WDManager):
+class GitVM(VersionManager):
     """
-    LastGitCommitWD creates a copy of the current directory 
+    GitVM creates a copy of the current directory 
     based on the latest commit, if it doesn't exist already, 
     then sets the working directory to this copy. 
     This class allows separting development code from 
@@ -67,30 +70,32 @@ class LastGitCommitWD(WDManager):
 
     def __init__(self,
                 parent_target_work_dir: str,
-                handleUntrackedFiles: bool, 
-                handleUncommitedChanges: bool):
+                skip_requirements: bool,
+                interactive_mode:bool):
+                
         self.parent_target_work_dir = os.path.abspath(parent_target_work_dir)
-        self.handleUncommitedChanges = handleUncommitedChanges
-        self.handleUntrackedFiles = handleUntrackedFiles
+        self.skip_requirements = skip_requirements
+        self.interactive_mode = interactive_mode
         self.dst = None 
         self.commit_hash = None
         self.repo_path = None
-    def update_configs(self, cfg:OmegaConf)->None:
+        self.work_dir = os.getcwd()
+        self.requirements = ["UNKNOWN"]
+
+    def get_configs(self)->Dict[str, Any]:
         """
             Updates the config with the new updated 
             info on the working directory
 
             :param cfg: Configuration of the run
             :type cfg: OmegaConf
-            
         """
-        omegaconf.OmegaConf.set_struct(cfg, True)
-        with omegaconf.open_dict(cfg):
-            cfg.requirements = self._get_requirements() 
-            cfg.commit_hash = self.commit_hash #if self.commit_hash is not None
-            cfg.repo_path = self.repo_path #if self.repo_name is not None
-        omegaconf.OmegaConf.set_struct(cfg, False)
-        
+        config_dict = {"requirements": self.requirements,
+                        "commit_hash":self.commit_hash,
+                        "repo_path": self.repo_path
+                        }
+                        
+        return {'version_manager':config_dict}
 
     def make_working_directory(self)->str:
         
@@ -101,6 +106,7 @@ class LastGitCommitWD(WDManager):
         :rtype: str
         :return: A path to the target working directory
         """
+        
         repo = self._getGitRepo()
         repo_root = repo.git.rev_parse("--show-toplevel")
         relpath = os.path.relpath(os.getcwd(), repo_root)
@@ -110,14 +116,48 @@ class LastGitCommitWD(WDManager):
         target_name = os.path.join(repo_name, self.commit_hash)
         parent_work_dir = self.parent_target_work_dir
         self.dst = os.path.join(parent_work_dir, target_name)
-        if not os.path.exists(self.dst):
-            print("Cloning the repository")
-            repo.clone(self.dst)
-            print("Getting the requirements using pipreqs")
-            self._make_requirements_file()
-        work_dir = os.path.join(self.dst, relpath)
-        return work_dir
 
+        self._handle_cloning(repo, relpath)
+        return self.work_dir
+    def _clone_repo(self,repo,relpath):
+        print(f"Creating a copying the repository at {self.dst}")
+        
+        repo.clone(self.dst)
+        if not self.skip_requirements:
+            self._make_requirements_file()
+        self._set_requirements()
+        self.work_dir = os.path.join(self.dst, relpath)
+        print(f"Job will be executed from {self.work_dir}")
+        
+    def _handle_cloning(self, repo, relpath):
+        while True:
+            if not os.path.exists(self.dst):
+                if self.interactive_mode:
+                    print(f"There is no separate copy of the repository with commit-hash {self.commit_hash}")
+                    print("Would you like to create one? (y/n):")
+                    print(f"y: A new copy of the repository will be created in {self.dst}. Run will be exectured from there.")
+                    print("n: No copy will be created. Run will be executed from the current repository.")
+                    choice = input("Please enter you answer (y/n):")
+
+                    if choice=='y':
+
+                        self._clone_repo(repo,relpath)
+                        break 
+                    elif choice=='n':
+                        print(f"No copy will be created!") 
+                        print(f"Run will be executed from the current repository {self.dst}")
+                        break
+                    else:
+                        print("Invalid choice. Please try again. (y/n)")
+                else:
+                    self._clone_repo(repo,relpath)
+                    break
+            else:
+                print(f"Found a copy of the repository with commit-hash {self.commit_hash}")
+                print(f"Run will be executed from {self.dst}")
+                self.work_dir = os.path.join(self.dst, relpath)
+                self._set_requirements()
+                break
 
     def _handle_commit_state(self, repo):
         ignore_msg = "Ingoring uncommitted changes!\n"
@@ -126,7 +166,7 @@ class LastGitCommitWD(WDManager):
 
         while True:
             if repo.is_dirty():
-                if self.handleUncommitedChanges:
+                if self.interactive_mode:
                     print("There are uncommitted changes in the repository:")
                     _disp_uncommited_files(repo)
                     print("How would you like to handle uncommitted changes?")
@@ -172,7 +212,7 @@ class LastGitCommitWD(WDManager):
 
         while True:
             if repo.untracked_files:
-                if self.handleUntrackedFiles:
+                if self.interactive_mode:
                     print("There are untracked files in the repository:")
                     _disp_untracked_files(repo)
                     print("How would you like to handle untracked files?")
@@ -229,24 +269,29 @@ class LastGitCommitWD(WDManager):
         reqs_cmd = f"pipreqs --force {self.dst}" 
         subprocess.check_call(reqs_cmd, shell=True)
         #raise NotImplementedError
-    def _get_requirements(self):
+    def _set_requirements(self):
         fname = os.path.join(self.dst, 'requirements.txt')
-        if not os.path.exists(fname):
+        
+
+        if os.path.exists(fname) or self.skip_requirements:
+            pass
+        else:
             self._make_requirements_file()
 
-        with open(fname, 'r') as file:
-        # Read the contents of the file
-            contents = file.read()
-            # Split the contents into lines
-            lines = contents.splitlines()
-            # Create a list of package names
-            package_list = []
-            # Iterate through the lines and append each line (package name) to the list
-            for line in lines:
-                package_list.append(line)
+        if os.path.exists(fname):
+            with open(fname, 'r') as file:
+            # Read the contents of the file
+                contents = file.read()
+                # Split the contents into lines
+                lines = contents.splitlines()
+                # Create a list of package names
+                package_list = []
+                # Iterate through the lines and append each line (package name) to the list
+                for line in lines:
+                    package_list.append(line)
+            self.requirements =  package_list
 
-
-        return package_list
+        
 
 
     def _getGitRepo(self):
@@ -263,23 +308,6 @@ class LastGitCommitWD(WDManager):
         self._handle_untracked_files(repo)
         self._handle_commit_state(repo)
         return repo
-
-class CWD(WDManager):
-    """
-    CWD keeps the default working directory of the run.
-    
-    """
-
-    def make_working_directory(self)->str:
-        """
-            Returns the current working directory.     
-            
-            :rtype: str
-            :return: A path to the target working directory
-            
-        """
-
-        return os.getcwd()
 
 
 def _disp_uncommited_files(repo):
