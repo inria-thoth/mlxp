@@ -20,10 +20,3 @@ The :class:`~experimentalist.reading.data_operations` Module
    :show-inheritance:
 
 
-The :class:`~experimentalist.reading.aggregation_maps.AggregationMap` Class
--------------------------
-
-.. automodule:: experimentalist.reading.aggregation_maps
-   :members:
-   :show-inheritance:
-
