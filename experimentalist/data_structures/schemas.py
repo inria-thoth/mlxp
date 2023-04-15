@@ -58,7 +58,7 @@ class ConfigScheduler:
 
 
 @dataclass
-class ConfigOARScheduler(Scheduler):
+class ConfigOARScheduler(ConfigScheduler):
 
 	"""
 	Configs for OAR job scheduler. See documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs 
@@ -68,7 +68,7 @@ class ConfigOARScheduler(Scheduler):
 
 	
 @dataclass
-class ConfigSLURMScheduler(Scheduler):
+class ConfigSLURMScheduler(ConfigScheduler):
 	"""
 	Configs for SLURM job scheduler. See documentation in: https://slurm.schedmd.com/documentation.html
 	"""
@@ -102,7 +102,7 @@ class ConfigVersionManager:
 
 
 @dataclass
-class ConfigGitVM(VersionManager):
+class ConfigGitVM(ConfigVersionManager):
 
 	"""
 	Configs for using the LastGitCommitWD working directory manager. 

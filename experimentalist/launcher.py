@@ -26,6 +26,8 @@ from hydra.types import TaskFunction
 from experimentalist.utils import _flatten_dict, config_to_instance
 from experimentalist.data_structures.schemas import Metadata
 from experimentalist.data_structures.config_dict import convert_dict, ConfigDict
+from experimentalist.logger import Logger
+
 from datetime import datetime
 import socket
 import sys
@@ -73,7 +75,7 @@ class Context:
     user_config : ConfigDict = MISSING
     base_config : ConfigDict = MISSING
     run_info: ConfigDict = MISSING
-    logger: Union[Logger(),None] = MISSING
+    logger: Union[Logger,None] = MISSING
 
 
 def launch(
