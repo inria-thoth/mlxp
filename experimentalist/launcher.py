@@ -26,7 +26,8 @@ from hydra.types import TaskFunction
 from experimentalist.utils import _flatten_dict, config_to_instance
 from experimentalist.data_structures.schemas import Metadata
 from experimentalist.data_structures.config_dict import convert_dict, ConfigDict
-
+from datetime import datetime
+import socket
 import sys
 
 _UNSPECIFIED_: Any = object()
@@ -67,8 +68,7 @@ class Status(Enum):
 
 
 def launch(
-    config_path: Optional[str] = _UNSPECIFIED_,
-    config_name: Optional[str] = None,
+    config_path: str = './configs',
     seeding_function: Union[Callable[Any, None],None] = None
 ) -> Callable[[TaskFunction], Any]:
     """Decorator of the main function to be executed.  
@@ -113,32 +113,14 @@ def launch(
     :type config_path: str
     :type config_name: str (default "None")
     """
-
+    config_name = "user_config"
     version_base= None # by default set the version base for hydra to None.
     version.setbase(version_base)
-
-    if config_path is _UNSPECIFIED_:
-        if version.base_at_least("1.2"):
-            config_path = None
-        elif version_base is _UNSPECIFIED_:
-            url = "https://hydra.cc/docs/upgrades/\
-                    1.0_to_1.1/changes_to_hydra_main_config_path"
-            deprecation_warning(
-                message=dedent(
-                    f"""
-                config_path is not specified in @hydra.main().
-                See {url} for more information."""
-                ),
-                stacklevel=2,
-            )
-            config_path = "."
-        else:
-            config_path = "."
     
     os.makedirs(config_path, exist_ok=True)
-    custom_config_file = os.path.join(config_path,config_name)
+    custom_config_file = os.path.join(config_path,config_name+".yaml")
     if not os.path.exists(custom_config_file):
-        custom_config = {'user_config':MISSING}
+        custom_config = {'seed':None}
         omegaconf.OmegaConf.save(config=custom_config, f=custom_config_file)
 
 
@@ -175,12 +157,18 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(cfg):
-            cfg = _build_config(cfg, config_path, config_name)
-
-            cfg.update_dict({'run_info': {'cmd':task_function.__code__.co_filename,
-                                        'app': os.environ["_"]}})
+            cfg = _build_config(cfg, config_path)
             
-            cfg.update_dict({'run_info':{'status':Status.STARTING.name}})
+            now = datetime.now()
+            info = {'hostname': socket.gethostname(),
+                    'process_id': os.getpid(),
+                    'cmd':task_function.__code__.co_filename,
+                    'app': os.environ["_"],
+                    'start_date':now.strftime("%d/%m/%Y"),
+                    'start_time':now.strftime("%H:%M:%S"),
+                    'status':Status.STARTING.name}
+            
+            cfg.update_dict({'run_info':info})
 
             if cfg.base_config.use_version_manager:
                 version_manager = config_to_instance(config_module_name="name", **cfg.base_config.version_manager)
@@ -218,8 +206,6 @@ def launch(
                 scheduler_job_id = scheduler.get_job_id(process_output) 
 
                 cfg.update({'base_config':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
-
-
                 logger._log_configs(cfg)
                 
             else:
@@ -246,15 +232,28 @@ def launch(
                             msg+= "provided as argument to the function 'seeding_function' "
                             raise Exception(msg)
                         seeding_function(cfg.user_config.seed)
+
+
+
                     task_function(cfg,logger)
-                    cfg.update_dict({'run_info':{'status':Status.COMPLETE.name}})
+                    now =  datetime.now()
+                    info = {'end_date':now.strftime("%d/%m/%Y"),
+                            'end_time':now.strftime("%H:%M:%S"),
+                            'status':Status.COMPLETE.name}
+            
+                    cfg.update_dict({'run_info':info})
                     
                     if logger:
                         logger._log_configs(cfg)
                     
                     return None
                 except Exception:
-                    cfg.update_dict({'run_info':{'status':Status.FAILED.name}})
+                    now =  datetime.now()
+                    info = {'end_date':now.strftime("%d/%m/%Y"),
+                            'end_time':now.strftime("%H:%M:%S"),
+                            'status':Status.FAILED.name}
+            
+                    cfg.update_dict({'run_info':info})
 
                     if logger:
                         logger._log_configs(cfg)
@@ -344,7 +343,7 @@ def _configure_experimentalist():
     raise NotImplementedError
 
 
-def _build_config(cfg, config_path, config_name):
+def _get_default_config(config_path):
     default_config = OmegaConf.structured(Metadata)
     conf_dict = OmegaConf.to_container(default_config, resolve=True)
     default_config = OmegaConf.create(conf_dict)
@@ -385,13 +384,34 @@ def _build_config(cfg, config_path, config_name):
     #         msg += f'Valid fields are {default_config.keys()}\n'
     #         msg += "Consider using 'user_config' field for user defined options"
     #         raise AssertionError(msg)
+    
+    # default_config = convert_dict(default_config, 
+    #                     src_class=omegaconf.dictconfig.DictConfig, 
+    #                     dst_class=ConfigDict)
+    return default_config
 
-    cfg = OmegaConf.merge(default_config, cfg)
+def _build_config(overrides, config_path):
+
+    cfg = _get_default_config(config_path)
+
+
+    overrides_base_config = OmegaConf.create({'base_config':overrides['base_config']})
+    cfg = OmegaConf.merge(cfg, overrides_base_config)
+    overrides = convert_dict(overrides, 
+                        src_class=omegaconf.dictconfig.DictConfig, 
+                        dst_class=dict)
+    overrides.pop('base_config')
+    overrides = convert_dict(overrides, 
+                        src_class=dict,
+                        dst_class=omegaconf.dictconfig.DictConfig)
+
+    user_config = OmegaConf.create({'user_config':overrides})
+    cfg = OmegaConf.merge(cfg, user_config)
 
     cfg = convert_dict(cfg, 
                         src_class=omegaconf.dictconfig.DictConfig, 
                         dst_class=ConfigDict)
-    cfg.set_starting_run_info()
+
     return cfg
 
 def _save_job_command(cmd_string, log_dir):

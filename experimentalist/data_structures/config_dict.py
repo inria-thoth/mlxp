@@ -1,8 +1,5 @@
 import omegaconf
 from typing import Dict, Any
-from datetime import datetime
-import socket
-import os
 import yaml
 
 class ConfigDict(dict):
@@ -34,16 +31,6 @@ class ConfigDict(dict):
                     self[key] = value
 
 
-
-    def set_starting_run_info(self):
-        now = datetime.now()
-        date = now.strftime("%d/%m/%Y")
-        time = now.strftime("%H:%M:%S")
-        info = {'hostname': socket.gethostname(),
-        'process_id': os.getpid(),
-        'start_date':date,
-        'start_time':time}
-        self.update_dict({'run_info':info})
 
 
 def convert_dict(config: Any, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)-> Any:

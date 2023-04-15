@@ -49,10 +49,10 @@ class Scheduler:
 		
 		Structure containing the arguments to instantiate the class name.
 	"""
-	name: str = ""
-	shell_path: str = "/bin/bash"
-	shell_config_cmd: str = "source ~/.bashrc"
-	env_cmd: str = "conda activate '${oc.env:CONDA_DEFAULT_ENV}'"
+	name: str = "Scheduler"
+	shell_path: str = ""
+	shell_config_cmd: str = ""
+	env_cmd: str = ""
 	cleanup_cmd: str = ""
 	option_cmd: list = field(default_factory=lambda: [])
 
@@ -128,8 +128,8 @@ class GitVM(VersionManager):
 
 	"""
 
-	name: str="LastGitCommitWD"
-	parent_target_work_dir: str = MISSING #os.path.join(os.getcwd(), "data/.workdir") 
+	name: str="GitVM"
+	parent_target_work_dir: str = "./.workdir" #os.path.join(os.getcwd(), "data/.workdir") 
 	skip_requirements: bool = False
 	interactive_mode: bool= True
 
@@ -201,10 +201,12 @@ class RunInfo:
 	app: str = ""
 	hostname: str = ""
 	process_id: int = -1
-	date: Any = ""
-	time: Any = ""
-	path: str = ""
-
+	start_date: Any = ""
+	start_time: Any = ""
+	log_dir: str = ""
+	log_id: int = -1
+	
+	
 @dataclass
 class Logger:
 	"""
@@ -237,7 +239,7 @@ class Logger:
 
 	name: str=MISSING
 	parent_log_dir: str = MISSING #os.path.join(os.getcwd(),"data","outputs")
-	forced_log_id: Any = None
+	forced_log_id: int = -1
 	config_file_name: str= "metadata"
 	log_streams_to_file: bool = False
 
@@ -301,7 +303,10 @@ class Metadata:
 	user_config: Any = None
 
 cs = ConfigStore.instance()
-# cs.store(name="config", node=Config)
+cs.store(group="base_config", 
+		 name="config", 
+		 node=Base_config(), 
+		 provider="base_config")
 
 # cs.store(
 #     group="experimentalist",

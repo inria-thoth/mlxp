@@ -2,7 +2,7 @@ from experimentalist.launcher import launch
 from experimentalist.reader import Reader
 from experimentalist.logger import DefaultLogger
 
-from experimentalist.scheduler import  SLURMScheduler, OARScheduler
+from experimentalist.scheduler import Scheduler, SLURMScheduler, OARScheduler
 
 from experimentalist.version_manager import GitVM 
 
@@ -13,7 +13,7 @@ __all__ = [
     "DefaultLogger",
     "OARScheduler",
     "SLURMScheduler",
-    "NoScheduler"
+    "Scheduler"
 ]
 
 VERSION = (2023, 0, 1)
