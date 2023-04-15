@@ -8,7 +8,7 @@ from hydra.core.config_store import ConfigStore
 
 
 @dataclass
-class Scheduler:
+class ConfigScheduler:
 	"""
 	Structure of the scheduler config file.
 
@@ -58,7 +58,7 @@ class Scheduler:
 
 
 @dataclass
-class OARScheduler(Scheduler):
+class ConfigOARScheduler(Scheduler):
 
 	"""
 	Configs for OAR job scheduler. See documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs 
@@ -68,7 +68,7 @@ class OARScheduler(Scheduler):
 
 	
 @dataclass
-class SLURMScheduler(Scheduler):
+class ConfigSLURMScheduler(Scheduler):
 	"""
 	Configs for SLURM job scheduler. See documentation in: https://slurm.schedmd.com/documentation.html
 	"""
@@ -78,7 +78,7 @@ class SLURMScheduler(Scheduler):
 
 
 @dataclass
-class VersionManager:
+class ConfigVersionManager:
 	"""
 	Structure of the config file for the working directory manager.
 
@@ -102,7 +102,7 @@ class VersionManager:
 
 
 @dataclass
-class GitVM(VersionManager):
+class ConfigGitVM(VersionManager):
 
 	"""
 	Configs for using the LastGitCommitWD working directory manager. 
@@ -208,7 +208,7 @@ class RunInfo:
 	
 	
 @dataclass
-class Logger:
+class ConfigLogger:
 	"""
 	Structure of the config file for the logs. 
 	The outputs for each run are saved in a directory of the form 
@@ -244,7 +244,7 @@ class Logger:
 	log_streams_to_file: bool = False
 
 @dataclass
-class DefaultLogger(Logger):
+class ConfigDefaultLogger(ConfigLogger):
 
 	name: str="DefaultLogger"
 	parent_log_dir: str = "./logs" #os.path.join(os.getcwd(),"data","outputs")
@@ -252,12 +252,13 @@ class DefaultLogger(Logger):
 
 @dataclass
 class Base_config:
-	logger: Logger = DefaultLogger()
-	scheduler: Scheduler = Scheduler()
-	version_manager: VersionManager = GitVM()
+	logger: ConfigLogger = ConfigDefaultLogger()
+	scheduler: ConfigScheduler = ConfigScheduler()
+	version_manager: ConfigVersionManager = ConfigGitVM()
 	use_version_manager: bool= False
 	use_scheduler: bool=False
 	use_logger: bool=True
+
 @dataclass
 class Metadata:
 	"""
@@ -302,11 +303,11 @@ class Metadata:
 	base_config: Base_config = Base_config()
 	user_config: Any = None
 
-cs = ConfigStore.instance()
-cs.store(group="base_config", 
-		 name="config", 
-		 node=Base_config(), 
-		 provider="base_config")
+#cs = ConfigStore.instance()
+# cs.store(group="base_config", 
+# 		 name="config", 
+# 		 node=Base_config(), 
+# 		 provider="base_config")
 
 # cs.store(
 #     group="experimentalist",
@@ -314,10 +315,10 @@ cs.store(group="base_config",
 #     node=Base_config(),
 #     provider="experimentalist")
 
-cs.store(name="OAR", node=OARScheduler())
-cs.store(name="SLURM", node=SLURMScheduler())
-cs.store(name="", node=None)
-cs.store(name="GitVM", node=GitVM())
-cs.store(name="Logger", node=DefaultLogger())
+# cs.store(name="OAR", node=OARScheduler())
+# cs.store(name="SLURM", node=SLURMScheduler())
+# cs.store(name="", node=None)
+# cs.store(name="GitVM", node=GitVM())
+# cs.store(name="Logger", node=DefaultLogger())
 
 

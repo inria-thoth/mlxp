@@ -19,56 +19,68 @@ Key functionalities
 Quick start guide
 ^^^^^^^^^^^^^^^^^
 
-To use Experimentalist for launching a job, you need to import it in the main python file that will be executed and use the decorator 'expy.launch' above the function to be run:
+
+As a starting point, let's assume the user already provided 
+a 'yaml' file containing some configuration options. These options will later be used by some python function 'my_func' defined by the user. The config file must be named 'user_config.yaml':
+
+.. code-block:: yaml
+   :caption: user_config.yaml
+ 
+   model:
+     num_layers: 4
+   optimizer:
+     lr: 1e-3
+
+Let's say, the user has a python file 'main.py' from which code will be executed by calling a function 'my_func'. To use Experimentalist for launching a job, you can use the decorator 'expy.launch' above the function 'my_func'. 
 
 .. code-block:: python
    :caption: main.py
 
    import experimentalist as expy
 
-   @expy.launch(config_name="config.yaml", config_path="./configs")
-   def my_func(logger: expy.Logger)->None:
-     print(logger.user_config)
+   @expy.launch()
+   def my_func(cfg: expy.ConfigDict, logger: expy.Logger)->None:
+
+     print("cfg.user_config")
 
    if __name__ == "__main__":
      my_func()
 
-The decorated function 'my_func' must take as argument an Logger object.
-The logger object will be automatically created on the fly during excecution and will laod the configurations options provided in "config.yaml" of the directory "./configs". 
+The decorated function 'my_func' must take as arguments a ConfigDict object and a Logger object, both of which are automatically created on the fly during execution. Note that 'my_func' is later called without providing these arguments just like in  `hydra <https://hydra.cc/>`_.
+The Logger object allows logging outputs of the run is a reserved directory while the ConfigDict object 'cfg' stores information about the run. In particular, the field 'user_config' of the ConfigDict object 'cfg' contains configurations options provided by the user in yaml file 'user_config.yaml' located by default in a directory './configs'.
+
+
+.. code-block:: yaml
+   :caption: user_config.yaml
+ 
+   model:
+     num_layers: 4
+   optimizer:
+     lr: 1e-3
+
+When executing the python file 'main.py' from the command-line, we get the following output:
 
 .. code-block:: console
 
    $ python main.py
-   user_config: 
-      model:
-        num_layers: 4
-      optimizer:
-        lr: 1e-3
 
-Just like in `hydra <https://hydra.cc/>`_, you can also provide configuration options in the command-line: 
+   model:
+     num_layers: 4
+   optimizer:
+     lr: 1e-3
+
+Just like in `hydra <https://hydra.cc/>`_, you can also override the options contained in the 'user_config.yaml' file from the command-line: 
 
 .. code-block:: console
 
-   $ python main.py ++user_config.optimizer.lr=10. ++user_config.model.num_layers=6
+   $ python main.py +optimizer.lr=10. +model.num_layers=6
    user_config: 
       model:
         num_layers: 6
       optimizer:
         lr: 10
 
-In the above example, the command-line options override the ones contained in the file 'config.yaml':
-
-.. code-block:: yaml
-   :caption: config.yaml
-
-   user_config: 
-      model:
-        num_layers: 4
-      optimizer:
-        lr: 1e-3
-   seed_config: ???
-
-If the file "config.yaml" or its parent directory "./configs" do not exist, they will be created automatically. By default, "config.yaml" contains two fields: 'user_config' and 'seed'. The variable 'user_config' should store options specified by the user, whereas the variable 'seed_config' is intended for seeding randomn number generators. Note that, by default, both fields are empty (indicated by question marks ???).
+If the file 'user_config.yaml' or its parent directory "./configs" do not exist, they will be created automatically. By default, "config.yaml" contains two fields: 'user_config' and 'seed'. The variable 'user_config' should store options specified by the user, whereas the variable 'seed_config' is intended for seeding randomn number generators. Note that, by default, both fields are empty (indicated by question marks ???).
 
 .. code-block:: yaml
    :caption: config.yaml

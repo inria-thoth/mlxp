@@ -29,6 +29,8 @@ from experimentalist.data_structures.config_dict import convert_dict, ConfigDict
 from datetime import datetime
 import socket
 import sys
+from dataclasses import dataclass
+
 
 _UNSPECIFIED_: Any = object()
 
@@ -65,6 +67,13 @@ class Status(Enum):
     RUNNING = "RUNNING"
     FAILED = "FAILED"
 
+
+@dataclass
+class Context:
+    user_config : ConfigDict = MISSING
+    base_config : ConfigDict = MISSING
+    run_info: ConfigDict = MISSING
+    logger: Union[Logger(),None] = MISSING
 
 
 def launch(
@@ -234,8 +243,11 @@ def launch(
                         seeding_function(cfg.user_config.seed)
 
 
-
-                    task_function(cfg,logger)
+                    ctx = Context(user_config=cfg.user_config,
+                                  base_config=cfg.base_config,
+                                  run_info=cfg.run_info,
+                                  logger = logger)
+                    task_function(ctx)
                     now =  datetime.now()
                     info = {'end_date':now.strftime("%d/%m/%Y"),
                             'end_time':now.strftime("%H:%M:%S"),
