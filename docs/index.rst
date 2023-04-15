@@ -12,7 +12,7 @@ Welcome to Experimentalist's documentation!
 
    
    install
-   tutorial
+   tutorials
    modules
 
 Indices and tables
