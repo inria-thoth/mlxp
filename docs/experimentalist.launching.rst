@@ -32,10 +32,10 @@ The :class:`~experimentalist.version_manager.WDManager` Class
 
 
 
-The :class:`~experimentalist.launching.schemas` Classes 
+The :class:`~experimentalist.data_structures.schemas` Classes 
 -------------------------
 
 
-.. automodule:: experimentalist.launching.schemas
+.. automodule:: experimentalist.data_structures.schemas
    :members:
    :show-inheritance:

@@ -4,18 +4,18 @@ The reading package
 This package provides a reader to queries the logs of several experiments and perform operations on the information contained in these logs (e.g. grouping and aggregation). 
 
 
-The :class:`~experimentalist.reading.reader.Reader` Class
+The :class:`~experimentalist.reader.Reader` Class
 -------------------------
 
-.. automodule:: experimentalist.reading.reader
+.. automodule:: experimentalist.reader
    :members:
    :show-inheritance:
 
 
-The :class:`~experimentalist.reading.data_operations` Module
+The :class:`~experimentalist.data_structures.data_operations` Module
 -------------------------
 
-.. automodule:: experimentalist.reading.data_operations
+.. automodule:: experimentalist.data_structures.data_operations
    :members:
    :show-inheritance:
 
