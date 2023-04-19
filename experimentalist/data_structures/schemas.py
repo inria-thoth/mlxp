@@ -240,7 +240,6 @@ class ConfigLogger:
 	name: str=MISSING
 	parent_log_dir: str = MISSING #os.path.join(os.getcwd(),"data","outputs")
 	forced_log_id: int = -1
-	config_file_name: str= "metadata"
 	log_streams_to_file: bool = False
 
 @dataclass
@@ -251,7 +250,7 @@ class ConfigDefaultLogger(ConfigLogger):
 	
 
 @dataclass
-class Base_config:
+class experimentalist:
 	logger: ConfigLogger = ConfigDefaultLogger()
 	scheduler: ConfigScheduler = ConfigScheduler()
 	version_manager: ConfigVersionManager = ConfigGitVM()
@@ -264,7 +263,7 @@ class Metadata:
 	"""
 		The structure of the config file. 
 
-	.. py:attribute:: run_info
+	.. py:attribute:: info
 		:type: RunInfo
 		
 		Contains config information of the run 
@@ -293,26 +292,26 @@ class Metadata:
 		Can a number or a more complex structure following hydra configs options.
 
   
-	.. py:attribute:: user_config
+	.. py:attribute:: config
 		:type: Any
 		
 		Contains user user configs
 
 	"""
-	run_info: RunInfo = RunInfo()
-	base_config: Base_config = Base_config()
-	user_config: Any = None
+	info: RunInfo = RunInfo()
+	experimentalist: experimentalist = experimentalist()
+	config: Any = None
 
 #cs = ConfigStore.instance()
-# cs.store(group="base_config", 
+# cs.store(group="experimentalist", 
 # 		 name="config", 
-# 		 node=Base_config(), 
-# 		 provider="base_config")
+# 		 node=experimentalist(), 
+# 		 provider="experimentalist")
 
 # cs.store(
 #     group="experimentalist",
 #     name="config",
-#     node=Base_config(),
+#     node=experimentalist(),
 #     provider="experimentalist")
 
 # cs.store(name="OAR", node=OARScheduler())

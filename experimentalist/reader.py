@@ -15,7 +15,7 @@ from experimentalist.utils import _flatten_dict
 from typing import Union, Optional, List
 import pandas as pd
 import abc
-
+from experimentalist.logger import Directories
 
 
 class Reader(object):
@@ -51,8 +51,7 @@ class Reader(object):
 
 
     def __init__(self,  src_dir: str,
-                        dst_dir: Optional[str] = None,
-                        file_name: str="metadata", 
+                        dst_dir: Optional[str] = None, 
                         parser: Parser = DefaultParser(),
                         reload: bool = False):
         """
@@ -78,7 +77,7 @@ class Reader(object):
 
         self.parser = parser
         self.src_dir = os.path.abspath(src_dir)
-        self.file_name = file_name
+        self.file_name = 'database'
         if dst_dir is None:
             dst_dir = self.src_dir
         self.dst_dir = _ensure_writable(dst_dir)
@@ -95,31 +94,30 @@ class Reader(object):
             self._create_base()
 
     def search(self, query_string:str ="", 
-                    asPandasDF:bool =False)->ConfigList:
+                    asPandas:bool =False)->ConfigList:
         
         """
         Searching a query in a database of runs. 
-            
+
         :param query_string: a string defining the query constaints.
-        :param asPandasDF: returns the result of the query as a pandas dataframe. 
+        :param asPandas: returns the result of the query as a pandas dataframe. 
         Otherwise returns a ConfigList object.
 
         :type query_string: str (default "")
-        :type asPandasDF: bool (default False)
+        :type asPandas: bool (default False)
         :return: The result of a query either as a ConfigList or a pandas dataframe.
         :rtype: Union[ConfigList,pd.DataFrame]
         :raises SyntaxError: if the query string does not follow expected syntax. 
         """
-
 
         if query_string:
             Q = self.parser.parse(query_string)
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [ Config(r,parent_dir=r[self.file_name+".run_info.log_dir"]) for r in res ]
+        res = [ Config(r,parent_dir=r[self.file_name+".info.log_dir"]) for r in res ]
         res = ConfigList(res)
-        if asPandasDF:
+        if asPandas:
             res = res.toPandasDF()
         return res
     
@@ -164,13 +162,18 @@ class Reader(object):
             print(files_not_found)
 
 def _get_data( path, metadata_file):
-    fname = os.path.join(path, metadata_file + ".yaml")
-    with open(fname, "r") as file:
-        data = yaml.safe_load(file)
-    metadata_dict = _flatten_dict(data, metadata_file)
+    data = {'config':{}, 'info':{},'experimentalist':{}}
+    for key in data:
+        fname = os.path.join(path, Directories.Metadata.name, key + ".yaml")
+        with open(fname, "r") as file:
+            data[key] = yaml.safe_load(file)
+
+    metadata_dict = _flatten_dict(data,parent_key="")
+    
     fields = {key: str(type(value)) 
                     for key, value in metadata_dict.items()}
-    keys_dir = os.path.join(path, ".keys" )
+    keys_dir = os.path.join(path, Directories.Metrics.name, ".keys" )
+    
     lazydata_dict = {}
     try:
         for file_name in os.listdir(keys_dir):

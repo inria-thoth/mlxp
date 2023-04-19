@@ -16,12 +16,31 @@ import shutil
 from dataclasses import dataclass
 from typing import Any, Type, Dict, Union, Callable
 import abc
+from enum import Enum
 
 from experimentalist.data_structures.artifacts import Artifact, Checkpoint
 
 
 
+class Directories(Enum):
+    """
+        Status of a run. 
 
+        The status can take the following values:
+
+        - STARTING: The metadata for the run have been created.
+
+        - RUNNING: The experiment is currently running. 
+        
+        - COMPLETE: The run is  complete and did not through any error.
+        
+        - FAILED: The run stoped due to an error.
+    """
+
+
+    Metrics = "metrics"
+    Metadata = "metadata"
+    Artifacts = "artifacts"
 
 
 
@@ -31,14 +50,20 @@ class Logger:
     def __init__(self, 
                  parent_log_dir,
                  forced_log_id=-1,
-                 config_file_name="metadata",
                  log_streams_to_file=False):
         self.parent_log_dir = os.path.abspath(parent_log_dir)
-        self.config_file_name = config_file_name
         self.forced_log_id = forced_log_id
-        self._metric_dict_keys = []
+        self._metric_dict_keys = {}
         self._log_id, self._log_dir = _make_log_dir(forced_log_id, 
                                                     self.parent_log_dir)
+
+        self.metrics_dir   = os.path.join(self._log_dir, Directories.Metrics.name)
+        self.artifacts_dir = os.path.join(self._log_dir, Directories.Artifacts.name)
+        self.metadata_dir  = os.path.join(self._log_dir, Directories.Metadata.name)
+        os.makedirs(self.metrics_dir, exist_ok=True)
+        os.makedirs(self.artifacts_dir, exist_ok=True)
+        os.makedirs(self.metadata_dir, exist_ok=True)
+
 
         if log_streams_to_file:
             log_stdout = open(os.path.join(self._log_dir, "log.stdout"), "w", buffering=1)
@@ -56,13 +81,20 @@ class Logger:
         :return: None
         """
 
-        file_name = os.path.join(self._log_dir, self.config_file_name)
+        file_name = os.path.join(self.metadata_dir, 'config')
         with open(file_name + ".yaml", "w") as f:
-            yaml.dump(config.to_dict(), f)
-
+            yaml.dump(config.config.to_dict(), f)
+        file_name = os.path.join(file_dir, 'info')
+        with open(file_name + ".yaml", "w") as f:
+            yaml.dump(config.info.to_dict(), f)
+        file_name = os.path.join(file_dir, 'experimentalist')
+        with open(file_name + ".yaml", "w") as f:
+            yaml.dump(config.experimentalist.to_dict(), f)        
+         
 
     def log_metrics(self,metrics_dict, file_name="metrics"):
         self._log_metrics_key(metric_dict,file_name=file_name)
+        file_name = os.path.join(self.metrics_dir, file_name)
         return _log_metrics(metrics_dict, file_name=file_name) 
 
     def _log_metrics(self,metrics_dict,file_name="metrics"):
@@ -84,7 +116,7 @@ class Logger:
         """
 
         assert isinstance(artifact,Artifact)
-        subdir = os.path.join(self._log_dir, 'Artifacts', type(artifact).__name__)
+        subdir = os.path.join(self.artifacts_dir, type(artifact).__name__)
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(subdir, file_name)
         artifact.save(fname)
@@ -113,13 +145,16 @@ class Logger:
     def _log_metrics_key(self,metrics_dict, file_name="metrics"):
         # Logging new keys appearing in a metrics dict
 
+        if file_name not in self._metric_dict_keys.keys():
+            self._metric_dict_keys[file_name] = []
+
         new_keys = []
         for key in metrics_dict.keys():
-            if key not in self._metric_dict_keys:
+            if key not in self._metric_dict_keys[file_name]:
                 new_keys.append(key)
-        self._metric_dict_keys += new_keys
+        self._metric_dict_keys[file_name] += new_keys
         dict_file = {key: "" for key in new_keys}
-        keys_dir = os.path.join(self._log_dir, '.keys')
+        keys_dir = os.path.join(self.metrics_dir, '.keys')
         os.makedirs(keys_dir, exist_ok=True)
         file_name = os.path.join(keys_dir , file_name)
         cur_yaml = {}
@@ -159,7 +194,6 @@ class DefaultLogger(Logger):
     """
     def __init__(self, parent_log_dir,
                         forced_log_id,
-                        config_file_name,
                         log_streams_to_file=False):
         """
         Constructor
@@ -170,8 +204,7 @@ class DefaultLogger(Logger):
         """
 
         super().__init__(parent_log_dir, 
-                        forced_log_id,
-                        config_file_name=config_file_name)
+                        forced_log_id)
 
 
 
@@ -180,7 +213,7 @@ class DefaultLogger(Logger):
 
 
     def _log_metrics(self, metric_dict: Dict[str, Union[int, float, str]], 
-                        file_name: str ="metrics")->None:
+                        file_name: str ="")->None:
         """Saves a dictionary of scalars to a json file named 
         file_name+'.json' in the directory log_dir. If the file exists already, 
         the dictionary is appended at the end of the file. 
@@ -191,13 +224,11 @@ class DefaultLogger(Logger):
         :type file_name: str (default "metrics")
         :return: None
         """
-        self._log_metrics_key(metric_dict,file_name=file_name)
-        file_name = os.path.join(self._log_dir, file_name)
         with open(file_name + ".json", "a") as f:
             json.dump(metric_dict, f)
             f.write(os.linesep)
 
-    def log_checkpoint(self, checkpoint: Any)->None:
+    def log_checkpoint(self, checkpoint: Any, log_name: str='checkpoint')->None:
         """
             Allows saving a checkpoint for later use, this can be any serializable object.
             This method is intended for saving the latest state of the run, thus, by default, 
@@ -207,9 +238,9 @@ class DefaultLogger(Logger):
             :param checkpoint: Any serializable object to be stored in 'run_dir/Artifacts/Checkpoint/last.pkl'. 
             :type checkpoint: Any
         """
-        self.log_artifact(Checkpoint(checkpoint, ".pkl"),file_name='last')
+        self.log_artifact(Checkpoint(checkpoint, ".pkl"),file_name=log_name)
         
-    def restore_checkpoint(self)-> Any:
+    def load_checkpoint(self, log_name)-> Any:
         """
         Restores a checkpoint from 'run_dir/Artifacts/Checkpoint/last.pkl'. 
         Raises an error if it fails to do so. 
@@ -218,43 +249,11 @@ class DefaultLogger(Logger):
         rtype: Any
 
         """
-        checkpoint_name = os.path.join(self._log_dir,'Artifacts', 'Checkpoint', 'last.pkl' )
+        checkpoint_name = os.path.join(self.artifacts_dir, 'Checkpoint', log_name+'.pkl' )
         with open(checkpoint_name,'rb') as f:
             checkpoint = pkl.load(f)
         return checkpoint
         
-        
-
-
-    def copy_artifact(self, src_name:str, dst_name: str, 
-                            artifact_class: Artifact) -> None:
-        """Copies an already existing artifact obj 
-        from a source file: log_dir/artifact_class_name/src_name 
-        to a destination file log_dir/artifact_class_name/dst_name, 
-        where artifact_class_name is the name of the class artifact_class.  
-        
-        .. note:: The source file name needs to have the same extension as the attribute ext of the class artifact_class.
-
-        :param src_name: Name of the source file to be copied.
-        :param dst_name: Name of the destination file of the copy.
-        :param artifact_class: A class inheriting from the abstract class Artifact.
-        :type src_name: str
-        :type dst_name: str
-        :type artifact_class: Artifact
-        :return: None
-        :raises FileNotFoundError: if the source file is not found.
-        """
-
-        assert issubclass(artifact_class, Artifact)
-        ckpt_dir_name = artifact_class.__name__
-        ext = getattr(artifact_class, 'ext')
-        subdir = os.path.join(self._log_dir, ckpt_dir_name)
-        fname = os.path.join(subdir, src_name)
-        copy_fname = os.path.join(subdir, dst_name)
-        try:
-            shutil.copy(f"{fname}{ext}", f"{copy_fname}{ext}")
-        except FileNotFoundError as e:
-            raise FileNotFoundError
 
 
 def _make_log_dir(forced_log_id, root):

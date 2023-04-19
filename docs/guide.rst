@@ -1,5 +1,5 @@
-Tutorials
-=========
+Guide
+=====
 
 
 
@@ -7,4 +7,4 @@ Tutorials
    :maxdepth: 2
 
    getting_started
-   launching
+   tutorial
