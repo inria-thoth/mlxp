@@ -48,6 +48,9 @@ hydra_defaults_dict = {
     "hydra/hydra_logging": "disabled",
 }
 
+vm_choices_file = os.path.join(hydra_defaults_dict["hydra"]["sweep"]["dir"],
+                                            "vm_choices.yaml")
+
 class Status(Enum):
     """
         Status of a run. 
@@ -134,7 +137,7 @@ def launch(
         custom_config = {'seed':None}
         omegaconf.OmegaConf.save(config=custom_config, f=custom_config_file)
 
-
+    work_dir =  os.getcwd()
 
     def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
         # task_function = launch(task_function)
@@ -154,7 +157,8 @@ def launch(
                 ]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
-
+                
+                
                 _run_hydra(
                     args=args,
                     args_parser=args_parser,
@@ -162,6 +166,13 @@ def launch(
                     config_path=config_path,
                     config_name=config_name,
                 )
+                
+                sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
+                try:
+                    os.remove(os.path.join(sweep_dir, "multirun.yaml"))
+                    os.remove(vm_choices_file)
+                except FileNotFoundError:
+                    pass                
 
         return decorated_main
 
@@ -183,6 +194,7 @@ def launch(
 
             if cfg.base_config.use_version_manager:
                 version_manager = config_to_instance(config_module_name="name", **cfg.base_config.version_manager)
+                version_manager.set_vm_choices_from_file(vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update_dict({'base_config':version_manager.get_configs()})
             else:
@@ -280,11 +292,6 @@ def launch(
     def composed_decorator(task_function: TaskFunction) -> Callable[[], None]:
         decorated_task = launcher_decorator(task_function)
         task_function = hydra_decorator(decorated_task)
-        sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
-        try:
-            os.remove(os.path.join(sweep_dir, "multirun.yaml"))
-        except FileNotFoundError:
-            pass
 
         return task_function
 

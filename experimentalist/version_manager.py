@@ -3,7 +3,7 @@ import abc
 from omegaconf import OmegaConf
 import omegaconf
 import subprocess
-
+import yaml
 from typing import Any, Dict
 
 
@@ -81,6 +81,9 @@ class GitVM(VersionManager):
         self.repo_path = None
         self.work_dir = os.getcwd()
         self.requirements = ["UNKNOWN"]
+        self.vm_choices = {}
+        self._existing_choices = False
+        self.vm_choices_file = ""
 
     def get_configs(self)->Dict[str, Any]:
         """
@@ -118,7 +121,23 @@ class GitVM(VersionManager):
         self.dst = os.path.join(parent_work_dir, target_name)
 
         self._handle_cloning(repo, relpath)
+        self._save_vm_choice()
+        
         return self.work_dir
+    
+    def set_vm_choices_from_file(self,file_name):
+        self.vm_choices_file = file_name
+        if os.path.isfile(self.vm_choices_file):
+            with open(self.vm_choices_file, "r") as file:
+                self.vm_choices = yaml.safe_load(file)
+                self._existing_choices = True
+        
+    def _save_vm_choice(self):
+        if not os.path.isfile(self.vm_choices_file):
+            with open(self.vm_choices_file, "w") as f:
+                yaml.dump(self.vm_choices, f)
+
+
     def _clone_repo(self,repo,relpath):
         print(f"Creating a copying the repository at {self.dst}")
         
@@ -133,14 +152,17 @@ class GitVM(VersionManager):
         while True:
             if not os.path.exists(self.dst):
                 if self.interactive_mode:
-                    print(f"There is no separate copy of the repository with commit-hash {self.commit_hash}")
-                    print("Would you like to create one? (y/n):")
-                    print(f"y: A new copy of the repository will be created in {self.dst}. Run will be exectured from there.")
-                    print("n: No copy will be created. Run will be executed from the current repository.")
-                    choice = input("Please enter you answer (y/n):")
-
+                    if self._existing_choices:
+                        choice = self.vm_choices['cloning']
+                    else: 
+                        print(f"There is no separate copy of the repository with commit-hash {self.commit_hash}")
+                        print("Would you like to create one? (y/n):")
+                        print(f"y: A new copy of the repository will be created in {self.dst}. Run will be exectured from there.")
+                        print("n: No copy will be created. Run will be executed from the current repository.")
+                        choice = input("Please enter you answer (y/n):")
+                        self.vm_choices['cloning'] = choice
+                    
                     if choice=='y':
-
                         self._clone_repo(repo,relpath)
                         break 
                     elif choice=='n':
@@ -167,14 +189,19 @@ class GitVM(VersionManager):
         while True:
             if repo.is_dirty():
                 if self.interactive_mode:
-                    print("There are uncommitted changes in the repository:")
-                    _disp_uncommited_files(repo)
-                    print("How would you like to handle uncommitted changes?")
-                    print("a: Create a new automatic commit before launching jobs.")
-                    print("b: Check again for uncommitted changes assuming you manually committed them.")
-                    print("c: Ignore uncommitted changes. Jobs will be executed from latest commit.")
-                    choice = input("Please enter your choice (a/b/c): ")
-                                        
+                    if self._existing_choices:
+                        choice = self.vm_choices['commit']
+                    else:
+
+                        print("There are uncommitted changes in the repository:")
+                        _disp_uncommited_files(repo)
+                        print("How would you like to handle uncommitted changes?")
+                        print("a: Create a new automatic commit before launching jobs.")
+                        print("b: Check again for uncommitted changes assuming you manually committed them.")
+                        print("c: Ignore uncommitted changes. Jobs will be executed from latest commit.")
+                        choice = input("Please enter your choice (a/b/c): ")
+                        self.vm_choices['commit'] = choice
+
                     if choice == 'a':
                         print("Commiting changes....")
                         output_msg = repo.git.commit("-a", "-m", "Experimentalist: Automatically committing all changes")
@@ -213,13 +240,17 @@ class GitVM(VersionManager):
         while True:
             if repo.untracked_files:
                 if self.interactive_mode:
-                    print("There are untracked files in the repository:")
-                    _disp_untracked_files(repo)
-                    print("How would you like to handle untracked files?")
-                    print("a: Add untracked files directly through this interface?")
-                    print("b: Check again for untrakced files assuming you manually added them.")
-                    print("c: Ignore untracked files. Untracked files will not be accessible during execution of the jobs.")
-                    choice = input("Please enter your choice (a/b/c): ")
+                    if self._existing_choices:
+                        choice = self.vm_choices['untracked']
+                    else:
+                        print("There are untracked files in the repository:")
+                        _disp_untracked_files(repo)
+                        print("How would you like to handle untracked files?")
+                        print("a: Add untracked files directly through this interface?")
+                        print("b: Check again for untrakced files assuming you manually added them.")
+                        print("c: Ignore untracked files. Untracked files will not be accessible during execution of the jobs.")
+                        choice = input("Please enter your choice (a/b/c): ")
+                        self.vm_choices['untracked'] = choice
                     if choice=='a':
                         print("Untracked files:")
                         _disp_untracked_files(repo)
