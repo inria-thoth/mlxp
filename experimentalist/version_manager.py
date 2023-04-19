@@ -139,9 +139,10 @@ class GitVM(VersionManager):
 
 
     def _clone_repo(self,repo,relpath):
-        print(f"Creating a copying the repository at {self.dst}")
-        
+        print(f"Creating a copy of the repository at {self.dst}")
         repo.clone(self.dst)
+
+
         if not self.skip_requirements:
             self._make_requirements_file()
         self._set_requirements()
@@ -290,6 +291,8 @@ class GitVM(VersionManager):
 
 
     def _make_requirements_file(self):
+        print("No requirement file found")
+        print("Generating fil using pipreqs")
         # Create a new updated requirement file.
         reqs_cmd = f"pipreqs --force {self.dst}" 
         subprocess.check_call(reqs_cmd, shell=True)
