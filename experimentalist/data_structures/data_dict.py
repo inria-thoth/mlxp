@@ -13,7 +13,7 @@ from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, 
 from typing import List, Dict, Tuple
 
 from experimentalist.utils import _flatten_dict
-
+from experimentalist.logger import Directories
 
 
 LAZYDATA="LAZYDATA" 
@@ -42,7 +42,7 @@ class AggregationMap:
         raise NotImplementedError
 
 
-class Config(Mapping):
+class DataDict(Mapping):
     """
     A dictionary containing the configs and logs of a given a single run.
     Each key represents a given config or particular type of output data of the run.
@@ -145,7 +145,7 @@ class LazyData(object):
     def __init__(self,parent_dir, file_name):
         self.file_name = file_name
         self.parent_dir = parent_dir
-        self.path = os.path.join(self.parent_dir, self.file_name + ".json")
+        self.path = os.path.join(self.parent_dir, Directories.Metrics.value, self.file_name + ".json")
         dir_name =os.path.join('src_dir',os.path.basename(self.parent_dir),self.file_name)
         self.display_message = f"Lazy loading from: {dir_name}"
         self.used_keys = set()
@@ -162,9 +162,9 @@ class LazyData(object):
             del self._data[key]
 
 
-class ConfigList(list):
+class DataDictList(list):
     """
-    A list of elements of type Config. This list can be viewed as a dataframe 
+    A list of elements of type DataDict. This list can be viewed as a dataframe 
     where each row represents a given run and columns represent 
     the configurations and results for each run.  
     
@@ -175,10 +175,10 @@ class ConfigList(list):
     """    
 
 
-    def __init__(self, iterable: List[Config]):
+    def __init__(self, iterable: List[DataDict]):
         if iterable:
             for config in iterable:
-                assert isinstance(config, Config) 
+                assert isinstance(config, DataDict) 
         super().__init__(item for item in iterable)
         self.pandas=None
         self._keys=None
@@ -189,18 +189,22 @@ class ConfigList(list):
     def _repr_html_(self):
         return self.toPandasDF()._repr_html_()  
 
-    def toPandasDF(self)->pd.DataFrame:
+    def toPandasDF(self,lazy=True)->pd.DataFrame:
         """
         Converts the list into a pandas dataframe.
 
         :return: A panda dataframe containing logs (configs and data) 
-        of the ConfigList object
+        of the DataDictList object
         :rtype: pd.DataFrame
 
         """
         
         if self.pandas is None:
-            self.pandas = pd.DataFrame([config.flattened() for config in self])
+            if lazy:
+                self.pandas = pd.DataFrame([config.flattened() for config in self])
+            else:
+                self.pandas = pd.DataFrame([config.lazy() for config in self])
+                
         return self.pandas
     
     def keys(self)->List[str]:
@@ -214,17 +218,17 @@ class ConfigList(list):
             self._keys = list(self.toPandasDF().keys())
         return self._keys
 
-    def groupBy(self, list_group_keys:List[str] )->GroupedConfigs:
+    def groupBy(self, list_group_keys:List[str] )->GroupedDataDicts:
 
         """
             Performs a groupby operation on the dataframe 
             according to a list of colum names (list_group_keys). 
-            Returns an object of the class GroupedConfigs 
+            Returns an object of the class GroupedDataDicts 
 
             :params list_group_keys: a list of strings containing the names of the columns to be grouped.
             :type list_group_keys: List[str]
             :return: A hierarchical dataframe grouped by the values of the columns provided to list_group_keys.
-            :rtype: GroupedConfigs
+            :rtype: GroupedDataDicts
             :raises InvalidKeyError: if one of the provided keys does not match any columns of the dataframe.
 
         """
@@ -241,7 +245,7 @@ class ConfigList(list):
         # Need to handle the case when keys are empty
         collection_dict, group_keys, group_vals = _group_by(self, list_group_keys)
         # pandas_grouped_df = deepcopy(self.toPandasDF()).set_index(list_group_keys)
-        grouped_config = GroupedConfigs(group_keys, collection_dict)
+        grouped_config = GroupedDataDicts(group_keys, collection_dict)
         #grouped_config.pandas = pandas_grouped_df
         return grouped_config
 
@@ -276,11 +280,11 @@ class ConfigList(list):
                             diff_keys.append(key)
         return diff_keys
 
-class GroupedConfigs:
+class GroupedDataDicts:
     """
     A dictionary where each key represents the tuple of values taken by the grouped column of some processed dataframe. 
-    The values corresponsing to each key are objects of type ConfigList containing a group. 
-    This object is usually obtained as the output of the group_by method of the class  ConfigList.
+    The values corresponsing to each key are objects of type DataDictList containing a group. 
+    This object is usually obtained as the output of the group_by method of the class  DataDictList.
     It is displayed as a hierarchical pandas dataframe and 
     can be converted to it using toPandasDF method.
 
@@ -301,16 +305,16 @@ class GroupedConfigs:
 
 
     def __init__(self, group_keys:List[str], 
-                        grouped_dict:Dict[Tuple[str, ...], ConfigList]):   
+                        grouped_dict:Dict[Tuple[str, ...], DataDictList]):   
         """
         Constructor
         :param group_keys: A list of string containing the column names used for grouping.
         :param grouped_dict: A dictionary where each key represents the tuple of values 
         taken by the grouped column of some processed dataframe. 
-        The values corresponsing to each key are objects of type ConfigList containing a group. 
+        The values corresponsing to each key are objects of type DataDictList containing a group. 
 
         :type group_keys: List[str]
-        :type grouped_dict: Dict[Tuple[str, ...], ConfigList]
+        :type grouped_dict: Dict[Tuple[str, ...], DataDictList]
 
         """
 
@@ -332,7 +336,7 @@ class GroupedConfigs:
     #     self._current_index = 0
     #     raise StopIteration
 
-    def __getitem__(self, key:Tuple[str, ...])->ConfigList:
+    def __getitem__(self, key:Tuple[str, ...])->DataDictList:
         """
         Returns the value of the dictionary at a given key key
         """
@@ -370,7 +374,7 @@ class GroupedConfigs:
         Converts the list into a pandas dataframe.
 
         :return: A panda dataframe containing logs (configs and data) 
-        of the ConfigList object
+        of the DataDictList object
         :rtype: pd.DataFrame
 
         """
@@ -378,21 +382,21 @@ class GroupedConfigs:
             all_configs = []
             for key, value in self.grouped_dict.items():
                 all_configs+=[el for el in value ]
-            self.pandas = ConfigList(all_configs).toPandasDF().set_index(list(self.group_keys))
+            self.pandas = DataDictList(all_configs).toPandasDF().set_index(list(self.group_keys))
         return self.pandas
 
-    def aggregate(self, aggregation_maps: List[AggregationMap])->Dict[str,GroupedConfigs]:
+    def aggregate(self, aggregation_maps: List[AggregationMap])->Dict[str,GroupedDataDicts]:
         """
         Performs aggregation of the leaf dataframes according to some aggregation maps provided as input. 
         It returns a dictionary of key value pairs, where each key represents an aggregation map 
-        and its value is an aggregated result returned as a GroupedConfigs objects 
+        and its value is an aggregated result returned as a GroupedDataDicts objects 
         preserving the same hierarchy as the current object.
         
         :params aggregation_maps: A list of aggregation maps. 
             Each map must be an instance of class inheriting from the abstract class AggregationMap. 
         :type aggregation_maps: List[AggregationMap]
         :return: A dictionary of aggregated results indexed by the aggregation maps. 
-        :rtype: Dict[str,GroupedConfigs]
+        :rtype: Dict[str,GroupedDataDicts]
         :raises InvalidAggregationMapError: if one of the aggregation map is not an instance of a class 
         inheriting from the abstract class AggregationMap.
         """
@@ -432,7 +436,7 @@ def _group_by(config_dicts, list_group_keys):
         )
     group_vals = list(group_vals)
     
-    grouped_dict = { key: ConfigList(reduce(dict.get, key, collection_dict)) 
+    grouped_dict = { key: DataDictList(reduce(dict.get, key, collection_dict)) 
                                 for key in group_vals }
 
     return grouped_dict, group_keys, group_vals
@@ -459,9 +463,9 @@ def _add_nested_keys_val(dictionary,keys,val):
      
 
 def _aggregate(groupedconfigs, aggregation_maps):
-    # Returns a hierarchical dictionary whose leafs are instances of ConfigList
+    # Returns a hierarchical dictionary whose leafs are instances of DataDictList
 
-    #agg_dict = AggregatedConfigs({})
+    #agg_dict = AggregatedDataDicts({})
     agg_config_dict = {agg_map.name: {} for agg_map in  aggregation_maps}
     for keys, config_list in groupedconfigs.items():
         
@@ -472,9 +476,9 @@ def _aggregate(groupedconfigs, aggregation_maps):
             _add_nested_keys_val(agg_config_dict[agg_map.name], keys, agg_config[agg_map.name])
 
     for agg_map in aggregation_maps:
-        agg_config_dict[agg_map.name] = { key: ConfigList(reduce(dict.get, key, agg_config_dict[agg_map.name])) 
+        agg_config_dict[agg_map.name] = { key: DataDictList(reduce(dict.get, key, agg_config_dict[agg_map.name])) 
                                         for key in groupedconfigs.group_vals }
-    return {agg_map.name : GroupedConfigs(groupedconfigs.group_keys,
+    return {agg_map.name : GroupedDataDicts(groupedconfigs.group_keys,
                                             agg_config_dict[agg_map.name]) for agg_map in aggregation_maps}
 
 
@@ -491,7 +495,7 @@ def _aggregate_collection(collection, agg_maps):
     for agg_map in agg_maps:
         agg_val, index = agg_map.apply(val_array)
         if index is not None:
-            new_collection= ConfigList([deepcopy(collection[index])])
+            new_collection= DataDictList([deepcopy(collection[index])])
         else:
             new_collection = deepcopy(collection)
         for config_dict in new_collection:

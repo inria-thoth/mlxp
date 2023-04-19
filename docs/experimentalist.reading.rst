@@ -12,10 +12,10 @@ The :class:`~experimentalist.reader.Reader` Class
    :show-inheritance:
 
 
-The :class:`~experimentalist.data_structures.data_operations` Module
+The :class:`~experimentalist.data_structures.data_dict` Module
 -------------------------
 
-.. automodule:: experimentalist.data_structures.data_operations
+.. automodule:: experimentalist.data_structures.data_dict
    :members:
    :show-inheritance:
 

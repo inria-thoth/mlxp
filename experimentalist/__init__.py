@@ -8,7 +8,7 @@ from experimentalist.scheduler import Scheduler, SLURMScheduler, OARScheduler, N
 
 from experimentalist.version_manager import GitVM 
 from experimentalist.data_structures.config_dict import ConfigDict
-from experimentalist.data_structures.data_operations import ConfigList
+from experimentalist.data_structures.data_dict import DataDictList
 
 
 __all__ = [
@@ -21,7 +21,7 @@ __all__ = [
     "Scheduler",
     "ConfigDict",
     "Context",
-    "ConfigList"
+    "DataDictList"
 ]
 
 VERSION = (2023, 0, 1)

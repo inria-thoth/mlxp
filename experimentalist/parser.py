@@ -115,7 +115,8 @@ def Lexer():
 
     # Define a rule for scalar values (including integers, floats, and strings)
     def t_SCALAR(t):
-        r'[0-9]+(\.[0-9]+)?|\'[^\']*\'|\"[^\"]*\"'
+        r'([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))|\'[^\']*\'|\"[^\"]*\"'
+        #r'[0-9]+(\.[0-9]+)?|\'[^\']*\'|\"[^\"]*\"'
         # Update the token type to 'LIST' and convert scalar value to a list object
         #t.type = 'LIST'
         t.value = ast.literal_eval(t.value)

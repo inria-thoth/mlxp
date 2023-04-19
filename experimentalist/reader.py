@@ -9,7 +9,7 @@ from tinydb.storages import JSONStorage
 from tinydb import Query
 from tinydb.table import Document
 
-from experimentalist.data_structures.data_operations import ConfigList, Config, LAZYDATA
+from experimentalist.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
 from experimentalist.parser import Parser, DefaultParser
 from experimentalist.utils import _flatten_dict
 from typing import Union, Optional, List
@@ -18,12 +18,15 @@ import abc
 from experimentalist.logger import Directories
 
 
+
+
+
 class Reader(object):
     """
     Constructs a database for the runs contained in a source directory 'src_dir'.    
     Once, created, it is possible to query the database using the method 'search'
     to get the results matching to a specific configuration setting. 
-    The result of the query is returned either as a ConfigList object or a pandas dataframe.
+    The result of the query is returned either as a DataDictList object or a pandas dataframe.
     The queries are processed using a parser inheriting form the abstract class Parser. 
     By default, the parser is DefaultParser. 
     However, the user can provide a custom parser with a custom syntax 
@@ -94,19 +97,19 @@ class Reader(object):
             self._create_base()
 
     def search(self, query_string:str ="", 
-                    asPandas:bool =False)->ConfigList:
+                    asPandas:bool =False)->DataDictList:
         
         """
         Searching a query in a database of runs. 
 
         :param query_string: a string defining the query constaints.
         :param asPandas: returns the result of the query as a pandas dataframe. 
-        Otherwise returns a ConfigList object.
+        Otherwise returns a DataDictList object.
 
         :type query_string: str (default "")
         :type asPandas: bool (default False)
-        :return: The result of a query either as a ConfigList or a pandas dataframe.
-        :rtype: Union[ConfigList,pd.DataFrame]
+        :return: The result of a query either as a DataDictList or a pandas dataframe.
+        :rtype: Union[DataDictList,pd.DataFrame]
         :raises SyntaxError: if the query string does not follow expected syntax. 
         """
 
@@ -115,10 +118,10 @@ class Reader(object):
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [ Config(r,parent_dir=r[self.file_name+".info.log_dir"]) for r in res ]
-        res = ConfigList(res)
+        res = [ DataDict(r,parent_dir=r["info.log_dir"]) for r in res ]
+        res = DataDictList(res)
         if asPandas:
-            res = res.toPandasDF()
+            res = res.toPandasDF(lazy=False)
         return res
     
     @property
@@ -164,7 +167,7 @@ class Reader(object):
 def _get_data( path, metadata_file):
     data = {'config':{}, 'info':{},'experimentalist':{}}
     for key in data:
-        fname = os.path.join(path, Directories.Metadata.name, key + ".yaml")
+        fname = os.path.join(path, Directories.Metadata.value, key + ".yaml")
         with open(fname, "r") as file:
             data[key] = yaml.safe_load(file)
 
@@ -172,7 +175,7 @@ def _get_data( path, metadata_file):
     
     fields = {key: str(type(value)) 
                     for key, value in metadata_dict.items()}
-    keys_dir = os.path.join(path, Directories.Metrics.name, ".keys" )
+    keys_dir = os.path.join(path, Directories.Metrics.value, ".keys" )
     
     lazydata_dict = {}
     try:
