@@ -57,9 +57,9 @@ class Logger:
         self._log_id, self._log_dir = _make_log_dir(forced_log_id, 
                                                     self.parent_log_dir)
 
-        self.metrics_dir   = os.path.join(self._log_dir, Directories.Metrics.name)
-        self.artifacts_dir = os.path.join(self._log_dir, Directories.Artifacts.name)
-        self.metadata_dir  = os.path.join(self._log_dir, Directories.Metadata.name)
+        self.metrics_dir   = os.path.join(self._log_dir, Directories.Metrics.value)
+        self.artifacts_dir = os.path.join(self._log_dir, Directories.Artifacts.value)
+        self.metadata_dir  = os.path.join(self._log_dir, Directories.Metadata.value)
         os.makedirs(self.metrics_dir, exist_ok=True)
         os.makedirs(self.artifacts_dir, exist_ok=True)
         os.makedirs(self.metadata_dir, exist_ok=True)
@@ -84,10 +84,10 @@ class Logger:
         file_name = os.path.join(self.metadata_dir, 'config')
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.config.to_dict(), f)
-        file_name = os.path.join(file_dir, 'info')
+        file_name = os.path.join(self.metadata_dir, 'info')
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.info.to_dict(), f)
-        file_name = os.path.join(file_dir, 'experimentalist')
+        file_name = os.path.join(self.metadata_dir, 'experimentalist')
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.experimentalist.to_dict(), f)        
          

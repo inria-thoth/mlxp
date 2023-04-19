@@ -188,12 +188,12 @@ def launch(
                     'app': os.environ["_"],
                     'start_date':now.strftime("%d/%m/%Y"),
                     'start_time':now.strftime("%H:%M:%S"),
-                    'status':Status.STARTING.name}
+                    'status':Status.STARTING.value}
             
             cfg.update_dict({'info':info})
 
-            if cfg.base_config.use_version_manager:
-                version_manager = config_to_instance(config_module_name="name", **cfg.base_config.version_manager)
+            if cfg.experimentalist.use_version_manager:
+                version_manager = config_to_instance(config_module_name="name", **cfg.experimentalist.version_manager)
                 version_manager.set_vm_choices_from_file(vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update_dict({'info':version_manager.get_configs()})
@@ -228,7 +228,7 @@ def launch(
                 process_output = scheduler.submit_job(job_path)
                 scheduler_job_id = scheduler.get_job_id(process_output) 
 
-                cfg.update({'info':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
+                cfg.update_dict({'info':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
                 logger._log_configs(cfg)
                 
             else:
@@ -241,7 +241,7 @@ def launch(
                     cfg.update_dict(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
                 try:
                     
-                    cfg.update_dict({'info':{'status':Status.RUNNING.name}})
+                    cfg.update_dict({'info':{'status':Status.RUNNING.value}})
                     if logger:
                         logger._log_configs(cfg)
                     if seeding_function:
@@ -262,7 +262,7 @@ def launch(
                     now =  datetime.now()
                     info = {'end_date':now.strftime("%d/%m/%Y"),
                             'end_time':now.strftime("%H:%M:%S"),
-                            'status':Status.COMPLETE.name}
+                            'status':Status.COMPLETE.value}
             
                     cfg.update_dict({'info':info})
                     
@@ -274,7 +274,7 @@ def launch(
                     now =  datetime.now()
                     info = {'end_date':now.strftime("%d/%m/%Y"),
                             'end_time':now.strftime("%H:%M:%S"),
-                            'status':Status.FAILED.name}
+                            'status':Status.FAILED.value}
             
                     cfg.update_dict({'info':info})
 
@@ -459,7 +459,7 @@ def _get_overrides():
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
     def filter_fn(x):
-        return ("scheduler" not in x) and ("logger.parent_log_dir" not in x)
+        return ("version_manager" not in x) and ("scheduler" not in x) and ("logger.parent_log_dir" not in x)
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args

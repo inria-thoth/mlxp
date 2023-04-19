@@ -250,7 +250,7 @@ class ConfigDefaultLogger(ConfigLogger):
 	
 
 @dataclass
-class experimentalist:
+class ExperimentalistConfig:
 	logger: ConfigLogger = ConfigDefaultLogger()
 	scheduler: ConfigScheduler = ConfigScheduler()
 	version_manager: ConfigVersionManager = ConfigGitVM()
@@ -299,7 +299,7 @@ class Metadata:
 
 	"""
 	info: RunInfo = RunInfo()
-	experimentalist: experimentalist = experimentalist()
+	experimentalist: ExperimentalistConfig = ExperimentalistConfig()
 	config: Any = None
 
 #cs = ConfigStore.instance()

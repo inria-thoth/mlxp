@@ -176,7 +176,7 @@ class GitVM(VersionManager):
                     self._clone_repo(repo,relpath)
                     break
             else:
-                print(f"Found a copy of the repository with commit-hash {self.commit_hash}")
+                print(f"Found a copy of the repository with commit-hash: {self.commit_hash}")
                 print(f"Run will be executed from {self.dst}")
                 self.work_dir = os.path.join(self.dst, relpath)
                 self._set_requirements()
@@ -191,17 +191,15 @@ class GitVM(VersionManager):
             if repo.is_dirty():
                 if self.interactive_mode:
                     if self._existing_choices:
-                        choice = self.vm_choices['commit']
-                    else:
+                        break
 
-                        print("There are uncommitted changes in the repository:")
-                        _disp_uncommited_files(repo)
-                        print("How would you like to handle uncommitted changes?")
-                        print("a: Create a new automatic commit before launching jobs.")
-                        print("b: Check again for uncommitted changes assuming you manually committed them.")
-                        print("c: Ignore uncommitted changes. Jobs will be executed from latest commit.")
-                        choice = input("Please enter your choice (a/b/c): ")
-                        self.vm_choices['commit'] = choice
+                    print("There are uncommitted changes in the repository:")
+                    _disp_uncommited_files(repo)
+                    print("How would you like to handle uncommitted changes?")
+                    print("a: Create a new automatic commit before launching jobs.")
+                    print("b: Check again for uncommitted changes (assuming you manually committed them). ")
+                    print("c: Ignore uncommitted changes.")
+                    choice = input("Please enter your choice (a/b/c): ")
 
                     if choice == 'a':
                         print("Commiting changes....")
@@ -210,7 +208,6 @@ class GitVM(VersionManager):
                         
                         if not repo.is_dirty():
                             print("No more uncommitted changes!")
-                            print("Submitting jobs from latest commit")
                             break
                     elif choice == 'b':
                         print("Checking again for uncommitted changes...")
@@ -220,7 +217,6 @@ class GitVM(VersionManager):
                             print(ignore_msg)
                         else:
                             print("No more uncommitted changes found! ")
-                            print("Submitting jobs from latest commit")
                         break
 
                     else:
@@ -230,7 +226,6 @@ class GitVM(VersionManager):
                     break
             else:
                 print("No uncommitted changes!")
-                print("Submitting jobs from latest commit")
                 break                
         
     def _handle_untracked_files(self,repo):
@@ -242,16 +237,14 @@ class GitVM(VersionManager):
             if repo.untracked_files:
                 if self.interactive_mode:
                     if self._existing_choices:
-                        choice = self.vm_choices['untracked']
-                    else:
-                        print("There are untracked files in the repository:")
-                        _disp_untracked_files(repo)
-                        print("How would you like to handle untracked files?")
-                        print("a: Add untracked files directly through this interface?")
-                        print("b: Check again for untrakced files assuming you manually added them.")
-                        print("c: Ignore untracked files. Untracked files will not be accessible during execution of the jobs.")
-                        choice = input("Please enter your choice (a/b/c): ")
-                        self.vm_choices['untracked'] = choice
+                        break
+                    print("There are untracked files in the repository:")
+                    _disp_untracked_files(repo)
+                    print("How would you like to handle untracked files?")
+                    print("a: Add untracked files directly from here?")
+                    print("b: Check again for untrakced files (assuming you manually added them).")
+                    print("c: Ignore untracked files.")
+                    choice = input("Please enter your choice (a/b/c): ")
                     if choice=='a':
                         print("Untracked files:")
                         _disp_untracked_files(repo)
