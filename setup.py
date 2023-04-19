@@ -9,7 +9,7 @@ setup(
         os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.md")
     ).read(),
     long_description_content_type="text/markdown",
-    url="git@github.com:MichaelArbel/Experimentalist.git",
+    url="git@github.com:MichaelArbel/experimentalist.git",
     author="Michael Arbel",
     author_email="michael.n.arbel@gmail.com",
     license="BSD3",

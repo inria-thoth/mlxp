@@ -1,9 +1,0 @@
-# @package cluster
-
-engine: "OAR"
-cleanup_cmd: "source gpu_setVisibleDevices.sh"
-cmd: ["-l core=1,walltime=15:00:00",
-      "-t besteffort",
-      "-t idempotent",
-      "-p gpumem>'16000' and not host like 'gpuhost26' and not host like 'gpuhost27'"
-    ]

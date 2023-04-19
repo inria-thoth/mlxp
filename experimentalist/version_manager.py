@@ -81,6 +81,7 @@ class GitVM(VersionManager):
         self.repo_path = None
         self.work_dir = os.getcwd()
         self.requirements = ["UNKNOWN"]
+        self.user_options = {}
 
     def get_configs(self)->Dict[str, Any]:
         """
@@ -132,6 +133,7 @@ class GitVM(VersionManager):
     def _handle_cloning(self, repo, relpath):
         while True:
             if not os.path.exists(self.dst):
+                
                 if self.interactive_mode:
                     print(f"There is no separate copy of the repository with commit-hash {self.commit_hash}")
                     print("Would you like to create one? (y/n):")
@@ -177,7 +179,7 @@ class GitVM(VersionManager):
                                         
                     if choice == 'a':
                         print("Commiting changes....")
-                        output_msg = repo.git.commit("-a", "-m", "Experimentalist: Automatically committing all changes")
+                        output_msg = repo.git.commit("-a", "-m", "experimentalist: Automatically committing all changes")
                         print(output_msg)
                         
                         if not repo.is_dirty():
@@ -236,7 +238,7 @@ class GitVM(VersionManager):
                             for file in files_to_add:
                                 repo.git.add(file.strip())
                             # Commit the changes
-                            #repo.index.commit("Experimentalist: Committing selected files ")
+                            #repo.index.commit("experimentalist: Committing selected files ")
                             if not repo.untracked_files:
                                 break
                         else:

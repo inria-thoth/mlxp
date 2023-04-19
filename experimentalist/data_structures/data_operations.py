@@ -49,7 +49,7 @@ class Config(Mapping):
     By default the keys corresponding to configs are preceeded by the prefix "metadata.", 
     while those corresponding to a user defined output are preceeded by the file name 
     containing such output (e.g. "metrics."). Example of keys:
-    - "metadata.run_info.status"
+    - "metadata.info.status"
     - "metrics.loss"
 
     .. note:: Except for configuration information stored in the file "metadata.yaml", 
@@ -245,13 +245,13 @@ class ConfigList(list):
         #grouped_config.pandas = pandas_grouped_df
         return grouped_config
 
-    def config_diff(self, start_key="metadata.user_config")->List[str]:
+    def config_diff(self, start_key="metadata.config")->List[str]:
         """
             Returns a list of colums keys starting with 'start_key' 
             and whose value varies in the dataframe.
             
             :param start_key: A string with which all column names to be considered must start. 
-            :type start_key: str (default 'metadata.user_config')
+            :type start_key: str (default 'metadata.config')
             :return: A list of strings containing the column names 
             starting with 'start_key' and whose values vary in the dataframe.
             :rtype: List[str]

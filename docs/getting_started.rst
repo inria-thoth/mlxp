@@ -3,60 +3,48 @@ Getting started
 
 Introduction
 ^^^^^^^^^^^^
-Experimentalist is an open-source python framework for managing multiple experiments with complex option structure from launching, logging to querying results. 
+experimentalist is an open-source python framework for managing multiple experiments with flexible option structure from launching, logging to querying results. 
 
 
 Key functionalities
 ^^^^^^^^^^^^^^^^^^^
-  - Creating several jobs automatically using `hydra <https://hydra.cc/>`_ and hierarchical configs. 
-  - Submitting jobs using a job scheduler whenerver available. 
-  - Enhancing code management and reproducibility of experiments by automatically generating a deployment version of the code based on the latest git commit. 
-  - Logging all outputs of a job in a uniquely assigned directory, along with all metadata and  configuration options to reproduce the experiment.
-  - Managing potential job failures by providing the ability to easily resume them from their latest state.
+  - Launching several jobs automatically using `hydra <https://hydra.cc/>`_ and hierarchical configs by adding a single decorator to the main task function (see Quick start guide).   
+  - Logging outputs (metrics, artifacts, checkpoints) of a job in a uniquely assigned directory along with all metadata and configuration options to reproduce the experiment.
+  - Code version management by automatically generating a deployment version of the code based on the latest git commit. 
+  - Submitting jobs to a cluster using a job scheduler. 
   - Exploiting the results of several experiments by easily reading, querying, grouping and aggregating the output of several jobs. 
 
 
 Quick start guide
 ^^^^^^^^^^^^^^^^^
 
-
-As a starting point, let's assume the user already provided 
-a 'yaml' file containing some configuration options. These options will later be used by some python function 'my_func' defined by the user. The config file must be named 'user_config.yaml':
-
-.. code-block:: yaml
-   :caption: user_config.yaml
- 
-   model:
-     num_layers: 4
-   optimizer:
-     lr: 1e-3
-
-Let's say, the user has a python file 'main.py' from which code will be executed by calling a function 'my_func'. To use Experimentalist for launching a job, you can use the decorator 'expy.launch' above the function 'my_func'. 
+Let's say you have a python file 'main.py' that call a function 'my_task' performing some task. To use experimentalist for launching a job, you can use the decorator 'expy.launch' above the function 'my_task'. 
 
 .. code-block:: python
    :caption: main.py
 
    import experimentalist as expy
 
-   @expy.launch()
-   def my_func(cfg: expy.ConfigDict, logger: expy.Logger)->None:
+   @expy.launch(config_path='./configs')
+   def my_task(ctx: expy.Context)->None:
 
-     print("cfg.user_config")
+     print("ctx.config")
+
+     print("The logger object is an instance of:")
+     print(type(logger))
+
 
    if __name__ == "__main__":
-     my_func()
+     my_task()
 
-The decorated function 'my_func' must take as arguments a ConfigDict object and a Logger object, both of which are automatically created on the fly during execution. Note that 'my_func' is later called without providing these arguments just like in  `hydra <https://hydra.cc/>`_.
-The Logger object allows logging outputs of the run is a reserved directory while the ConfigDict object 'cfg' stores information about the run. In particular, the field 'user_config' of the ConfigDict object 'cfg' contains configurations options provided by the user in yaml file 'user_config.yaml' located by default in a directory './configs'.
+The decorated function 'my_func' must take as arguments a context variable 'ctx' which is an object of the class Context. 
+Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
+The 'ctx' variable is automatically created on the fly during execution and stores informations about the run. It contains four fields: 'config', 'experimentalist', 'info' and 'logger':
 
-
-.. code-block:: yaml
-   :caption: user_config.yaml
- 
-   model:
-     num_layers: 4
-   optimizer:
-     lr: 1e-3
+  - ctx.config: Stores task specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
+  - ctx.experimentalist: Stores options contained in a yaml file 'experimentalist.yaml' located in the same directory 'config_path' and which configure the package experimentalist (see section below).  
+  - ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
+  - ctx.logger: Is an a logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
 When executing the python file 'main.py' from the command-line, we get the following output:
 
@@ -64,66 +52,114 @@ When executing the python file 'main.py' from the command-line, we get the follo
 
    $ python main.py
 
+   seed: null
    model:
      num_layers: 4
    optimizer:
      lr: 1e-3
 
-Just like in `hydra <https://hydra.cc/>`_, you can also override the options contained in the 'user_config.yaml' file from the command-line: 
+   The logger object is an instance of:
+   <class 'experimentalist.logger.DefaultLogger'>
+   
+One can check that these outputs match the content of the yaml file 'config.yaml':
+
+.. code-block:: yaml
+   :caption: ./configs/config.yaml
+  
+   seed: null
+   model:
+     num_layers: 4
+   optimizer:
+     lr: 1e-3
+
+Just like in `hydra <https://hydra.cc/>`_, you can also override the options contained in the 'config.yaml' file from the command-line: 
 
 .. code-block:: console
 
    $ python main.py +optimizer.lr=10. +model.num_layers=6
-   user_config: 
-      model:
-        num_layers: 6
-      optimizer:
-        lr: 10
+   
+   seed: null
+   model:
+     num_layers: 6
+   optimizer:
+     lr: 10
 
-If the file 'user_config.yaml' or its parent directory "./configs" do not exist, they will be created automatically. By default, "config.yaml" contains two fields: 'user_config' and 'seed'. The variable 'user_config' should store options specified by the user, whereas the variable 'seed_config' is intended for seeding randomn number generators. Note that, by default, both fields are empty (indicated by question marks ???).
+   The logger object is an instance of:
+   <class 'experimentalist.logger.DefaultLogger'>
+
+If the file 'config.yaml' or its parent directory 'config_path' do not exist, they will be created automatically. By default, 'config.yaml' contains a single field 'seed' with a 'null' value intended for seeding randomn number generators.
 
 .. code-block:: yaml
-   :caption: config.yaml
+   :caption: ./configs/config.yaml
 
-   user_config: ???
-   seed_config: ???
+   seed: null
 
-Experimentalist configuration
+
+
+experimentalist configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Experimentalist is intended to be a configurable tool with default functionalities that can be adjusted by the user. The package configurations are stored in a file 'base_config.yaml' located in the directory './configs'. 
-The user can then modify this file to use their own preferred configuration options. 
-When a new job is executed, the 'base_config.yaml' file is then loaded automatically. 
-If the file 'base_config.yaml' does not exit already, it is created automotically with default configuration options.
+experimentalist is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
+The package configurations are stored in a file 'experimentalist.yaml' located in the same directory as the 'config.yaml' file.
+If the file 'experimentalist.yaml' does not exit already, it is created automatically with default configuration options:
 
 .. code-block:: yaml
-   :caption: base_config.yaml
+   :caption: ./configs/experimentalist.yaml
 
-   logger: None
-   scheduler: None
-   wd_manager: None
+   logger:
+     name: DefaultLogger
+     parent_log_dir: ./logs
+     forced_log_id: -1
+     log_streams_to_file: false
+   scheduler:
+     name: Scheduler
+     shell_path: ''
+     shell_config_cmd: ''
+     env_cmd: ''
+     cleanup_cmd: ''
+     option_cmd: []
+   version_manager:
+     name: GitVM
+     parent_target_work_dir: ./.workdir
+     skip_requirements: false
+     interactive_mode: true
+   use_version_manager: false
+   use_scheduler: false
+   use_logger: true
 
-The logger option 'parent_log_dir' specifies a relative/absolute path where the outputs of all jobs will be saved. By default and for each run, the outputs are saved in a directory 'parent_log_dir/log_id', where 'log_id' is an integer that is uniquely defined for the current run. It is possible to force the value of 'log_id' by setting 
+The fields 'logger', 'scheduler' and 'version_manager' contain the configurations for logging information (Logger), submitting to a job scheduler (Scheduler) and managing code version used for executing jobs (VersionManager). For all three configuration fields, the sub-field 'name' must contain the relevant class name of the object instantiated during execution. 
+In case of using custom classes provided by the user, the full scope of such classes must be provided to the sub-fields 'name'. These classes must inherit form abstract classes Logger, Scheduler or VersionManager. 
+The remaining sub-fields are variables provided to the constructor of these classes. 
+Finally, the options 'use_version_manager', 'use_scheduler' and 'use_logger' either enable or disable these three functionalities (logging, scheduling and version management).  
+
+It is possible to override these options from the command-line by adding the prefix 'experimentalist' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
+
+.. code-block:: console
+
+   $ python main.py +experimentalist.use_logger=false 
+   
+   seed: null
+   model:
+     num_layers: 4
+   optimizer:
+     lr: 1e-3
+
+   The logger object is an instance of:
+   <class 'NoneType'>  
 
 
 
-
-
-Additionally, the user can override these configs in the command-line when executing code.
-
-
-
-Citing Experimentalist
+Citing experimentalist
 ^^^^^^^^^^^^^^^^^^^^^^
 
-If you use Experimentalist in your research please use the following BibTeX entry:
+If you use experimentalist in your research please use the following BibTeX entry:
 
 
 .. code-block:: bibtex 
 
    @Misc{Arbel2023Expy,
      author = {Michae Arbel},
-     title = {Experimentalist},
+     title = {experimentalist},
      howpublished = {Github},
      year = {2023},
      url = {https://github.com/MichaelArbel/experimentalist}

@@ -72,15 +72,15 @@ class Status(Enum):
 
 @dataclass
 class Context:
-    user_config : ConfigDict = MISSING
-    base_config : ConfigDict = MISSING
-    run_info: ConfigDict = MISSING
+    config : ConfigDict = MISSING
+    experimentalist : ConfigDict = MISSING
+    info: ConfigDict = MISSING
     logger: Union[Logger,None] = MISSING
 
 
 def launch(
     config_path: str = './configs',
-    seeding_function: Union[Callable[Any, None],None] = None
+    seeding_function: Union[Callable[[Any], None],None] = None
 ) -> Callable[[TaskFunction], Any]:
     """Decorator of the main function to be executed.  
 
@@ -124,7 +124,7 @@ def launch(
     :type config_path: str
     :type config_name: str (default "None")
     """
-    config_name = "user_config"
+    config_name = "config"
     version_base= None # by default set the version base for hydra to None.
     version.setbase(version_base)
     
@@ -179,33 +179,33 @@ def launch(
                     'start_time':now.strftime("%H:%M:%S"),
                     'status':Status.STARTING.name}
             
-            cfg.update_dict({'run_info':info})
+            cfg.update_dict({'info':info})
 
-            if cfg.base_config.use_version_manager:
-                version_manager = config_to_instance(config_module_name="name", **cfg.base_config.version_manager)
+            if cfg.experimentalist.use_version_manager:
+                version_manager = config_to_instance(config_module_name="name", **cfg.experimentalist.version_manager)
                 work_dir = version_manager.make_working_directory()
-                cfg.update_dict({'base_config':version_manager.get_configs()})
+                cfg.update_dict({'info':version_manager.get_configs()})
             else:
                 work_dir = os.getcwd()
 
-            if cfg.base_config.use_logger:
-                logger = config_to_instance(config_module_name="name", **cfg.base_config.logger)
+            if cfg.experimentalist.use_logger:
+                logger = config_to_instance(config_module_name="name", **cfg.experimentalist.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
-                cfg.update_dict({'run_info':{'log_id':log_id, 'log_dir':log_dir}})
+                cfg.update_dict({'info':{'log_id':log_id, 'log_dir':log_dir}})
             else:
                 logger = None
             
-            if cfg.base_config.use_scheduler:
+            if cfg.experimentalist.use_scheduler:
                 try:
                     assert logger
                 except AssertionError:
                     raise Exception("To use the scheduler, you must also use a logger, otherwise results might not be stored!")
-                scheduler = config_to_instance(config_module_name="name", **cfg.base_config.scheduler) 
+                scheduler = config_to_instance(config_module_name="name", **cfg.experimentalist.scheduler) 
 
                 cmd = _make_job_command(scheduler,
-                                        cfg.run_info,
+                                        cfg.info,
                                         work_dir,
                                         parent_log_dir,
                                         log_dir,
@@ -216,38 +216,35 @@ def launch(
                 process_output = scheduler.submit_job(job_path)
                 scheduler_job_id = scheduler.get_job_id(process_output) 
 
-                cfg.update({'base_config':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
+                cfg.update({'info':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
                 logger._log_configs(cfg)
                 
             else:
                 ## Setting up the working directory
                 os.chdir(work_dir)
                 sys.path.insert(0, work_dir)
-                cfg.update_dict({'run_info': {'work_dir':work_dir}})
+                cfg.update_dict({'info': {'work_dir':work_dir}})
 
                 if logger:
-                    
-                    cfg.update_dict(
-                        _get_scheduler_configs(log_dir,
-                                                logger.config_file_name)) # Checks if a metadata file exists and loads the scheduler configs
+                    cfg.update_dict(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
                 try:
                     
-                    cfg.update_dict({'run_info':{'status':Status.RUNNING.name}})
+                    cfg.update_dict({'info':{'status':Status.RUNNING.name}})
                     if logger:
                         logger._log_configs(cfg)
                     if seeding_function:
                         try:
-                            assert 'seed' in cfg.user_config.keys()
+                            assert 'seed' in cfg.config.keys()
                         except AssertionError:
-                            msg = "Missing field: The 'user_config' must contain a field 'seed'\n"
+                            msg = "Missing field: The 'config' must contain a field 'seed'\n"
                             msg+= "provided as argument to the function 'seeding_function' "
                             raise Exception(msg)
-                        seeding_function(cfg.user_config.seed)
+                        seeding_function(cfg.config.seed)
 
 
-                    ctx = Context(user_config=cfg.user_config,
-                                  base_config=cfg.base_config,
-                                  run_info=cfg.run_info,
+                    ctx = Context(config=cfg.config,
+                                  experimentalist=cfg.experimentalist,
+                                  info=cfg.info,
                                   logger = logger)
                     task_function(ctx)
                     now =  datetime.now()
@@ -255,7 +252,7 @@ def launch(
                             'end_time':now.strftime("%H:%M:%S"),
                             'status':Status.COMPLETE.name}
             
-                    cfg.update_dict({'run_info':info})
+                    cfg.update_dict({'info':info})
                     
                     if logger:
                         logger._log_configs(cfg)
@@ -267,7 +264,7 @@ def launch(
                             'end_time':now.strftime("%H:%M:%S"),
                             'status':Status.FAILED.name}
             
-                    cfg.update_dict({'run_info':info})
+                    cfg.update_dict({'info':info})
 
                     if logger:
                         logger._log_configs(cfg)
@@ -313,26 +310,26 @@ def _set_co_filename(func, co_filename):
     )
 
 
-def _get_scheduler_configs(log_dir, config_file_name):
-    abs_name = os.path.join(log_dir, config_file_name +".yaml")
+def _get_scheduler_configs(log_dir):
+    abs_name = os.path.join(log_dir, 'metadata','info.yaml')
     scheduler_configs = {}
     import yaml
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-            scheduler_configs = {'base_config':{'scheduler':configs['base_config']['scheduler']}}
+            scheduler_configs = {'info':{'scheduler':configs['scheduler']}}
     return  scheduler_configs
 
 
 def _make_job_command(scheduler,
-                  run_info, 
+                  info, 
                   work_dir,
                   parent_log_dir,
                   log_dir,
                   job_id,
                   ):
     ## Writing job command
-    job_command = [_job_command(run_info,parent_log_dir, work_dir, job_id)]
+    job_command = [_job_command(info,parent_log_dir, work_dir, job_id)]
 
     ## Setting shell   
     shell_cmd = [f"#!{scheduler.shell_path}\n"]
@@ -353,8 +350,6 @@ def _make_job_command(scheduler,
     return cmd
 
 
-def _configure_experimentalist():
-    raise NotImplementedError
 
 
 def _get_default_config(config_path):
@@ -363,32 +358,31 @@ def _get_default_config(config_path):
     default_config = OmegaConf.create(conf_dict)
     
     os.makedirs(config_path, exist_ok=True)
-    base_config_file = os.path.join(config_path,"base_config.yaml")
+    experimentalist_file = os.path.join(config_path,"experimentalist.yaml")
 
-    if os.path.exists(base_config_file):
+    if os.path.exists(experimentalist_file):
         import yaml
-        with open(base_config_file, "r") as file:
-            base_config = OmegaConf.create({'base_config':yaml.safe_load(file)})
+        with open(experimentalist_file, "r") as file:
+            experimentalist = OmegaConf.create({'experimentalist':yaml.safe_load(file)})
         valid_keys = ['logger','version_manager','scheduler',
                         'use_version_manager',
                         'use_logger',
                         'use_scheduler']
-        for key in base_config['base_config'].keys():
+        for key in experimentalist['experimentalist'].keys():
             try: 
                 assert key in valid_keys 
             except AssertionError:
-                msg =f'In the file {base_config_file},'
+                msg =f'In the file {experimentalist_file},'
                 msg += f'the following field is invalid: {key}\n'
                 msg += f'Valid fields are {valid_keys}\n'
                 raise AssertionError(msg)
 
-        default_config = OmegaConf.merge(default_config, base_config)
+        default_config = OmegaConf.merge(default_config, experimentalist)
     
     else:
-        #_configure_experimentalist(default_config)        
-        base_config = OmegaConf.create(default_config['base_config'])
+        experimentalist = OmegaConf.create(default_config['experimentalist'])
 
-        omegaconf.OmegaConf.save(config=base_config, f=base_config_file)
+        omegaconf.OmegaConf.save(config=experimentalist, f=experimentalist_file)
 
     # for key in cfg.keys():
     #     try: 
@@ -396,7 +390,7 @@ def _get_default_config(config_path):
     #     except AssertionError:
     #         msg = f'The following field is invalid: {key}\n'
     #         msg += f'Valid fields are {default_config.keys()}\n'
-    #         msg += "Consider using 'user_config' field for user defined options"
+    #         msg += "Consider using 'config' field for user defined options"
     #         raise AssertionError(msg)
     
     # default_config = convert_dict(default_config, 
@@ -409,18 +403,18 @@ def _build_config(overrides, config_path):
     cfg = _get_default_config(config_path)
 
 
-    overrides_base_config = OmegaConf.create({'base_config':overrides['base_config']})
-    cfg = OmegaConf.merge(cfg, overrides_base_config)
+    overrides_experimentalist = OmegaConf.create({'experimentalist':overrides['experimentalist']})
+    cfg = OmegaConf.merge(cfg, overrides_experimentalist)
     overrides = convert_dict(overrides, 
                         src_class=omegaconf.dictconfig.DictConfig, 
                         dst_class=dict)
-    overrides.pop('base_config')
+    overrides.pop('experimentalist')
     overrides = convert_dict(overrides, 
                         src_class=dict,
                         dst_class=omegaconf.dictconfig.DictConfig)
 
-    user_config = OmegaConf.create({'user_config':overrides})
-    cfg = OmegaConf.merge(cfg, user_config)
+    config = OmegaConf.create({'config':overrides})
+    cfg = OmegaConf.merge(cfg, config)
 
     cfg = convert_dict(cfg, 
                         src_class=omegaconf.dictconfig.DictConfig, 
@@ -436,19 +430,19 @@ def _save_job_command(cmd_string, log_dir):
 
 
 
-def _job_command(run_info, parent_log_dir, work_dir, job_id):
-    #exec_file = run_info.cmd
-    exec_file = os.path.relpath(run_info.cmd, os.getcwd())
+def _job_command(info, parent_log_dir, work_dir, job_id):
+    #exec_file = info.cmd
+    exec_file = os.path.relpath(info.cmd, os.getcwd())
     
 
     args = _get_overrides()
     values = [
         f"cd {work_dir}",
-        f"{run_info.app} {exec_file} {args} \
-            ++base_config.logger.forced_log_id={job_id}\
-            ++base_config.logger.parent_log_dir={parent_log_dir} \
-            ++base_config.use_scheduler={False}\
-            ++base_config.use_version_manager={False}"
+        f"{info.app} {exec_file} {args} \
+            +experimentalist.logger.forced_log_id={job_id}\
+            +experimentalist.logger.parent_log_dir={parent_log_dir} \
+            +experimentalist.use_scheduler={False}\
+            +experimentalist.use_version_manager={False}"
     ]
 
     values = [f"{val}\n" for val in values]
