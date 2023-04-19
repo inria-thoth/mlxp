@@ -40,7 +40,6 @@ def train(ctx: expy.Context)->None:
             train_err = torch.mean((pred-y)**2)
             train_err.backward()
             optimizer.step()
-            print(train_err.item())
         
         logger.log_metrics({'loss': train_err.item(),
                             'epoch': epoch}, log_name='train')
