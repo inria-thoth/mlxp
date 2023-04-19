@@ -6,16 +6,25 @@ from core_app import DataLoader, OneHiddenLayer
 
 def set_seeds(seed):
     import torch
+    import numpy
     torch.manual_seed(seed)
-
+    numpy.random.seed(seed)
 
 @expy.launch(config_path='./configs',
              seeding_function=set_seeds)
 
 def train(ctx: expy.Context)->None:
 
+
     cfg = ctx.config
     logger = ctx.logger
+
+    import numpy 
+    print(numpy.random.rand())
+
+    print("seed")
+    print(cfg.seed)
+
 
     try:
         checkpoint = logger.load_checkpoint(log_name= 'last_ckpt')

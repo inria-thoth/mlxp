@@ -59,12 +59,13 @@ class DataDict(Mapping):
     """
 
 
-    def __init__(self,flattened_dict, parent_dir):
+    def __init__(self,flattened_dict, parent_dir =None):
         #flattened_dict = _flatten_dict(config_dict, parent_key=parent_key) 
         self.config = { "flattened": flattened_dict,
                         "lazy": LazyDict(flattened_dict)}
         self.parent_dir = parent_dir
-        self._make_lazydict()
+        if self.parent_dir:
+            self._make_lazydict()
 
     def __getitem__(self,key):
         return self.config['lazy'][key]
@@ -82,7 +83,7 @@ class DataDict(Mapping):
         return df._repr_html_() 
     def keys(self):
 
-        return self.config['lazy'].keys()
+        return self.config['flattened'].keys()
 
     def items(self):
 
@@ -161,6 +162,12 @@ class LazyData(object):
         for key in unused_keys:
             del self._data[key]
 
+class _MyListProxy:
+    def __init__(self, list_of_dicts):
+        self.list_of_dicts = list_of_dicts
+
+    def __getitem__(self, key):
+        return [d[key] for d in self.list_of_dicts]
 
 class DataDictList(list):
     """
@@ -179,12 +186,21 @@ class DataDictList(list):
         if iterable:
             for config in iterable:
                 assert isinstance(config, DataDict) 
+        
         super().__init__(item for item in iterable)
+        self.pandas_lazy=None
         self.pandas=None
         self._keys=None
 
     def __repr__(self):
         return str(self.toPandasDF())
+    
+    def __getitem__(self, index):
+        if isinstance(index, slice):
+            return _MyListProxy([d for d in super().__getitem__(index)])
+        else:
+            return super().__getitem__(index)
+
 
     def _repr_html_(self):
         return self.toPandasDF()._repr_html_()  
@@ -198,14 +214,14 @@ class DataDictList(list):
         :rtype: pd.DataFrame
 
         """
-        
-        if self.pandas is None:
-            if lazy:
-                self.pandas = pd.DataFrame([config.flattened() for config in self])
-            else:
+        if lazy:
+            if self.pandas_lazy is None:
+                self.pandas_lazy = pd.DataFrame([config.flattened() for config in self])
+            return self.pandas_lazy
+        else:
+            if self.pandas is None:
                 self.pandas = pd.DataFrame([config.lazy() for config in self])
-                
-        return self.pandas
+            return self.pandas
     
     def keys(self)->List[str]:
         """
@@ -326,22 +342,14 @@ class GroupedDataDicts:
         self.pandas = None
     def __iter__(self):
             return iter(self.grouped_dict)
-    # def __next__(self):
-    #     if self._current_index < self.groups_size:
-    #         keys = self.group_vals[self._current_index]
-    #         # key_dict = dict(zip(self.group_keys, keys))
-    #         dict_val = self.__getitem__(keys)
-    #         self._current_index += 1
-    #         return keys, dict_val
-    #     self._current_index = 0
-    #     raise StopIteration
 
     def __getitem__(self, key:Tuple[str, ...])->DataDictList:
         """
-        Returns the value of the dictionary at a given key key
+        Returns the value of the dictionary at a given key
         """
-
-        return self.grouped_dict[keys]
+        
+        
+        return self.grouped_dict[key]
 
     def __repr__(self):
 
@@ -381,6 +389,12 @@ class GroupedDataDicts:
         if self.pandas is None:
             all_configs = []
             for key, value in self.grouped_dict.items():
+                data_dict = value[0].flattened()
+                for name_key, val_key in zip(self.group_keys, list(key)):
+                    if name_key not in data_dict.keys(): 
+                        data_dict[name_key] = val_key
+                if len(value)==1:
+                    value = [DataDict(data_dict)]
                 all_configs+=[el for el in value ]
             self.pandas = DataDictList(all_configs).toPandasDF().set_index(list(self.group_keys))
         return self.pandas
@@ -466,20 +480,19 @@ def _aggregate(groupedconfigs, aggregation_maps):
     # Returns a hierarchical dictionary whose leafs are instances of DataDictList
 
     #agg_dict = AggregatedDataDicts({})
-    agg_config_dict = {agg_map.name: {} for agg_map in  aggregation_maps}
+    agg_config_list = []
     for keys, config_list in groupedconfigs.items():
         
         agg_config = _aggregate_collection(config_list, aggregation_maps)
+        for key_name, key in zip(groupedconfigs.group_keys, list(keys)):
+            agg_config.update({key_name:key})
         #keys = list(keys_vals.values())
-        for agg_map in aggregation_maps:
-            tmp_agg_config_dict = {}
-            _add_nested_keys_val(agg_config_dict[agg_map.name], keys, agg_config[agg_map.name])
+        agg_config_list.append(DataDict(agg_config))
+        #_add_nested_keys_val(agg_config_dict, keys, agg_config)
 
-    for agg_map in aggregation_maps:
-        agg_config_dict[agg_map.name] = { key: DataDictList(reduce(dict.get, key, agg_config_dict[agg_map.name])) 
-                                        for key in groupedconfigs.group_vals }
-    return {agg_map.name : GroupedDataDicts(groupedconfigs.group_keys,
-                                            agg_config_dict[agg_map.name]) for agg_map in aggregation_maps}
+    #agg_config_dict = { key: DataDictList(reduce(dict.get, key, agg_config_dict)) 
+    #                                    for key in groupedconfigs.group_vals }
+    return  DataDictList(agg_config_list) 
 
 
 def _aggregate_collection(collection, agg_maps):
@@ -492,17 +505,12 @@ def _aggregate_collection(collection, agg_maps):
         val_array.append(data)
         config_dict.free_unused()
 
+    data_dict = {}
     for agg_map in agg_maps:
         agg_val, index = agg_map.apply(val_array)
-        if index is not None:
-            new_collection= DataDictList([deepcopy(collection[index])])
-        else:
-            new_collection = deepcopy(collection)
-        for config_dict in new_collection:
-            config_dict.update(agg_val)
-        agg_collection[agg_map.name] = new_collection
+        data_dict.update(agg_val)
+    return data_dict
 
-    return agg_collection
 
 
 def _load_dict_from_json(json_file_name, file_name):

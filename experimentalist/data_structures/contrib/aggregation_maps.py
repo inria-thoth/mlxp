@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 
-from experimentalist.data_structures import AggregationMap
+from experimentalist.data_structures.data_dict import AggregationMap
     
 class Last(AggregationMap):
     def __init__(self, key):
