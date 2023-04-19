@@ -4,7 +4,7 @@ from experimentalist.logger import DefaultLogger
 
 
 
-from experimentalist.scheduler import Scheduler, SLURMScheduler, OARScheduler
+from experimentalist.scheduler import Scheduler, SLURMScheduler, OARScheduler, NoScheduler
 
 from experimentalist.version_manager import GitVM 
 from experimentalist.data_structures.config_dict import ConfigDict
@@ -17,6 +17,7 @@ __all__ = [
     "DefaultLogger",
     "OARScheduler",
     "SLURMScheduler",
+    "NoScheduler",
     "Scheduler",
     "ConfigDict",
     "Context",

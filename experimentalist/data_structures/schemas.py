@@ -49,7 +49,7 @@ class ConfigScheduler:
 		
 		Structure containing the arguments to instantiate the class name.
 	"""
-	name: str = "Scheduler"
+	name: str = "NoScheduler"
 	shell_path: str = ""
 	shell_config_cmd: str = ""
 	env_cmd: str = ""

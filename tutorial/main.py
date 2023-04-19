@@ -1,42 +1,57 @@
-    import experimentalist as expy
-    from core_app import DataLoader, Network, Optimizer, Loss
+import experimentalist as expy
+import torch
+ 
 
-    @expy.launch(config_path='./configs')
-    def train(ctx: expy.Context)->None:
+from core_app import DataLoader, OneHiddenLayer
 
-        cfg = ctx.config
-        logger = ctx.logger
-
-        try:
-            checkpoint = logger.load_checkpoint()
-            num_epoch = cfg.num_epoch - checkpoint['epoch']-1
-            model = checkpoint['model']
-        except:
-            num_epoch = cfg.num_epoch
-            model = Network(n_layers = cfg.model.num_layers)
+def set_seeds(seed):
+    import torch
+    torch.manual_seed(seed)
 
 
-        optimizer = Optimizer(lr = cfg.optimizer.lr)
+@expy.launch(config_path='./configs',
+             seeding_function=set_seeds)
 
-        dataloader = DataLoader()
-        loss = Loss()
-         
+def train(ctx: expy.Context)->None:
 
-        for epoch in range(num_epoch):
+    cfg = ctx.config
+    logger = ctx.logger
 
-            for data in dataloader:
-                x,y = data
-                pred = model(x)
-                train_err = loss(pred, y)
-                logger.log_metrics({'train_loss': train_err.item()})
+    try:
+        checkpoint = logger.load_checkpoint(log_name= 'last_ckpt')
+        num_epoch = cfg.num_epoch - checkpoint['epoch']-1
+        model = checkpoint['model']
+    except:
+        num_epoch = cfg.num_epoch
+        model = OneHiddenLayer(d_int=cfg.data.d_int, 
+                        n_units = cfg.model.num_units)
 
-            logger.log_checkpoint({'model': model,
-                                   'epoch':epoch} )
+    model = model.to(cfg.data.device)
+    optimizer = torch.optim.SGD(model.parameters(), 
+                          lr=cfg.optimizer.lr)
+    dataloader = DataLoader(cfg.data.d_int,
+                            cfg.data.device)         
+
+    for epoch in range(num_epoch):
+
+        for data in dataloader:
+            x,y = data
+            pred = model(x)
+            train_err = torch.mean((pred-y)**2)
+            train_err.backward()
+            optimizer.step()
+            print(train_err.item())
+        
+        logger.log_metrics({'loss': train_err.item(),
+                            'epoch': epoch}, log_name='train')
+        
+        logger.log_checkpoint({'model': model,
+                               'epoch':epoch}, log_name='last_ckpt' )
 
 
 
-    if __name__ == "__main__":
-        train()
+if __name__ == "__main__":
+    train()
 
 
 

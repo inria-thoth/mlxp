@@ -45,7 +45,7 @@ class Directories(Enum):
 
 
 
-class Logger:
+class Logger(abc.ABC):
 
     def __init__(self, 
                  parent_log_dir,
@@ -90,20 +90,21 @@ class Logger:
         file_name = os.path.join(self.metadata_dir, 'experimentalist')
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.experimentalist.to_dict(), f)        
+
          
 
-    def log_metrics(self,metrics_dict, file_name="metrics"):
-        self._log_metrics_key(metric_dict,file_name=file_name)
-        file_name = os.path.join(self.metrics_dir, file_name)
-        return _log_metrics(metrics_dict, file_name=file_name) 
+    def log_metrics(self,metrics_dict, log_name="metrics"):
+        self._log_metrics_key(metrics_dict,log_name=log_name)
+        file_name = os.path.join(self.metrics_dir, log_name)
+        return self._log_metrics(metrics_dict, file_name=file_name) 
 
+    @abc.abstractmethod
     def _log_metrics(self,metrics_dict,file_name="metrics"):
         pass
 
-
-    def log_artifact(self, artifact: Artifact, file_name: str)-> None:
+    def log_artifact(self, artifact: Artifact, log_name: str)-> None:
         """Saves the attribute obj of an instance inheriting from the abstract class Artifact 
-        into a destination file: 'log_dir/artifact_class_name/file_name'. 
+        into a destination file: 'log_dir/artifacts/artifact_class_name/log_name'. 
         The directory 'artifact_class_name' is named after 
         the child class inheriting from Artifact.   
 
@@ -118,7 +119,7 @@ class Logger:
         assert isinstance(artifact,Artifact)
         subdir = os.path.join(self.artifacts_dir, type(artifact).__name__)
         os.makedirs(subdir, exist_ok=True)
-        fname = os.path.join(subdir, file_name)
+        fname = os.path.join(subdir, log_name)
         artifact.save(fname)
 
 
@@ -142,29 +143,29 @@ class Logger:
         return self._log_dir
 
 
-    def _log_metrics_key(self,metrics_dict, file_name="metrics"):
+    def _log_metrics_key(self,metrics_dict, log_name):
         # Logging new keys appearing in a metrics dict
 
-        if file_name not in self._metric_dict_keys.keys():
-            self._metric_dict_keys[file_name] = []
+        if log_name not in self._metric_dict_keys.keys():
+            self._metric_dict_keys[log_name] = []
 
         new_keys = []
         for key in metrics_dict.keys():
-            if key not in self._metric_dict_keys[file_name]:
+            if key not in self._metric_dict_keys[log_name]:
                 new_keys.append(key)
-        self._metric_dict_keys[file_name] += new_keys
+        self._metric_dict_keys[log_name] += new_keys
         dict_file = {key: "" for key in new_keys}
         keys_dir = os.path.join(self.metrics_dir, '.keys')
         os.makedirs(keys_dir, exist_ok=True)
-        file_name = os.path.join(keys_dir , file_name)
+        log_name = os.path.join(keys_dir , log_name)
         cur_yaml = {}
         try:
-            with open(file_name + ".yaml", "r") as f:
+            with open(log_name + ".yaml", "r") as f:
                 cur_yaml = yaml.safe_load(f)
         except:
             pass
         cur_yaml.update(dict_file)
-        with open(file_name + ".yaml", "w") as f:
+        with open(log_name + ".yaml", "w") as f:
             yaml.dump(cur_yaml, f)  
 
 
@@ -238,7 +239,7 @@ class DefaultLogger(Logger):
             :param checkpoint: Any serializable object to be stored in 'run_dir/Artifacts/Checkpoint/last.pkl'. 
             :type checkpoint: Any
         """
-        self.log_artifact(Checkpoint(checkpoint, ".pkl"),file_name=log_name)
+        self.log_artifact(Checkpoint(checkpoint, ".pkl"),log_name=log_name)
         
     def load_checkpoint(self, log_name)-> Any:
         """

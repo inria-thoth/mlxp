@@ -184,7 +184,7 @@ def launch(
             now = datetime.now()
             info = {'hostname': socket.gethostname(),
                     'process_id': os.getpid(),
-                    'cmd':task_function.__code__.co_filename,
+                    'exec':task_function.__code__.co_filename,
                     'app': os.environ["_"],
                     'start_date':now.strftime("%d/%m/%Y"),
                     'start_time':now.strftime("%H:%M:%S"),
@@ -215,17 +215,13 @@ def launch(
                 except AssertionError:
                     raise Exception("To use the scheduler, you must also use a logger, otherwise results might not be stored!")
                 scheduler = config_to_instance(config_module_name="name", **cfg.experimentalist.scheduler) 
-
-                cmd = _make_job_command(scheduler,
-                                        cfg.info,
-                                        work_dir,
-                                        parent_log_dir,
-                                        log_dir,
-                                        log_id)
-                print(cmd)
-
-                job_path = _save_job_command(cmd, log_dir)
-                process_output = scheduler.submit_job(job_path)
+                main_cmd = _main_job_command(cfg.info.app,
+                                             cfg.info.exec,
+                                             work_dir,
+                                             parent_log_dir,
+                                             log_id)
+                
+                process_output = scheduler.submit_job(main_cmd, log_dir)
                 scheduler_job_id = scheduler.get_job_id(process_output) 
 
                 cfg.update_dict({'info':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
@@ -324,39 +320,12 @@ def _get_scheduler_configs(log_dir):
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-            scheduler_configs = {'info':{'scheduler':configs['scheduler']}}
+            try:
+                scheduler_configs = {'info':{'scheduler':configs['scheduler']}}
+            except KeyError:
+                pass
+
     return  scheduler_configs
-
-
-def _make_job_command(scheduler,
-                  info, 
-                  work_dir,
-                  parent_log_dir,
-                  log_dir,
-                  job_id,
-                  ):
-    ## Writing job command
-    job_command = [_job_command(info,parent_log_dir, work_dir, job_id)]
-
-    ## Setting shell   
-    shell_cmd = [f"#!{scheduler.shell_path}\n"]
-    
-    ## Setting scheduler options
-    sheduler_option_command = [scheduler.option_command(log_dir)]
-    
-    ## Setting environment
-    env_cmds = [f"{scheduler.shell_config_cmd}\n", 
-                f"{scheduler.cleanup_cmd}\n"]
-    try:
-        env_cmds += [f"{scheduler.env_cmd}\n"]
-    except OmegaConfBaseException:
-        pass
-
-    cmd = "".join(shell_cmd + sheduler_option_command + env_cmds + job_command)
-
-    return cmd
-
-
 
 
 def _get_default_config(config_path):
@@ -437,15 +406,15 @@ def _save_job_command(cmd_string, log_dir):
 
 
 
-def _job_command(info, parent_log_dir, work_dir, job_id):
+def _main_job_command(app,executable,work_dir, parent_log_dir, job_id):
     #exec_file = info.cmd
-    exec_file = os.path.relpath(info.cmd, os.getcwd())
+    exec_file = os.path.relpath(executable, os.getcwd())
     
 
     args = _get_overrides()
     values = [
         f"cd {work_dir}",
-        f"{info.app} {exec_file} {args} \
+        f"{app} {exec_file} {args} \
             +experimentalist.logger.forced_log_id={job_id}\
             +experimentalist.logger.parent_log_dir={parent_log_dir} \
             +experimentalist.use_scheduler={False}\

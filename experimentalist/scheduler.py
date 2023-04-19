@@ -79,15 +79,14 @@ class Scheduler(abc.ABC):
         self.env_cmd = env_cmd
 
     @abc.abstractmethod
-    def option_command(self, log_dir:str)->str:
+    def make_job_details(self, log_dir:str)->List[str]:
         """
-        Returns a string specifying resource allocation to the scheduler. 
-        This string will then be written in a job script that is submitted to the scheduler.    
+        Returns a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.   
         
         :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.  
         :type log_dir: str
-        :return: a string specifying resource allocation to the scheduler.
-        :rtype: str 
+        :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.
+        :rtype: List[str] 
 
         """
         pass 
@@ -107,7 +106,7 @@ class Scheduler(abc.ABC):
         pass
 
 
-    def submit_job(self,job_path):
+    def submit_job(self,main_cmd, log_dir):
         """
             Submits the job to the scheduler and returns 
             a string containing the output of the submission command. 
@@ -119,8 +118,13 @@ class Scheduler(abc.ABC):
             :return: The output of the job submission command. 
             :rtype: str 
 
-        """    
+        """ 
+        cmd = self._make_job(main_cmd,log_dir)
+        print(cmd)
 
+        job_path = job_path = os.path.join(log_dir, "script.sh")
+        with open(job_path, "w") as f:
+            f.write(cmd)
 
         try:
             chmod_cmd = f"chmod +x {job_path!r}"
@@ -135,8 +139,85 @@ class Scheduler(abc.ABC):
 
         return process_output
 
+    def _make_job(self,main_cmd,log_dir):
+        job_command = [main_cmd]
+
+        ## Setting shell   
+        shell_cmd = [f"#!{self.shell_path}\n"]
+        
+        ## Setting scheduler options
+        
+        option_cmd = self.make_job_details(log_dir)
+        option_cmd += self.option_cmd
+        option_cmd = [f"{self.directive} {val}\n" for val in option_cmd]
+        option_cmd= ["".join(option_cmd)]
+        
+        ## Setting environment
+        env_cmds = [f"{self.shell_config_cmd}\n", 
+                    f"{self.cleanup_cmd}\n"]
+        try:
+            env_cmds += [f"{self.env_cmd}\n"]
+        except OmegaConfBaseException:
+            pass
+
+        cmd = "".join(shell_cmd + option_cmd + env_cmds + job_command)
+        return cmd
 
 
+class NoScheduler(Scheduler):
+
+    def __init__(self,shell_path="", 
+                  shell_config_cmd="",
+                  env_cmd="", 
+                  cleanup_cmd="", 
+                  option_cmd = []):
+        super().__init__(
+                        directive="", 
+                        submission_cmd="",
+                        shell_path=shell_path, 
+                        shell_config_cmd=shell_config_cmd,
+                        env_cmd=env_cmd,
+                        cleanup_cmd=cleanup_cmd, 
+                        option_cmd = option_cmd)  
+
+    def make_job_details(self, log_dir:str)->List[str]:
+        """
+        Returns a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.   
+        
+        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.  
+        :type log_dir: str
+        :raises Exception: This is not a valid scheduler, it does nothing 
+
+        """
+        raise Exception( 'No scheduler is defined! Please set the option experimentalist.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' ) 
+
+
+    def get_job_id(self,process_output):
+        """
+            Returns the scheduler's job id of the submited job.
+
+            :param process_output: The output string returned by self.submit_job
+            :type process_output: str
+            :raises Exception: This is not a valid scheduler, it does nothing 
+        """
+
+    
+        raise Exception( 'No scheduler is defined! Please set the option experimentalist.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' )
+
+
+    def submit_job(self,main_cmd, log_dir):
+        """
+            Submits the job to the scheduler and returns 
+            a string containing the output of the submission command. 
+
+            .. note:: There is generally no need to customize this function.
+
+            :param job_path: A path to an existing script defining the job.
+            :type job_path: str
+            :raises Exception: This is not a valid scheduler, it does nothing 
+
+        """  
+        raise Exception( 'No scheduler is defined! Please set the option experimentalist.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' )
 
 class OARScheduler(Scheduler):
     """
@@ -161,7 +242,7 @@ class OARScheduler(Scheduler):
     def get_job_id(self,process_output:str)->int:
         return process_output.split("\n")[-2].split("=")[-1]
 
-    def get_job_details(self,log_dir):
+    def make_job_details(self,log_dir):
         job_name = log_dir.split(os.sep)
         job_name = os.sep.join(job_name[-2:])
         # Creating job string
@@ -176,12 +257,6 @@ class OARScheduler(Scheduler):
         ]
         return values
 
-    def option_command(self, log_dir):
-        values = self.get_job_details(log_dir)
-        values += self.option_cmd
-        directive = self.directive
-        values = [f"{directive} {val}\n" for val in values]
-        return "".join(values)
 
 
 
@@ -206,7 +281,7 @@ class SLURMScheduler(Scheduler):
                         cleanup_cmd=cleanup_cmd, 
                         option_cmd= option_cmd)
 
-    def get_job_details(self,log_dir):
+    def make_job_details(self,log_dir):
         job_name = log_dir.split(os.sep)
         job_name = os.sep.join(job_name[-2:])
         # Creating job string
@@ -219,13 +294,6 @@ class SLURMScheduler(Scheduler):
             f"--error={err_path}",
         ]
         return values
-
-    def option_command(self, log_dir):
-        values = self.get_job_details(log_dir)
-        values += self.option_cmd
-        directive = self.directive
-        values = [f"{directive} {val}\n" for val in values]
-        return "".join(values)
 
 class JobSubmissionError(Exception):
     """Raised when failed to submit a job using a scheduler"""
