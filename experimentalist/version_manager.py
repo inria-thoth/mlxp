@@ -292,7 +292,7 @@ class GitVM(VersionManager):
 
     def _make_requirements_file(self):
         print("No requirement file found")
-        print("Generating fil using pipreqs")
+        print("Generating file using pipreqs")
         # Create a new updated requirement file.
         reqs_cmd = f"pipreqs --force {self.dst}" 
         subprocess.check_call(reqs_cmd, shell=True)
