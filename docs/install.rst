@@ -24,13 +24,13 @@ the following dependencies installed:
 
 .. code-block:: console
    
-   $ git clone git@github.com:MichaelArbel/experimentalist.git
+   $ git clone git@github.com:MichaelArbel/mlxpy.git
 
 2. Change to the package directory:
 
 .. code-block:: console
    
-   $ cd experimentalist
+   $ cd mlxpy
 
 3. Install the requirements using `pip`:
 

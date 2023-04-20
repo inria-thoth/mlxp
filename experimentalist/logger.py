@@ -18,7 +18,7 @@ from typing import Any, Type, Dict, Union, Callable
 import abc
 from enum import Enum
 
-from experimentalist.data_structures.artifacts import Artifact, Checkpoint
+from mlxpy.data_structures.artifacts import Artifact, Checkpoint
 
 
 
@@ -87,9 +87,9 @@ class Logger(abc.ABC):
         file_name = os.path.join(self.metadata_dir, 'info')
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.info.to_dict(), f)
-        file_name = os.path.join(self.metadata_dir, 'experimentalist')
+        file_name = os.path.join(self.metadata_dir, 'mlxpy')
         with open(file_name + ".yaml", "w") as f:
-            yaml.dump(config.experimentalist.to_dict(), f)        
+            yaml.dump(config.mlxpy.to_dict(), f)        
 
          
 

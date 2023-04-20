@@ -1,7 +1,7 @@
 from collections.abc import MutableMapping
 import importlib
 import os
-import experimentalist
+import mlxpy
 import copy
 
 def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
@@ -21,7 +21,7 @@ def _flatten_dict_gen(d, parent_key, sep):
 def import_module(module_name):
     module, attr = os.path.splitext(module_name)
     if not attr:
-        return  getattr(experimentalist, module)
+        return  getattr(mlxpy, module)
     else:
         try:
             module = importlib.import_module(module)

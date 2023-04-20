@@ -1,4 +1,4 @@
-import experimentalist as expy
+import mlxpy as expy
 import torch
  
 

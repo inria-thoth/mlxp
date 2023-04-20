@@ -3,7 +3,7 @@ Getting started
 
 Introduction
 ^^^^^^^^^^^^
-experimentalist is an open-source python framework for managing multiple experiments with flexible option structure from launching, logging to querying results. 
+mlxpy is an open-source python framework for managing multiple experiments with flexible option structure from launching, logging to querying results. 
 
 
 Key functionalities
@@ -18,12 +18,12 @@ Key functionalities
 Quick start guide
 ^^^^^^^^^^^^^^^^^
 
-Let's say you have a python file 'main.py' that call a function 'my_task' performing some task. To use experimentalist for launching a job, you can use the decorator 'expy.launch' above the function 'my_task'. 
+Let's say you have a python file 'main.py' that call a function 'my_task' performing some task. To use mlxpy for launching a job, you can use the decorator 'expy.launch' above the function 'my_task'. 
 
 .. code-block:: python
    :caption: main.py
 
-   import experimentalist as expy
+   import mlxpy as expy
 
    @expy.launch(config_path='./configs')
    def my_task(ctx: expy.Context)->None:
@@ -39,10 +39,10 @@ Let's say you have a python file 'main.py' that call a function 'my_task' perfor
 
 The decorated function 'my_func' must take as arguments a context variable 'ctx' which is an object of the class Context. 
 Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
-The 'ctx' variable is automatically created on the fly during execution and stores informations about the run. It contains four fields: 'config', 'experimentalist', 'info' and 'logger':
+The 'ctx' variable is automatically created on the fly during execution and stores informations about the run. It contains four fields: 'config', 'mlxpy', 'info' and 'logger':
 
   - ctx.config: Stores task specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-  - ctx.experimentalist: Stores options contained in a yaml file 'experimentalist.yaml' located in the same directory 'config_path' and which configure the package experimentalist (see section below).  
+  - ctx.mlxpy: Stores options contained in a yaml file 'mlxpy.yaml' located in the same directory 'config_path' and which configure the package mlxpy (see section below).  
   - ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
   - ctx.logger: Is an a logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
@@ -59,7 +59,7 @@ When executing the python file 'main.py' from the command-line, we get the follo
      lr: 1e-3
 
    The logger object is an instance of:
-   <class 'experimentalist.logger.DefaultLogger'>
+   <class 'mlxpy.logger.DefaultLogger'>
    
 One can check that these outputs match the content of the yaml file 'config.yaml':
 
@@ -85,7 +85,7 @@ Just like in `hydra <https://hydra.cc/>`_, you can also override the options con
      lr: 10
 
    The logger object is an instance of:
-   <class 'experimentalist.logger.DefaultLogger'>
+   <class 'mlxpy.logger.DefaultLogger'>
 
 If the file 'config.yaml' or its parent directory 'config_path' do not exist, they will be created automatically. By default, 'config.yaml' contains a single field 'seed' with a 'null' value intended for seeding randomn number generators.
 
@@ -96,15 +96,15 @@ If the file 'config.yaml' or its parent directory 'config_path' do not exist, th
 
 
 
-experimentalist configuration
+mlxpy configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-experimentalist is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
-The package configurations are stored in a file 'experimentalist.yaml' located in the same directory as the 'config.yaml' file.
-If the file 'experimentalist.yaml' does not exit already, it is created automatically with default configuration options:
+mlxpy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
+The package configurations are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file.
+If the file 'mlxpy.yaml' does not exit already, it is created automatically with default configuration options:
 
 .. code-block:: yaml
-   :caption: ./configs/experimentalist.yaml
+   :caption: ./configs/mlxpy.yaml
 
    logger:
      name: DefaultLogger
@@ -132,11 +132,11 @@ In case of using custom classes provided by the user, the full scope of such cla
 The remaining sub-fields are variables provided to the constructor of these classes. 
 Finally, the options 'use_version_manager', 'use_scheduler' and 'use_logger' either enable or disable these three functionalities (logging, scheduling and version management).  
 
-It is possible to override these options from the command-line by adding the prefix 'experimentalist' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
+It is possible to override these options from the command-line by adding the prefix 'mlxpy' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
 
 .. code-block:: console
 
-   $ python main.py +experimentalist.use_logger=false 
+   $ python main.py +mlxpy.use_logger=false 
    
    seed: null
    model:
@@ -149,19 +149,19 @@ It is possible to override these options from the command-line by adding the pre
 
 
 
-Citing experimentalist
+Citing mlxpy
 ^^^^^^^^^^^^^^^^^^^^^^
 
-If you use experimentalist in your research please use the following BibTeX entry:
+If you use mlxpy in your research please use the following BibTeX entry:
 
 
 .. code-block:: bibtex 
 
    @Misc{Arbel2023Expy,
      author = {Michae Arbel},
-     title = {experimentalist},
+     title = {mlxpy},
      howpublished = {Github},
      year = {2023},
-     url = {https://github.com/MichaelArbel/experimentalist}
+     url = {https://github.com/MichaelArbel/mlxpy}
    }
 

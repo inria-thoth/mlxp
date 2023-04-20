@@ -9,13 +9,13 @@ from tinydb.storages import JSONStorage
 from tinydb import Query
 from tinydb.table import Document
 
-from experimentalist.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
-from experimentalist.parser import Parser, DefaultParser
-from experimentalist.utils import _flatten_dict
+from mlxpy.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
+from mlxpy.parser import Parser, DefaultParser
+from mlxpy.utils import _flatten_dict
 from typing import Union, Optional, List
 import pandas as pd
 import abc
-from experimentalist.logger import Directories
+from mlxpy.logger import Directories
 
 
 
@@ -165,7 +165,7 @@ class Reader(object):
             print(files_not_found)
 
 def _get_data( path, metadata_file):
-    data = {'config':{}, 'info':{},'experimentalist':{}}
+    data = {'config':{}, 'info':{},'mlxpy':{}}
     for key in data:
         fname = os.path.join(path, Directories.Metadata.value, key + ".yaml")
         with open(fname, "r") as file:

@@ -12,8 +12,8 @@ from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, 
 
 from typing import List, Dict, Tuple
 
-from experimentalist.utils import _flatten_dict
-from experimentalist.logger import Directories
+from mlxpy.utils import _flatten_dict
+from mlxpy.logger import Directories
 
 
 LAZYDATA="LAZYDATA" 

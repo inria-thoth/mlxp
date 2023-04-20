@@ -23,10 +23,10 @@ from hydra.core.hydra_config import HydraConfig
 from hydra.types import TaskFunction
 
 
-from experimentalist.utils import _flatten_dict, config_to_instance
-from experimentalist.data_structures.schemas import Metadata
-from experimentalist.data_structures.config_dict import convert_dict, ConfigDict
-from experimentalist.logger import Logger
+from mlxpy.utils import _flatten_dict, config_to_instance
+from mlxpy.data_structures.schemas import Metadata
+from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
+from mlxpy.logger import Logger
 
 from datetime import datetime
 import socket
@@ -76,7 +76,7 @@ class Status(Enum):
 @dataclass
 class Context:
     config : ConfigDict = MISSING
-    experimentalist : ConfigDict = MISSING
+    mlxpy : ConfigDict = MISSING
     info: ConfigDict = MISSING
     logger: Union[Logger,None] = MISSING
 
@@ -192,16 +192,16 @@ def launch(
             
             cfg.update_dict({'info':info})
 
-            if cfg.experimentalist.use_version_manager:
-                version_manager = config_to_instance(config_module_name="name", **cfg.experimentalist.version_manager)
+            if cfg.mlxpy.use_version_manager:
+                version_manager = config_to_instance(config_module_name="name", **cfg.mlxpy.version_manager)
                 version_manager.set_vm_choices_from_file(vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update_dict({'info':version_manager.get_configs()})
             else:
                 work_dir = os.getcwd()
 
-            if cfg.experimentalist.use_logger:
-                logger = config_to_instance(config_module_name="name", **cfg.experimentalist.logger)
+            if cfg.mlxpy.use_logger:
+                logger = config_to_instance(config_module_name="name", **cfg.mlxpy.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
@@ -209,12 +209,12 @@ def launch(
             else:
                 logger = None
             
-            if cfg.experimentalist.use_scheduler:
+            if cfg.mlxpy.use_scheduler:
                 try:
                     assert logger
                 except AssertionError:
                     raise Exception("To use the scheduler, you must also use a logger, otherwise results might not be stored!")
-                scheduler = config_to_instance(config_module_name="name", **cfg.experimentalist.scheduler) 
+                scheduler = config_to_instance(config_module_name="name", **cfg.mlxpy.scheduler) 
                 main_cmd = _main_job_command(cfg.info.app,
                                              cfg.info.exec,
                                              work_dir,
@@ -251,7 +251,7 @@ def launch(
 
 
                     ctx = Context(config=cfg.config,
-                                  experimentalist=cfg.experimentalist,
+                                  mlxpy=cfg.mlxpy,
                                   info=cfg.info,
                                   logger = logger)
                     task_function(ctx)
@@ -334,31 +334,31 @@ def _get_default_config(config_path):
     default_config = OmegaConf.create(conf_dict)
     
     os.makedirs(config_path, exist_ok=True)
-    experimentalist_file = os.path.join(config_path,"experimentalist.yaml")
+    mlxpy_file = os.path.join(config_path,"mlxpy.yaml")
 
-    if os.path.exists(experimentalist_file):
+    if os.path.exists(mlxpy_file):
         import yaml
-        with open(experimentalist_file, "r") as file:
-            experimentalist = OmegaConf.create({'experimentalist':yaml.safe_load(file)})
+        with open(mlxpy_file, "r") as file:
+            mlxpy = OmegaConf.create({'mlxpy':yaml.safe_load(file)})
         valid_keys = ['logger','version_manager','scheduler',
                         'use_version_manager',
                         'use_logger',
                         'use_scheduler']
-        for key in experimentalist['experimentalist'].keys():
+        for key in mlxpy['mlxpy'].keys():
             try: 
                 assert key in valid_keys 
             except AssertionError:
-                msg =f'In the file {experimentalist_file},'
+                msg =f'In the file {mlxpy_file},'
                 msg += f'the following field is invalid: {key}\n'
                 msg += f'Valid fields are {valid_keys}\n'
                 raise AssertionError(msg)
 
-        default_config = OmegaConf.merge(default_config, experimentalist)
+        default_config = OmegaConf.merge(default_config, mlxpy)
     
     else:
-        experimentalist = OmegaConf.create(default_config['experimentalist'])
+        mlxpy = OmegaConf.create(default_config['mlxpy'])
 
-        omegaconf.OmegaConf.save(config=experimentalist, f=experimentalist_file)
+        omegaconf.OmegaConf.save(config=mlxpy, f=mlxpy_file)
 
     # for key in cfg.keys():
     #     try: 
@@ -379,12 +379,12 @@ def _build_config(overrides, config_path):
     cfg = _get_default_config(config_path)
 
 
-    overrides_experimentalist = OmegaConf.create({'experimentalist':overrides['experimentalist']})
-    cfg = OmegaConf.merge(cfg, overrides_experimentalist)
+    overrides_mlxpy = OmegaConf.create({'mlxpy':overrides['mlxpy']})
+    cfg = OmegaConf.merge(cfg, overrides_mlxpy)
     overrides = convert_dict(overrides, 
                         src_class=omegaconf.dictconfig.DictConfig, 
                         dst_class=dict)
-    overrides.pop('experimentalist')
+    overrides.pop('mlxpy')
     overrides = convert_dict(overrides, 
                         src_class=dict,
                         dst_class=omegaconf.dictconfig.DictConfig)
@@ -415,10 +415,10 @@ def _main_job_command(app,executable,work_dir, parent_log_dir, job_id):
     values = [
         f"cd {work_dir}",
         f"{app} {exec_file} {args} \
-            +experimentalist.logger.forced_log_id={job_id}\
-            +experimentalist.logger.parent_log_dir={parent_log_dir} \
-            +experimentalist.use_scheduler={False}\
-            +experimentalist.use_version_manager={False}"
+            +mlxpy.logger.forced_log_id={job_id}\
+            +mlxpy.logger.parent_log_dir={parent_log_dir} \
+            +mlxpy.use_scheduler={False}\
+            +mlxpy.use_version_manager={False}"
     ]
 
     values = [f"{val}\n" for val in values]

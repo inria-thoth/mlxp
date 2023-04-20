@@ -2,7 +2,7 @@ import abc
 from typing import Any, Type
 from dataclasses import dataclass
 import dill as pkl
-from experimentalist.logging.artifacts import Artifact
+from mlxpy.logging.artifacts import Artifact
 
 @dataclass
 class NumpyArray(Artifact):

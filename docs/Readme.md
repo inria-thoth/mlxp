@@ -20,7 +20,7 @@ extensions = [
 
 - Run the following command from the main directory
 
-sphinx-apidoc -o docs experimentalist/
+sphinx-apidoc -o docs mlxpy/
 
 
 - Add modules to the file index.rst

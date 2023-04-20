@@ -23,7 +23,7 @@ copyright = '2023, Michael Arbel'
 ver_dic = {}
 exec(
     compile(
-        open("../experimentalist/__init__.py").read(), "../experimentalist/__init__.py", "exec"
+        open("../mlxpy/__init__.py").read(), "../mlxpy/__init__.py", "exec"
     ),
     ver_dic,
 )
@@ -46,7 +46,7 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'experimentalist'
+project = 'mlxpy'
 
 author = 'Michael Arbel'
 

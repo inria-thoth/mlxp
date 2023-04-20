@@ -299,20 +299,20 @@ class Metadata:
 
 	"""
 	info: RunInfo = RunInfo()
-	experimentalist: ExperimentalistConfig = ExperimentalistConfig()
+	mlxpy: ExperimentalistConfig = ExperimentalistConfig()
 	config: Any = None
 
 #cs = ConfigStore.instance()
-# cs.store(group="experimentalist", 
+# cs.store(group="mlxpy", 
 # 		 name="config", 
-# 		 node=experimentalist(), 
-# 		 provider="experimentalist")
+# 		 node=mlxpy(), 
+# 		 provider="mlxpy")
 
 # cs.store(
-#     group="experimentalist",
+#     group="mlxpy",
 #     name="config",
-#     node=experimentalist(),
-#     provider="experimentalist")
+#     node=mlxpy(),
+#     provider="mlxpy")
 
 # cs.store(name="OAR", node=OARScheduler())
 # cs.store(name="SLURM", node=SLURMScheduler())

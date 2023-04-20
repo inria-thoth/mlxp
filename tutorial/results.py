@@ -1,5 +1,5 @@
-import experimentalist as expy
-from experimentalist.data_structures.contrib.aggregation_maps import AvgStd
+import mlxpy as expy
+from mlxpy.data_structures.contrib.aggregation_maps import AvgStd
 
 
 parent_log_dir = './logs/'

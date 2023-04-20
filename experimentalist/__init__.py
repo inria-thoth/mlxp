@@ -1,14 +1,14 @@
-from experimentalist.launcher import launch, Context
-from experimentalist.reader import Reader
-from experimentalist.logger import DefaultLogger
+from mlxpy.launcher import launch, Context
+from mlxpy.reader import Reader
+from mlxpy.logger import DefaultLogger
 
 
 
-from experimentalist.scheduler import Scheduler, SLURMScheduler, OARScheduler, NoScheduler
+from mlxpy.scheduler import Scheduler, SLURMScheduler, OARScheduler, NoScheduler
 
-from experimentalist.version_manager import GitVM 
-from experimentalist.data_structures.config_dict import ConfigDict
-from experimentalist.data_structures.data_dict import DataDictList
+from mlxpy.version_manager import GitVM 
+from mlxpy.data_structures.config_dict import ConfigDict
+from mlxpy.data_structures.data_dict import DataDictList
 
 
 __all__ = [

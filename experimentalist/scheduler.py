@@ -189,7 +189,7 @@ class NoScheduler(Scheduler):
         :raises Exception: This is not a valid scheduler, it does nothing 
 
         """
-        raise Exception( 'No scheduler is defined! Please set the option experimentalist.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' ) 
+        raise Exception( 'No scheduler is defined! Please set the option mlxpy.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' ) 
 
 
     def get_job_id(self,process_output):
@@ -202,7 +202,7 @@ class NoScheduler(Scheduler):
         """
 
     
-        raise Exception( 'No scheduler is defined! Please set the option experimentalist.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' )
+        raise Exception( 'No scheduler is defined! Please set the option mlxpy.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' )
 
 
     def submit_job(self,main_cmd, log_dir):
@@ -217,7 +217,7 @@ class NoScheduler(Scheduler):
             :raises Exception: This is not a valid scheduler, it does nothing 
 
         """  
-        raise Exception( 'No scheduler is defined! Please set the option experimentalist.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' )
+        raise Exception( 'No scheduler is defined! Please set the option mlxpy.scheduler.name to a valid scheduler (default OARScheduler or SLURMScheduler) ' )
 
 class OARScheduler(Scheduler):
     """

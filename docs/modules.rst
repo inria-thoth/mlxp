@@ -1,7 +1,7 @@
-experimentalist
+mlxpy
 ===============
 
 .. toctree::
    :maxdepth: 4
 
-   experimentalist
+   mlxpy

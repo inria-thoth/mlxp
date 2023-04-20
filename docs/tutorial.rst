@@ -9,14 +9,14 @@ In this example we would like to train a simple neural network on a regression t
 -----------------
 
 Let's have a look at the main python file to be executed.
-We can import experimentalist as 'expy' for simplicity. 
-To use experimentalist, we only need to use the decorator 'expy.launch' above the main function to be executed. In this case, our function 'train' will optimize a network. It must be defined as a function taking an object 'ctx' of type 'expy.Context' as argument, although it will be later call without explicity passing any argument. 
+We can import mlxpy as 'expy' for simplicity. 
+To use mlxpy, we only need to use the decorator 'expy.launch' above the main function to be executed. In this case, our function 'train' will optimize a network. It must be defined as a function taking an object 'ctx' of type 'expy.Context' as argument, although it will be later call without explicity passing any argument. 
 The object 'ctx' will be created on the fly during execution and will contain a logger object and a structure containing the user configuration for the run. 
 
 .. code-block:: python
     :caption: main.py
 
-    import experimentalist as expy
+    import mlxpy as expy
     from core_app import DataLoader, Network, Optimizer, Loss
 
     @expy.launch(config_path='./configs')
@@ -84,17 +84,17 @@ We want to run the code again with different learning rates (say: 1e-2 and 1e-1)
    Completed training with learing rate: 1e-1
 
 The above instruction executes the code twice: once using a learning rate of 1e-2 and second time using 1e-1. 
-That's it, launching a job using experimentalist is as easy as this! 
+That's it, launching a job using mlxpy is as easy as this! 
 
 
 2- Easy logging 
 ---------------
 
-By default, the logger was activated and logging the outputs of the run in a directory located in './logs'. To see this, we can inspect the file 'experimentalist.yaml' located by default in the directory './configs'. This file contains the configurations for experimentalist. There, we see that the variable 'use_logger' is set to 'true' and that the variable logger.parent_log_dir is set to './logs': 
+By default, the logger was activated and logging the outputs of the run in a directory located in './logs'. To see this, we can inspect the file 'mlxpy.yaml' located by default in the directory './configs'. This file contains the configurations for mlxpy. There, we see that the variable 'use_logger' is set to 'true' and that the variable logger.parent_log_dir is set to './logs': 
 
 
 .. code-block:: yaml
-   :caption: ./configs/experimentalist.yaml
+   :caption: ./configs/mlxpy.yaml
 
    logger:
      name: DefaultLogger
@@ -129,7 +129,7 @@ Let's have a closer look at the content of these sub-directories:
    │   ├── metadata/
    │   │   ├── config.yaml
    │   │   ├── info.yaml
-   │   │   └── experimentalist.yaml
+   │   │   └── mlxpy.yaml
    │   ├── metrics/
    │   │   └── train.json
    │   ├── artifacts/
@@ -140,7 +140,7 @@ Let's have a closer look at the content of these sub-directories:
    ├── 2/...
    └── 3/...
 
-The hidden directory '.keys' is used by the reader module of experimentalist and is not something to worry about here. Instead we inspect the remaining files and directories below. 
+The hidden directory '.keys' is used by the reader module of mlxpy and is not something to worry about here. Instead we inspect the remaining files and directories below. 
 
 
 The 'metrics' directory
@@ -173,8 +173,8 @@ This directory contains json files created when calling the logger's method 'log
 The 'metadata' directory
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-The 'metadata' directory contains three yaml files: 'config', 'info' and 'experimentalist', each storing the content of the corresponding fields of the context object 'ctx'. 
-'config' stores the user config of the run, 'info' stores general information about the run such as the assinged 'log_id' and the absolute path to the logs of the run 'log_dir', while 'experimentalist' stores the experimentalist's settings used for the run (e.g. the logger settings). 
+The 'metadata' directory contains three yaml files: 'config', 'info' and 'mlxpy', each storing the content of the corresponding fields of the context object 'ctx'. 
+'config' stores the user config of the run, 'info' stores general information about the run such as the assinged 'log_id' and the absolute path to the logs of the run 'log_dir', while 'mlxpy' stores the mlxpy's settings used for the run (e.g. the logger settings). 
 
 
 .. code-block:: yaml
@@ -195,7 +195,7 @@ The 'metadata' directory contains three yaml files: 'config', 'info' and 'experi
     ...
 
 .. code-block:: yaml
-   :caption: ./logs/1/metadata/experimentalist.yaml
+   :caption: ./logs/1/metadata/mlxpy.yaml
 
     use_logger: true
     ...
@@ -210,7 +210,7 @@ Checkpointing can be particularly useful if you need to restart a job from its l
 .. code-block:: python
     :caption: main.py
 
-    import experimentalist as expy
+    import mlxpy as expy
     from core_app import DataLoader, Network, Optimizer, Loss
 
     @expy.launch(config_path='./configs')
@@ -241,7 +241,7 @@ Of course if you execute 'main.py' without further options, the logger will crea
 
 .. code-block:: console
 
-   $ python main.py +experimentalist.logger.forced_log_id=1
+   $ python main.py +mlxpy.logger.forced_log_id=1
 
    Starting from epoch 9
 
@@ -254,7 +254,7 @@ Of course if you execute 'main.py' without further options, the logger will crea
 
 .. code-block:: ipython
 
-    In [1]: import experimentalist as expy
+    In [1]: import mlxpy as expy
 
     In [2]: # Create a reader object to access the results stored by the logger.
        ...: parent_log_dir = './logs/'
@@ -292,7 +292,7 @@ This object can also be rendered as a dataframe but does not load the 'metrics.j
 
 .. code-block:: ipython
 
-    In [1]: import experimentalist as expy
+    In [1]: import mlxpy as expy
 
     In [2]: # Create a reader object to access the results stored by the logger.
        ...: parent_log_dir = './logs/'
@@ -335,7 +335,7 @@ In our example, the initialization of the model uses random initial parameters w
 .. code-block:: python
     :caption: main.py
 
-    import experimentalist as expy
+    import mlxpy as expy
     from core_app import DataLoader, Network, Optimizer, Loss
 
     def set_seeds(seed):
@@ -355,7 +355,7 @@ In our example, the initialization of the model uses random initial parameters w
         train()
 
 
-The function 'set_seeds' will be called by experimentalist before executing the function 'train'. The parameter seed is read from the user-defined option: ctx.config.seed. 
+The function 'set_seeds' will be called by mlxpy before executing the function 'train'. The parameter seed is read from the user-defined option: ctx.config.seed. 
 Note that this object can be an integer or a dictionary or any object that can be stored in a yaml file. 
 Of course it is also possible to perform seeding inside the function 'train', but this allows to do it systematically. 
 
@@ -380,7 +380,7 @@ Let's see how this work! We simply need to set the option 'use_version_manager' 
 
 .. code-block:: console
 
-   $ python main.py +experimentalist.use_version_manager=True
+   $ python main.py +mlxpy.use_version_manager=True
 
    
 
@@ -391,7 +391,7 @@ First, the version manager checks for untracked files and asks to user what to d
 
 .. code-block:: console
 
-   $ python main.py +experimentalist.use_version_manager=True
+   $ python main.py +mlxpy.use_version_manager=True
 
 
 
@@ -401,7 +401,7 @@ The next step is to check for uncommitted changes. We see that there is one chan
 
 .. code-block:: console
 
-   $ python main.py +experimentalist.use_version_manager=True
+   $ python main.py +mlxpy.use_version_manager=True
 
 Finally, the version manager asks if we want to create a 'safe' copy based on the latest commit and from which code will be executed. If not, the code is excuted from the current directory. We choose the safe copy! Experimentalist proceed to excecute the code from that copy:
 
@@ -422,7 +422,7 @@ We can double check where the code were executed from by inspecting the 'info.ya
     work_dir: 
 
 
-You can see that the workin directory during execution of the job was '' which is different from the initial directory from which we run the commang 'python main.py +experimentalist.use_version_manager=True'. The directory is named after the latest commit hash during execution time (the one that was created when interacting with the version manager). We can inspect that directory and see that it contains a full copy of the committed files contained in the repository (except untracked files). 
+You can see that the workin directory during execution of the job was '' which is different from the initial directory from which we run the commang 'python main.py +mlxpy.use_version_manager=True'. The directory is named after the latest commit hash during execution time (the one that was created when interacting with the version manager). We can inspect that directory and see that it contains a full copy of the committed files contained in the repository (except untracked files). 
 If other jobs are submitted later, and if the code did not change meanwhile, then these jobs will also be executed from this same working directory. This avoids copying the exact same content multiple times. 
 
 Finally, a copy of the dependencies used by the code is also stored along with their versions in the fields 'requirements'. 
@@ -434,7 +434,7 @@ Finally, a copy of the dependencies used by the code is also stored along with t
 
 
 If you have access to an HPC cluster, then you probably use a job scheduler for submiting jobs. 
-Using experimentalist, you can combine the 'multirun' capabilities of hydra with job scheduling to perform large scale experiments involving large grid search over multiple hyper-parameters.
+Using mlxpy, you can combine the 'multirun' capabilities of hydra with job scheduling to perform large scale experiments involving large grid search over multiple hyper-parameters.
 
 
 Configuring the scheduler
@@ -442,12 +442,12 @@ Configuring the scheduler
 
 By default, Experimentalist supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your own custom scheduler and we will see later. 
 For now, let's use assume we are using one of the default schedulers: 'OAR'. 
-Since, the scheduler settings are unlikely to change much during your project, I  recommand to directly edit those settings in the './configs/experimentalist.yaml': 
+Since, the scheduler settings are unlikely to change much during your project, I  recommand to directly edit those settings in the './configs/mlxpy.yaml': 
 
 
 
 .. code-block:: yaml
-   :caption: ./configs/experimentalist.yaml
+   :caption: ./configs/mlxpy.yaml
 
    logger: ... 
   
@@ -466,7 +466,7 @@ Since, the scheduler settings are unlikely to change much during your project, I
    version_manager: ...
 
 
-Here, we set the option 'name' to 'OARScheduler', which is the class  implemented by experimentalist to handle OAR.
+Here, we set the option 'name' to 'OARScheduler', which is the class  implemented by mlxpy to handle OAR.
 Then, we need to provide some options to the scheduler: 'shell_path',  'shell_config_cmd', 'env_cmd', 'cleanup_cmd' and 'option_cmd' that we'll discuss soon. 
 The most important command is the 'option_cmd' which specifies the resources required by the job using OAR's syntax. 
 It contains a list of strings, each string providing some instruction to OAR (e.g.: number of cores, walltime, gpu memory). You can have a look at the OAR documentation for how to set those options. 
@@ -479,10 +479,10 @@ We can now submit jobs using OAR scheduler assuming we have access to it. We onl
 
 .. code-block:: console
 
-   $ python main.py +experimentalist.use_scheduler=True
+   $ python main.py +mlxpy.use_scheduler=True
 
 
-Under the woods experimentalist first assigns a 'log_id' to the run and creates its corresponding log directory './logs/log_id'. Here, log_id=5, since this is the 5th run that we launched in './logs'. Then instead of executing the job, the scheduler creates a script 'script.sh' that is saved in './logs/log_id'. This script is then submitted automatically to the OAR cluster queue using the command: 'sbatch .script.sh'. At this point, the program exits with a message 'Submitted 1 job to the cluster queue!'.
+Under the woods mlxpy first assigns a 'log_id' to the run and creates its corresponding log directory './logs/log_id'. Here, log_id=5, since this is the 5th run that we launched in './logs'. Then instead of executing the job, the scheduler creates a script 'script.sh' that is saved in './logs/log_id'. This script is then submitted automatically to the OAR cluster queue using the command: 'sbatch .script.sh'. At this point, the program exits with a message 'Submitted 1 job to the cluster queue!'.
 Let's have a look at the content of the script:
 
 
@@ -499,14 +499,14 @@ Let's have a look at the content of the script:
     cd absolute_path_to/work_dir
 
     python main.py 
-    +experimentalist.logger.forced_log_id=5 
-    +experimentalist.logger.parent_log_dir=absolute_path_to/logs
-    +experimentalist.use_scheduler=False
-    +experimentalist.use_version_manager=False
+    +mlxpy.logger.forced_log_id=5 
+    +mlxpy.logger.parent_log_dir=absolute_path_to/logs
+    +mlxpy.use_scheduler=False
+    +mlxpy.use_version_manager=False
 
 Let's now go through this script:
 
-- The first line of the script specifies the shell used for running the script. It is determined by the scheduler's option 'shell_path' of the 'experimentalist.yaml' file settings. We chose to set it to '/bin/bash'. 
+- The first line of the script specifies the shell used for running the script. It is determined by the scheduler's option 'shell_path' of the 'mlxpy.yaml' file settings. We chose to set it to '/bin/bash'. 
 - The next lines specify the OAR resource option provided in 'option_cmd'. 
 - The first instruction is to go to the work_directory set by the launcher (which can be different from the current working directory if we are using the version manager). 
 - Finally, we find the instruction for executing the 'main.py' file with some additional options. 
@@ -541,7 +541,7 @@ Once, the job finishes execution, we can double check that everything went well 
    │   ├── metadata/
    │   │   ├── config.yaml
    │   │   ├── info.yaml
-   │   │   └── experimentalist.yaml
+   │   │   └── mlxpy.yaml
    │   ├── metrics/
    │   │   └── train.json
    │   ├── artifacts/
@@ -563,12 +563,12 @@ You can also fire several jobs to the cluster from a single command! Let's say, 
 
 .. code-block:: console
 
-   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +experimentalist.use_scheduler=True
+   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxpy.use_scheduler=True
 
 Here is what happens:
 
 1- Hydra performs a cross product of the options provided and creates as many jobs are needed (3x4).
-2- The experimentalist logger create a separate directory for each one of these jobs (by assigning a unique log_id to each one of them).
+2- The mlxpy logger create a separate directory for each one of these jobs (by assigning a unique log_id to each one of them).
 3- The scheduler creates a script for each of these jobs in the corresponding directory (created by the logger) then submits these scripts to the cluster queue.
 
 You only need to wait for the results to come!
@@ -581,10 +581,10 @@ Combining the scheduler with the version manager
 
 Finally, you can combine both features to run several reproducible jobs with a controlled version of the code they use.  
 
-   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +experimentalist.use_scheduler=True +experimentalist.use_version_manager=True
+   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxpy.use_scheduler=True +mlxpy.use_version_manager=True
 
 
-In this case, experimentalist first runs the version manager 
+In this case, mlxpy first runs the version manager 
 with an interactive 
 
 

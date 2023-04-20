@@ -1,10 +1,10 @@
-experimentalist package
+mlxpy package
 =======================
 
 
 .. toctree::
    :maxdepth: 2
 
-   experimentalist.launching 
-   experimentalist.logging
-   experimentalist.reading
+   mlxpy.launching 
+   mlxpy.logging
+   mlxpy.reading

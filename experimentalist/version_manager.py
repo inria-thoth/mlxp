@@ -204,7 +204,7 @@ class GitVM(VersionManager):
 
                     if choice == 'a':
                         print("Commiting changes....")
-                        output_msg = repo.git.commit("-a", "-m", "experimentalist: Automatically committing all changes")
+                        output_msg = repo.git.commit("-a", "-m", "mlxpy: Automatically committing all changes")
                         print(output_msg)
                         
                         if not repo.is_dirty():
@@ -262,7 +262,7 @@ class GitVM(VersionManager):
                             for file in files_to_add:
                                 repo.git.add(file.strip())
                             # Commit the changes
-                            #repo.index.commit("experimentalist: Committing selected files ")
+                            #repo.index.commit("mlxpy: Committing selected files ")
                             if not repo.untracked_files:
                                 break
                         else:
