@@ -1,8 +1,7 @@
 Tutorial
 ========
 
-In this example we would like to train a simple neural network on a regression task. 
-
+In this example we will train a simple neural network on a regression task using mlxpy. 
 
 
 1- Easy launching
