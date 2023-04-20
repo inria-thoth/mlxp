@@ -130,7 +130,7 @@ class ConfigGitVM(ConfigVersionManager):
 
 	name: str="GitVM"
 	parent_target_work_dir: str = "./.workdir" #os.path.join(os.getcwd(), "data/.workdir") 
-	skip_requirements: bool = False
+	skip_requirements: bool = True
 	interactive_mode: bool= True
 
 @dataclass
