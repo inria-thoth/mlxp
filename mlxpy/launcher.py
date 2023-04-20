@@ -237,13 +237,14 @@ def launch(
                 
             else:
                 pass
-                print(work_dir)
                 
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
                 os.chdir(work_dir)
                 
                 sys.path.insert(0, work_dir)
+                print(sys.path)
+
                 cfg.update_dict({'info': {'work_dir':work_dir}})
 
                 if logger:
