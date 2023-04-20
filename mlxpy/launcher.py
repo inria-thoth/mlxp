@@ -51,6 +51,15 @@ hydra_defaults_dict = {
 vm_choices_file = os.path.join(hydra_defaults_dict["hydra"]["sweep"]["dir"],
                                             "vm_choices.yaml")
 
+
+def clean_dir():
+    sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
+    try:
+        os.remove(os.path.join(sweep_dir, "multirun.yaml"))
+        os.remove(vm_choices_file)
+    except FileNotFoundError:
+        pass   
+
 class Status(Enum):
     """
         Status of a run. 
@@ -80,6 +89,8 @@ class Context:
     info: ConfigDict = MISSING
     logger: Union[Logger,None] = MISSING
 
+
+  
 
 def launch(
     config_path: str = './configs',
@@ -157,7 +168,9 @@ def launch(
                 ]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
-                
+
+                clean_dir()
+               
                 
                 _run_hydra(
                     args=args,
@@ -167,12 +180,7 @@ def launch(
                     config_name=config_name,
                 )
                 
-                sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
-                try:
-                    os.remove(os.path.join(sweep_dir, "multirun.yaml"))
-                    os.remove(vm_choices_file)
-                except FileNotFoundError:
-                    pass                
+                clean_dir()
 
         return decorated_main
 

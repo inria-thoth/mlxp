@@ -138,49 +138,44 @@ class GitVM(VersionManager):
                 yaml.dump(self.vm_choices, f)
 
 
-    def _clone_repo(self,repo,relpath):
-        print(f"Creating a copy of the repository at {self.dst}")
-        repo.clone(self.dst)
-
-
-        if not self.skip_requirements:
-            self._make_requirements_file()
-        self._set_requirements()
-        self.work_dir = os.path.join(self.dst, relpath)
-        print(f"Job will be executed from {self.work_dir}")
-        
-    def _handle_cloning(self, repo, relpath):
-        while True:
-            if not os.path.exists(self.dst):
-                
-                if self.interactive_mode:
-                    if self._existing_choices:
-                        choice = self.vm_choices['cloning']
-                    else: 
-                        print(f"There is no separate copy of the repository with commit-hash {self.commit_hash}")
-                        print("Would you like to create one? (y/n):")
-                        print(f"y: A new copy of the repository will be created in {self.dst}. Run will be exectured from there.")
-                        print("n: No copy will be created. Run will be executed from the current repository.")
-                        choice = input("Please enter you answer (y/n):")
-                        self.vm_choices['cloning'] = choice
-                    
-                    if choice=='y':
-                        self._clone_repo(repo,relpath)
-                        break 
-                    elif choice=='n':
-                        print(f"No copy will be created!") 
-                        print(f"Run will be executed from the current repository {self.dst}")
-                        break
-                    else:
-                        print("Invalid choice. Please try again. (y/n)")
-                else:
-                    self._clone_repo(repo,relpath)
-                    break
-            else:
+    def _clone_repo(self,repo):
+        if not os.path.isdir(self.dst):
+            print(f"Creating a copy of the repository at {self.dst}")
+            repo.clone(self.dst)
+            if not self.skip_requirements:
+                self._make_requirements_file()
+        else:
+            if not self._existing_choices:
                 print(f"Found a copy of the repository with commit-hash: {self.commit_hash}")
                 print(f"Run will be executed from {self.dst}")
-                self.work_dir = os.path.join(self.dst, relpath)
+        
+    def _handle_cloning(self, repo, relpath):
+        while True:                
+            if self.interactive_mode:
+                if self._existing_choices:
+                    choice = self.vm_choices['cloning']
+                else: 
+                    print(f"Where would you like to run your code from? (a/b):")
+                    print(f"a: Code will be run from a copy of the repository based on the latest commit and located in: {self.dst}")
+                    print("b: Code will be run from the main repository")
+                    choice = input("Please enter you answer (a/b):")
+                    self.vm_choices['cloning'] = choice
+                
+                if choice=='a':
+                    self._clone_repo(repo)
+                    self._set_requirements()
+                    self.work_dir = os.path.join(self.dst, relpath)
+                    break 
+                elif choice=='b':
+                    if not self._existing_choices:
+                        print(f"Run will be executed from the current repository {self.dst}")
+                    break
+                else:
+                    print("Invalid choice. Please try again. (y/n)")
+            else:
+                self._clone_repo(repo)
                 self._set_requirements()
+                self.work_dir = os.path.join(self.dst, relpath)
                 break
 
     def _handle_commit_state(self, repo):
