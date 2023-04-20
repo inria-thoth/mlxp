@@ -6,16 +6,7 @@ import subprocess
 import yaml
 from typing import Any, Dict
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+from mlxpy.utils import bcolors
 
 class VersionManager(abc.ABC):
     """
@@ -185,7 +176,7 @@ class GitVM(VersionManager):
                         print(f"{bcolors.OKBLUE}Run will be executed from the current repository {self.dst}{bcolors.ENDC}")
                     break
                 else:
-                    print(f"{bcolors.OKBLUE}Invalid choice. Please try again. (y/n){bcolors.ENDC}")
+                    print(f"{bcolors.OKBLUE}Invalid choice. Please try again. (a/b){bcolors.ENDC}")
             else:
                 self._clone_repo(repo)
                 self._set_requirements()
@@ -259,7 +250,7 @@ class GitVM(VersionManager):
                     if choice=='a':
                         print("Untracked files:")
                         _disp_untracked_files(repo)
-                        print(f"{bcolors.OKBLUE}Please select files to be tracked (comma-separated, hit Enter to skip):{bcolors.ENDC}")
+                        print(f"{bcolors.OKGREEN}Please select files to be tracked (comma-separated, hit Enter to skip):{bcolors.ENDC}")
                         
                         files_input = input()
 

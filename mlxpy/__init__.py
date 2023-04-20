@@ -11,17 +11,18 @@ from mlxpy.data_structures.config_dict import ConfigDict
 from mlxpy.data_structures.data_dict import DataDictList
 
 
+
 __all__ = [
     "launch",
     "Reader",
     "DefaultLogger",
-    "OARScheduler",
-    "SLURMScheduler",
     "NoScheduler",
     "Scheduler",
     "ConfigDict",
     "Context",
-    "DataDictList"
+    "DataDictList",
+    "OARScheduler", 
+    "SLURMScheduler"
 ]
 
 VERSION = (2023, 0, 1)

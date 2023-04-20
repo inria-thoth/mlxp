@@ -10,10 +10,7 @@ from typing import Any, Callable, List, Optional, Union
 from types import CodeType
 from dataclasses import dataclass, field
 
-import omegaconf
-from omegaconf import OmegaConf, DictConfig, open_dict, read_write
-from omegaconf import MISSING
-from omegaconf.errors import OmegaConfBaseException
+from omegaconf import DictConfig
 from enum import Enum
 
 from hydra import version
@@ -24,7 +21,6 @@ from hydra.types import TaskFunction
 
 
 from mlxpy.utils import _flatten_dict, config_to_instance
-from mlxpy.data_structures.schemas import Metadata
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
 from mlxpy.logger import Logger
 
@@ -32,6 +28,8 @@ from datetime import datetime
 import socket
 import sys
 from dataclasses import dataclass
+from mlxpy._internal.configure import _build_config
+import yaml
 
 
 _UNSPECIFIED_: Any = object()
@@ -84,10 +82,10 @@ class Status(Enum):
 
 @dataclass
 class Context:
-    config : ConfigDict = MISSING
-    mlxpy : ConfigDict = MISSING
-    info: ConfigDict = MISSING
-    logger: Union[Logger,None] = MISSING
+    config : ConfigDict = None
+    mlxpy : ConfigDict = None
+    info: ConfigDict = None
+    logger: Union[Logger,None] = None
 
 
   
@@ -146,7 +144,8 @@ def launch(
     custom_config_file = os.path.join(config_path,config_name+".yaml")
     if not os.path.exists(custom_config_file):
         custom_config = {'seed':None}
-        omegaconf.OmegaConf.save(config=custom_config, f=custom_config_file)
+        with open(custom_config_file, "w") as f:
+            yaml.dump(custom_config, f) 
 
     work_dir =  os.getcwd()
 
@@ -208,6 +207,18 @@ def launch(
             else:
                 work_dir = os.getcwd()
 
+            if cfg.mlxpy.use_scheduler:
+                
+                scheduler = config_to_instance(config_module_name="name", **cfg.mlxpy.scheduler) 
+                if not cfg.mlxpy.use_logger:
+                    print("Logger is currently disabled.")
+                    print("To use the scheduler, the logger must be enabled")
+                    print("Enabling the logger...")
+                    cfg.mlxpy.use_logger=True
+            else:
+                scheduler = None
+
+
             if cfg.mlxpy.use_logger:
                 logger = config_to_instance(config_module_name="name", **cfg.mlxpy.logger)
                 log_id = logger.log_id
@@ -222,7 +233,7 @@ def launch(
                     assert logger
                 except AssertionError:
                     raise Exception("To use the scheduler, you must also use a logger, otherwise results might not be stored!")
-                scheduler = config_to_instance(config_module_name="name", **cfg.mlxpy.scheduler) 
+                
                 main_cmd = _main_job_command(cfg.info.app,
                                              cfg.info.exec,
                                              work_dir,
@@ -340,7 +351,7 @@ def _set_co_filename(func, co_filename):
 def _get_scheduler_configs(log_dir):
     abs_name = os.path.join(log_dir, 'metadata','info.yaml')
     scheduler_configs = {}
-    import yaml
+    
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
@@ -351,82 +362,6 @@ def _get_scheduler_configs(log_dir):
 
     return  scheduler_configs
 
-
-def _get_default_config(config_path):
-    default_config = OmegaConf.structured(Metadata)
-    conf_dict = OmegaConf.to_container(default_config, resolve=True)
-    default_config = OmegaConf.create(conf_dict)
-    
-    os.makedirs(config_path, exist_ok=True)
-    mlxpy_file = os.path.join(config_path,"mlxpy.yaml")
-
-    if os.path.exists(mlxpy_file):
-        import yaml
-        with open(mlxpy_file, "r") as file:
-            mlxpy = OmegaConf.create({'mlxpy':yaml.safe_load(file)})
-        valid_keys = ['logger','version_manager','scheduler',
-                        'use_version_manager',
-                        'use_logger',
-                        'use_scheduler']
-        for key in mlxpy['mlxpy'].keys():
-            try: 
-                assert key in valid_keys 
-            except AssertionError:
-                msg =f'In the file {mlxpy_file},'
-                msg += f'the following field is invalid: {key}\n'
-                msg += f'Valid fields are {valid_keys}\n'
-                raise AssertionError(msg)
-
-        default_config = OmegaConf.merge(default_config, mlxpy)
-    
-    else:
-        mlxpy = OmegaConf.create(default_config['mlxpy'])
-
-        omegaconf.OmegaConf.save(config=mlxpy, f=mlxpy_file)
-
-    # for key in cfg.keys():
-    #     try: 
-    #         assert key in  default_config.keys()
-    #     except AssertionError:
-    #         msg = f'The following field is invalid: {key}\n'
-    #         msg += f'Valid fields are {default_config.keys()}\n'
-    #         msg += "Consider using 'config' field for user defined options"
-    #         raise AssertionError(msg)
-    
-    # default_config = convert_dict(default_config, 
-    #                     src_class=omegaconf.dictconfig.DictConfig, 
-    #                     dst_class=ConfigDict)
-    return default_config
-
-def _build_config(overrides, config_path):
-
-    cfg = _get_default_config(config_path)
-
-
-    overrides_mlxpy = OmegaConf.create({'mlxpy':overrides['mlxpy']})
-    cfg = OmegaConf.merge(cfg, overrides_mlxpy)
-    overrides = convert_dict(overrides, 
-                        src_class=omegaconf.dictconfig.DictConfig, 
-                        dst_class=dict)
-    overrides.pop('mlxpy')
-    overrides = convert_dict(overrides, 
-                        src_class=dict,
-                        dst_class=omegaconf.dictconfig.DictConfig)
-
-    config = OmegaConf.create({'config':overrides})
-    cfg = OmegaConf.merge(cfg, config)
-
-    cfg = convert_dict(cfg, 
-                        src_class=omegaconf.dictconfig.DictConfig, 
-                        dst_class=ConfigDict)
-
-    return cfg
-
-def _save_job_command(cmd_string, log_dir):
-    job_path = os.path.join(log_dir, "script.sh")
-    with open(job_path, "w") as f:
-        f.write(cmd_string)
-    return job_path
 
 
 

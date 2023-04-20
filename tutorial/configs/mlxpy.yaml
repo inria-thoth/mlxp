@@ -5,15 +5,11 @@ logger:
   log_streams_to_file: false
 scheduler:
   name: OARScheduler
-  cleanup_cmd: "source gpu_setVisibleDevices.sh"
-  option_cmd: ["-l core=1,walltime=15:00:00",
-        "-t besteffort",
-        "-t idempotent",
-        "-p gpumem>'16000'"
-      ]
-  shell_config_cmd: source ~/.bashrc
   shell_path: /bin/bash
-  env_cmd: conda activate 'base'
+  shell_config_cmd: ''
+  env_cmd: ''
+  cleanup_cmd: ''
+  option_cmd: []
 version_manager:
   name: GitVM
   parent_target_work_dir: ./.workdir
