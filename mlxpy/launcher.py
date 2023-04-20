@@ -238,8 +238,10 @@ def launch(
             else:
                 pass
                 print(work_dir)
+                
                 # ## Setting up the working directory
-                #os.chdir(work_dir)
+                cur_dir = os.getcwd()
+                os.chdir(work_dir)
                 
                 sys.path.insert(0, work_dir)
                 cfg.update_dict({'info': {'work_dir':work_dir}})
@@ -276,6 +278,7 @@ def launch(
                     if logger:
                         logger._log_configs(cfg)
                     
+                    os.chdir(cur_dir)
                     return None
                 except Exception:
                     now =  datetime.now()
@@ -287,6 +290,7 @@ def launch(
 
                     if logger:
                         logger._log_configs(cfg)
+                    os.chdir(cur_dir)
                     raise
 
         _set_co_filename(decorated_task, task_function.__code__.co_filename)
