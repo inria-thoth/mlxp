@@ -164,7 +164,7 @@ class GitVM(VersionManager):
                 if self._existing_choices:
                     choice = self.vm_choices['cloning']
                 else: 
-                    print(f"{bcolors.OKBLUE}Where would you like to run your code from?{bcolors.ENDC} {bcolors.OKGREEN}(a/b){bcolors.ENDC}:")
+                    print(f"{bcolors.OKGREEN}Where would you like to run your code from?{bcolors.ENDC} {bcolors.OKGREEN}(a/b){bcolors.ENDC}:")
                     if os.path.isdir(self.dst):
                         print(f"{bcolors.OKGREEN} a {bcolors.ENDC}: Execute code from an existing copy of the repository based on the latest commit.")
                         print(f"The copy is located in: {self.dst}")
@@ -204,7 +204,7 @@ class GitVM(VersionManager):
                 if repo.is_dirty():    
                     print(f"{bcolors.OKBLUE}There are uncommitted changes in the repository:{bcolors.ENDC}")
                     _disp_uncommited_files(repo)
-                    print(f"{bcolors.OKBLUE}How would you like to handle uncommitted changes?{bcolors.ENDC} {bcolors.OKGREEN}(a/b/c){bcolors.ENDC}")
+                    print(f"{bcolors.OKGREEN}How would you like to handle uncommitted changes?{bcolors.ENDC} {bcolors.OKGREEN}(a/b/c){bcolors.ENDC}")
                     print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Create a new automatic commit before launching jobs.")
                     print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Check again for uncommitted changes (assuming you manually committed them). ")
                     print(f"{bcolors.OKGREEN}c{bcolors.ENDC}: Ignore uncommitted changes.")
@@ -251,7 +251,7 @@ class GitVM(VersionManager):
                 if repo.untracked_files:
                     print(f"{bcolors.OKBLUE}There are untracked files in the repository:{bcolors.ENDC}")
                     _disp_untracked_files(repo)
-                    print(f"{bcolors.OKBLUE}How would you like to handle untracked files?{bcolors.ENDC} {bcolors.OKGREEN}(a/b/c){bcolors.ENDC}")
+                    print(f"{bcolors.OKGREEN}How would you like to handle untracked files?{bcolors.ENDC} {bcolors.OKGREEN}(a/b/c){bcolors.ENDC}")
                     print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Add untracked files directly from here?")
                     print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Check again for untrakced files (assuming you manually added them).")
                     print(f"{bcolors.OKGREEN}c{bcolors.ENDC}: Ignore untracked files.")
