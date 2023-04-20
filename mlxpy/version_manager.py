@@ -184,11 +184,10 @@ class GitVM(VersionManager):
         ignore_msg+= "\033[91m Warning:\033[0m Jobs will be executed from the latest commit"
 
         while True:
-            if repo.is_dirty():
-                if self.interactive_mode:
-                    if self._existing_choices:
-                        break
-
+            if self.interactive_mode:
+                if self._existing_choices:
+                    break
+                if repo.is_dirty():    
                     print("There are uncommitted changes in the repository:")
                     _disp_uncommited_files(repo)
                     print("How would you like to handle uncommitted changes?")
@@ -218,11 +217,11 @@ class GitVM(VersionManager):
                     else:
                         print("Invalid choice. Please try again. (a/b/c)")
                 else:
-                    print(ignore_msg)
+                    print("No uncommitted changes!")
                     break
             else:
-                print("No uncommitted changes!")
-                break                
+                print(ignore_msg)
+                break             
         
     def _handle_untracked_files(self,repo):
         ignore_msg ="\033[91m Warning:\033[0m There are untracked files! \n"
@@ -230,10 +229,12 @@ class GitVM(VersionManager):
 
 
         while True:
-            if repo.untracked_files:
-                if self.interactive_mode:
-                    if self._existing_choices:
-                        break
+            if self.interactive_mode:
+                if self._existing_choices:
+                    break
+                status = repo.git.status()
+                print(status)
+                if repo.untracked_files:
                     print("There are untracked files in the repository:")
                     _disp_untracked_files(repo)
                     print("How would you like to handle untracked files?")
@@ -276,13 +277,14 @@ class GitVM(VersionManager):
                         break
                     else:
                         print("Invalid choice. Please try again. (a/b/c)")
-                else: 
-                    print(ignore_msg)
-            else:
-                print("No untracked files!")
-                print("Continuing checks ...")
-                break
-            
+
+                else:
+                    print("No untracked files!")
+                    print("Continuing checks ...")
+                    break
+            else: 
+                print(ignore_msg)
+                break 
 
 
     def _make_requirements_file(self):
@@ -325,8 +327,7 @@ class GitVM(VersionManager):
         except git.exc.InvalidGitRepositoryError:
             raise git.exc.InvalidGitRepositoryError(os.getcwd()) 
 
-        status = repo.git.status()
-        print(status)
+
 
         self._handle_untracked_files(repo)
         self._handle_commit_state(repo)
