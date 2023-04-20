@@ -241,7 +241,6 @@ def launch(
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
                 _set_work_dir(work_dir)
-                print(sys.path)
 
                 cfg.update_dict({'info': {'work_dir':work_dir}})
 

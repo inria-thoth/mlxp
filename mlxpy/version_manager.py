@@ -6,7 +6,16 @@ import subprocess
 import yaml
 from typing import Any, Dict
 
-
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 class VersionManager(abc.ABC):
     """
@@ -156,8 +165,13 @@ class GitVM(VersionManager):
                     choice = self.vm_choices['cloning']
                 else: 
                     print(f"Where would you like to run your code from? (a/b):")
-                    print(f"a: Code will be run from a copy of the repository based on the latest commit and located in: {self.dst}")
-                    print("b: Code will be run from the main repository")
+                    if os.path.isdir(self.dst):
+                        print(f"{bcolors.OKGREEN} a {bcolors.OKGREEN}: Executes code from an existing copy of the repository based on the latest commit.")
+                        print(f"The copy is located in: {self.dst}")
+                    else:
+                        print(f"{bcolors.OKGREEN}a{bcolors.OKGREEN}: Creates a copy of the repository based on the latest commit and executes code from there {self.dst}")
+                        print(f"The copy will be created in: {self.dst}")
+                    print(f"{bcolors.OKGREEN}b{bcolors.OKGREEN}: Code will be run from the main repository")
                     choice = input("Please enter you answer (a/b):")
                     self.vm_choices['cloning'] = choice
                 
