@@ -240,9 +240,7 @@ def launch(
                 
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
-                os.chdir(work_dir)
-                
-                sys.path.insert(0, work_dir)
+                _set_work_dir(work_dir)
                 print(sys.path)
 
                 cfg.update_dict({'info': {'work_dir':work_dir}})
@@ -279,7 +277,7 @@ def launch(
                     if logger:
                         logger._log_configs(cfg)
                     
-                    os.chdir(cur_dir)
+                    _reset_work_dir(cur_dir)
                     return None
                 except Exception:
                     now =  datetime.now()
@@ -291,7 +289,8 @@ def launch(
 
                     if logger:
                         logger._log_configs(cfg)
-                    os.chdir(cur_dir)
+                    
+                    _reset_work_dir(cur_dir)
                     raise
 
         _set_co_filename(decorated_task, task_function.__code__.co_filename)
@@ -305,6 +304,16 @@ def launch(
         return task_function
 
     return composed_decorator
+
+
+def _set_work_dir(work_dir):
+    os.chdir(work_dir)            
+    sys.path.insert(0, work_dir)    
+
+def _reset_work_dir(cur_dir):
+    os.chdir(cur_dir)
+    sys.path  = sys.path[1:]
+
 
 
 def _set_co_filename(func, co_filename):
