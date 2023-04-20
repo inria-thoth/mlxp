@@ -164,15 +164,15 @@ class GitVM(VersionManager):
                 if self._existing_choices:
                     choice = self.vm_choices['cloning']
                 else: 
-                    print(f"Where would you like to run your code from? (a/b):")
+                    print(f"{bcolors.OKGREEN}Where would you like to run your code from? (a/b){bcolors.ENDC}:")
                     if os.path.isdir(self.dst):
-                        print(f"{bcolors.OKGREEN} a {bcolors.OKGREEN}: Executes code from an existing copy of the repository based on the latest commit.")
+                        print(f"{bcolors.OKGREEN} a {bcolors.ENDC}: Execute code from an existing copy of the repository based on the latest commit.")
                         print(f"The copy is located in: {self.dst}")
                     else:
-                        print(f"{bcolors.OKGREEN}a{bcolors.OKGREEN}: Creates a copy of the repository based on the latest commit and executes code from there {self.dst}")
+                        print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Create a copy of the repository based on the latest commit and execute code from there.")
                         print(f"The copy will be created in: {self.dst}")
-                    print(f"{bcolors.OKGREEN}b{bcolors.OKGREEN}: Code will be run from the main repository")
-                    choice = input("Please enter you answer (a/b):")
+                    print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Execute code from the main repository")
+                    choice = input(f"{bcolors.OKGREEN}Please enter you answer (a/b):{bcolors.ENDC}")
                     self.vm_choices['cloning'] = choice
                 
                 if choice=='a':
@@ -182,10 +182,10 @@ class GitVM(VersionManager):
                     break 
                 elif choice=='b':
                     if not self._existing_choices:
-                        print(f"Run will be executed from the current repository {self.dst}")
+                        print(f"{bcolors.OKGREEN}Run will be executed from the current repository {self.dst}{bcolors.ENDC}")
                     break
                 else:
-                    print("Invalid choice. Please try again. (y/n)")
+                    print(f"{bcolors.OKGREEN}Invalid choice. Please try again. (y/n){bcolors.ENDC}")
             else:
                 self._clone_repo(repo)
                 self._set_requirements()
@@ -202,34 +202,34 @@ class GitVM(VersionManager):
                 if self._existing_choices:
                     break
                 if repo.is_dirty():    
-                    print("There are uncommitted changes in the repository:")
+                    print(f"{bcolors.OKGREEN}There are uncommitted changes in the repository:{bcolors.ENDC}")
                     _disp_uncommited_files(repo)
-                    print("How would you like to handle uncommitted changes?")
-                    print("a: Create a new automatic commit before launching jobs.")
-                    print("b: Check again for uncommitted changes (assuming you manually committed them). ")
-                    print("c: Ignore uncommitted changes.")
-                    choice = input("Please enter your choice (a/b/c): ")
+                    print(f"{bcolors.OKGREEN}How would you like to handle uncommitted changes? (a/b/c){bcolors.ENDC}")
+                    print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Create a new automatic commit before launching jobs.")
+                    print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Check again for uncommitted changes (assuming you manually committed them). ")
+                    print(f"{bcolors.OKGREEN}c{bcolors.ENDC}: Ignore uncommitted changes.")
+                    choice = input(f"{bcolors.OKGREEN}[Uncommitted changes]: Please enter your choice (a/b/c): {bcolors.ENDC}")
 
                     if choice == 'a':
-                        print("Commiting changes....")
+                        print(f"{bcolors.OKGREEN}Commiting changes....{bcolors.ENDC}")
                         output_msg = repo.git.commit("-a", "-m", "mlxpy: Automatically committing all changes")
-                        print(output_msg)
+                        print(bcolors.OKGREEN + output_msg + bcolors.ENDC)
                         
                         if not repo.is_dirty():
-                            print("No more uncommitted changes!")
+                            print(f"{bcolors.OKGREEN}No more uncommitted changes!{bcolors.ENDC}")
                             break
                     elif choice == 'b':
-                        print("Checking again for uncommitted changes...")
+                        print(f"{bcolors.OKGREEN}Checking again for uncommitted changes...{bcolors.ENDC}")
                         pass
                     elif choice == 'c':
                         if repo.is_dirty():
                             print(ignore_msg)
                         else:
-                            print("No more uncommitted changes found! ")
+                            print(f"{bcolors.OKGREEN}No more uncommitted changes found!{bcolors.ENDC}")
                         break
 
                     else:
-                        print("Invalid choice. Please try again. (a/b/c)")
+                        print(f"{bcolors.OKGREEN}Invalid choice. Please try again. (a/b/c){bcolors.ENDC}")
                 else:
                     print("No uncommitted changes!")
                     break
@@ -249,17 +249,17 @@ class GitVM(VersionManager):
                 status = repo.git.status()
                 print(status)
                 if repo.untracked_files:
-                    print("There are untracked files in the repository:")
+                    print(f"{bcolors.OKGREEN}There are untracked files in the repository:{bcolors.ENDC}")
                     _disp_untracked_files(repo)
-                    print("How would you like to handle untracked files?")
-                    print("a: Add untracked files directly from here?")
-                    print("b: Check again for untrakced files (assuming you manually added them).")
-                    print("c: Ignore untracked files.")
-                    choice = input("Please enter your choice (a/b/c): ")
+                    print(f"{bcolors.OKGREEN}How would you like to handle untracked files? (a/b/c){bcolors.ENDC}")
+                    print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Add untracked files directly from here?")
+                    print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Check again for untrakced files (assuming you manually added them).")
+                    print(f"{bcolors.OKGREEN}c{bcolors.ENDC}: Ignore untracked files.")
+                    choice = input(f"{bcolors.OKGREEN}[Untracked files]: Please enter your choice (a/b/c):{bcolors.ENDC}")
                     if choice=='a':
                         print("Untracked files:")
                         _disp_untracked_files(repo)
-                        print("Please select files to be tracked (comma-separated, hit Enter to skip):")
+                        print(f"{bcolors.OKGREEN}Please select files to be tracked (comma-separated, hit Enter to skip):{bcolors.ENDC}")
                         
                         files_input = input()
 
@@ -276,21 +276,21 @@ class GitVM(VersionManager):
                             if not repo.untracked_files:
                                 break
                         else:
-                            print("No files added. Skipping...")
+                            print(f"{bcolors.OKGREEN}No files added. Skipping...{bcolors.ENDC}")
                             print(ignore_msg)
                             break
                     elif choice=='b':
-                        print("Checking again for untracked files...")
+                        print(f"{bcolors.OKGREEN}Checking again for untracked files...{bcolors.ENDC}")
                         pass
                     elif choice=='c':
                         if repo.untracked_files:
                             print(ignore_msg)
                         else:
-                            print("No more untracked files!")
-                            print("Continuing checks ...")
+                            print(f"{bcolors.OKGREEN}No more untracked files!{bcolors.ENDC}")
+                            print(f"{bcolors.OKGREEN}Continuing checks ...{bcolors.ENDC}")
                         break
                     else:
-                        print("Invalid choice. Please try again. (a/b/c)")
+                        print(f"{bcolors.OKGREEN}Invalid choice. Please try again. (a/b/c){bcolors.ENDC}")
 
                 else:
                     print("No untracked files!")
