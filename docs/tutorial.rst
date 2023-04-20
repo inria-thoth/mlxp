@@ -1,7 +1,7 @@
 Tutorial
 ========
 
-In this example we will train a simple neural network on a regression task using mlxpy. 
+In this example we will train a simple neural network on a regression task using mlxpy. You can find code for reproducing this tutorial in https://github.com/MichaelArbel/mlxpy/tree/master/tutorial
 
 
 1- Easy launching
@@ -21,32 +21,48 @@ The object 'ctx' will be created on the fly during execution and will contain a 
     @expy.launch(config_path='./configs')
     def train(ctx: expy.Context)->None:
 
+    :caption: main.py
+
+    import mlxpy as expy
+    from core_app import DataLoader, Network, Optimizer, Loss
+
+    @expy.launch(config_path='./configs')
+    def train(ctx: expy.Context)->None:
+
         cfg = ctx.config
         logger = ctx.logger
 
-        num_epoch = cfg.num_epoch
-        
-        model = Network(n_layers = cfg.model.num_layers)
-        optimizer = Optimizer(model,lr = cfg.optimizer.lr)
-        dataloader = DataLoader()
-        loss = Loss()
-         
+
+        try:
+            checkpoint = logger.load_checkpoint(log_name= 'last_ckpt')
+            num_epoch = cfg.num_epoch - checkpoint['epoch']-1
+            model = checkpoint['model']
+        except:
+            num_epoch = cfg.num_epoch
+            model = OneHiddenLayer(d_int=cfg.data.d_int, 
+                            n_units = cfg.model.num_units)
+
+        model = model.to(cfg.data.device)
+        optimizer = torch.optim.SGD(model.parameters(), 
+                              lr=cfg.optimizer.lr)
+        dataloader = DataLoader(cfg.data.d_int,
+                                cfg.data.device)         
 
         for epoch in range(num_epoch):
-            for iteration, data in enumerate(dataloader):
+
+            for data in dataloader:
                 x,y = data
                 pred = model(x)
-                train_err = loss(pred, y)
+                train_err = torch.mean((pred-y)**2)
                 train_err.backward()
                 optimizer.step()
-                logger.log_metrics({'loss': train_err.item(),
-                'iter': iteration,
-                'epoch': epoch}, log_name= 'train')
-
+            
+            logger.log_metrics({'loss': train_err.item(),
+                                'epoch': epoch}, log_name='train')
+            
             logger.log_checkpoint({'model': model,
-                                   'epoch':epoch}, log_name = 'last_ckpt')
-        print(f"Completed training with learing rate: {cfg.optimizer.lr}")
-    
+                                   'epoch':epoch}, log_name='last_ckpt' )
+
     if __name__ == "__main__":
         train()
         
