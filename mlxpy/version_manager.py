@@ -356,10 +356,26 @@ def _disp_untracked_files(repo):
         print("\033[91m" + name + "\033[0m")
 
 
+def _disp_untracked_files(repo):
+    from git.compat import defenc
+    status = repo.git.status( porcelain=True, untracked_files=False, as_process=True)
 
+    prefix = "?? "
+    untracked_files = []
+    for line in status.stdout:
+        line = line.decode(defenc)
+        if not line.startswith(prefix):
+            continue
+        filename = line[len(prefix) :].rstrip("\n")
+        # Special characters are escaped
+        if filename[0] == filename[-1] == '"':
+            filename = filename[1:-1]
+            # WHATEVER ... it's a mess, but works for me
+            filename = filename.encode("ascii").decode("unicode_escape").encode("latin1").decode(defenc)
+        untracked_files.append(filename)
 
-
-
+    for name in untracked_files:
+        print("\033[91m" + name + "\033[0m")
 
 
 
