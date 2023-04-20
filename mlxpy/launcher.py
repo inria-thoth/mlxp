@@ -240,53 +240,54 @@ def launch(
                 print(work_dir)
                 # ## Setting up the working directory
                 #os.chdir(work_dir)
+                
                 sys.path.insert(0, work_dir)
-                # cfg.update_dict({'info': {'work_dir':work_dir}})
+                cfg.update_dict({'info': {'work_dir':work_dir}})
 
-                # if logger:
-                #     cfg.update_dict(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
-                # try:
+                if logger:
+                    cfg.update_dict(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
+                try:
                     
-                #     cfg.update_dict({'info':{'status':Status.RUNNING.value}})
-                #     if logger:
-                #         logger._log_configs(cfg)
-                #     if seeding_function:
-                #         try:
-                #             assert 'seed' in cfg.config.keys()
-                #         except AssertionError:
-                #             msg = "Missing field: The 'config' must contain a field 'seed'\n"
-                #             msg+= "provided as argument to the function 'seeding_function' "
-                #             raise Exception(msg)
-                #         seeding_function(cfg.config.seed)
+                    cfg.update_dict({'info':{'status':Status.RUNNING.value}})
+                    if logger:
+                        logger._log_configs(cfg)
+                    if seeding_function:
+                        try:
+                            assert 'seed' in cfg.config.keys()
+                        except AssertionError:
+                            msg = "Missing field: The 'config' must contain a field 'seed'\n"
+                            msg+= "provided as argument to the function 'seeding_function' "
+                            raise Exception(msg)
+                        seeding_function(cfg.config.seed)
 
 
-                #     ctx = Context(config=cfg.config,
-                #                   mlxpy=cfg.mlxpy,
-                #                   info=cfg.info,
-                #                   logger = logger)
-                #     task_function(ctx)
-                #     now =  datetime.now()
-                #     info = {'end_date':now.strftime("%d/%m/%Y"),
-                #             'end_time':now.strftime("%H:%M:%S"),
-                #             'status':Status.COMPLETE.value}
+                    ctx = Context(config=cfg.config,
+                                  mlxpy=cfg.mlxpy,
+                                  info=cfg.info,
+                                  logger = logger)
+                    task_function(ctx)
+                    now =  datetime.now()
+                    info = {'end_date':now.strftime("%d/%m/%Y"),
+                            'end_time':now.strftime("%H:%M:%S"),
+                            'status':Status.COMPLETE.value}
             
-                #     cfg.update_dict({'info':info})
+                    cfg.update_dict({'info':info})
                     
-                #     if logger:
-                #         logger._log_configs(cfg)
+                    if logger:
+                        logger._log_configs(cfg)
                     
-                #     return None
-                # except Exception:
-                #     now =  datetime.now()
-                #     info = {'end_date':now.strftime("%d/%m/%Y"),
-                #             'end_time':now.strftime("%H:%M:%S"),
-                #             'status':Status.FAILED.value}
+                    return None
+                except Exception:
+                    now =  datetime.now()
+                    info = {'end_date':now.strftime("%d/%m/%Y"),
+                            'end_time':now.strftime("%H:%M:%S"),
+                            'status':Status.FAILED.value}
             
-                #     cfg.update_dict({'info':info})
+                    cfg.update_dict({'info':info})
 
-                #     if logger:
-                #         logger._log_configs(cfg)
-                #     raise
+                    if logger:
+                        logger._log_configs(cfg)
+                    raise
 
         _set_co_filename(decorated_task, task_function.__code__.co_filename)
 
