@@ -239,8 +239,8 @@ def launch(
                 pass
                 print(work_dir)
                 # ## Setting up the working directory
-                # os.chdir(work_dir)
-                # sys.path.insert(0, work_dir)
+                os.chdir(work_dir)
+                sys.path.insert(0, work_dir)
                 # cfg.update_dict({'info': {'work_dir':work_dir}})
 
                 # if logger:
