@@ -237,6 +237,7 @@ def launch(
                 
             else:
                 pass
+                print(work_dir)
                 # ## Setting up the working directory
                 # os.chdir(work_dir)
                 # sys.path.insert(0, work_dir)
