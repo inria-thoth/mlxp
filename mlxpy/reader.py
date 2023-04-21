@@ -10,14 +10,19 @@ from tinydb import Query
 from tinydb.table import Document
 
 from mlxpy.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
-from mlxpy.parser import Parser, DefaultParser
+from mlxpy.parser import Parser, DefaultParser, SearchableKeys, is_searchable
 from mlxpy.utils import _flatten_dict
 from typing import Union, Optional, List
 import pandas as pd
 import abc
 from mlxpy.logger import Directories
 
+from enum import Enum
 
+
+class DataFrameType(Enum):
+    Pandas = "pandas"
+    DataDictList= "datadict"
 
 
 
@@ -95,47 +100,77 @@ class Reader(object):
 
         if not self.db.tables() or reload:
             self._create_base()
+    def __len__(self):
+        return len(self.runs)
 
-    def search(self, query_string:str ="", 
-                    asPandas:bool =False)->DataDictList:
+    def filter(self, query_string:str ="", 
+                    result_format: str = DataFrameType.DataDictList.value)->Union[DataDictList,pd.DataFrame]:
         
         """
         Searching a query in a database of runs. 
 
         :param query_string: a string defining the query constaints.
-        :param asPandas: returns the result of the query as a pandas dataframe. 
+        :param result_format: format of the result (either a pandas dataframe or an object of type DataDictList). 
         Otherwise returns a DataDictList object.
 
         :type query_string: str (default "")
-        :type asPandas: bool (default False)
+        :type result_format: str (default False)
         :return: The result of a query either as a DataDictList or a pandas dataframe.
         :rtype: Union[DataDictList,pd.DataFrame]
         :raises SyntaxError: if the query string does not follow expected syntax. 
         """
+        is_valid = False
+        for member in DataFrameType:
+            if result_format==member.value:
+                is_valid= True
+        if not is_valid:
+            raise Exception(f"Invalid format string: {result_format}. Valid format are one of the following:" + str([member.value for member in DataFrameType])) 
 
         if query_string:
             Q = self.parser.parse(query_string)
+            
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
         res = [ DataDict(r,parent_dir=r["info.log_dir"]) for r in res ]
         res = DataDictList(res)
-        if asPandas:
-            res = res.toPandasDF(lazy=False)
-        return res
+        if result_format==DataFrameType.Pandas.value:
+            return res.toPandasDF(lazy=False)
+        elif result_format==DataFrameType.DataDictList.value:
+            return res
+        
     
     @property
     def fields(self)->pd.DataFrame:
         """
-        Returns all fields of the database that are searchable.
+        Returns all fields of the database.
         
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame
         """
-        fields_dict = {k: v for d in self._fields.all() for k, v in d.items()}
+        fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if not k.startswith("mlxpy")}
         df = pd.DataFrame(list(fields_dict.items()), columns=['Fields', 'Type'])
         df.set_index('Fields', inplace=True)
+        df = df.sort_index()
+
         return df
+
+    @property
+    def searchable(self)->pd.DataFrame:
+        """
+        Returns all fields of the database that are searchable.
+        
+        return: a dataframe of all fields contained in the database that can be searched using the method filter
+        rtype: pd.DataFrame
+        """
+
+        fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if is_searchable(k)}
+        df = pd.DataFrame(list(fields_dict.items()), columns=['Fields', 'Type'])
+        df.set_index('Fields', inplace=True)
+        df = df.sort_index()
+
+        return df
+
 
     def _create_base(self):
         self.db.drop_table("runs")

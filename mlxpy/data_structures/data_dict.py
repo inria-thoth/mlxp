@@ -12,7 +12,7 @@ from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, 
 
 from typing import List, Dict, Tuple
 
-from mlxpy.utils import _flatten_dict
+from mlxpy.utils import _flatten_dict, InvalidKeyError
 from mlxpy.logger import Directories
 
 
@@ -419,11 +419,7 @@ class GroupedDataDicts:
 
         return _aggregate(self, aggregation_maps)
 
-class InvalidKeyError(Exception):
-    """
-    Raised when the key is invalid
-    """
-    pass
+
 
 class InvalidAggregationMapError(Exception):
     """

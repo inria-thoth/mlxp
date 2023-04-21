@@ -19,7 +19,7 @@ import abc
 from enum import Enum
 
 from mlxpy.data_structures.artifacts import Artifact, Checkpoint
-
+from mlxpy.utils import InvalidKeyError
 
 
 class Directories(Enum):
@@ -93,13 +93,20 @@ class Logger(abc.ABC):
 
          
 
-    def log_metrics(self,metrics_dict, log_name="metrics"):
-        self._log_metrics_key(metrics_dict,log_name=log_name)
+    def log_metrics(self,metrics_dict, log_name):
+        invalid_names = ["info", "config", "mlxpy"]
+        try:
+            assert log_name not in ["info", "config", "mlxpy"]
+        except AssertionError:
+            raise InvalidKeyError(f"The chosen log_nam:  {log_name} is invalid! It must be different from these protected names: {invalid_names} ")
+        
+        self._log_metrics_key(metrics_dict,log_name)
         file_name = os.path.join(self.metrics_dir, log_name)
-        return self._log_metrics(metrics_dict, file_name=file_name) 
+        return self._log_metrics(metrics_dict,file_name) 
 
     @abc.abstractmethod
-    def _log_metrics(self,metrics_dict,file_name="metrics"):
+    def _log_metrics(self,metrics_dict: Dict[str, Union[int, float, str]], 
+                        file_name: str):
         pass
 
     def log_artifact(self, artifact: Artifact, log_name: str)-> None:
@@ -143,7 +150,8 @@ class Logger(abc.ABC):
         return self._log_dir
 
 
-    def _log_metrics_key(self,metrics_dict, log_name):
+    def _log_metrics_key(self,metrics_dict: Dict[str, Union[int, float, str]], 
+                        log_name: str):
         # Logging new keys appearing in a metrics dict
 
         if log_name not in self._metric_dict_keys.keys():
@@ -179,7 +187,7 @@ class DefaultLogger(Logger):
         - log_dir:
             - metadata.yaml : Contains the configs of the run
             - 'file_name'.json : Contains a the outputs stored 
-                                when running the method log_metrics(metric_dict, file_name)
+                                when running the method log_metrics(metrics_dict, file_name)
             - log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
             - log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
             - script.sh: Contains the script for running the job (Only if job is submitted in bacth mode to a scheduler)
@@ -213,20 +221,20 @@ class DefaultLogger(Logger):
 
 
 
-    def _log_metrics(self, metric_dict: Dict[str, Union[int, float, str]], 
-                        file_name: str ="")->None:
+    def _log_metrics(self, metrics_dict: Dict[str, Union[int, float, str]], 
+                        file_name: str)->None:
         """Saves a dictionary of scalars to a json file named 
         file_name+'.json' in the directory log_dir. If the file exists already, 
         the dictionary is appended at the end of the file. 
 
-        :param metric_dict:  Dictonary of scalars values to be saved, the values can be either int, float of string.
+        :param metrics_dict:  Dictonary of scalars values to be saved, the values can be either int, float of string.
         :param file_name: Name of the target file.
-        :type metric_dict: Dict[str, Union[int, float, str]
+        :type metrics_dict: Dict[str, Union[int, float, str]
         :type file_name: str (default "metrics")
         :return: None
         """
         with open(file_name + ".json", "a") as f:
-            json.dump(metric_dict, f)
+            json.dump(metrics_dict, f)
             f.write(os.linesep)
 
     def log_checkpoint(self, checkpoint: Any, log_name: str='checkpoint')->None:

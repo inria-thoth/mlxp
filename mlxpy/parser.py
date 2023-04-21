@@ -5,7 +5,8 @@ from operator import eq, ge, gt, le, lt, ne
 from tinydb import TinyDB, where, Query
 from tinydb.queries import QueryInstance
 import abc
-
+from mlxpy.utils import InvalidKeyError
+from enum import Enum
 
 class Parser(abc.ABC):
     """
@@ -199,10 +200,12 @@ def binOp(k,op,v):
             print("Unknown operator: {0:s}".format(op))
             raise ValueError
             return where(None)
+        check_searchable_key(k)
         field = _build_field_struct(k)
         return opf(field, v)
 
 def inclusionOp(key, values):
+    check_searchable_key(key)
     field = _build_field_struct(key)
     return field.one_of(values)
 
@@ -224,8 +227,22 @@ def _build_field_struct(key):
     return field
 
 
+class SearchableKeys(Enum):
+    Info="info."
+    Config="config."
 
+def is_searchable(k):
+    for member in SearchableKeys:
+        if k.startswith(member.value):
+            return True
+    return False
 
+def check_searchable_key(k):
+    if is_searchable(k):
+        pass
+    else:
+
+        raise InvalidKeyError(f"The key {k} is invalid! Valid keys must start with one of these prefixes: " + str([member.value for member in SearchableKeys]) )
 
 
 

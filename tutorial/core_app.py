@@ -1,7 +1,21 @@
 import torch
 import torch.nn as nn
 
+def train_epoch(dataloader,
+                model,
+                optimizer):
+    for data in dataloader:
+        x,y = data
+        pred = model(x)
+        train_err = torch.mean((pred-y)**2)
+        train_err.backward()
+        optimizer.step()
+    return train_err
 
+
+def DataLoader(d_int, device):
+	dataset = Dataset(d_int, device)
+	return [(dataset.X, dataset.Y)]
 
 class Dataset(torch.utils.data.Dataset):
 
@@ -28,9 +42,7 @@ class Dataset(torch.utils.data.Dataset):
 		return self.X[index,:],self.Y[index,:]
 
 
-def DataLoader(d_int, device):
-	dataset = Dataset(d_int, device)
-	return [(dataset.X, dataset.Y)]
+
 
 
 

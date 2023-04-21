@@ -1,17 +1,18 @@
-import mlxpy as expy
+import mlxpy
 import torch
- 
-
-from core_app import DataLoader, OneHiddenLayer
+from core_app import DataLoader, OneHiddenLayer, train_epoch
 
 def set_seeds(seed):
     import torch
     torch.manual_seed(seed)
 
-@expy.launch(config_path='./configs',
+
+
+
+@mlxpy.launch(config_path='./configs',
              seeding_function=set_seeds)
 
-def train(ctx: expy.Context)->None:
+def train(ctx: mlxpy.Context)->None:
 
 
     cfg = ctx.config
@@ -20,10 +21,10 @@ def train(ctx: expy.Context)->None:
 
     try:
         checkpoint = logger.load_checkpoint(log_name= 'last_ckpt')
-        num_epoch = cfg.num_epoch - checkpoint['epoch']-1
+        start_epoch = checkpoint['epoch']+1
         model = checkpoint['model']
     except:
-        num_epoch = cfg.num_epoch
+        start_epoch = 0
         model = OneHiddenLayer(d_int=cfg.data.d_int, 
                         n_units = cfg.model.num_units)
 
@@ -33,22 +34,20 @@ def train(ctx: expy.Context)->None:
     dataloader = DataLoader(cfg.data.d_int,
                             cfg.data.device)         
 
-    for epoch in range(num_epoch):
+    print(f"Starting from epoch: {start_epoch}")
+    for epoch in range(start_epoch, cfg.num_epoch):
 
-        for data in dataloader:
-            x,y = data
-            pred = model(x)
-            train_err = torch.mean((pred-y)**2)
-            train_err.backward()
-            optimizer.step()
-        
+        train_err = train_epoch(dataloader,
+                                model,
+                                optimizer)
+
         logger.log_metrics({'loss': train_err.item(),
                             'epoch': epoch}, log_name='train')
         
         logger.log_checkpoint({'model': model,
                                'epoch':epoch}, log_name='last_ckpt' )
 
-
+    print(f"Completed training with learing rate: {cfg.optimizer.lr}")
 
 if __name__ == "__main__":
     train()
