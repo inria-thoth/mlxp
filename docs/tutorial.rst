@@ -1,83 +1,223 @@
 Tutorial
 ========
 
-In this example we will train a simple neural network on a regression task using mlxpy. You can find code for reproducing this tutorial in https://github.com/MichaelArbel/mlxpy/tree/master/tutorial
+In this tutorial, we will see how to use mlxpy to run experiments using python. We will go through the three main functionalities: Launching, Logging and Reading and explain these are easily handeled by mlxpy. Then we will see how to enhance reproducibility of experiments using the git-based version-manager provided by mlxpy and how to submit several jobs to a cluster in a single command using the mlxpy's scheduler. But let's first start by introducing the example. You can find code for reproducing results of this tutorial in https://github.com/MichaelArbel/mlxpy/tree/master/tutorial.
+
+
+The example: optimizing a neural network on synthetic data
+----------------------------------------------------------
+
+In this example we will train a simple neural network on a regression task using mlxpy. To this end, we created three python files in the 'tutorial' directory along with a subdirectory 'configs': 
+
+.. code-block:: text
+   :caption: tutorial/
+
+   tutorial/
+   ├── configs/
+   │   └── config.yaml
+   ├── core_app.py
+   ├── main.py
+   └── results.py
+
+The file 'core_app.py' contains a pytorch implementation of a one hidden layer network 'OneHiddenLayer' as well as a simple data loader 'DataLoader' that we will use during training:
+
+
+.. code-block:: python
+    :caption: main.py
+
+    import torch
+    import torch.nn as nn
+
+    def train_epoch(dataloader,
+                    model,
+                    optimizer):
+        for data in dataloader:
+            x,y = data
+            pred = model(x)
+            train_err = torch.mean((pred-y)**2)
+            train_err.backward()
+            optimizer.step()
+        return train_err
+
+    class Dataset(torch.utils.data.Dataset):
+
+        def __init__(self, d_int, device):
+            self.network = OneHiddenLayer(d_int, 5)
+            self.device = device
+            dtype = torch.float
+            self.X = torch.normal(mean= torch.zeros(N_samples,d_int,dtype=dtype,device=device),std=1.)
+            self.total_size = N_samples
+            with torch.no_grad():
+                self.Y = self.network(self.X)
+
+        def __len__(self):
+            return self.total_size 
+        def __getitem__(self,index):
+            return self.X[index,:],self.Y[index,:]
+
+    def DataLoader(d_int, device):
+        dataset = Dataset(d_int, device)
+        return [(dataset.X, dataset.Y)]
+
+
+
+    class OneHiddenLayer(nn.Module):
+        def __init__(self,d_int, n_units):
+            super(OneHiddenLayer,self).__init__()
+            self.linear1 = torch.nn.Linear(d_int, n_units,bias=True)
+            self.linear2 = torch.nn.Linear( 1, n_units, bias=False)
+            self.non_linearity = torch.nn.SiLU()
+            self.d_int = d_int
+            self.n_units = n_units
+
+        def forward(self, x):
+            x = self. non_linearity(self.linear1(x))
+            return torch.einsum('hi,nh->ni',self.linear2.weight,x)/self.n_units
+
+
+In the rest of the tutorial, we will not need to worry about 'core_app.py'. Instead, we will focus on the 'main.py' file which trains a 'OneHiddenLayer' model on data provided by the 'DataLoader' from 'core_app.py'. Training is performed using a function 'train': 
+
+
+.. code-block:: python
+    :caption: main.py
+
+    import torch
+    from core_app import DataLoader, OneHiddenLayer
+
+    def train(d_int = 10,
+              num_units = 100,
+              num_epoch = 10,
+              lr = 10.,
+              device = 'cpu'):
+
+        # Building model, optimizer and data loader.
+        model = OneHiddenLayer(d_int=d_int, n_units = num_units)
+        model = model.to(device)
+        optimizer = torch.optim.SGD(model.parameters(),lr=lr)
+        dataloader = DataLoader(d_int,device)         
+
+        # Training
+        for epoch in range(num_epoch):
+
+            train_err = train_epoch(dataloader,
+                                    model,
+                                    optimizer)
+
+            print({'loss': train_err.item(),
+                  'epoch': epoch})
+
+        print(f"Completed training with learing rate: {lr}")
+
+    if __name__ == "__main__":
+        train()
+
+
+If we execute the function 'main.py', we can see that the training performs 10 'epochs' and then prints a message confirming that training is complete. 
+
+.. code-block:: console
+
+    $ python main.py
+    {'loss': 0.030253788456320763, 'epoch': 0}
+    {'loss': 0.02899891696870327, 'epoch': 1}
+    {'loss': 0.026649776846170425, 'epoch': 2}
+    {'loss': 0.023483652621507645, 'epoch': 3}
+    {'loss': 0.019827445968985558, 'epoch': 4}
+    {'loss': 0.01599641889333725, 'epoch': 5}
+    {'loss': 0.012259905226528645, 'epoch': 6}
+    {'loss': 0.008839688263833523, 'epoch': 7}
+    {'loss': 0.005932427477091551, 'epoch': 8}
+    {'loss': 0.003738593542948365, 'epoch': 9}
+    Completed training with learing rate: 10.0
+
+
+In this basic example, we have not used any specific tool for launching or logging. 
+Next, we will see how you can use mlxpy to keep track of all parameters, runs and code versions seemlessly! 
 
 
 1- Easy launching
 -----------------
 
-Let's have a look at the main python file to be executed.
-We can import mlxpy as 'expy' for simplicity. 
-To use mlxpy, we only need to use the decorator 'expy.launch' above the main function to be executed. In this case, our function 'train' will optimize a network. It must be defined as a function taking an object 'ctx' of type 'expy.Context' as argument, although it will be later call without explicity passing any argument. 
-The object 'ctx' will be created on the fly during execution and will contain a logger object and a structure containing the user configuration for the run. 
+We will see how to modify the file 'main.py' to use mlxpy using the decorator 'mlxpy.launch'. 
+But first let's introduce the 'mlxpy.Context' class which allows using mlxpy's logging and configuring functionalities. 
+
+
+The Context object
+^^^^^^^^^^^^^^^^^^
+Mlxpy uses an object 'ctx' of the class 'mlxpy.Context' that is created on the fly during execution of the program to store informations about the run. 
+More precisely, it contains 4 fields: 
+
+- ctx.config: Stores project-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
+- ctx.mlxpy: Stores mlxpy's default settings for the project. It's content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config_path'.  
+- ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
+- ctx.logger: Is a logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
+
+Using mlxpy for launching 
+^^^^^^^^^^^^^^^^^^^^^^^^^
+To use mlxpy, we first import it and use the decorator 'mlxpy.launch' above the function 'train'. 
+We also need to change the signature of the function 'train' so that it can accept an object 'ctx' of type 'mlxpy.Context' as argument instead of the variables. 
+Note however, that 'train' is called later without explicity passing any argument. 
+The remaining modifications are simply using the option values stored in ctx.config for the variables and using the logger ctx.logger for logging.
+
 
 .. code-block:: python
     :caption: main.py
 
-    import mlxpy as expy
-    from core_app import DataLoader, Network, Optimizer, Loss
+    
+    import torch
+    from core_app import DataLoader, OneHiddenLayer
 
-    @expy.launch(config_path='./configs')
-    def train(ctx: expy.Context)->None:
+    import mlxpy as mlxpy
 
-    :caption: main.py
-
-    import mlxpy as expy
-    from core_app import DataLoader, Network, Optimizer, Loss
-
-    @expy.launch(config_path='./configs')
-    def train(ctx: expy.Context)->None:
+    @mlxpy.launch(config_path='./configs')
+    def train(ctx: mlxpy.Context)->None:
 
         cfg = ctx.config
         logger = ctx.logger
 
+        start_epoch = 0
 
-        try:
-            checkpoint = logger.load_checkpoint(log_name= 'last_ckpt')
-            num_epoch = cfg.num_epoch - checkpoint['epoch']-1
-            model = checkpoint['model']
-        except:
-            num_epoch = cfg.num_epoch
-            model = OneHiddenLayer(d_int=cfg.data.d_int, 
-                            n_units = cfg.model.num_units)
-
+        # Building model, optimizer and data loader.
+        model = OneHiddenLayer(d_int=cfg.data.d_int, 
+                                n_units = cfg.model.num_units)
         model = model.to(cfg.data.device)
-        optimizer = torch.optim.SGD(model.parameters(), 
-                              lr=cfg.optimizer.lr)
+        optimizer = torch.optim.SGD(model.parameters(),
+                                    lr=cfg.optimizer.lr)
         dataloader = DataLoader(cfg.data.d_int,
                                 cfg.data.device)         
 
-        for epoch in range(num_epoch):
+        # Training
+        for epoch in range(start_epoch,cfg.num_epoch):
 
-            for data in dataloader:
-                x,y = data
-                pred = model(x)
-                train_err = torch.mean((pred-y)**2)
-                train_err.backward()
-                optimizer.step()
-            
+            train_err = train_epoch(dataloader,
+                                    model,
+                                    optimizer)
+
             logger.log_metrics({'loss': train_err.item(),
                                 'epoch': epoch}, log_name='train')
             
             logger.log_checkpoint({'model': model,
                                    'epoch':epoch}, log_name='last_ckpt' )
 
+        print(f"Completed training with learing rate: {cfg.optimizer.lr}")
+
     if __name__ == "__main__":
         train()
-        
+
 
 During execution, the configuration will be read from the file 'config.yaml' located in the directory './configs'. This file contains user provided values for the options 'num_layers', 'lr' and 'num_epoch' used by the function 'train' and access from the field 'config' of the 'ctx' object. Let's  inspect the 'config.yaml':
 
 .. code-block:: yaml
-   :caption: ./configs/config.yaml
-  
-   seed: null
-   model:
-     num_layers: 4
-   optimizer:
-     lr: 1e-3
-   num_epoch: 2
+    :caption: ./configs/config.yaml
+   
+    seed: 0
+    num_epoch: 10
+    model:
+     num_units: 100
+    data:
+     d_int: 10
+     device: 'cpu'
+    optimizer:
+     lr: 10.
 
 We are now ready to run the code! 
 
@@ -85,45 +225,26 @@ We are now ready to run the code!
 .. code-block:: console
 
    $ python main.py
-
-   Completed training with learing rate: 1e-3
+   Completed training with learing rate: 10.0
 
 We want to run the code again with different learning rates (say: 1e-2 and 1e-1). Just like with hydra, we can do this from the command-line by providing multiple values (0.01,0.1) to the option 'optimizer.lr': 
 
 .. code-block:: console
 
-   $ python main.py +optimizer.lr=0.01,0.1
+   $ python main.py optimizer.lr=0.01,0.1
+   Completed training with learing rate: 0.01
+   Completed training with learing rate: 0.1
 
-   Completed training with learing rate: 1e-2
-
-   Completed training with learing rate: 1e-1
-
-The above instruction executes the code twice: once using a learning rate of 1e-2 and second time using 1e-1. 
+The above instruction executes the code twice: once using a learning rate of 0.01 and second time using 0.1. 
 That's it, launching a job using mlxpy is as easy as this! 
 
 
 2- Easy logging 
 ---------------
 
-By default, the logger was activated and logging the outputs of the run in a directory located in './logs'. To see this, we can inspect the file 'mlxpy.yaml' located by default in the directory './configs'. This file contains the configurations for mlxpy. There, we see that the variable 'use_logger' is set to 'true' and that the variable logger.parent_log_dir is set to './logs': 
+By default, the logger is activated and logs the outputs of the run in a directory located in './logs'. These defaults settings can be easily modified by changing mlxpy's default settings stored in 'mlxpy.yaml' located in the directory './configs' (See :ref:`Configuring mlxpy <file1:Configuring_mlxpy>). 
 
-
-.. code-block:: yaml
-   :caption: ./configs/mlxpy.yaml
-
-   logger:
-     name: DefaultLogger
-     parent_log_dir: ./logs
-     forced_log_id: -1
-     log_streams_to_file: false
-   scheduler: ... 
-   version_manager: ...
-   use_version_manager: false
-   use_scheduler: false
-   use_logger: true
-
-
-First, the logger assigns a 'log_id' to the run. Everytime we 'main.py' is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of './logs' is created and named after the assigned log_id. 
+First, the logger assigns a 'log_id' to the run. Everytime 'main.py' is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of './logs' is created and named after the assigned log_id. 
 Since we executed the code three times in total, we should expect three sub-directories under './logs' called '1', '2' and '3', all having the same structure:
 
 .. code-block:: text
@@ -146,16 +267,15 @@ Let's have a closer look at the content of these sub-directories:
    │   │   ├── info.yaml
    │   │   └── mlxpy.yaml
    │   ├── metrics/
-   │   │   └── train.json
-   │   ├── artifacts/
-   │   │   └── Checkpoint/
-   │   │       └── last_ckpt.pkl
-   │   └── .keys/
-   │       └── metrics.yaml
+   │   │   ├── train.json
+   │   │   └──.keys/
+   │   │       └── metrics.yaml
+   │   └── artifacts/
+   │       └── Checkpoint/
+   │           └── last_ckpt.pkl
+   │    
    ├── 2/...
    └── 3/...
-
-The hidden directory '.keys' is used by the reader module of mlxpy and is not something to worry about here. Instead we inspect the remaining files and directories below. 
 
 
 The 'metrics' directory
@@ -165,24 +285,20 @@ This directory contains json files created when calling the logger's method 'log
 
 
 .. code-block:: json
-   :caption: ./logs/1/metrics/train.json
+    :caption: ./logs/1/metrics/train.json
 
-   {
-    "train_loss": 1.2,
-    "iter": 0,
-    "epoch": 0
-   }
-   {
-    "train_loss": 1.19,
-    "iter": 1,
-    "epoch": 0
-   }
+    {"loss": 0.030253788456320763, "epoch": 0}
+    {"loss": 0.02899891696870327, "epoch": 1}
+    {"loss": 0.026649776846170425, "epoch": 2}
+    {"loss": 0.023483652621507645, "epoch": 3}
+    {"loss": 0.019827445968985558, "epoch": 4}
+    {"loss": 0.01599641889333725, "epoch": 5}
+    {"loss": 0.012259905226528645, "epoch": 6}
+    {"loss": 0.008839688263833523, "epoch": 7}
+    {"loss": 0.005932427477091551, "epoch": 8}
+    {"loss": 0.003738593542948365, "epoch": 9}
 
-   {
-    "train_loss": 0.1,
-    "iter": 29,
-    "epoch": 9
-   }
+The hidden directory '.keys' is used by the reader module of mlxpy and is not something to worry about here. Instead we inspect the remaining directories below. 
 
 
 The 'metadata' directory
@@ -193,73 +309,128 @@ The 'metadata' directory contains three yaml files: 'config', 'info' and 'mlxpy'
 
 
 .. code-block:: yaml
-   :caption: ./logs/1/metadata/config.yaml
+    :caption: ./logs/1/metadata/config.yaml
 
-    seed: null
+    seed: 0
+    num_epoch: 10
     model:
-      num_layers: 4
+     num_units: 100
+    data:
+     d_int: 10
+     device: 'cpu'
     optimizer:
-      lr: 1e-3
-    num_epoch: 2
+     lr: 10.
 
 .. code-block:: yaml
-   :caption: ./logs/1/metadata/info.yaml
-
+    :caption: ./logs/1/metadata/info.yaml
+    
+    app: absolute_path_to/bin/python
+    cmd: ''
+    end_date: 20/04/2023
+    end_time: '16:01:13'
+    exec: absolute_path_to/main.py
+    log_dir: absolute_path_to/logs/1
     log_id: 1
-    log_dir: absolute_path_to/logs/1/
-    ...
+    process_id: 7100
+    start_date: 20/04/2023
+    start_time: '16:01:13'
+    status: COMPLETE
+    user: marbel
+    work_dir: absolute_path_to/tutorial
 
 .. code-block:: yaml
-   :caption: ./logs/1/metadata/mlxpy.yaml
+    :caption: ./logs/1/metadata/mlxpy.yaml
 
+    logger:
+      forced_log_id: -1
+      log_streams_to_file: false
+      name: DefaultLogger
+      parent_log_dir: ./logs
+    scheduler:
+      cleanup_cmd: ''
+      env_cmd: ''
+      name: NoScheduler
+      option_cmd: []
+      shell_config_cmd: ''
+      shell_path: /bin/bash
     use_logger: true
-    ...
+    use_scheduler: false
+    use_version_manager: false
+    version_manager:
+      interactive_mode: true
+      name: GitVM
+      parent_target_work_dir: ./.workdir
+      skip_requirements: true
 
 The 'artifacts' directory 
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The directory 'artifacts' is where all data passed to the logger's methods 'log_artifact' and 'log_checkpoint' are stored. These are stored in different directories depending on the artifact type. In this example, since we used the reserved method 'log_checkpoint', the logged data are considered as checkpoint objects, hence the sub-directory 'Checkpoint'. You can see that it contains the pickle file 'last_ckpt.pkl' which is the name we provided when calling the method 'log_checkpoint' in the 'main.py' file. 
 
-Checkpointing can be particularly useful if you need to restart a job from its latest state without having to re-run it form scratch. To do this, you only need to slightly modify the 'train' to load the latest checkpoint by default:
+
+
+Checkpointing
+^^^^^^^^^^^^^
+
+Checkpointing can be particularly useful if you need to restart a job from its latest state without having to re-run it form scratch. To do this, you only need to slightly modify the function 'train' to load the latest checkpoint by default:
 
 .. code-block:: python
     :caption: main.py
 
-    import mlxpy as expy
-    from core_app import DataLoader, Network, Optimizer, Loss
+    import torch
+    from core_app import DataLoader, OneHiddenLayer
 
-    @expy.launch(config_path='./configs')
-    def train(ctx: expy.Context)->None:
+    import mlxpy as mlxpy
+
+    @mlxpy.launch(config_path='./configs')
+    def train(ctx: mlxpy.Context)->None:
+
+        cfg = ctx.config
+        logger = ctx.logger
+
+        # Try loading from checkpoint
+        try:
+            checkpoint = logger.load_checkpoint()
+            start_epoch = checkpoint['epoch']+1
+            model = checkpoint['model']
+        except:
+            start_epoch = 0
+            model = Network(n_layers = cfg.model.num_layers)
 
 
-    try:
-        checkpoint = logger.load_checkpoint()
-        num_epoch = cfg.num_epoch - checkpoint['epoch']-1
-        model = checkpoint['model']
-    except:
-        num_epoch = cfg.num_epoch
-        model = Network(n_layers = cfg.model.num_layers)
+        model = model.to(cfg.data.device)
+        optimizer = torch.optim.SGD(model.parameters(),
+                                    lr=cfg.optimizer.lr)
+        dataloader = DataLoader(cfg.data.d_int,
+                                cfg.data.device)         
 
-        optimizer = Optimizer(model,lr = cfg.optimizer.lr)
-        dataloader = DataLoader()
-        loss = Loss()
+        # Training
+        print(f"Starting from epoch: {start_epoch} ")
 
-    print(f"Starting from epoch {num_epoch}")
+        for epoch in range(start_epoch,cfg.num_epoch):
 
-    for epoch in range(num_epoch):
-        ...
+            train_err = train_epoch(dataloader,
+                                    model,
+                                    optimizer)
+
+            logger.log_metrics({'loss': train_err.item(),
+                                'epoch': epoch}, log_name='train')
+            
+            logger.log_checkpoint({'model': model,
+                                   'epoch':epoch}, log_name='last_ckpt' )
+
+        print(f"Completed training with learing rate: {cfg.optimizer.lr}")
+
 
     if __name__ == "__main__":
         train()
 
-Of course if you execute 'main.py' without further options, the logger will create a new 'log_id' where there is no checkpoint yet, so it cannot resume a previous job. Instead, you need to force the 'log_id' using the option: 'logger.forced_log_id' 
+Of course, if you execute 'main.py' without further options, the logger will create a new 'log_id' where there is no checkpoint yet, so it cannot resume a previous job. Instead, you need to force the 'log_id' using the option 'logger.forced_log_id':
 
 .. code-block:: console
 
    $ python main.py +mlxpy.logger.forced_log_id=1
-
-   Starting from epoch 9
-
+   Starting from epoch 10
    Completed training with learing rate: 1e-3
 
 
@@ -267,99 +438,261 @@ Of course if you execute 'main.py' without further options, the logger will crea
 3- Easy reading
 ---------------
 
+We have already stored information about 3 runs so far. 
+We can access these information easily using mlxpy's reader module, which allows querying results, groupping and aggregating them. Let's do this interactively!
+
+
+Creating a result database
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
 .. code-block:: ipython
 
-    In [1]: import mlxpy as expy
+    In [1]: import mlxpy as mlxpy
 
-    In [2]: # Create a reader object to access the results stored by the logger.
+    In [2]: # Creates a database of results stored by the logger that is accessible using a reader object.
        ...: parent_log_dir = './logs/'
-            reader = expy.Reader(parent_log_dir)
+            reader = mlxpy.Reader(parent_log_dir)
 
-    In [3]: # Perform a query search on the logs.
-       ...: query = "config.optimizer.lr <= 1e-2 & info.status == 'COMPLETE'"
-        results = reader.search(query_string=query, asPandas = True)
 
-    In [3]: # Display the result as a pandas dataframe 
+Under the woods the reader object creates a json file 'database.json' in the directory parent_log_dir and stores metadata about all runs contained in that directory. 
+
+.. code-block:: text
+   :caption: ./logs/
+
+   logs/
+   ├── 1/...
+   ├── 2/...
+   ├── 3/...
+   └── database.json
+
+
+This database allows, for instance, to obtain general information about the runs contained in the log directory 'parent_log_dir', such as the number of runs or the list of fields that are stored in the various files of the log directories: (e.g. in config.yaml, info.yaml or metrics/): 
+
+
+.. code-block:: ipython
+
+    In [3]: # Displaying the number of runs accessible to the reader
+       ...: len(reader)
+    Out[3]: 3
+
+    In [4]: # Displaying all fields accessible in the database.
+       ...: print(reader.fields)
+    Out[4]:
+                                       Type
+    Fields
+    config.data.d_int         <class 'int'>
+    config.data.device        <class 'str'>
+    config.model.num_units    <class 'int'>
+    config.num_epoch          <class 'int'>
+    config.optimizer.lr     <class 'float'>
+    config.seed               <class 'int'>
+    info.app                  <class 'str'>
+    info.cmd                  <class 'str'>
+    info.end_date             <class 'str'>
+    info.end_time             <class 'str'>
+    info.exec                 <class 'str'>
+    info.hostname             <class 'str'>
+    info.log_dir              <class 'str'>
+    info.log_id               <class 'int'>
+    info.process_id           <class 'int'>
+    info.start_date           <class 'str'>
+    info.start_time           <class 'str'>
+    info.status               <class 'str'>
+    info.user                 <class 'str'>
+    info.work_dir             <class 'str'>
+    train.epoch                    LAZYDATA
+    train.loss                     LAZYDATA
+
+
+For instance, the method 'fields' displace a table of existing fields along with their type. 
+You can see that all the user config options are preceeded by the prefix 'config'. 
+The table also contains all fields stored in the files 'info.yaml' of the metadata directory for each run. 
+Finally, all keys stored by the logger when calling the method 'log_metrics' are also availabe. 
+Note that these keys are of type 'LAZYDATA', meaning that the database does not store these data but only a reference to them (more on this later). 
+
+
+
+
+
+Querying the database
+^^^^^^^^^^^^^^^^^^^^^
+Once the database is created, the reader object allows to filter the database by the values taken by some of its fields. 
+Not all fields can make a valid query. Only those obtained when displaying the attribute 'searchable' are acceptable:
+
+.. code-block:: ipython
+
+    In [5]: # Displaying searchable fields must start with info or config
+       ...: print(reader.searchable)
+    Out[5]:
+                                       Type
+    Fields
+    config.data.d_int         <class 'int'>
+    config.data.device        <class 'str'>
+    config.model.num_units    <class 'int'>
+    config.num_epoch          <class 'int'>
+    config.optimizer.lr     <class 'float'>
+    config.seed               <class 'int'>
+    info.app                  <class 'str'>
+    info.cmd                  <class 'str'>
+    info.end_date             <class 'str'>
+    info.end_time             <class 'str'>
+    info.exec                 <class 'str'>
+    info.hostname             <class 'str'>
+    info.log_dir              <class 'str'>
+    info.log_id               <class 'int'>
+    info.process_id           <class 'int'>
+    info.start_date           <class 'str'>
+    info.start_time           <class 'str'>
+    info.status               <class 'str'>
+    info.user                 <class 'str'>
+    info.work_dir             <class 'str'>
+
+
+The 'searchable' fields must start with the prefixes: 'info.' or 'config.' to indicate that they correspond to keys in the files 'config.yaml' and 'info.yaml' of the directories 'metadata' of the logs.  Let's make a simple query and use the 'filter' method: 
+
+
+.. code-block:: ipython
+    
+    In [6]: # Searching using a query string
+       ... query = "info.status == 'COMPLETE' & config.optimizer.lr <= 0.1"
+       ... results = reader.filter(query_string=query, result_format="pandas")
+
+    In [7]: # Display the result as a pandas dataframe 
        ...: results 
-    Out[3]:
-    +-----------+-------------------+-----+-------------+
-    |info.log_id|config.optimizer.lr| ... | train.loss  |
-    +-----------+-------------------+-----+-------------+
-    |     1     |       1e-3        | ... |[0.3,...,0.1]|
-    |     2     |       1e-2        | ... |[0.3,...,0.1]|
-    +-----------+-------------------+-----+-------------+
+    Out[7]:
+       config.data.d_int  ...                                         train.loss
+    0                 10  ...  [0.030253788456320763, 0.03025251068174839, 0....
+    1                 10  ...  [0.030253788456320763, 0.03024102933704853, 0....
 
 
-The search method of the reader results a pandas dataframe whose rows correspond to a run stored in the 'parent_log_dir' and matching the provided query. 
-The dataframe's column names consist of:
+Here, we call the method 'filter' with the option 'result_format' set to 'pandas'. This allows to return the result as a pandas dataframe where the rows correspond to runs stored in the 'parent_log_dir' and matching the query. If the query is an empty string, then all entries of the database are returned.  
+
+
+The dataframe's column names correspond to the fields contained in 'reader.fields'. These names are constructed as follows:
 - The dot-separaed flattened keys of the hierarchical options contained in the yaml file 'metadata.yaml' preceeded by the prefix 'metadata'.  
-- The keys of the dictionaries stored in the file 'metrics.json' preceeded by the suffix 'metrics'. 
-As you can see, the dataframe loads the content of all keys in the  'metrics.json' file as a list, which might not be desirable if the file is large. 
-This can be avoided using 'lazy loading' which we describe next.
+- The keys of the dictionaries stored in the files contained in the 'metrics' directories (here 'train.json') preceeded by the file name as a suffix (here: 'train.'). 
+As you can see, the dataframe loads the content of all keys in the files 'train.json' (contained in the 'metrics' directories of each run), which might not be desirable if these file is large. 
+This can be avoided using 'lazy evaluation' which we describe next.
 
 Lazy evaluation
 ^^^^^^^^^^^^^^^
 
-Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, 'metrics.json' file, we can return a 'expy.ConfigList' object. 
-This object can also be rendered as a dataframe but does not load the 'metrics.json' files in memory unless the corresponding fields are explicitly accessed. 
+Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, 'train.json' file, we can return a 'mlxpy.DataDictList' object. 
+This object can also be rendered as a dataframe but does not load the 'train.json' files in memory unless the corresponding fields are explicitly accessed. 
 
 
 
 .. code-block:: ipython
 
-    In [1]: import mlxpy as expy
+    In [8]: # Returning a DataDictList as a result
+       ... results = reader.filter(query_string=query)
 
-    In [2]: # Create a reader object to access the results stored by the logger.
-       ...: parent_log_dir = './logs/'
-            reader = expy.Reader(parent_log_dir)
-
-    In [3]: # Perform a query search on the logs.
-       ...: query = "config.optimizer.lr <= 1e-2 & info.status == 'COMPLETE'"
-        results = reader.search(query_string=query)
-
-    In [3]: # Display the result as a pandas dataframe 
+    In [9]: # Display the result as a pandas dataframe 
        ...: results 
-    Out[3]:
-    +-----------++-----------+-------------------+-----+-----------+
-    |info.log_id||info.status|config.optimizer.lr| ... |train.loss |
-    +-----------++-----------+-------------------+-----+-----------+
-    |     1     || COMPLETED |       1e-3        | ... |LAZYLOADING|
-    |     2     || COMPLETED |       1e-2        | ... |LAZYLOADING|
-    +-----------++-----------+-------------------+-----+-----------+
+    Out[9]:
+       config.data.d_int config.data.device  ...  train.epoch  train.loss
+    0                 10                cpu  ...     LAZYDATA    LAZYDATA
+    1                 10                cpu  ...     LAZYDATA    LAZYDATA
 
-    In [4]: # Accessing the column 'metrics.train_loss'
-       ...: results[0]['train.loss']
-    Out[4]:
+    [2 rows x 39 columns]
+
+As you can see, the content of the columns 'train.epoch' and 'train.loss' is simply marked as 'LAZYDATA', meaning that it is not loaded for now. If we try to access a specific column (e.g. 'train.loss'), DataDictList will automatically load the desired result:
+
+
+.. code-block:: ipython
+
+    In [10]: # Access a particular column of the results 
+       ...: results[0]['train.loss'] 
+    Out[10]:
+    [0.030253788456320763, 0.03025251068174839, 0.030249962583184242, 0.030246131122112274, 0.03024103306233883, 0.030234655365347862, 0.03022700361907482, 0.030218079686164856, 0.030207885429263115, 0.030196424573659897]
+
+The object results should be viewed as a list of dictionaries. Each element of the list correspond to a particular run in the  'parent_log_dir' directory. The keys of each dictionary in the list are the columns of the dataframe. Finally, it is always to convert a DataDictList object to a pandas dataframe using the method 'toPandasDF'. 
+
+
+Grouping and aggregation
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+While it is possible to directly convert the results of a query to a pandas dataframe which supports grouping and aggregation operations, 
+mlxpy aslo provides a basic support for these operations. Let's see how this works:
+
+
+.. code-block:: ipython
+
+
+    In [11]: # List of group keys.
+       ... group_keys = ['config.optimizer.lr']
+
+    In [12]: # Grouping the results 
+       ...: grouped_results = results.groupBy(group_keys)
+       ...: print(grouped_results)
+    Out[12]:
+                                 config.data.d_int config.data.device  ...  train.epoch  train.loss
+    config.optimizer.lr                                        ...
+    0.01                                10                cpu  ...     LAZYDATA    LAZYDATA
+    0.10                                10                cpu  ...     LAZYDATA    LAZYDATA
+
+    [2 rows x 38 columns]
+
+The output is an object of type GroupedDataDicts. It can be viewed as a dictionary whose keys are given by the different values takes by the  group variables. Here the group variable is the learning rate 'config.optimizer.lr' which takes the values '0.01' and '0.10'. Hence, the keys of GroupedDataDicts are '0.01' and '0.10'. Each group (for instance the group with key '0.01') is a DataDictList object containing the different runs belonging to that group.
+
+Finally, we can aggregate these group according to some aggregation operations:
+
+
+.. code-block:: ipython
+
+
+    In [13]: # Creating the aggregation maps 
+        ... from mlxpy.data_structures.contrib.aggregation_maps import AvgStd
+        ... agg_maps = [AvgStd('train.loss'),AvgStd('train.epoch')]
+
+
+    In [14]: # Aggregating the results 
+       ...: agg_results = grouped_results.aggregate(agg_maps)
+       ...: print(agg_results)
+    Out[14]:
+                                          train.loss_avg  ... config.optimizer.lr
+    0  [0.030253788456320763, 0.03024102933704853, 0....  ...                 0.1
+    1  [0.030253788456320763, 0.03025251068174839, 0....  ...                0.01
+
+    [2 rows x 3 columns]
+
+Here, we compute the average and standard deviation of the field 'train.loss' which contains list of loss values. Each loss values for each  group are averaged and the result is returned as DataDictList object whose columns consist of:
+- The resulting fields: 'train.loss_avg' and 'train.loss_std'
+- The orginal group key: 'config.optimizer.lr'.
+
+Of course, one can always convert these structures to a pandas dataframe at anytime!
+
 
 
 4- Reproducibility
 ------------------
 
-Experimentalist provides three main features for enhanced reproducibility:
+Mlxpy provides three main features for enhanced reproducibility:
 
-    - Config logs: By storing the configs of each run into the 'config.yaml', one can keep track of what parameters were used to obtain are result. A good practice is to avoid hard-coding any parameter and systematically providing those as options. 
-    - Seeding: Experimentalist allows to easily seed the random number generators globally by passing a 'seeding function' to the the launcher. (More on this below).
-    - Version management: Experimentalist provides a version manager that relies on git to check for uncommitted changes and untracked files interactively. Once all changes are committed, the version manager created a copy of the repository based on the latest commit and run the jobs from there.
+    - Config logs: By storing the configs of each run into the 'config.yaml', one can keep track of what parameters were used to obtain a result. A good practice is to avoid hard-coding any parameter and systematically providing those as options. 
+    - Seeding: Mlxpy allows to easily seed random number generators globally by passing a user-defined 'seeding function' to the the launcher. (More on this below).
+    - Version management: Mlxpy provides a version manager that relies on git to check for uncommitted changes and untracked files interactively. Once all changes are committed, the version manager creates a copy of the repository based on the latest commit and runs the jobs from there.
 
 Seeding
 ^^^^^^^
 
-In our example, the initialization of the model uses random initial parameters which might change from a run to another. To avoid this, the user can provide a function 'set_seed' to the expy.launch decorator to set the global seeds of whathever random number generator is used. 
+In our example, the initialization of the model uses random initial parameters which might change from a run to another. To avoid this, the user can provide a function 'set_seed' to the mlxpy.launch decorator to set the global seeds of whathever random number generator is used. 
 
 
 .. code-block:: python
     :caption: main.py
 
-    import mlxpy as expy
+    import mlxpy as mlxpy
     from core_app import DataLoader, Network, Optimizer, Loss
 
     def set_seeds(seed):
         import torch
         torch.manual_seed(seed)
 
-    @expy.launch(config_path='./configs',
+    @mlxpy.launch(config_path='./configs',
                 seeding_function=set_seeds)
-    def train(ctx: expy.Context)->None:
+    def train(ctx: mlxpy.Context)->None:
 
         cfg = ctx.config
         logger = ctx.logger
@@ -370,14 +703,14 @@ In our example, the initialization of the model uses random initial parameters w
         train()
 
 
-The function 'set_seeds' will be called by mlxpy before executing the function 'train'. The parameter seed is read from the user-defined option: ctx.config.seed. 
-Note that this object can be an integer or a dictionary or any object that can be stored in a yaml file. 
-Of course it is also possible to perform seeding inside the function 'train', but this allows to do it systematically. 
+The function 'set_seeds' will be called by mlxpy before executing the function 'train'. The parameter seed is read from the user-defined option: ctx.config.seed. If the field seed is not provided by the user and a seeding function is passed, then the code throws an error.  
+Note that the field 'seed' passed to the 'set_seeds' can be an integer or a dictionary or any object that can be stored in a yaml file. 
+Of course it is also possible to perform seeding inside the function 'train', but 'seeding_function'  allows you to do it systematically. 
 
 
 .. code-block:: console
 
-   $ python main.py +seed=1
+   $ python main.py seed=1
 
    Completed training with learing rate: 1e-3
 
@@ -387,9 +720,9 @@ Version management
 
 Sometimes, there can be a delay between the time when a job is submitted and when it gets executed. This typically happens when submitting jobs to a cluster queue. 
 Meanwhile, the development code might have already changed, with some potential bugs introduced! 
-Without careful version management, it is hard to know for sure what code was used to produce the results. Experimentalist proposes a simple way to avoid these issues by introducing two features:
-- Systematically checking for uncommitted change/ untracked files
-- Sytematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changed that could be introduced to the development code before executing a job. 
+Without careful version management, it is hard to know for sure what code was used to produce the results. Mlxpy proposes a simple way to avoid these issues by introducing two features:
+- Systematically checking for uncommitted change/ untracked files.
+- Sytematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.
 
 Let's see how this work! We simply need to set the option 'use_version_manager' to true. This launches an interactive seesion where the user can tell the version manager what to do.
 
@@ -401,29 +734,80 @@ Let's see how this work! We simply need to set the option 'use_version_manager' 
 
 
 
-First, the version manager checks for untracked files and asks to user what to do: either ignore or add the files to git. Let's say we choose to ignore the added files. 
+
+.. code-block:: python
+    
+    There are untracked files in the repository:
+    
+    tutorial/logs/
+    
+    How would you like to handle untracked files? (a/b/c)
+    
+    a: Add untracked files directly from here?
+    b: Check again for untrakced files (assuming you manually added them).
+    c: Ignore untracked files.
+    
+    [Untracked files]: Please enter your choice (a/b/c):
+
+First, the version manager checks for untracked files and asks the user what to do: either ignore, double check untracked files or add the files to git. 
+Here, we just choose option 'c' which ignores the untracked directory './logs/'.
 
 
-.. code-block:: console
-
-   $ python main.py +mlxpy.use_version_manager=True
+The next step is to check for uncommitted changes. 
 
 
+.. code-block:: python
+    
+    There are uncommitted changes in the repository:
+    
+    tutorial/main.py
+    
+    How would you like to handle uncommitted changes? (a/b/c)
+    
+    a: Create a new automatic commit before launching jobs.
+    b: Check again for uncommitted changes (assuming you manually committed them).
+    c: Ignore uncommitted changes.
+    
+    [Uncommitted changes]: Please enter your choice (a/b/c):
 
-The next step is to check for uncommitted changes. We see that there is one change that is uncommitted. The user can either ignore this, commit the changes from a different iterface and check again, or commit the changes from the version manager interface. Here, we just choose option 'a' which creates an automatic commit of the changes. 
+We see that there is one change that is uncommitted. The user can either ignore this, commit the changes from a different iterface and check again, or commit the changes from the version manager interface. Here, we just choose option ‘a’ which creates an automatic commit of the changes.
+
+
+.. code-block:: python
+
+    Commiting changes....
+    
+    [master e22179c] mlxpy: Automatically committing all changes
+
+     1 files changed, 2 insertions(+), 1 deletions(-)
+    
+    No more uncommitted changes!
+    
+
+Finally, the version manager asks if we want to create a 'safe' copy (if it does not already exist) based on the latest commit and from which code will be executed. If not, the code is excuted from the current directory.
+
+.. code-block:: python
+
+    Where would you like to run your code from? (a/b):
+    
+    a: Create a copy of the repository based on the latest commit and execute code from there.
+    The copy will be created in: absolute_path_to/.workdir/mlxpy/commit_hash
+    b: Execute code from the main repository
+    
+    Please enter you answer (a/b):
 
 
 
-.. code-block:: console
 
-   $ python main.py +mlxpy.use_version_manager=True
-
-Finally, the version manager asks if we want to create a 'safe' copy based on the latest commit and from which code will be executed. If not, the code is excuted from the current directory. We choose the safe copy! Experimentalist proceed to excecute the code from that copy:
+We choose the safe copy! 
+The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). Mlxpy then proceeds to excecute the code from that copy:
 
 
-.. code-block:: console
+.. code-block:: python
 
-   Completed training with learing rate: 1e-3
+    Creating a copy of the repository at absolute_path_to/.workdir/mlxpy/commit_hash
+    Starting from epoch: 0
+    Completed training with learing rate: 10.0
 
 
 We can double check where the code were executed from by inspecting the 'info.yaml' file (Note that this is the 4th run, so the file should be located in ./logs/4/)
@@ -432,15 +816,13 @@ We can double check where the code were executed from by inspecting the 'info.ya
 .. code-block:: yaml
    :caption: ./logs/4/metadata/info.yaml
 
-    log_id: 4
-    log_dir: absolute_path_to/logs/4/
-    work_dir: 
+    ...
+    work_dir: absolute_path_to/.workdir/mlxpy/commit_hash/tutorial
 
 
-You can see that the workin directory during execution of the job was '' which is different from the initial directory from which we run the commang 'python main.py +mlxpy.use_version_manager=True'. The directory is named after the latest commit hash during execution time (the one that was created when interacting with the version manager). We can inspect that directory and see that it contains a full copy of the committed files contained in the repository (except untracked files). 
 If other jobs are submitted later, and if the code did not change meanwhile, then these jobs will also be executed from this same working directory. This avoids copying the exact same content multiple times. 
 
-Finally, a copy of the dependencies used by the code is also stored along with their versions in the fields 'requirements'. 
+Finally, a copy of the dependencies used by the code is also stored along with their versions in a fields 'requirements' if the option 'mlxpy.version_manager.skip_requirements' is set to 'False'.
 
 
 
@@ -455,10 +837,53 @@ Using mlxpy, you can combine the 'multirun' capabilities of hydra with job sched
 Configuring the scheduler
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, Experimentalist supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your own custom scheduler and we will see later. 
-For now, let's use assume we are using one of the default schedulers: 'OAR'. 
-Since, the scheduler settings are unlikely to change much during your project, I  recommand to directly edit those settings in the './configs/mlxpy.yaml': 
+If you are using mlxpy for the first time in your project and the file 
 
+If you have not specified a default job scheduler in './configs/mlxpy.yaml' but still set the option 'mlxpy.user_scheduler' to true when executing code, you will have access to an interactive platform to set up a scheduler from the terminal. 
+
+.. code-block:: console
+
+    python main.py +mlxpy.use_scheduler=True
+
+    No scheduler is configured by default
+    
+    Would you like to select a default job scheduler now ?  (y/n):
+    
+    y: The job scheduler configs will be stored in the file ./configs/mlxpy.yaml
+    n: No scheduler will be selected by default.
+    
+    Please enter you answer (y/n):
+
+
+This interface is also displayed if you are using mlxpy for the first time in your project and/or if the 
+mlxpy settings file './configs/mlxpy.yaml' does not exist. Mlxpy provides two options: 'y' or 'n'. If you choose 'n', then mlxpy skips configuration and tries to execute code without a scheduler. If you choose 'y', you'll be able to set up a scheduler. Let's select 'y':
+
+
+.. code-block:: console
+
+    You can either choose one of the job schedulers available by default ,
+    or define a custom one by inheriting from the abstract class <class 'mlxpy.scheduler.Scheduler'> (see documentation)
+
+    For a default scheduler, you can choose one from this list:
+    
+    ['OARScheduler', 'SLURMScheduler']
+    
+    For a custom scheduler, you must provide the full name of the user-defined Scheduler subclass (ex. my_app.CustomScheduler):
+    
+     Please enter your choice (or hit Enter to skip) :
+
+
+By default, Mlxpy supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your own custom scheduler by defining a class inheriting from the abstract class 'mlxpy.scheduler.Scheduler' and providing the full name of the class so that mlxpy can import it. 
+Here, we select one of the default schedulers provided by mlxpy 'OARScheduler' as we have access to a cluster using the OAR scheduler:
+
+.. code-block:: console
+    Please enter your choice (or hit Enter to skip) : OARScheduler
+    
+    Setting Scheduler to: OARScheduler
+
+    Default settings for mlxpy will be created in ./configs/mlxpy.yaml
+
+Mlxpy then sets up the scheduler, update/creates the mlxpy settings file './configs/mlxpy.yaml' with an option for using 'OARScheduler' and continues execution of the code (see next section for what is executed). We can double-check that the mlxpy settings file './configs/mlxpy.yaml' was correctly modified: 
 
 
 .. code-block:: yaml
@@ -472,32 +897,48 @@ Since, the scheduler settings are unlikely to change much during your project, I
      shell_config_cmd: ''
      env_cmd: ''
      cleanup_cmd: ''
-     option_cmd: ["-l core=1,walltime=15:00:00",
-        "-t besteffort",
-        "-t idempotent",
-        "-p gpumem>'16000'"
-      ]
+     option_cmd: []
 
    version_manager: ...
 
+You can also directly edit the 'mlxpy.yaml' file to configure the scheduler (by setting the field scheduler.name to a valid value). 
+Additionally, there are other options that the scheduler need and that are, by default, set to an empty string for most of them. The most important option is the 'option_cmd' which specifies the resources required by the job. 
+It contains a list of strings, each string providing some instruction to the scheduler (e.g.: number of cores, walltime, gpu memory). These instructions must follow the systax required by the scheduler. 
+Since we are using OAR, these options must follow OAR's syntax. 
 
-Here, we set the option 'name' to 'OARScheduler', which is the class  implemented by mlxpy to handle OAR.
-Then, we need to provide some options to the scheduler: 'shell_path',  'shell_config_cmd', 'env_cmd', 'cleanup_cmd' and 'option_cmd' that we'll discuss soon. 
-The most important command is the 'option_cmd' which specifies the resources required by the job using OAR's syntax. 
-It contains a list of strings, each string providing some instruction to OAR (e.g.: number of cores, walltime, gpu memory). You can have a look at the OAR documentation for how to set those options. 
 
 
 Submitting job to a cluster queue
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We can now submit jobs using OAR scheduler assuming we have access to it. We only need to set the option 'use_scheduler' to True: 
+After configuring the scheduler or if it was already configured in the mlxpy file settings, executing the command 'python main.py +mlxpy.use_scheduler=True' falls-back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: 'OAR'). 
+In the console, you can see the content of the script followed by a message 'Job launched!' indicating that the scheduler succeeded in launching the job:
 
 .. code-block:: console
 
-   $ python main.py +mlxpy.use_scheduler=True
+    #!/bin/bash
+    #OAR -n logs/5
+    #OAR -E absolute_path_to/logs/5/log.stderr
+    #OAR -O absolute_path_to/logs/5/log.stdout
 
 
-Under the woods mlxpy first assigns a 'log_id' to the run and creates its corresponding log directory './logs/log_id'. Here, log_id=5, since this is the 5th run that we launched in './logs'. Then instead of executing the job, the scheduler creates a script 'script.sh' that is saved in './logs/log_id'. This script is then submitted automatically to the OAR cluster queue using the command: 'sbatch .script.sh'. At this point, the program exits with a message 'Submitted 1 job to the cluster queue!'.
+
+    cd /home/marbel/Documents/projects/mlxpy/tutorial
+    /scratch/clear/marbel/anaconda3/bin/python main.py              +mlxpy.logger.forced_log_id=12            +mlxpy.logger.parent_log_dir=/home/marbel/Documents/projects/mlxpy/tutorial/logs             +mlxpy.use_scheduler=False            +mlxpy.use_version_manager=False
+
+    [ADMISSION RULE] Set default walltime to 7200.
+    [ADMISSION RULE] Modify resource description with type constraints
+    OAR_JOB_ID=684995
+
+    Job launched!
+
+
+How job scheduling works with mlxpy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Under the woods mlxpy first assigns a 'log_id' to the run and then creates its corresponding log directory './logs/log_id' (, using the logger). 
+Here, log_id=5, since this is the 5th run that we launched in './logs'. Then instead of executing the job, the scheduler creates a script 'script.sh' that is saved in './logs/log_id'. This script is then submitted automatically to the OAR cluster queue using the command: 'sbatch ./script.sh'. 
+At this point, the program exits after displaying the script along with a message: 'Job launched!'.
 Let's have a look at the content of the script:
 
 
@@ -508,28 +949,30 @@ Let's have a look at the content of the script:
     #OAR -n logs/5
     #OAR -E absolute_path_to/logs/5/log.stderr
     #OAR -O absolute_path_to/logs/5/log.stdout
-    #OAR -l core=1,walltime=15:00:00
-    #OAR -p gpumem>'16000'
-    
-    cd absolute_path_to/work_dir
 
-    python main.py 
-    +mlxpy.logger.forced_log_id=5 
-    +mlxpy.logger.parent_log_dir=absolute_path_to/logs
-    +mlxpy.use_scheduler=False
+
+
+    cd absolute_path_to_work_dir
+    absolute_path_to/python main.py  +mlxpy.logger.forced_log_id=5           
+    +mlxpy.logger.parent_log_dir=absolute_path_to/logs             
+    +mlxpy.use_scheduler=False            
     +mlxpy.use_version_manager=False
+
 
 Let's now go through this script:
 
-- The first line of the script specifies the shell used for running the script. It is determined by the scheduler's option 'shell_path' of the 'mlxpy.yaml' file settings. We chose to set it to '/bin/bash'. 
-- The next lines specify the OAR resource option provided in 'option_cmd'. 
-- The first instruction is to go to the work_directory set by the launcher (which can be different from the current working directory if we are using the version manager). 
-- Finally, we find the instruction for executing the 'main.py' file with some additional options. 
-    - First, the log_id is forced to be the same as the one asigned for the job during launching (here log_id=5). 
-    - Then, we make sure that the 'parent_log_dir' is also the same as the one we used during job submission to the cluster. 
-    - Finally, the job must not use any scheduler or version manager anymore! That is because this script was already submitted to a queue using the scheduler and must readily be executed once a resource is allocated. 
+- The first line of the script specifies the shell used for running the script. 
+It is determined by the scheduler's option 'shell_path' of the 'mlxpy.yaml' file settings. We chose to set it to '/bin/bash'. 
+- The next lines specify the OAR resource option provided in 'option_cmd'. When the script is created,  the OAR directive '#OAR' is automatically added before these options so that the scheduler can interpret them. You can have a look at the OAR documentation for how to set those options. 
 
-This script is submitted automatically to the OAR cluster queue, so there is no need, in priciple, to worry about it. It is only useful in case you need to debug or re-run an experiment. 
+- The first instruction is to go to the 'working directory' set by the launcher (which can be different from the current working directory if we are using the version manager).
+- Finally, we find the instruction for executing the 'main.py' file with some additional options. 
+    - First, the log_id is forced to be the same as the one asigned for the job during launching (by setting mlxpy.logger.forced_log_id=5). 
+    - Then, we make sure that the 'parent_log_dir' is also the same as the one we used during job submission to the cluster. 
+    - Finally, the job must not use any scheduler or version manager anymore! That is because the script was already submitted to a cluster queue using the scheduler and must readily be executed once a resource is allocated.
+
+The script is submitted automatically to the OAR cluster queue, so there is no need, in priciple, to worry about it. 
+It is only useful in case you need to debug or re-run an experiment. 
 
 We can check that the job is assigned to a cluster queue using the command 'oarstat':
 
@@ -574,11 +1017,11 @@ Once, the job finishes execution, we can double check that everything went well 
 Submitting several jobs to a cluster
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can also fire several jobs to the cluster from a single command! Let's say, you want to vary the learning rate and use different seeds to test the robustness of the results. You can leverage the power of hydra for this!
+You can also launch several jobs to the cluster from a single command! Let's say, you want to vary the learning rate and use different seeds to test the robustness of the results. You can leverage the power of hydra for this!
 
 .. code-block:: console
 
-   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxpy.use_scheduler=True
+   $ python main.py optimizer.lr=1e-3,1e-2,1e-1 seed=1,2,3,4  +mlxpy.use_scheduler=True
 
 Here is what happens:
 
@@ -586,31 +1029,25 @@ Here is what happens:
 2- The mlxpy logger create a separate directory for each one of these jobs (by assigning a unique log_id to each one of them).
 3- The scheduler creates a script for each of these jobs in the corresponding directory (created by the logger) then submits these scripts to the cluster queue.
 
-You only need to wait for the results to come!
-
 
 
 Combining the scheduler with the version manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
 Finally, you can combine both features to run several reproducible jobs with a controlled version of the code they use.  
 
    $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxpy.use_scheduler=True +mlxpy.use_version_manager=True
 
-
-In this case, mlxpy first runs the version manager 
-with an interactive 
-
+In this case, mlxpy first asks the user to set up a scheduler (if not aleardy configured) then runs the version manager in interactive mode to decide how to handle untracked/uncommitted files and whether or not to create a 'safe' directory from which the code will be run. 
+Once the user's choice are entered, the jobs are submitted to the scheduler and you simply need to wait for the results to come!
 
 
 
+Conclusion
+^^^^^^^^^^
 
-
-
-
-
-
+This was a rather long tutorial! I hope you can find mlxpy useful and I'd be happy 
+to hear your feedback and suggestions!
 
 
 
