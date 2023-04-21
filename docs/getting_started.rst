@@ -95,13 +95,13 @@ If the file 'config.yaml' or its parent directory 'config_path' do not exist, th
    seed: null
 
 
+.. _Configuring_mlxpy
+Configuring mlxpy
+^^^^^^^^^^^^^^^^^
 
-mlxpy configuration
-^^^^^^^^^^^^^^^^^^^
-
-mlxpy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
-The package configurations are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file.
-If the file 'mlxpy.yaml' does not exit already, it is created automatically with default configuration options:
+Mlxpy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
+The package configurations are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exists. 
+By default 'mlxpy.yaml' contains the following:
 
 .. code-block:: yaml
    :caption: ./configs/mlxpy.yaml
