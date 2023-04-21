@@ -4,7 +4,7 @@ logger:
   forced_log_id: -1
   log_streams_to_file: false
 scheduler:
-  name: NoScheduler
+  name: OARScheduler
   shell_path: /bin/bash
   shell_config_cmd: ''
   env_cmd: ''
