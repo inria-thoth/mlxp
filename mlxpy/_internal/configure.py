@@ -129,7 +129,7 @@ def _get_default_config(config_path,overrides):
     update_default_conifg = False
     if scheduler_name=="NoScheduler":
         if using_scheduler or not os.path.exists(mlxpy_file):
-            print(f"{bcolors.OKBLUE} No valid job scheduler were found {bcolors.ENDC}")
+            print(f"{bcolors.OKBLUE}No scheduler is configured by default {bcolors.ENDC}")
             _ask_configure_scheduler(default_config,mlxpy_file)
             update_default_conifg = True
     else:
@@ -139,10 +139,10 @@ def _get_default_config(config_path,overrides):
         omegaconf.OmegaConf.set_struct(default_config, False)
         if scheduler_name_default=="NoScheduler":
             update_default_conifg = True
-            print(f"{bcolors.OKBLUE} Setting Scheduler to: {scheduler_name} {bcolors.ENDC}")
+            print(f"{bcolors.OKBLUE}Setting Scheduler to: {scheduler_name} {bcolors.ENDC}")
 
     if not os.path.exists(mlxpy_file) or update_default_conifg:
-        print(f"{bcolors.OKBLUE} Default settings for mlxpy will be created in {mlxpy_file} {bcolors.ENDC}") 
+        print(f"{bcolors.OKBLUE}Default settings for mlxpy will be created in {mlxpy_file} {bcolors.ENDC}") 
         mlxpy = OmegaConf.create(default_config['mlxpy'])
         omegaconf.OmegaConf.save(config=mlxpy, f=mlxpy_file)
 

@@ -247,7 +247,6 @@ def launch(
                 logger._log_configs(cfg)
                 
             else:
-                pass
                 
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
