@@ -19,22 +19,19 @@ import abc
 from enum import Enum
 
 from mlxpy.data_structures.artifacts import Artifact, Checkpoint
-from mlxpy.utils import InvalidKeyError
-
+from mlxpy.errors import InvalidKeyError, InvalidArtifact
+from mlxpy.data_structures.config_dict import ConfigDict
 
 class Directories(Enum):
     """
-        Status of a run. 
+        The sub-directories created by the logger for each run. 
 
-        The status can take the following values:
+        - Metrics: A directory containing the JSON files created when calling the method log_metrics of a Logger object.
 
-        - STARTING: The metadata for the run have been created.
-
-        - RUNNING: The experiment is currently running. 
+        - Metadata: A directory containing three files 'info.yaml', 'mlxpy.yaml' and 'config.yaml'.
         
-        - COMPLETE: The run is  complete and did not through any error.
+        - Artifacts: A directory containing sub-directories created when calling the method log_artifacts of a Logger object.
         
-        - FAILED: The run stoped due to an error.
     """
 
 
@@ -47,10 +44,65 @@ class Directories(Enum):
 
 class Logger(abc.ABC):
 
+    """ 
+    The class defines a logger which provides all metatdata for the run 
+    and allows saving outputs of the run in a uniquely assigned directory for 
+    the specific run. 
+    
+    The logger creates a directory with a default file structure:
+        - parent_log_dir/log_id:
+
+            - metadata/
+
+                - metadata.yaml : Contains the configs of the run
+            
+            -metrics/
+
+                - 'file_name'.json : Contains a the outputs stored 
+                                when running the method log_metrics(metrics_dict, file_name)
+                - .keys: Directory of yaml files containing the keys of dictionaries saved using log_metrics. 
+                     Each file 'file_name'.yaml corresponds to a json file 'file_name'.json containing the dictionaries.
+
+            - artifacts : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.
+
+            - log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
+            - log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
+            - script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)
+
+    .. py:attribute:: parent_log_dir
+        :type: str
+
+        The parent directory where the directory of the run is created. 
+
+    """
+
+
     def __init__(self, 
                  parent_log_dir,
                  forced_log_id=-1,
                  log_streams_to_file=False):
+
+        """
+         Constructor
+
+
+        :param parent_log_dir: The parent directory where the directory of the run is created. 
+        :param forced_log_id:  A forced log_id for the run. When forced_log_id is positive, the log_id of the run is set forced_log_id. 
+        If forced_log_id is negative, then the logger assigns a new unique log_id for the run.  
+        :param log_streams_to_file: When true, the stdout and stderr files are saved in files 'log_dir/log.stdout' and 'log_dir/log.stderr'.
+
+        :type parent_log_dir: str
+        :type forced_log_id: int
+        :type log_streams_to_file: bool
+
+        """
+
+
+
+
+
+
+
         self.parent_log_dir = os.path.abspath(parent_log_dir)
         self.forced_log_id = forced_log_id
         self._metric_dict_keys = {}
@@ -71,16 +123,7 @@ class Logger(abc.ABC):
             log_stderr = open(os.path.join(self._log_dir, "log.stderr"), "w", buffering=1)
             sys.stderr = log_stderr
 
-    def _log_configs(self, config)->None:
-        """
-        Saves the config attribute corresponding to the current run  
-        into a yaml file log_dir/file_name+'.yaml'. 
-
-        :param file_name: Name of the target file.
-        :type file_name: str (default "metadata")
-        :return: None
-        """
-
+    def _log_configs(self, config: ConfigDict)->None:
         file_name = os.path.join(self.metadata_dir, 'config')
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.config.to_dict(), f)
@@ -94,6 +137,18 @@ class Logger(abc.ABC):
          
 
     def log_metrics(self,metrics_dict, log_name):
+        """Saves a dictionary of scalars to a json file named 
+        log_name+'.json' in the directory log_dir/metrics. If the file exists already, 
+        the dictionary is appended at the end of the file. 
+
+        :param metrics_dict:  Dictonary of scalar values to be saved, the values can be either int, float of string.
+        :param log_name: Name of the json file where to save the metric_dict.
+        :type metrics_dict: Dict[str, Union[int, float, str]]
+        :type log_name: str
+        :return: None
+        """
+
+
         invalid_names = ["info", "config", "mlxpy"]
         try:
             assert log_name not in ["info", "config", "mlxpy"]
@@ -104,10 +159,12 @@ class Logger(abc.ABC):
         file_name = os.path.join(self.metrics_dir, log_name)
         return self._log_metrics(metrics_dict,file_name) 
 
-    @abc.abstractmethod
-    def _log_metrics(self,metrics_dict: Dict[str, Union[int, float, str]], 
-                        file_name: str):
-        pass
+    def _log_metrics(self, metrics_dict: Dict[str, Union[int, float, str]], 
+                        file_name: str)->None:
+        with open(file_name + ".json", "a") as f:
+            json.dump(metrics_dict, f)
+            f.write(os.linesep)
+
 
     def log_artifact(self, artifact: Artifact, log_name: str)-> None:
         """Saves the attribute obj of an instance inheriting from the abstract class Artifact 
@@ -116,14 +173,17 @@ class Logger(abc.ABC):
         the child class inheriting from Artifact.   
 
         :param artifact:  An instance of a class inheriting from the abstract class Artifact.
-        :param file_name: Name of the file where the artifact is saved.
+        :param log_name: Name of the file where the artifact is saved.
         :type artifact: Artifact
-        :type file_name: str
+        :type log_name: str
         :return: None
         :raises Assertionerror: if artifact is not an instance of Artifact.
         """
+        try:
+            assert isinstance(artifact,Artifact)
+        except AssertionError:
+            raise InvalidArtifactError(f"The object {artifact} must be an instance of the abstract class {Artifact}. Instead, it is of type {type(artifact)}")
 
-        assert isinstance(artifact,Artifact)
         subdir = os.path.join(self.artifacts_dir, type(artifact).__name__)
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(subdir, log_name)
@@ -178,64 +238,14 @@ class Logger(abc.ABC):
 
 
 class DefaultLogger(Logger):
-    """ 
-    The class defines a logger which provides all metatdata for the run 
-    and allows saving outputs of the run in a uniquely assigned directory for 
-    the specific run. 
-    
-    The logger creates a directory with a default file structure:
-        - log_dir:
-            - metadata.yaml : Contains the configs of the run
-            - 'file_name'.json : Contains a the outputs stored 
-                                when running the method log_metrics(metrics_dict, file_name)
-            - log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
-            - log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
-            - script.sh: Contains the script for running the job (Only if job is submitted in bacth mode to a scheduler)
-            - .keys: Directory of yaml files containing the keys of dictionaries saved using log_metrics. 
-                     Each file 'file_name'.yaml corresponds to a json file 'file_name'.json containing the dictionaries.
-            - Artifacts : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact
 
-    .. py:attribute:: config
-        :type: omegaconf.dictconfig.DictConfig 
-
-        An object containing the configuration metadata for the run.
-
-    """
     def __init__(self, parent_log_dir,
                         forced_log_id,
                         log_streams_to_file=False):
-        """
-        Constructor
-
-        :param config: An object containing the configuration metadata for the run.
-        :type config: omegaconf.dictconfig.DictConfig
-
-        """
-
         super().__init__(parent_log_dir, 
-                        forced_log_id)
+                        forced_log_id,
+                        log_streams_to_file=log_streams_to_file)
 
-
-
-
-
-
-
-    def _log_metrics(self, metrics_dict: Dict[str, Union[int, float, str]], 
-                        file_name: str)->None:
-        """Saves a dictionary of scalars to a json file named 
-        file_name+'.json' in the directory log_dir. If the file exists already, 
-        the dictionary is appended at the end of the file. 
-
-        :param metrics_dict:  Dictonary of scalars values to be saved, the values can be either int, float of string.
-        :param file_name: Name of the target file.
-        :type metrics_dict: Dict[str, Union[int, float, str]
-        :type file_name: str (default "metrics")
-        :return: None
-        """
-        with open(file_name + ".json", "a") as f:
-            json.dump(metrics_dict, f)
-            f.write(os.linesep)
 
     def log_checkpoint(self, checkpoint: Any, log_name: str='checkpoint')->None:
         """
@@ -246,16 +256,21 @@ class DefaultLogger(Logger):
 
             :param checkpoint: Any serializable object to be stored in 'run_dir/Artifacts/Checkpoint/last.pkl'. 
             :type checkpoint: Any
+            :param log_name: Name of the file where the checkpoint is saved.
+            :type log_name: str (default 'checkpoint')
+
         """
         self.log_artifact(Checkpoint(checkpoint, ".pkl"),log_name=log_name)
         
     def load_checkpoint(self, log_name)-> Any:
         """
-        Restores a checkpoint from 'run_dir/Artifacts/Checkpoint/last.pkl'. 
-        Raises an error if it fails to do so. 
-    
-        return: Any serializable object stored in 'run_dir/Artifacts/Checkpoint/last.pkl'. 
-        rtype: Any
+            Restores a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl'. 
+            Raises an error if it fails to do so. 
+
+            :param log_name: Name of the file where the checkpoint is saved.
+            :type log_name: str (default 'checkpoint')    
+            return: Any serializable object stored in 'run_dir/Artifacts/Checkpoint/last.pkl'. 
+            rtype: Any
 
         """
         checkpoint_name = os.path.join(self.artifacts_dir, 'Checkpoint', log_name+'.pkl' )

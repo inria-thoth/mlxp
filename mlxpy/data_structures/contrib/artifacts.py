@@ -22,6 +22,7 @@ class PNGImage(Artifact):
         import matplotlib
         assert isinstance(self.obj, matplotlib.figure.Figure)
         self.obj.savefig(f"{fname}{self.ext}", bbox_inches="tight")
+
 @dataclass
 class TorchModel(Artifact):
     """An subclass of Artifact for saving pytorch objects: Tensor, Module, or 
@@ -29,10 +30,6 @@ class TorchModel(Artifact):
     """
     ext= ".pth"
     def save(self, fname):
-        try:
-            # pipreqs: exclude
-            import torch
-            torch.save(self.obj, f"{fname}{self.ext}")
-        except ImportError:
-            raise ImportError
+        import torch
+        torch.save(self.obj, f"{fname}{self.ext}")
 

@@ -16,21 +16,36 @@ class VersionManager(abc.ABC):
 
     def __init__(self):
 
-        self.interactive_mode = False
+        self._interactive_mode = False
+        self._vm_choices_file = ""
+        self._existing_choices = False
+        self.vm_choices = {}
 
+    def _handle_interactive_mode(self, mode:bool, 
+                                 vm_choices_file: './vm_choices.yaml')->None:
+        self._interactive_mode = mode
+        self._vm_choices_file = vm_choices_file
+        if os.path.isfile(self._vm_choices_file):
+            with open(self._vm_choices_file, "r") as file:
+                self.vm_choices = yaml.safe_load(file)
+                self._existing_choices = True
 
-    def update_interactive_mode(self, mode):
-        self.interactive_mode = mode
+    def _save_vm_choice(self):
+        if self._interactive_mode:
+            if not os.path.isfile(self._vm_choices_file):
+                with open(self._vm_choices_file, "w") as f:
+                    yaml.dump(self.vm_choices, f)
 
     @abc.abstractmethod
-    def get_configs(self)->Dict[str, Any]:
+    def get_info(self)->Dict[str, Any]:
         """
-            Updates the config with the new updated 
-            info on the working directory
+            Returns a dictionary containing 
+            information about the version used for the run.
 
-            :param cfg: Configuration of the run
-            :type cfg: OmegaConf
-            
+            :return: Dictionary containing 
+            information about the version used for the run.
+
+            :rtype: Dict[str, Any]         
         """
 
         pass
@@ -65,21 +80,17 @@ class GitVM(VersionManager):
 
         The target parent directory of the new working directory.
 
-    .. py:attribute:: handleUntrackedFiles
+    .. py:attribute:: store_requirements
         :type: bool 
 
-        When set to true, offers interactive options to handle untracked files. 
-
-    .. py:attribute:: handleUncommitedChanges
-        :type: bool 
-
-        When set to true, offers interactive options to handle uncommitted changes. 
+        When set to true, the version manager stores a list of requirements and their version.
     
     """
 
     def __init__(self,
                 parent_target_work_dir: str,
                 store_requirements: bool):
+        super().__init__()
 
         self.parent_target_work_dir = os.path.abspath(parent_target_work_dir)
         self.store_requirements = store_requirements
@@ -88,30 +99,35 @@ class GitVM(VersionManager):
         self.repo_path = None
         self.work_dir = os.getcwd()
         self.requirements = ["UNKNOWN"]
-        self.vm_choices = {}
-        self._existing_choices = False
-        self.vm_choices_file = ""
 
-    def get_configs(self)->Dict[str, Any]:
-        """
-            Updates the config with the new updated 
-            info on the working directory
+        
+        
 
-            :param cfg: Configuration of the run
-            :type cfg: OmegaConf
+    def get_info(self)->Dict[str, Any]:
         """
-        config_dict = {"requirements": self.requirements,
+            Returns a dictionary containing 
+            information about the version used for the run:
+                - requirements: the dependencies of the code and their versions. Empty if 'store_requirements' is false.
+                - commit_hash: The hash of the latest commit.
+                - repo_path: Path to the repository.  
+            :return: Dictionary containing 
+            information about the version used for the run.
+
+            :rtype: Dict[str, Any]         
+        """
+        return config_dict = {"requirements": self.requirements,
                         "commit_hash":self.commit_hash,
                         "repo_path": self.repo_path
                         }
                         
-        return {'version_manager':config_dict}
-
     def make_working_directory(self)->str:
         
         """     
-        This function creates and returns a target working directory under self.parent_target_work_dir
-        and containing a copy of the code used to run the experiment based on the latest git commit. 
+        This function creates and returns a target working directory. 
+        Depending on the user's choice, the returned directory is either: 
+            - The current working directory.
+            - A directory under self.parent_target_work_dir/repo_name/latest_commit_hash. 
+            In this case, a copy of the code based on the latest git commit is created and used to run the experiment. 
 
         :rtype: str
         :return: A path to the target working directory
@@ -132,17 +148,8 @@ class GitVM(VersionManager):
         
         return self.work_dir
     
-    def set_vm_choices_from_file(self,file_name):
-        self.vm_choices_file = file_name
-        if os.path.isfile(self.vm_choices_file):
-            with open(self.vm_choices_file, "r") as file:
-                self.vm_choices = yaml.safe_load(file)
-                self._existing_choices = True
         
-    def _save_vm_choice(self):
-        if not os.path.isfile(self.vm_choices_file):
-            with open(self.vm_choices_file, "w") as f:
-                yaml.dump(self.vm_choices, f)
+
 
 
     def _clone_repo(self,repo):
@@ -158,7 +165,7 @@ class GitVM(VersionManager):
         
     def _handle_cloning(self, repo, relpath):
         while True:                
-            if self.interactive_mode:
+            if self._interactive_mode:
                 if self._existing_choices:
                     choice = self.vm_choices['cloning']
                 else: 
@@ -196,7 +203,7 @@ class GitVM(VersionManager):
         ignore_msg+= "\033[91m Warning:\033[0m Jobs will be executed from the latest commit"
 
         while True:
-            if self.interactive_mode:
+            if self._interactive_mode:
                 if self._existing_choices:
                     break
                 if repo.is_dirty():    
@@ -241,7 +248,7 @@ class GitVM(VersionManager):
 
 
         while True:
-            if self.interactive_mode:
+            if self._interactive_mode:
                 if self._existing_choices:
                     break
                 status = repo.git.status()
@@ -300,12 +307,14 @@ class GitVM(VersionManager):
 
 
     def _make_requirements_file(self):
+
         print(f"{bcolors.OKBLUE}No requirements file found{bcolors.ENDC}")
         print(f"{bcolors.OKBLUE}Generating it using pipreqs{bcolors.ENDC}")
         # Create a new updated requirement file.
         reqs_cmd = f"pipreqs --force {self.dst}" 
         subprocess.check_call(reqs_cmd, shell=True)
-        #raise NotImplementedError
+
+
     def _set_requirements(self):
         fname = os.path.join(self.dst, 'requirements.txt')
         
@@ -337,7 +346,8 @@ class GitVM(VersionManager):
         try:
             repo = git.Repo(search_parent_directories=True)
         except git.exc.InvalidGitRepositoryError:
-            raise git.exc.InvalidGitRepositoryError(os.getcwd()) 
+            msg = os.getcwd() +  ". To use the GitVM, the code must belong to a git repository!"
+            raise git.exc.InvalidGitRepositoryError(msg) 
 
 
 

@@ -9,6 +9,8 @@ from typing import List, Union
 
 from enum import Enum
 
+from mlxpy.errors import JobSubmissionError
+
 
 class DefaultSchedulers(Enum):
 
@@ -48,27 +50,54 @@ class Scheduler(abc.ABC):
         This allows to specify the desired resources to the scheduler such as
         the duration of the job, the quantity and type of resources, etc. 
 
+    .. py:attribute:: env_cmd
+        :type: str
+        
+        Command for activating the working environment. 
+        (e.g.: 'conda activate my_env')
+        By default no environment is activated.  
+
+    .. py:attribute:: shell_path
+        :type: Any
+        
+        Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
+
+    .. py:attribute:: shell_config_cmd
+        :type: bool
+        
+        Command for configuring the shell when submitting a job using a scheduler. 
+        (e.g.: 'source ~/.bashrc')
+
+
+
     """
 
 
     def __init__(self, 
                 directive: str, 
-                submission_cmd: str,
-                shell_path: str ="/bin/bash", 
+                shell_path: str ="/bin/bash",
                 shell_config_cmd:str ="",
                 env_cmd:str="",
+                submission_cmd: str, 
                 cleanup_cmd: str ="", 
                 option_cmd:List[str]=[]):
         """
         Constructor
 
         :param directive: The string that preceeds the command options of a scheduler in a script. 
+        :param shell_path: Path to the shell used for submitting a job using a scheduler.
+        :param shell_config_cmd: Command for configuring the shell when submitting a job using a scheduler. 
+        :param env_cmd: A command for activating the working environment. 
         :param submission_cmd: The command for submitting a job defined in a script to the scheduler.
         :param cleanup_cmd: A command for cleaning up the environment before executing code.
         :param option_cmd: A list of strings containing the scheduler's options for the job.
 
 
+
         :type directive: str
+        :type shell_path: str
+        :type shell_config_cmd: str
+        :type env_cmd: str
         :type submission_cmd: str
         :type cleanup_cmd: str
         :type option_cmd: List[str] 
@@ -302,9 +331,6 @@ class SLURMScheduler(Scheduler):
         ]
         return values
 
-class JobSubmissionError(Exception):
-    """Raised when failed to submit a job using a scheduler"""
-    pass 
 
 
 

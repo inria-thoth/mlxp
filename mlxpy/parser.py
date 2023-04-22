@@ -5,7 +5,7 @@ from operator import eq, ge, gt, le, lt, ne
 from tinydb import TinyDB, where, Query
 from tinydb.queries import QueryInstance
 import abc
-from mlxpy.utils import InvalidKeyError
+from mlxpy.errors import InvalidKeyError
 from enum import Enum
 
 class Parser(abc.ABC):
@@ -31,7 +31,7 @@ class Parser(abc.ABC):
 class DefaultParser(Parser):
 
     """
-        A simple parser based on python syntax.
+        A simple parser inspired from python's syntax.
     """
 
     def __init__(self):
@@ -241,7 +241,6 @@ def check_searchable_key(k):
     if is_searchable(k):
         pass
     else:
-
         raise InvalidKeyError(f"The key {k} is invalid! Valid keys must start with one of these prefixes: " + str([member.value for member in SearchableKeys]) )
 
 

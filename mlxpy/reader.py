@@ -29,8 +29,8 @@ class DataFrameType(Enum):
 class Reader(object):
     """
     Constructs a database for the runs contained in a source directory 'src_dir'.    
-    Once, created, it is possible to query the database using the method 'search'
-    to get the results matching to a specific configuration setting. 
+    Once, created, it is possible to query the database using the method 'filter'
+    to get the results matching a specific configuration setting. 
     The result of the query is returned either as a DataDictList object or a pandas dataframe.
     The queries are processed using a parser inheriting form the abstract class Parser. 
     By default, the parser is DefaultParser. 
@@ -67,14 +67,12 @@ class Reader(object):
 
         :param src_dir: The path to the parent directory containing logs of several runs. 
         :param dst_dir: The destination directory where the database will be created.
-        :param file_name: The name of the database (to be created if it does not already exist).  
         :param parser: A parser for querying the database.
         :param reload: Re-create the database even if it already exists.
    
 
         :type src_dir: str
         :type dst_dir: str (default None)
-        :type file_name: str (default 'metadata')
         :type parser: Parser (default DefaultParser)
         :type reload: bool (default False)
     
@@ -111,7 +109,7 @@ class Reader(object):
 
         :param query_string: a string defining the query constaints.
         :param result_format: format of the result (either a pandas dataframe or an object of type DataDictList). 
-        Otherwise returns a DataDictList object.
+        By default returns a DataDictList object.
 
         :type query_string: str (default "")
         :type result_format: str (default False)
@@ -143,7 +141,8 @@ class Reader(object):
     @property
     def fields(self)->pd.DataFrame:
         """
-        Returns all fields of the database.
+        Returns all fields of the database except those specific to mlxpy, 
+        excluding the fields contained in the file 'mlxpy.yaml'.
         
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame
@@ -158,7 +157,8 @@ class Reader(object):
     @property
     def searchable(self)->pd.DataFrame:
         """
-        Returns all fields of the database that are searchable.
+        Returns all fields of the database that are searchable,
+        excluding the fields contained in the file 'mlxpy.yaml'.
         
         return: a dataframe of all fields contained in the database that can be searched using the method filter
         rtype: pd.DataFrame
@@ -240,7 +240,7 @@ def _ensure_writable(dst_dir):
         message = f"Unable to create the destination directory {dst_dir}.\n"
         raise PermissionError(message + err_msg)
     if not os.access(dst_dir, os.W_OK):
-        message = f"Unable to access the destination directory {dst_dir}.\n"
+        message = f"Unable to write in the destination directory {dst_dir}.\n"
         raise PermissionError(message + err_msg)            
     return dst_dir
 

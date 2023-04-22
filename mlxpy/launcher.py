@@ -23,6 +23,7 @@ from hydra.types import TaskFunction
 from mlxpy.utils import _flatten_dict, config_to_instance
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
 from mlxpy.logger import Logger
+from mlxpy.errors import MissingFieldError
 
 from datetime import datetime
 import socket
@@ -30,6 +31,8 @@ import sys
 from dataclasses import dataclass
 from mlxpy._internal.configure import _build_config
 import yaml
+
+
 
 
 _UNSPECIFIED_: Any = object()
@@ -82,6 +85,36 @@ class Status(Enum):
 
 @dataclass
 class Context:
+    """
+    The contex object passed to the decorated function when using decorator mlxpy.launch.
+
+    .. py:attribute:: config
+        :type: ConfigDict
+
+        A structure containing project-specific options provided by the user. 
+        These options are loaded from a yaml file 'config.yaml' contained in the directory 'config_path' 
+        provided as argument to the decorator mlxpy.launch. It's content can be overriden from the command line. 
+
+    .. py:attribute:: mlxpy
+        :type: ConfigDict
+
+        A structure containing mlxpy's default settings for the project. 
+        Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config.yaml'. 
+
+    .. py:attribute:: info
+        :type: ConfigDict
+
+        A structure containing information about the current run: ex. status, start time, hostname, etc. 
+
+    .. py:attribute:: logger
+        :type: Union[Logger,None]
+
+        A logger object that can be used for logging variables (metrics, checkpoints, artifacts). 
+        When logging is enabled, these variables are all stored in a uniquely defined directory. 
+
+
+    """
+    
     config : ConfigDict = None
     mlxpy : ConfigDict = None
     info: ConfigDict = None
@@ -100,41 +133,48 @@ def launch(
         - Composing configurations from multiple files using hydra (see hydra-core package). 
         This behavior is similar to the decorator hydra.main provided in the hydra-core package:
         https://github.com/facebookresearch/hydra/blob/main/hydra/main.py. 
-        The configs are contained in a yaml file 'config_name' 
-        within the directory 'config_path' passed as argument to this function. 
+        The configs are contained in a yaml file 'config.yaml' stored in 
+        the directory 'config_path' passed as argument to this function.
         Unlike hydra.main which decorates functions taking an OmegaConf object, 
-        this decorator acts on functions with the following signature: main(logger: Logger).
-        The logger object, can then be used to log outputs of the current run.
+        mlxpy.launch  decorates functions with the following signature: main(ctx: mlxpy.Context).
+        The ctx object is created on the fly during the execution of the program 
+        and stores information about the run. 
+        In particular, the field cfg.config stores the options contained in the config file 'config.yaml'. 
+        Additionally, cfg.logger, provides a logger object of the class mlxpy.Logger for logging results of the run.  
         Just like in hydra, it is also possible to override the configs from the command line and 
         to sweep over multiple values of a given configuration when executing python code.   
         See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
     
-        - Submitting jobs the a scheduler's queue in a cluster. 
-        This is achieved by setting the config value scheduler.name to the name of the scheduler instead of None. 
+        - Seeding: Additionally, mlxpy.launch takes an optional argument 'seeding_function'. 
+        By default, 'seeding_function' is None and does nothing. If a callable object is passed to it, this object is called with the argument cfg.config.seed
+        right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code. 
+        In that case, the option 'ctx.config.seed' must be none empty.  
+
+        - Submitting jobs to a cluster queue using a scheduler. 
+        This is achieved by setting the config value scheduler.name to the name of a valid scheduler. 
         Two job schedulers are currently supported by default: ['OARScheduler', 'SLURMScheduler' ]. 
         It is possible to support other schedulers by 
         defining a subclass of the abstract class Scheduler.
 
-        - Creating a 'safe' working directory when submitting jobs to a cluster. 
+        - Version management: Creating a 'safe' working directory when submitting jobs to a cluster. 
         This functionality sets the working directory to a new location 
         created by making a copy of the code based on the latest commit 
         to a separate destination, if it doesn't exist already. Executing code 
         from this copy allows separting development code from code deployed in a cluster. 
         It also allows recovering exactly the code used for a given run.
-        This behavior can be modified by using a different working directory manager WDManager (default LastGitCommitWD). 
+        This behavior can be modified by using a different version manager VersionManager (default GitVM). 
         
         .. note:: Currently, this functionality expects 
-        the executed python file to part of the git repository. 
+        the executed python file to part of a git repository. 
 
-    :param config_path: The config path, a directory relative
-                        to the declaring python file.
-                        If config_path is None no directory is added
-                        to the Config search path.
-    :param config_name: The name of the config
-                        (usually the file name without the .yaml extension)
-    
-    :type config_path: str
-    :type config_name: str (default "None")
+    :param config_path: The config path, a directory where 
+    the default user configuration and mlxpy settings are stored.
+    :param seeding_function:  A callable for setting the seed of random number generators. 
+    It is called with the seed option in 'ctx.config.seed' passed to it.
+
+    :type config_path: str (default './configs')
+    :type seeding_function: Union[Callable[[Any], None],None] (default None)
+
     """
     config_name = "config"
     version_base= None # by default set the version base for hydra to None.
@@ -201,10 +241,9 @@ def launch(
 
             if cfg.mlxpy.use_version_manager:
                 version_manager = config_to_instance(config_module_name="name", **cfg.mlxpy.version_manager)
-                version_manager.update_interactive_mode(cfg.mlxpy.interactive_mode)
-                version_manager.set_vm_choices_from_file(vm_choices_file)
+                version_manager._handle_interactive_mode(cfg.mlxpy.interactive_mode, vm_choices_file)
                 work_dir = version_manager.make_working_directory()
-                cfg.update_dict({'info':version_manager.get_configs()})
+                cfg.update_dict({'info':{'version_manager': version_manager.get_info()} })
             else:
                 work_dir = os.getcwd()
 
@@ -230,11 +269,7 @@ def launch(
                 logger = None
             
             if cfg.mlxpy.use_scheduler:
-                try:
-                    assert logger
-                except AssertionError:
-                    raise Exception("To use the scheduler, you must also use a logger, otherwise results might not be stored!")
-                
+
                 main_cmd = _main_job_command(cfg.info.app,
                                              cfg.info.exec,
                                              work_dir,
@@ -268,7 +303,7 @@ def launch(
                         except AssertionError:
                             msg = "Missing field: The 'config' must contain a field 'seed'\n"
                             msg+= "provided as argument to the function 'seeding_function' "
-                            raise Exception(msg)
+                            raise MissingFieldError(msg)
                         seeding_function(cfg.config.seed)
 
 

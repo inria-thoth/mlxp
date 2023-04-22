@@ -57,8 +57,4 @@ def config_to_instance(config_module_name="name",**config):
     return attr
 
 
-class InvalidKeyError(Exception):
-    """
-    Raised when the key is invalid
-    """
-    pass
+

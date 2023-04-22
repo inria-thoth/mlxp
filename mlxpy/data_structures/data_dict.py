@@ -12,9 +12,9 @@ from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, 
 
 from typing import List, Dict, Tuple
 
-from mlxpy.utils import _flatten_dict, InvalidKeyError
+from mlxpy.utils import _flatten_dict
 from mlxpy.logger import Directories
-
+from mlxpy.errors import InvalidKeyError, InvalidAggregationMapError
 
 LAZYDATA="LAZYDATA" 
 
@@ -421,11 +421,7 @@ class GroupedDataDicts:
 
 
 
-class InvalidAggregationMapError(Exception):
-    """
-    Raised when an aggregation map is not an instance of AggregationMap.
-    """
-    pass
+
 
 
 
