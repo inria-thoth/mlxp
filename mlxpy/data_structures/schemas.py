@@ -130,8 +130,8 @@ class ConfigGitVM(ConfigVersionManager):
 
 	name: str="GitVM"
 	parent_target_work_dir: str = "./.workdir" #os.path.join(os.getcwd(), "data/.workdir") 
-	skip_requirements: bool = True
-	interactive_mode: bool= True
+	store_requirements: bool = False
+
 
 @dataclass
 class RunInfo:
@@ -241,13 +241,13 @@ class ConfigLogger:
 	parent_log_dir: str = MISSING #os.path.join(os.getcwd(),"data","outputs")
 	forced_log_id: int = -1
 	log_streams_to_file: bool = False
+	parent_log_dir: str = "./logs" #os.path.join(os.getcwd(),"data","outputs")
+
 
 @dataclass
 class ConfigDefaultLogger(ConfigLogger):
 
-	name: str="DefaultLogger"
-	parent_log_dir: str = "./logs" #os.path.join(os.getcwd(),"data","outputs")
-	
+	name: str="DefaultLogger"	
 
 @dataclass
 class ExperimentalistConfig:
@@ -257,6 +257,7 @@ class ExperimentalistConfig:
 	use_version_manager: bool= False
 	use_scheduler: bool=False
 	use_logger: bool=True
+	interactive_mode: bool= True
 
 @dataclass
 class Metadata:

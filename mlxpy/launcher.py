@@ -201,6 +201,7 @@ def launch(
 
             if cfg.mlxpy.use_version_manager:
                 version_manager = config_to_instance(config_module_name="name", **cfg.mlxpy.version_manager)
+                version_manager.update_interactive_mode(cfg.mlxpy.interactive_mode)
                 version_manager.set_vm_choices_from_file(vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update_dict({'info':version_manager.get_configs()})

@@ -51,11 +51,15 @@ When executing the Python file 'main.py' from the command line, we get the follo
 
    $ python main.py
 
-   seed: null
+   seed: 0
+   num_epoch: 10
    model:
-     num_layers: 4
+    num_units: 100
+   data:
+    d_int: 10
+    device: 'cpu'
    optimizer:
-     lr: 1e-3
+    lr: 10.
 
    The logger object is an instance of:
    <class 'mlxpy.logger.DefaultLogger'>
@@ -65,23 +69,31 @@ One can check that these outputs match the content of the yaml file 'config.yaml
 .. code-block:: yaml
    :caption: ./configs/config.yaml
   
-   seed: null
+   seed: 0
+   num_epoch: 10
    model:
-     num_layers: 4
+    num_units: 100
+   data:
+    d_int: 10
+    device: 'cpu'
    optimizer:
-     lr: 1e-3
+    lr: 10.
 
 Just like in `hydra <https://hydra.cc/>`_, you can also override the options contained in the 'config.yaml' file from the command line: 
 
 .. code-block:: console
 
-   $ python main.py +optimizer.lr=10. +model.num_layers=6
+   $ python main.py +optimizer.lr=0.1 +model.num_layers=6
    
-   seed: null
+   seed: 0
+   num_epoch: 10
    model:
-     num_layers: 6
+    num_units: 100
+   data:
+    d_int: 10
+    device: 'cpu'
    optimizer:
-     lr: 10
+    lr: 0.1
 
    The logger object is an instance of:
    <class 'mlxpy.logger.DefaultLogger'>
@@ -101,8 +113,8 @@ Configuring mlxpy
 ^^^^^^^^^^^^^^^^^
 
 Mlxpy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
-The package configurations are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
-By default 'mlxpy.yaml' contains the following:
+The package default settings are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
+By default, 'mlxpy.yaml' contains the following:
 
 .. code-block:: yaml
    :caption: ./configs/mlxpy.yaml
@@ -113,7 +125,7 @@ By default 'mlxpy.yaml' contains the following:
      forced_log_id: -1
      log_streams_to_file: false
    scheduler:
-     name: Scheduler
+     name: NoScheduler
      shell_path: ''
      shell_config_cmd: ''
      env_cmd: ''
@@ -122,11 +134,11 @@ By default 'mlxpy.yaml' contains the following:
    version_manager:
      name: GitVM
      parent_target_work_dir: ./.workdir
-     skip_requirements: false
-     interactive_mode: true
+     store_requirements: false
    use_version_manager: false
    use_scheduler: false
    use_logger: true
+   interactive_mode: true
 
 The fields 'logger', 'scheduler', and 'version_manager' contain the configurations for logging information (Logger), submitting to a job scheduler (Scheduler), and managing code version used for executing jobs (VersionManager). For all three configuration fields, the sub-field 'name' must contain the relevant class name of the object instantiated during execution. 
 In case of using custom classes provided by the user, the full scope of such classes must be provided to the sub-fields 'name'. These classes must inherit from abstract classes Logger, Scheduler, or VersionManager. 

@@ -13,6 +13,13 @@ class VersionManager(abc.ABC):
     An abstract class whose children allow custumizing the working directory of the run.
     
     """
+
+    self.interactive_mode = False
+
+
+    def update_interactive_mode(self, mode):
+        self.interactive_mode = mode
+
     @abc.abstractmethod
     def get_configs(self)->Dict[str, Any]:
         """
@@ -70,12 +77,10 @@ class GitVM(VersionManager):
 
     def __init__(self,
                 parent_target_work_dir: str,
-                skip_requirements: bool,
-                interactive_mode:bool):
-                
+                store_requirements: bool):
+
         self.parent_target_work_dir = os.path.abspath(parent_target_work_dir)
-        self.skip_requirements = skip_requirements
-        self.interactive_mode = interactive_mode
+        self.store_requirements = store_requirements
         self.dst = None 
         self.commit_hash = None
         self.repo_path = None
@@ -142,7 +147,7 @@ class GitVM(VersionManager):
         if not os.path.isdir(self.dst):
             print(f"{bcolors.OKBLUE}Creating a copy of the repository at {self.dst}{bcolors.ENDC}")
             repo.clone(self.dst)
-            if not self.skip_requirements:
+            if self.store_requirements:
                 self._make_requirements_file()
         else:
             if not self._existing_choices:
@@ -303,7 +308,7 @@ class GitVM(VersionManager):
         fname = os.path.join(self.dst, 'requirements.txt')
         
 
-        if os.path.exists(fname) or self.skip_requirements:
+        if os.path.exists(fname) or not self.store_requirements:
             pass
         else:
             self._make_requirements_file()

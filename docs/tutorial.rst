@@ -471,14 +471,15 @@ The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy
       option_cmd: []
       shell_config_cmd: ''
       shell_path: /bin/bash
+    version_manager:
+      name: GitVM
+      parent_target_work_dir: ./.workdir
+      store_requirements: false
     use_logger: true
     use_scheduler: false
     use_version_manager: false
-    version_manager:
-      interactive_mode: true
-      name: GitVM
-      parent_target_work_dir: ./.workdir
-      skip_requirements: true
+    interactive_mode: true
+
 
 The 'artifacts' directory 
 """""""""""""""""""""""""
@@ -922,6 +923,7 @@ It is determined by the scheduler's option 'shell_path' of the 'mlxpy.yaml' file
 2. The next lines specify the OAR resource option provided in 'option_cmd'. When the script is created,  the OAR directive '#OAR' is automatically added before these options so that the scheduler can interpret them. You can have a look at the OAR documentation for how to set those options. 
 3. The first instruction is to go to the 'working directory' set by the launcher (which can be different from the current working directory if we are using the version manager).
 4. Finally, we find the instruction for executing the 'main.py' file with some additional options. 
+
     * First, the log_id is forced to be the same as the one assigned for the job during launching (by setting mlxpy.logger.forced_log_id=5). 
     * Then, we make sure that the 'parent_log_dir' is also the same as the one we used during job submission to the cluster. 
     * Finally, the submitted job must no longer use any scheduler or version manager anymore! That is because the script was already submitted to a cluster queue using the scheduler and must readily be executed once a resource is allocated.
@@ -1093,7 +1095,7 @@ We can double check where the code was executed from by inspecting the 'info.yam
 
 If other jobs are submitted later, and if the code did not change meanwhile, then these jobs will also be executed from this same working directory. This avoids copying the same content multiple times. 
 
-Finally, a copy of the dependencies used by the code is also stored along with their versions in the field 'requirements' if the option 'mlxpy.version_manager.skip_requirements' is set to 'False'.
+Finally, a copy of the dependencies used by the code is also stored along with their versions in the field 'requirements' if the option 'mlxpy.version_manager.store_requirements' is set to 'True'.
 
 
 Using both scheduler and version manager

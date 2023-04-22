@@ -118,20 +118,29 @@ def _get_default_config(config_path,overrides):
     using_scheduler = default_config.mlxpy.use_scheduler
     scheduler_name_default = default_config.mlxpy.scheduler.name
     scheduler_name = scheduler_name_default
+    interactive_mode = default_config.mlxpy.interactive_mode
     if 'mlxpy' in overrides:
         if 'use_scheduler' in overrides['mlxpy']:
             using_scheduler = overrides['mlxpy']['use_scheduler']
         if 'scheduler' in overrides['mlxpy']:
             if 'name' in overrides['mlxpy']['scheduler']:
                 scheduler_name = overrides['mlxpy']['scheduler']
-    
+        if 'interactive_mode' in overrides['mlxpy']:
+            interactive_mode = overrides['mlxpy']['interactive_mode']
+
     using_invalid_scheduler = scheduler_name=="NoScheduler" and using_scheduler
     update_default_conifg = False
     if scheduler_name=="NoScheduler":
         if using_scheduler or not os.path.exists(mlxpy_file):
             print(f"{bcolors.OKBLUE}No scheduler is configured by default {bcolors.ENDC}")
-            _ask_configure_scheduler(default_config,mlxpy_file)
-            update_default_conifg = True
+            if interactive_mode:
+                print(f"{bcolors.OKBLUE}Entering interactive mode {bcolors.ENDC}")
+                _ask_configure_scheduler(default_config,mlxpy_file)
+                print(f"{bcolors.OKBLUE}Leaving interactive mode {bcolors.ENDC}")
+                update_default_conifg = True
+            else: 
+                pass
+
     else:
         omegaconf.OmegaConf.set_struct(default_config, True)
         with omegaconf.open_dict(default_config):
