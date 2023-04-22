@@ -74,11 +74,11 @@ class Scheduler(abc.ABC):
 
 
     def __init__(self, 
-                directive: str, 
+                directive: str,
+                submission_cmd: str,  
                 shell_path: str ="/bin/bash",
                 shell_config_cmd:str ="",
                 env_cmd:str="",
-                submission_cmd: str, 
                 cleanup_cmd: str ="", 
                 option_cmd:List[str]=[]):
         """
