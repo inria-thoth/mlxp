@@ -1,8 +1,6 @@
 from collections.abc import MutableMapping
-import importlib
+
 import os
-import mlxpy
-import copy
 
 
 class bcolors:
@@ -30,31 +28,7 @@ def _flatten_dict_gen(d, parent_key, sep):
 
 
 
-def import_module(module_name):
-    module, attr = os.path.splitext(module_name)
-    if not attr:
-        return  getattr(mlxpy, module)
-    else:
-        try:
-            module = importlib.import_module(module)
-            return getattr(module, attr[1:])
-        except:
-            try:
-                module = import_module(module)
-                return getattr(module, attr[1:])
-            except:
-                return eval(module+attr[1:])
 
-
-def config_to_instance(config_module_name="name",**config):
-    config = copy.deepcopy(config)
-    module_name = config.pop(config_module_name)
-    attr = import_module(module_name)
-    if config:
-        attr = attr(**config)
-    else:
-        attr = attr()
-    return attr
 
 
 

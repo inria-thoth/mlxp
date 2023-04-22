@@ -20,7 +20,7 @@ from hydra.core.hydra_config import HydraConfig
 from hydra.types import TaskFunction
 
 
-from mlxpy.utils import _flatten_dict, config_to_instance
+from mlxpy.utils import _flatten_dict
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
 from mlxpy.logger import Logger
 from mlxpy.errors import MissingFieldError
@@ -31,7 +31,7 @@ import sys
 from dataclasses import dataclass
 from mlxpy._internal.configure import _build_config
 import yaml
-
+import importlib
 
 
 
@@ -121,7 +121,48 @@ class Context:
     logger: Union[Logger,None] = None
 
 
-  
+
+def instance_from_dict(module_name, config):
+    """
+        A factory function that dynamically creates an instance of a class 
+        based on a configuration dictionary. 
+        The configuration dictionary should have the following structure:
+        config: 'name'
+
+
+
+    """
+
+    attr = import_module(module_name)
+    if config:
+        attr = attr(**config)
+    else:
+        attr = attr()
+
+    return attr
+
+def _instance_from_config(config_module_name="name", config):
+    config = copy.deepcopy(config)
+    module_name = config.pop(config_module_name)
+
+    return instance_from_dict(module_name, config)
+
+def import_module(module_name):
+    module, attr = os.path.splitext(module_name)
+    if not attr:
+        return  getattr(mlxpy, module)
+    else:
+        try:
+            module = importlib.import_module(module)
+            return getattr(module, attr[1:])
+        except:
+            try:
+                module = import_module(module)
+                return getattr(module, attr[1:])
+            except:
+                return eval(module+attr[1:])
+
+
 
 def launch(
     config_path: str = './configs',
@@ -240,7 +281,7 @@ def launch(
             cfg.update_dict({'info':info})
 
             if cfg.mlxpy.use_version_manager:
-                version_manager = config_to_instance(config_module_name="name", **cfg.mlxpy.version_manager)
+                version_manager = _instance_from_config(config_module_name="name", **cfg.mlxpy.version_manager)
                 version_manager._handle_interactive_mode(cfg.mlxpy.interactive_mode, vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update_dict({'info':{'version_manager': version_manager.get_info()} })
@@ -249,7 +290,7 @@ def launch(
 
             if cfg.mlxpy.use_scheduler:
                 
-                scheduler = config_to_instance(config_module_name="name", **cfg.mlxpy.scheduler) 
+                scheduler = _instance_from_config(config_module_name="name", **cfg.mlxpy.scheduler) 
                 if not cfg.mlxpy.use_logger:
                     print("Logger is currently disabled.")
                     print("To use the scheduler, the logger must be enabled")
@@ -260,7 +301,7 @@ def launch(
 
 
             if cfg.mlxpy.use_logger:
-                logger = config_to_instance(config_module_name="name", **cfg.mlxpy.logger)
+                logger = _instance_from_config(config_module_name="name", **cfg.mlxpy.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
