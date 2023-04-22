@@ -100,10 +100,7 @@ def _get_default_config(config_path,overrides):
     if os.path.exists(mlxpy_file):
         with open(mlxpy_file, "r") as file:
             mlxpy = OmegaConf.create({'mlxpy':yaml.safe_load(file)})
-        valid_keys = ['logger','version_manager','scheduler',
-                        'use_version_manager',
-                        'use_logger',
-                        'use_scheduler']
+        valid_keys = list(default_config['mlxpy'].keys())
         for key in mlxpy['mlxpy'].keys():
             try: 
                 assert key in valid_keys 

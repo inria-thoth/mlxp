@@ -14,7 +14,9 @@ class VersionManager(abc.ABC):
     
     """
 
-    self.interactive_mode = False
+    def __init__(self):
+
+        self.interactive_mode = False
 
 
     def update_interactive_mode(self, mode):
