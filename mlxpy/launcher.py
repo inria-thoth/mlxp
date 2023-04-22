@@ -24,6 +24,7 @@ from mlxpy.utils import _flatten_dict
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
 from mlxpy.logger import Logger
 from mlxpy.errors import MissingFieldError
+import mlxpy
 
 from datetime import datetime
 import socket

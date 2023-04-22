@@ -115,7 +115,7 @@ class GitVM(VersionManager):
 
             :rtype: Dict[str, Any]         
         """
-        return config_dict = {"requirements": self.requirements,
+        return {"requirements": self.requirements,
                         "commit_hash":self.commit_hash,
                         "repo_path": self.repo_path
                         }
