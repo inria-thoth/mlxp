@@ -141,7 +141,8 @@ def instance_from_dict(module_name, config):
 
     return attr
 
-def _instance_from_config(config_module_name="name", config):
+def _instance_from_config(config):
+    config_module_name = "name"
     config = copy.deepcopy(config)
     module_name = config.pop(config_module_name)
 
@@ -281,7 +282,7 @@ def launch(
             cfg.update_dict({'info':info})
 
             if cfg.mlxpy.use_version_manager:
-                version_manager = _instance_from_config(config_module_name="name", **cfg.mlxpy.version_manager)
+                version_manager = _instance_from_config(cfg.mlxpy.version_manager)
                 version_manager._handle_interactive_mode(cfg.mlxpy.interactive_mode, vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update_dict({'info':{'version_manager': version_manager.get_info()} })
@@ -290,7 +291,7 @@ def launch(
 
             if cfg.mlxpy.use_scheduler:
                 
-                scheduler = _instance_from_config(config_module_name="name", **cfg.mlxpy.scheduler) 
+                scheduler = _instance_from_config(cfg.mlxpy.scheduler) 
                 if not cfg.mlxpy.use_logger:
                     print("Logger is currently disabled.")
                     print("To use the scheduler, the logger must be enabled")
@@ -301,7 +302,7 @@ def launch(
 
 
             if cfg.mlxpy.use_logger:
-                logger = _instance_from_config(config_module_name="name", **cfg.mlxpy.logger)
+                logger = _instance_from_config(cfg.mlxpy.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
