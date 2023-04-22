@@ -3,30 +3,30 @@ Getting started
 
 Introduction
 ^^^^^^^^^^^^
-mlxpy is an open-source python framework for managing multiple experiments with flexible option structure from launching, logging to querying results. 
+Mlxpy is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. 
 
 
 Key functionalities
 ^^^^^^^^^^^^^^^^^^^
-  - Launching several jobs automatically using `hydra <https://hydra.cc/>`_ and hierarchical configs by adding a single decorator to the main task function (see Quick start guide).   
-  - Logging outputs (metrics, artifacts, checkpoints) of a job in a uniquely assigned directory along with all metadata and configuration options to reproduce the experiment.
-  - Code version management by automatically generating a deployment version of the code based on the latest git commit. 
-  - Submitting jobs to a cluster using a job scheduler. 
-  - Exploiting the results of several experiments by easily reading, querying, grouping and aggregating the output of several jobs. 
+  1. Launching several jobs automatically using `hydra <https://hydra.cc/>`_ and hierarchical configs by adding a single decorator to the main task function.   
+  2. Logging outputs (metrics, artifacts, checkpoints) of a job in a uniquely assigned directory along with all metadata and configuration options to reproduce the experiment.
+  3. Code version management by automatically generating a deployment version of the code based on the latest git commit. 
+  4. Submitting jobs to a cluster using a job scheduler. 
+  5. Exploiting the results of several experiments by easily reading, querying, grouping, and aggregating the output of several jobs. 
 
 
 Quick start guide
 ^^^^^^^^^^^^^^^^^
 
-Let's say you have a python file 'main.py' that call a function 'my_task' performing some task. To use mlxpy for launching a job, you can use the decorator 'expy.launch' above the function 'my_task'. 
+Let's say you have a python file 'main.py' that calls a function 'my_task' performing some task. To use mlxpy for launching a job, you can use the decorator 'mlxpy.launch' above the function 'my_task'. 
 
 .. code-block:: python
    :caption: main.py
 
-   import mlxpy as expy
+   import mlxpy 
 
-   @expy.launch(config_path='./configs')
-   def my_task(ctx: expy.Context)->None:
+   @mlxpy.launch(config_path='./configs')
+   def my_task(ctx: mlxpy.Context)->None:
 
      print("ctx.config")
 
@@ -37,16 +37,15 @@ Let's say you have a python file 'main.py' that call a function 'my_task' perfor
    if __name__ == "__main__":
      my_task()
 
-The decorated function 'my_func' must take as arguments a context variable 'ctx' which is an object of the class Context. 
-Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
-The 'ctx' variable is automatically created on the fly during execution and stores informations about the run. It contains four fields: 'config', 'mlxpy', 'info' and 'logger':
+The decorated function 'my_func' must take a  variable 'ctx' of type 'mlxpy.Context' as an argument. Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
+The 'ctx' variable is automatically created on the fly during execution and stores information about the run. It contains four fields: 'config', 'mlxpy', 'info', and 'logger':
 
-  - ctx.config: Stores task specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-  - ctx.mlxpy: Stores options contained in a yaml file 'mlxpy.yaml' located in the same directory 'config_path' and which configure the package mlxpy (see section below).  
-  - ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
-  - ctx.logger: Is an a logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
+  * ctx.config: Stores task-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
+  * ctx.mlxpy: Stores options contained in a yaml file 'mlxpy.yaml' located in the same directory 'config_path' and which configures the package mlxpy (see section below).  
+  * ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
+  * ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
-When executing the python file 'main.py' from the command-line, we get the following output:
+When executing the Python file 'main.py' from the command line, we get the following output:
 
 .. code-block:: console
 
@@ -72,7 +71,7 @@ One can check that these outputs match the content of the yaml file 'config.yaml
    optimizer:
      lr: 1e-3
 
-Just like in `hydra <https://hydra.cc/>`_, you can also override the options contained in the 'config.yaml' file from the command-line: 
+Just like in `hydra <https://hydra.cc/>`_, you can also override the options contained in the 'config.yaml' file from the command line: 
 
 .. code-block:: console
 
@@ -87,7 +86,7 @@ Just like in `hydra <https://hydra.cc/>`_, you can also override the options con
    The logger object is an instance of:
    <class 'mlxpy.logger.DefaultLogger'>
 
-If the file 'config.yaml' or its parent directory 'config_path' do not exist, they will be created automatically. By default, 'config.yaml' contains a single field 'seed' with a 'null' value intended for seeding randomn number generators.
+If the file 'config.yaml' or its parent directory 'config_path' do not exist, they will be created automatically. By default, 'config.yaml' contains a single field 'seed' with a 'null' value intended for seeding random number generators.
 
 .. code-block:: yaml
    :caption: ./configs/config.yaml
@@ -95,12 +94,14 @@ If the file 'config.yaml' or its parent directory 'config_path' do not exist, th
    seed: null
 
 
+
+
 .. _Configuring_mlxpy
 Configuring mlxpy
 ^^^^^^^^^^^^^^^^^
 
 Mlxpy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
-The package configurations are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exists. 
+The package configurations are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
 By default 'mlxpy.yaml' contains the following:
 
 .. code-block:: yaml
@@ -127,12 +128,12 @@ By default 'mlxpy.yaml' contains the following:
    use_scheduler: false
    use_logger: true
 
-The fields 'logger', 'scheduler' and 'version_manager' contain the configurations for logging information (Logger), submitting to a job scheduler (Scheduler) and managing code version used for executing jobs (VersionManager). For all three configuration fields, the sub-field 'name' must contain the relevant class name of the object instantiated during execution. 
-In case of using custom classes provided by the user, the full scope of such classes must be provided to the sub-fields 'name'. These classes must inherit form abstract classes Logger, Scheduler or VersionManager. 
+The fields 'logger', 'scheduler', and 'version_manager' contain the configurations for logging information (Logger), submitting to a job scheduler (Scheduler), and managing code version used for executing jobs (VersionManager). For all three configuration fields, the sub-field 'name' must contain the relevant class name of the object instantiated during execution. 
+In case of using custom classes provided by the user, the full scope of such classes must be provided to the sub-fields 'name'. These classes must inherit from abstract classes Logger, Scheduler, or VersionManager. 
 The remaining sub-fields are variables provided to the constructor of these classes. 
-Finally, the options 'use_version_manager', 'use_scheduler' and 'use_logger' either enable or disable these three functionalities (logging, scheduling and version management).  
+Finally, the options 'use_version_manager', 'use_scheduler', and 'use_logger' either enable or disable these three functionalities (logging, scheduling, and version management).  
 
-It is possible to override these options from the command-line by adding the prefix 'mlxpy' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
+It is possible to override these options from the command line by adding the prefix 'mlxpy' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
 
 .. code-block:: console
 
@@ -150,14 +151,14 @@ It is possible to override these options from the command-line by adding the pre
 
 
 Citing mlxpy
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^
 
 If you use mlxpy in your research please use the following BibTeX entry:
 
 
 .. code-block:: bibtex 
 
-   @Misc{Arbel2023Expy,
+   @Misc{Arbel2023Mlxpy,
      author = {Michae Arbel},
      title = {mlxpy},
      howpublished = {Github},

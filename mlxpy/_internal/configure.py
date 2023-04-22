@@ -18,7 +18,7 @@ def _configure_scheduler(mlxpy_config):
         print(f"{bcolors.OKCYAN}For a default scheduler, you can choose one from this list:")
         print(f"{bcolors.FAIL}{[member.value for member in DefaultSchedulers]}{bcolors.ENDC}")
         print(f"For a custom scheduler, you must provide the full name of the user-defined Scheduler subclass (ex. my_app.CustomScheduler):")
-        files_input = input(f"{bcolors.OKCYAN} Please enter your choice (or hit Enter to skip) :{bcolors.ENDC}")
+        files_input = input(f"{bcolors.OKCYAN} Please enter your choice (or hit Enter to skip): {bcolors.ENDC}")
          
 
         if files_input:
@@ -32,7 +32,7 @@ def _configure_scheduler(mlxpy_config):
                 with omegaconf.open_dict(mlxpy_config):
                     mlxpy_config.mlxpy.scheduler.name = files_input
                 omegaconf.OmegaConf.set_struct(mlxpy_config, False)
-                print(f"{bcolors.OKBLUE} Setting Scheduler to: {files_input} {bcolors.ENDC}")
+                print(f"{bcolors.OKBLUE} Setting Scheduler to {files_input} {bcolors.ENDC}")
                 break
             else:
                 print(f"{bcolors.OKBLUE} {files_input} is not a valid class identifier. Please try again  {bcolors.ENDC}")
@@ -46,7 +46,7 @@ def _ask_configure_scheduler(mlxpy_config,mlxpy_file):
         print(f"{bcolors.OKGREEN} Would you like to select a default job scheduler now ? {bcolors.ENDC} {bcolors.OKGREEN}(y/n){bcolors.ENDC}:")
         print(f"{bcolors.OKGREEN}y{bcolors.ENDC}: The job scheduler configs will be stored in the file {mlxpy_file}")
         print(f"{bcolors.OKGREEN}n{bcolors.ENDC}: No scheduler will be selected by default.")
-        choice = input(f"{bcolors.OKGREEN}Please enter you answer (y/n):{bcolors.ENDC}")
+        choice = input(f"{bcolors.OKGREEN}Please enter your answer (y/n):{bcolors.ENDC}")
 
 
         if choice=='y':

@@ -47,7 +47,7 @@ def train(ctx: mlxpy.Context)->None:
         logger.log_checkpoint({'model': model,
                                'epoch':epoch}, log_name='last_ckpt' )
 
-    print(f"Completed training with learing rate: {cfg.optimizer.lr}")
+    print(f"Completed training with a learning rate of {cfg.optimizer.lr}")
 
 if __name__ == "__main__":
     train()
