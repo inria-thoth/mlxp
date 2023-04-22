@@ -78,7 +78,8 @@ class GitVM(VersionManager):
     .. py:attribute:: parent_target_work_dir
         :type: str 
 
-        The target parent directory of the new working directory.
+        The target parent directory of 
+        the new working directory returned by the version manager
 
     .. py:attribute:: store_requirements
         :type: bool 

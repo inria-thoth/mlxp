@@ -6,7 +6,7 @@ import pickle
 import warnings
 from pathlib import Path
 from textwrap import dedent
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union, Dict, TypeVar
 from types import CodeType
 from dataclasses import dataclass, field
 
@@ -122,16 +122,19 @@ class Context:
     logger: Union[Logger,None] = None
 
 
+T = TypeVar('T')
 
-def instance_from_dict(module_name, config):
+def instance_from_dict(class_name: str, arguments: Dict[str, Any])->T:
     """
         A factory function that dynamically creates an instance of a class 
-        based on a configuration dictionary. 
-        The configuration dictionary should have the following structure:
-        config: 'name'
-
-
-
+        based on a dictionary of arguments.
+        
+        :param class_name: The name of the class 
+        :param arguments: A dictionary of arguments to the class constructor
+        :type class_name: str
+        :type arguments: Dict[str,Any]
+        :return: An instance of a class 'class_name' constructed using the arguments in 'arguments'.
+        :rtype: 
     """
 
     attr = import_module(module_name)
@@ -274,21 +277,23 @@ def launch(
             now = datetime.now()
             info = {'hostname': socket.gethostname(),
                     'process_id': os.getpid(),
-                    'exec':task_function.__code__.co_filename,
+                    'executable':task_function.__code__.co_filename,
                     'app': os.environ["_"],
                     'start_date':now.strftime("%d/%m/%Y"),
                     'start_time':now.strftime("%H:%M:%S"),
                     'status':Status.STARTING.value}
             
-            cfg.update_dict({'info':info})
+            cfg.update({'info':info})
 
             if cfg.mlxpy.use_version_manager:
                 version_manager = _instance_from_config(cfg.mlxpy.version_manager)
                 version_manager._handle_interactive_mode(cfg.mlxpy.interactive_mode, vm_choices_file)
                 work_dir = version_manager.make_working_directory()
-                cfg.update_dict({'info':{'version_manager': version_manager.get_info()} })
+                cfg.update({'info':{'version_manager': version_manager.get_info()} })
             else:
                 work_dir = os.getcwd()
+
+            cfg.update({'info': {'work_dir':work_dir}})
 
             if cfg.mlxpy.use_scheduler:
                 
@@ -307,22 +312,20 @@ def launch(
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
-                cfg.update_dict({'info':{'log_id':log_id, 'log_dir':log_dir}})
+                cfg.update({'info':{'logger':logger.get_info()}})
             else:
                 logger = None
             
             if cfg.mlxpy.use_scheduler:
 
                 main_cmd = _main_job_command(cfg.info.app,
-                                             cfg.info.exec,
+                                             cfg.info.executable,
                                              work_dir,
                                              parent_log_dir,
                                              log_id)
                 
-                process_output = scheduler.submit_job(main_cmd, log_dir)
-                scheduler_job_id = scheduler.get_job_id(process_output) 
-
-                cfg.update_dict({'info':{'scheduler':{'scheduler_job_id':scheduler_job_id}}})
+                scheduler.submit_job(main_cmd, log_dir)
+                cfg.update({'info':{'scheduler':scheduler.get_info()}})
                 logger._log_configs(cfg)
                 
             else:
@@ -331,13 +334,13 @@ def launch(
                 cur_dir = os.getcwd()
                 _set_work_dir(work_dir)
 
-                cfg.update_dict({'info': {'work_dir':work_dir}})
+                
 
                 if logger:
-                    cfg.update_dict(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
+                    cfg.update(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
                 try:
                     
-                    cfg.update_dict({'info':{'status':Status.RUNNING.value}})
+                    cfg.update({'info':{'status':Status.RUNNING.value}})
                     if logger:
                         logger._log_configs(cfg)
                     if seeding_function:
@@ -360,7 +363,7 @@ def launch(
                             'end_time':now.strftime("%H:%M:%S"),
                             'status':Status.COMPLETE.value}
             
-                    cfg.update_dict({'info':info})
+                    cfg.update({'info':info})
                     
                     if logger:
                         logger._log_configs(cfg)
@@ -373,7 +376,7 @@ def launch(
                             'end_time':now.strftime("%H:%M:%S"),
                             'status':Status.FAILED.value}
             
-                    cfg.update_dict({'info':info})
+                    cfg.update({'info':info})
 
                     if logger:
                         logger._log_configs(cfg)

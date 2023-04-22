@@ -134,7 +134,14 @@ class Logger(abc.ABC):
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.mlxpy.to_dict(), f)        
 
-         
+    def get_info(self):
+
+        return {'log_id': self.log_id,
+                'log_dir': self.log_dir,
+                'metrics_dir': self.metrics_dir,
+                'metadata_dir':self.metadata_dir,
+                'artifacts_dir': self.artifacts_dir}
+
 
     def log_metrics(self,metrics_dict, log_name):
         """Saves a dictionary of scalars to a json file named 

@@ -17,16 +17,16 @@ class ConfigScheduler:
 		
 		Name of the scheduler's class. 
 
-	.. py:attribute:: env
+	.. py:attribute:: env_cmd
 		:type: str
 		
 		Command for activating the working environment. 
-		By default it activates the default conda environment
+		(e.g. 'conda activate my_env')
 
 	.. py:attribute:: shell_path
 		:type: Any
 		
-		Path to the shell used for submitting a job using a scheduler. (defulat '/bin/bash')
+		Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
 
 	.. py:attribute:: shell_config_cmd
 		:type: bool
@@ -39,6 +39,7 @@ class ConfigScheduler:
 		
 		A command for clearning the environment 
 		when executing a job submitted by the scheduler.
+		(e.g.: 'module purge' for SLURM)  
 
 	.. py:attribute:: option_cmd
 		:type: List[str]
@@ -58,41 +59,16 @@ class ConfigScheduler:
 
 
 @dataclass
-class ConfigOARScheduler(ConfigScheduler):
-
-	"""
-	Configs for OAR job scheduler. See documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs 
-	"""
-
-	name: str = "OARScheduler"
-
-	
-@dataclass
-class ConfigSLURMScheduler(ConfigScheduler):
-	"""
-	Configs for SLURM job scheduler. See documentation in: https://slurm.schedmd.com/documentation.html
-	"""
-
-	name: str = "SLURMScheduler"
-	
-
-
-@dataclass
 class ConfigVersionManager:
 	"""
-	Structure of the config file for the working directory manager.
+	Structure of the config file for the version manager.
 
 
 	.. py:attribute:: name
 		:type: str
 		
-		Name of the working directory manager's class. 
+		Name of the version manager's class. 
 
-
-	.. py:attribute:: args
-		:type: Any
-		
-		Structure containing the arguments to instantiate the class name.
 	
 	"""
 
@@ -105,36 +81,37 @@ class ConfigVersionManager:
 class ConfigGitVM(ConfigVersionManager):
 
 	"""
-	Configs for using the LastGitCommitWD working directory manager. 
+	Configs for using the GitVM version manager. 
 	It inherits the structure of the class VersionManager.
+
+	.. py:attribute:: name
+		:type: str
+		
+		Name of the version manager's class. 
+
+
 
 	.. py:attribute:: parent_target_work_dir
 		:type: str
 		
-		Name of the parent directory of the target working directory to be created.
+		The target parent directory of 
+        the new working directory returned by the version manager
 
 
-	.. py:attribute:: handleUncommitedChanges
-		:type: bool
-		
-	   When set to true, raises an error if there are uncommited changes. 
-	   Displays a warning otherwise. 
+    .. py:attribute:: store_requirements
+        :type: bool 
 
-	.. py:attribute:: handleUntrackedFiles
-		:type: bool
-		
-	   When set to true, raises an error if there are untracked files. 
-	   Displays a warning otherwise. 
+        When set to true, the version manager stores a list of requirements and their version.
 
 	"""
 
 	name: str="GitVM"
-	parent_target_work_dir: str = "./.workdir" #os.path.join(os.getcwd(), "data/.workdir") 
+	parent_target_work_dir: str = "./.workdir"
 	store_requirements: bool = False
 
 
 @dataclass
-class RunInfo:
+class Info:
 	"""
 	A structure storing general information about the run. 
 
@@ -143,7 +120,7 @@ class RunInfo:
 	The following variables are assigned during execution.
 
 	.. py:attribute:: status
-		:type: bool
+		:type: str
 		
 		Status of a job. The status can take the following values:
 
@@ -157,18 +134,18 @@ class RunInfo:
 
 
 	
-	.. py:attribute:: cmd
-		:type: bool
+	.. py:attribute:: executable
+		:type: str
 		
 		(private) Name of the python file being executed. 
 
 	.. py:attribute:: app
-		:type: bool
+		:type: str
 		
 		(Private) Path to the python app used for executing the code.
 
 	.. py:attribute:: hostname
-		:type: bool
+		:type: str
 		
 		(private) Name of the host from which code is executed.
 
@@ -178,33 +155,48 @@ class RunInfo:
 		(private) User name executing the code. 
 
 	.. py:attribute:: process_id
-		:type: bool
+		:type: int
 		
 		Id of the process assigned to the job during execution.
 
-	.. py:attribute:: date
-		:type: bool
+	.. py:attribute:: start_date
+		:type: Any
 		
 		(Private) Date at which job started.
 
-	.. py:attribute:: time
-		:type: bool
+	.. py:attribute:: start_time
+		:type: Any
 		
 		(Private) Time at which job started.
+
+	.. py:attribute:: end_date
+		:type: Any
+		
+		(Private) Date at which job ended.
+
+	.. py:attribute:: end_time
+		:type: Any
+		
+		(Private) Time at which job ended.
+
 
 	"""
 
 
-	user: str = "${oc.env:USER}"
 	status: str = "STARTING"
-	cmd: str = ""
+	executable: str = ""
 	app: str = ""
 	hostname: str = ""
+	user: str = "${oc.env:USER}"
 	process_id: int = -1
 	start_date: Any = ""
 	start_time: Any = ""
-	log_dir: str = ""
-	log_id: int = -1
+	end_date: Any = ""
+	end_time: Any = ""
+	work_dir: str = os.getcwd()
+	logger: Any = None
+	scheduler: Any = None
+	version_manager: Any = None
 	
 	
 @dataclass
@@ -250,7 +242,7 @@ class ConfigDefaultLogger(ConfigLogger):
 	name: str="DefaultLogger"	
 
 @dataclass
-class ExperimentalistConfig:
+class MlxpyConfig:
 	logger: ConfigLogger = ConfigDefaultLogger()
 	scheduler: ConfigScheduler = ConfigScheduler()
 	version_manager: ConfigVersionManager = ConfigGitVM()
@@ -265,11 +257,11 @@ class Metadata:
 		The structure of the config file. 
 
 	.. py:attribute:: info
-		:type: RunInfo
+		:type: Info
 		
 		Contains config information of the run 
 		(hostname, command, application,  etc) 
-		(default RunInfo) 
+		(default Info) 
 
 	.. py:attribute:: logger
 		:type: Logger
@@ -299,8 +291,8 @@ class Metadata:
 		Contains user user configs
 
 	"""
-	info: RunInfo = RunInfo()
-	mlxpy: ExperimentalistConfig = ExperimentalistConfig()
+	info: Info = Info()
+	mlxpy: MlxpyConfig = MlxpyConfig()
 	config: Any = None
 
 #cs = ConfigStore.instance()

@@ -130,7 +130,7 @@ class Reader(object):
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [ DataDict(r,parent_dir=r["info.log_dir"]) for r in res ]
+        res = [ DataDict(r,parent_dir=r["info.logger.metrics_dir"]) for r in res ]
         res = DataDictList(res)
         if result_format==DataFrameType.Pandas.value:
             return res.toPandasDF(lazy=False)

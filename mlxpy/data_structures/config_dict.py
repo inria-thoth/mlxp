@@ -1,8 +1,15 @@
 import omegaconf
-from typing import Dict, Any
+from typing import Dict, Any, Type
 import yaml
 
 class ConfigDict(dict):
+    """
+    A subclass of the dict class containing the configuration options.
+    In this object, the value corresponding to a key can be accessed as an attribute: self.key
+
+    """
+
+
     def __init__(self, *args, **kwargs):
         super(ConfigDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
@@ -10,10 +17,21 @@ class ConfigDict(dict):
     def __repr__(self):
         # Define custom string representation for ConfigDict objects
         return f'{yaml.dump(convert_dict(self,src_class=ConfigDict,dst_class=dict))}'
-    def to_dict(self):
+    def to_dict(self)->Dict[str,Any]:
+        """
+            Converts the object into a simple dictionary.
+            
+            :return: A dictionary containing the same information as self
+            :rtype: Dict[str,Any]
+
+        """
         return convert_dict(self,src_class=ConfigDict,dst_class=dict)
 
-    def update_dict(self,new_dict: Dict[str,Any])->None:
+    def update(self,new_dict: Dict[str,Any])->None:
+        """
+            Updates the dictionary based on 
+
+        """
         new_dict = convert_dict(new_dict, src_class=dict)
         for key, value in new_dict.items():
             if key in self.keys():
@@ -33,31 +51,39 @@ class ConfigDict(dict):
 
 
 
-def convert_dict(config: Any, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)-> Any:
+def convert_dict(src_dict: Any, 
+                src_class: Type=omegaconf.dictconfig.DictConfig, 
+                dst_class: Type=ConfigDict)-> Any:
     """
-    Converts an instance of the class omegaconf.dictconfig.DictConfig
-    to a dictionary
+    Converts a dictionary-like object from a source class to a destination 
+    dictionary-like object of a destination class.
     
-    :param config: The metadata for the run in immutable form
-    :type config: omegaconf.dictconfig.DictConfig
-    :rtype: Dict[str, Any]
-    :return: The metadata for the run in mutable form
+    :param src_dict: The source dictionary to be converted
+    :param src_class: The type of the src dictionary
+    :param dst_class: The destination type of the returned dictionary-like object.
+
+
+    :type src_dict: Any
+    :type src_class: Type
+    :type dst_class: Type    
+    :return: A dictionary-like instance of the dst_class copying the data from the src_dict. 
+    :rtype: Any
     """
 
 
     done = False
-    out_dict = {}
-    for key, value in config.items():
+    dst_dict = {}
+    for key, value in src_dict.items():
         if isinstance(value, src_class):
-            out_dict[key] = convert_dict(value, 
+            dst_dict[key] = convert_dict(value, 
                                 src_class=src_class,
                                 dst_class=dst_class)
         else:
             if isinstance(value, omegaconf.listconfig.ListConfig):
                 value = list(value)
-            out_dict[key] = value
-    out_dict = dst_class(out_dict)
-    return out_dict
+            dst_dict[key] = value
+    dst_dict = dst_class(dst_dict)
+    return dst_dict
 
 
 

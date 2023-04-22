@@ -1,4 +1,4 @@
-from __future__ import annotations
+ from __future__ import annotations
 import os
 import json
 import yaml
@@ -44,25 +44,16 @@ class AggregationMap:
 
 class DataDict(Mapping):
     """
-    A dictionary containing the configs and logs of a given a single run.
-    Each key represents a given config or particular type of output data of the run.
-    By default the keys corresponding to configs are preceeded by the prefix "metadata.", 
-    while those corresponding to a user defined output are preceeded by the file name 
-    containing such output (e.g. "metrics."). Example of keys:
-    - "metadata.info.status"
-    - "metrics.loss"
+    A dictionary of key values pairs where some values are loaded lazyly 
+    from a specific path whenever they are accessed.
 
-    .. note:: Except for configuration information stored in the file "metadata.yaml", 
-        all outputs comming from the outputs of a run are stored in "lazy mode". 
-        This means that data corresponding to a given key are not stored in the dictionary at creation to save memory. 
-        The data is loaded only when user accesses a given key of the dictionary.  
+
     """
 
-
     def __init__(self,flattened_dict, parent_dir =None):
-        #flattened_dict = _flatten_dict(config_dict, parent_key=parent_key) 
         self.config = { "flattened": flattened_dict,
                         "lazy": LazyDict(flattened_dict)}
+      
         self.parent_dir = parent_dir
         if self.parent_dir:
             self._make_lazydict()
@@ -109,7 +100,7 @@ class DataDict(Mapping):
     def update(self, new_dict):
         copy_dict = {key: LAZYDATA if callable(value) 
                         else value 
-                        for key,value in new_dict.items()  }
+                        for key,value in new_dict.items()}
         self.config["lazy"].update(new_dict)
         self.config["flattened"].update(copy_dict)        
         
@@ -143,12 +134,12 @@ class LazyDict(MutableMapping):
 
 
 class LazyData(object):
-    def __init__(self,parent_dir, file_name):
+    def __init__(self,parent_dir, 
+                      file_name, 
+                      extension = '.json'):
         self.file_name = file_name
         self.parent_dir = parent_dir
-        self.path = os.path.join(self.parent_dir, Directories.Metrics.value, self.file_name + ".json")
-        dir_name =os.path.join('src_dir',os.path.basename(self.parent_dir),self.file_name)
-        self.display_message = f"Lazy loading from: {dir_name}"
+        self.path = os.path.join(self.parent_dir, self.file_name + extension)
         self.used_keys = set()
         self._data = None
     def get_data(self, key):
@@ -172,11 +163,13 @@ class _MyListProxy:
 class DataDictList(list):
     """
     A list of elements of type DataDict. This list can be viewed as a dataframe 
-    where each row represents a given run and columns represent 
-    the configurations and results for each run.  
+    where each row represents a given entry (a DataDict) and columns represent 
+    the keys of the DataDicts.  This structure allows to load some columns lazyly. 
+    the content of some columns is loaded from its corresponding file 
+    only when that column is explicitly accessed.
     
     It is displayed as a pandas dataframe and 
-    can be converted to it using toPandasDF method.
+    can be converted to it using the method toPandasDF.
 
 
     """    
@@ -208,7 +201,8 @@ class DataDictList(list):
     def toPandasDF(self,lazy=True)->pd.DataFrame:
         """
         Converts the list into a pandas dataframe.
-
+        
+        :param lazy: If true the pandas dataframe does not contain the results of data loaded lazyly. 
         :return: A panda dataframe containing logs (configs and data) 
         of the DataDictList object
         :rtype: pd.DataFrame
@@ -265,13 +259,13 @@ class DataDictList(list):
         #grouped_config.pandas = pandas_grouped_df
         return grouped_config
 
-    def config_diff(self, start_key="metadata.config")->List[str]:
+    def config_diff(self, start_key="config")->List[str]:
         """
             Returns a list of colums keys starting with 'start_key' 
             and whose value varies in the dataframe.
             
             :param start_key: A string with which all column names to be considered must start. 
-            :type start_key: str (default 'metadata.config')
+            :type start_key: str (default 'config')
             :return: A list of strings containing the column names 
             starting with 'start_key' and whose values vary in the dataframe.
             :rtype: List[str]
@@ -282,13 +276,13 @@ class DataDictList(list):
         diff_keys = []
         ref_dict = None
         
-        for config in self:
+        for item in self:
             if ref_dict is None:
-                ref_dict = config
+                ref_dict = item
             else:
-                for key in config.keys():
+                for key in item.keys():
                     if key in ref_dict and key.startswith(start_key):
-                        if ref_dict[key] != config[key]:
+                        if ref_dict[key] != item[key]:
                             if key not in diff_keys:
                                 diff_keys.append(key)
                     else:
@@ -402,15 +396,16 @@ class GroupedDataDicts:
     def aggregate(self, aggregation_maps: List[AggregationMap])->Dict[str,GroupedDataDicts]:
         """
         Performs aggregation of the leaf dataframes according to some aggregation maps provided as input. 
-        It returns a dictionary of key value pairs, where each key represents an aggregation map 
-        and its value is an aggregated result returned as a GroupedDataDicts objects 
-        preserving the same hierarchy as the current object.
+        It returns a DataDictList object where each row represents a group 
+        and each column consist of one of the following:
+            - The results of the aggregation maps.
+            - The original group keys of the current GroupedDataDicts object.
         
         :params aggregation_maps: A list of aggregation maps. 
             Each map must be an instance of class inheriting from the abstract class AggregationMap. 
         :type aggregation_maps: List[AggregationMap]
-        :return: A dictionary of aggregated results indexed by the aggregation maps. 
-        :rtype: Dict[str,GroupedDataDicts]
+        :return: A DataDictList object containing the result of the aggregation. 
+        :rtype: DataDictList
         :raises InvalidAggregationMapError: if one of the aggregation map is not an instance of a class 
         inheriting from the abstract class AggregationMap.
         """
@@ -471,19 +466,14 @@ def _add_nested_keys_val(dictionary,keys,val):
 def _aggregate(groupedconfigs, aggregation_maps):
     # Returns a hierarchical dictionary whose leafs are instances of DataDictList
 
-    #agg_dict = AggregatedDataDicts({})
     agg_config_list = []
     for keys, config_list in groupedconfigs.items():
         
         agg_config = _aggregate_collection(config_list, aggregation_maps)
         for key_name, key in zip(groupedconfigs.group_keys, list(keys)):
             agg_config.update({key_name:key})
-        #keys = list(keys_vals.values())
         agg_config_list.append(DataDict(agg_config))
-        #_add_nested_keys_val(agg_config_dict, keys, agg_config)
 
-    #agg_config_dict = { key: DataDictList(reduce(dict.get, key, agg_config_dict)) 
-    #                                    for key in groupedconfigs.group_vals }
     return  DataDictList(agg_config_list) 
 
 
