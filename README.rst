@@ -10,26 +10,33 @@ Key functionalities
   3. Code version management by automatically generating a deployment version of the code based on the latest git commit. 
   4. Submitting jobs to a cluster using a job scheduler. 
   5. Exploiting the results of several experiments by easily reading, querying, grouping, and aggregating the output of several jobs. 
- 
+
+
+Requirements
+^^^^^^^^^^^^
+
+
+.. list-table::
+   :header-rows: 1
+   :class: left
+
+   * - Requirements
+   * - hydra-core
+   * - omegaconf
+   * - tinydb
+   * - setuptools
+   * - PyYAML
+   * - pandas
+   * - ply
+   * - dill
+   * - GitPython
+
 
 Installing mlxpy
 ^^^^^^^^^^^^^^^^
 
 You can install this package by cloning it from the GitHub repository
-and then installing it with `pip`. Before installing, make sure you have
-the following dependencies installed:
-
-
-- hydra-core
-- omegaconf
-- tinydb
-- setuptools
-- PyYAML
-- pandas
-- ply
-- dill
-- GitPython
-
+and then installing it with `pip`. Before installing mlxpy, make sure you the requirements are installed.
 
 
 1. Clone the repository:
