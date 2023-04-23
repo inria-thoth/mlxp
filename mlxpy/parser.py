@@ -28,6 +28,7 @@ class Parser(abc.ABC):
         """
         pass
 
+
 class DefaultParser(Parser):
     """Mlxpy's deafult parser inspired from python's syntax."""
 

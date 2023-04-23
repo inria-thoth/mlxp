@@ -1,5 +1,6 @@
 """Errors raised by Mlxpy."""
 
+
 class JobSubmissionError(Exception):
     """Raised when failed to submit a job using a scheduler."""
 

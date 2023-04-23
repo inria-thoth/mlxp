@@ -56,7 +56,7 @@ class Scheduler(abc.ABC):
         Command for configuring the shell when submitting a job using a scheduler.
         (e.g.: 'source ~/.bashrc')
     """
-    
+
     def __init__(
         self,
         directive: str,
@@ -250,7 +250,7 @@ class SLURMScheduler(Scheduler):
 
         :return: A dictionary containing the job_id assigned to the run by the scheduler.
         :rtype: Dict[str,Any]
-        """        
+        """
         # Not implemented yet!
         return {}
 

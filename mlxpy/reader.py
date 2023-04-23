@@ -18,7 +18,7 @@ from mlxpy.enumerations import DataFrameType, Directories
 
 class Reader(object):
     """A class for exploiting the results stored in several runs contained in a same parent directory 'src_dir'.
-    
+
     Once, created, it is possible to query the database using the method 'filter'
     to get the results matching a specific configuration setting.
     The result of the query is returned either as a DataDictList object or a pandas dataframe.
@@ -84,10 +84,10 @@ class Reader(object):
         if not self.db.tables() or reload:
             self._create_base()
 
-    def __len__(self)->int:
+    def __len__(self) -> int:
         """Return the number of runs contained in the database created by the reader.
-        
-        :return: Number of runs contained in the database. 
+
+        :return: Number of runs contained in the database.
         :rtype: int
         """
         return len(self.runs)

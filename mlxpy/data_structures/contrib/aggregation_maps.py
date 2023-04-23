@@ -56,7 +56,7 @@ class Max(AggregationMap):
 
 class AvgStd(AggregationMap):
     """Compute the mean and standard deviation of a list of arrays."""
-    
+
     def __init__(self, key):
         super().__init__([key], map_name="avgstd")
 

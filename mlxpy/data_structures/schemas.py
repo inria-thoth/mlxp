@@ -72,7 +72,7 @@ class ConfigVersionManager:
 @dataclass
 class ConfigGitVM(ConfigVersionManager):
     """Configs for using the GitVM version manager.
-    
+
     It inherits the structure of the class VersionManager.
 
     .. py:attribute:: name
@@ -100,7 +100,7 @@ class ConfigGitVM(ConfigVersionManager):
 @dataclass
 class ConfigLogger:
     """Structure of the config file for the logs.
-    
+
     The outputs for each run are saved in a directory of the form
     'parent_log_dir/log_id' which is stored in the variable 'path' during execution.
 

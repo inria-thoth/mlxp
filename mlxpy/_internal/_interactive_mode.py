@@ -12,4 +12,3 @@ class _bcolors:
 
 def _printc(color, text):
     print(color + text + _bcolors.ENDC)
-

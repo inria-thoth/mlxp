@@ -57,9 +57,9 @@ class VersionManager(abc.ABC):
 
 class GitVM(VersionManager):
     """GitVM allows separting development code from code deployed in a cluster and allows to recover exactly the code used for a given run.
-    
+
     GitVM creates a copy of the current directory based on the latest commit, if it doesn't exist already, then sets the working directory to this copy.
-    
+
     .. py:attribute:: parent_target_work_dir
         :type: str
 
@@ -104,7 +104,7 @@ class GitVM(VersionManager):
 
     def make_working_directory(self) -> str:
         """Create and return a target working directory.
-        
+
         Depending on the user's choice, the returned directory is either:
 
         - The current working directory.
@@ -330,7 +330,9 @@ class GitVM(VersionManager):
                             print(ignore_msg)
                             break
                     elif choice == "b":
-                        _printc(_bcolors.OKBLUE, "Checking again for untracked files...")
+                        _printc(
+                            _bcolors.OKBLUE,
+                            "Checking again for untracked files...")
                         pass
                     elif choice == "c":
                         if repo.untracked_files:

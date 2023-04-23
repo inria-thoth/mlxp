@@ -32,9 +32,9 @@ class AggregationMap:
     def _make_name(self):
         return self.map_name + "(" + ",".join(self.keys) + ")"
 
-    def _apply(self, data:List[Dict[str,Any]])->Dict[str,Any]:
+    def _apply(self, data: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Apply a map to input data and return the result.
-        
+
         :param data: List of dictionaries containing data to be aggregated.
         :type data: List[Dict[str,Any]]
         :return: A dictionary containing the aggregated result.
@@ -225,7 +225,8 @@ class DataDictList(list):
         """
         if lazy:
             if self.pandas_lazy is None:
-                self.pandas_lazy = pd.DataFrame([config._flattened() for config in self])
+                self.pandas_lazy = pd.DataFrame(
+                    [config._flattened() for config in self])
             return self.pandas_lazy
         else:
             if self.pandas is None:
@@ -244,7 +245,7 @@ class DataDictList(list):
 
     def groupBy(self, list_group_keys: List[str]) -> GroupedDataDicts:
         """Perform a groupby operation on the dataframe according to a list of colum names (list_group_keys).
-        
+
         Returns an object of the class GroupedDataDicts
 
         :params list_group_keys: a list of strings containing the names of the columns to be grouped.
@@ -297,7 +298,7 @@ class DataDictList(list):
 
 class GroupedDataDicts:
     """A dictionary where each key represents the tuple of values taken by the grouped column of some processed dataframe.
-    
+
     The values corresponsing to each key are objects of type DataDictList containing a group.
     This object is usually obtained as the output of the group_by method of the class  DataDictList.
     It is displayed as a hierarchical pandas dataframe and
@@ -322,7 +323,7 @@ class GroupedDataDicts:
         self, group_keys: List[str], grouped_dict: Dict[Tuple[str, ...], DataDictList]
     ):
         """Create an GroupedDataDicts object.
-        
+
         :param group_keys: A list of string containing the column names used for grouping.
         :param grouped_dict: A dictionary where each key represents the tuple of values
         taken by the grouped column of some processed dataframe.
@@ -392,7 +393,7 @@ class GroupedDataDicts:
         self, aggregation_maps: List[AggregationMap]
     ) -> Dict[str, GroupedDataDicts]:
         """Perform aggregation of the leaf dataframes according to some aggregation maps provided as input.
-        
+
         This function returns a DataDictList object where each row represents a group
         and each column consist of one of the following:
 

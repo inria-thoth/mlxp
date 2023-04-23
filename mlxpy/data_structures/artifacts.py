@@ -9,7 +9,7 @@ import dill as pkl
 @dataclass
 class Artifact(abc.ABC):
     """An abstract base class for any types of artifacts.
-    
+
     This class can deal with different objects structures
     such as numpy arrays, torch tensors, checkpoints, etc.
     Instances of this class are meant to be used as inputs

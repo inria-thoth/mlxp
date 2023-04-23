@@ -67,7 +67,8 @@ def _ask_configure_scheduler(mlxpy_config, mlxpy_file):
             f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No scheduler will be selected by default."
         )
 
-        choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
+        choice = input(
+            f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
 
         if choice == "y":
             _configure_scheduler(mlxpy_config)

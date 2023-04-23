@@ -7,7 +7,7 @@ import yaml
 
 class ConfigDict(dict):
     """A subclass of the dict class containing the configuration options.
-    
+
     The value corresponding to a key can be accessed as an attribute: self.key
     """
 
