@@ -1,8 +1,10 @@
+"""Parser object for querying results stored by the reader."""
+
 import ply.lex as lex
 import ply.yacc as yacc
 import ast
 from operator import eq, ge, gt, le, lt, ne
-from tinydb import TinyDB, where, Query
+from tinydb import where, Query
 from tinydb.queries import QueryInstance
 import abc
 from mlxpy.errors import InvalidKeyError
@@ -12,16 +14,11 @@ from mlxpy.enumerations import SearchableKeys
 
 
 class Parser(abc.ABC):
-    """
-    An abstract class for parsing queries. Any parser used by the class Reader must inherit
-        from this abstract class.
-
-    """
+    """An abstract class for parsing queries. Any parser used by the class Reader must inherit from this abstract class."""
 
     @abc.abstractmethod
     def parse(self, query: str) -> QueryInstance:
-        """
-        A method for parsin a query string into a tinydb QueryInstance object.
+        """Parse a query string into a tinydb QueryInstance object.
 
         :param query: A query in the form of a string
         :type query: str
@@ -29,19 +26,17 @@ class Parser(abc.ABC):
         :rtype: QueryInstance
         :raises SyntaxError: if the query string does not follow expected syntax.
         """
-
+        pass
 
 class DefaultParser(Parser):
-
-    """
-        A simple parser inspired from python's syntax.
-    """
+    """Mlxpy's deafult parser inspired from python's syntax."""
 
     def __init__(self):
-        self.lexer = Lexer()
-        self.parser = YaccParser()
+        self.lexer = _Lexer()
+        self.parser = _YaccParser()
 
     def parse(self, query: str) -> QueryInstance:
+        """Parse a query string into a tinydb QueryInstance object."""
         return self.parser.parse(query, lexer=self.lexer)
 
 
@@ -73,7 +68,7 @@ tokens = (
 )
 
 
-def Lexer():
+def _Lexer():
 
     reserved = {"in": "IN"}
 
@@ -137,10 +132,7 @@ def Lexer():
     return lex.lex(debug=False)
 
 
-# lexer = lex.lex()
-
-
-def YaccParser():
+def _YaccParser():
 
     precedence = (
         ("left", "OR"),
@@ -158,39 +150,35 @@ def YaccParser():
         ),
     )
 
-    def p_expression_binop(p):
-        """expr : ID EQUAL SCALAR
+    def p_expression__binOp(p):
+        """Expr : ID EQUAL SCALAR
                   | ID NOT_EQUAL SCALAR
                   | ID LESS_THAN SCALAR
                   | ID GREATER_THAN SCALAR
                   | ID LESS_THAN_OR_EQUAL SCALAR
                   | ID GREATER_THAN_OR_EQUAL SCALAR
         """
-        p[0] = binOp(p[1], p[2], p[3])
+        p[0] = _binOp(p[1], p[2], p[3])
 
     def p_expression_inclusion(p):
-        """expr : ID IN LIST
-        """
-        p[0] = inclusionOp(p[1], p[3])
+        """Expr : ID IN LIST"""
+        p[0] = _inclusionOp(p[1], p[3])
 
     def p_expression_group(p):
-        """expr : LPAREN expr RPAREN"""
+        """Expr : LPAREN Expr RPAREN"""
         p[0] = p[2]
 
     def p_expression_and(p):
-        """expr : expr AND expr
-        """
-        p[0] = andOp(p[1], p[3])
+        """Expr : Expr AND Expr"""
+        p[0] = _andOp(p[1], p[3])
 
     def p_expression_or(p):
-        """expr : expr OR expr
-        """
-        p[0] = orOp(p[1], p[3])
+        """Expr : Expr OR Expr"""
+        p[0] = _orOp(p[1], p[3])
 
     def p_expression_not(p):
-        """expr : NOT expr
-        """
-        p[0] = notOp(p[2])
+        """Expr : NOT Expr"""
+        p[0] = _notOp(p[2])
 
     def p_error(p):
         raise SyntaxError(" Syntax error in input!")
@@ -198,32 +186,32 @@ def YaccParser():
     return yacc.yacc(debug=False, write_tables=0)
 
 
-def binOp(k, op, v):
+def _binOp(k, op, v):
     opf = ops.get(op, None)
     if opf is None:
         print("Unknown operator: {0:s}".format(op))
         raise ValueError
         return where(None)
-    check_searchable_key(k)
+    _check_searchable_key(k)
     field = _build_field_struct(k)
     return opf(field, v)
 
 
-def inclusionOp(key, values):
-    check_searchable_key(key)
+def _inclusionOp(key, values):
+    _check_searchable_key(key)
     field = _build_field_struct(key)
     return field.one_of(values)
 
 
-def andOp(left, right):
+def _andOp(left, right):
     return (left) & (right)
 
 
-def orOp(left, right):
+def _orOp(left, right):
     return (left) | (right)
 
 
-def notOp(expr):
+def _notOp(expr):
     return ~expr
 
 
@@ -233,15 +221,15 @@ def _build_field_struct(key):
     return field
 
 
-def is_searchable(k):
+def _is_searchable(k):
     for member in SearchableKeys:
         if k.startswith(member.value):
             return True
     return False
 
 
-def check_searchable_key(k):
-    if is_searchable(k):
+def _check_searchable_key(k):
+    if _is_searchable(k):
         pass
     else:
         raise InvalidKeyError(

@@ -1,3 +1,5 @@
+"""The launcher allows launching multiple experiments on a cluster using hydra."""
+
 import copy
 import os
 import functools
@@ -25,44 +27,43 @@ import importlib
 from mlxpy.enumerations import Status
 
 
+
 _UNSPECIFIED_: Any = object()
 
 
-hydra_defaults_dict = {
-    "hydra.mode": "MULTIRUN",
-    "hydra.output_subdir": "null",
-    "hydra.run.dir": ".",
-    "hydra.sweep.dir": ".",
-    "hydra.sweep.subdir": ".",
-    "hydra/job_logging": "disabled",
-    "hydra/hydra_logging": "disabled",
-}
+hydra_defaults_dict = {"hydra.mode": "MULTIRUN",
+                        "hydra.output_subdir": "null",
+                        "hydra.run.dir": ".",
+                        "hydra.sweep.dir": ".",
+                        "hydra.sweep.subdir": ".",
+                        "hydra/job_logging":"disabled",
+                        "hydra/hydra_logging":"disabled",
+                                }
 
 
-vm_choices_file = os.path.join(
-    hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml"
-)
+vm_choices_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"],
+                                            "vm_choices.yaml")
 
 
-def clean_dir():
+def _clean_dir():
     sweep_dir = hydra_defaults_dict["hydra.sweep.dir"]
     try:
         os.remove(os.path.join(sweep_dir, "multirun.yaml"))
         os.remove(vm_choices_file)
     except FileNotFoundError:
-        pass
+        pass   
 
 
 def launch(
-    config_path: str = "./configs",
-    seeding_function: Union[Callable[[Any], None], None] = None,
+    config_path: str = './configs',
+    seeding_function: Union[Callable[[Any], None],None] = None
 ) -> Callable[[TaskFunction], Any]:
-    """Creates a decorator of the main function to be executed.
+    """Create a decorator of the main function to be executed.
 
     :example:
 
     .. code-block:: python
-
+        
         import mlxpy
 
         @mlxpy.launch(config_path='./configs',
@@ -81,58 +82,54 @@ def launch(
     :return: A decorator of the main function to be executed.
     :type: Callable[[TaskFunction], Any]
 
-    This function allows four main functionalities:
+    This function allows four main functionalities: 
 
-        1. Composing configurations from multiple files using hydra (see hydra-core package).
+        1. Composing configurations from multiple files using hydra (see hydra-core package). 
         This behavior is similar to the decorator hydra.main provided in the hydra-core package:
-        https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.
-        The configs are contained in a yaml file 'config.yaml' stored in
+        https://github.com/facebookresearch/hydra/blob/main/hydra/main.py. 
+        The configs are contained in a yaml file 'config.yaml' stored in 
         the directory 'config_path' passed as argument to this function.
-        Unlike hydra.main which decorates functions taking an OmegaConf object,
+        Unlike hydra.main which decorates functions taking an OmegaConf object, 
         mlxpy.launch  decorates functions with the following signature: main(ctx: mlxpy.Context).
-        The ctx object is created on the fly during the execution of the program
-        and stores information about the run.
-        In particular, the field cfg.config stores the options contained in the config file 'config.yaml'.
-        Additionally, cfg.logger, provides a logger object of the class mlxpy.Logger for logging results of the run.
-        Just like in hydra, it is also possible to override the configs from the command line and
-        to sweep over multiple values of a given configuration when executing python code.
+        The ctx object is created on the fly during the execution of the program 
+        and stores information about the run. 
+        In particular, the field cfg.config stores the options contained in the config file 'config.yaml'. 
+        Additionally, cfg.logger, provides a logger object of the class mlxpy.Logger for logging results of the run.  
+        Just like in hydra, it is also possible to override the configs from the command line and 
+        to sweep over multiple values of a given configuration when executing python code.   
         See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
-
-        2. Seeding: Additionally, mlxpy.launch takes an optional argument 'seeding_function'.
+    
+        2. Seeding: Additionally, mlxpy.launch takes an optional argument 'seeding_function'. 
         By default, 'seeding_function' is None and does nothing. If a callable object is passed to it, this object is called with the argument cfg.config.seed
-        right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code.
-        In that case, the option 'ctx.config.seed' must be none empty.
+        right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code. 
+        In that case, the option 'ctx.config.seed' must be none empty.  
 
-        3. Submitting jobs to a cluster queue using a scheduler.
-        This is achieved by setting the config value scheduler.name to the name of a valid scheduler.
-        Two job schedulers are currently supported by default: ['OARScheduler', 'SLURMScheduler' ].
-        It is possible to support other schedulers by
+        3. Submitting jobs to a cluster queue using a scheduler. 
+        This is achieved by setting the config value scheduler.name to the name of a valid scheduler. 
+        Two job schedulers are currently supported by default: ['OARScheduler', 'SLURMScheduler' ]. 
+        It is possible to support other schedulers by 
         defining a subclass of the abstract class Scheduler.
 
-        4. Version management: Creating a 'safe' working directory when submitting jobs to a cluster.
-        This functionality sets the working directory to a new location
-        created by making a copy of the code based on the latest commit
-        to a separate destination, if it doesn't exist already. Executing code
-        from this copy allows separting development code from code deployed in a cluster.
+        4. Version management: Creating a 'safe' working directory when submitting jobs to a cluster. 
+        This functionality sets the working directory to a new location 
+        created by making a copy of the code based on the latest commit 
+        to a separate destination, if it doesn't exist already. Executing code 
+        from this copy allows separting development code from code deployed in a cluster. 
         It also allows recovering exactly the code used for a given run.
-        This behavior can be modified by using a different version manager VersionManager (default GitVM).
-
+        This behavior can be modified by using a different version manager VersionManager (default GitVM). 
+        
         .. note:: Currently, this functionality expects the executed python file to part of a git repository.
-
-
     """
     config_name = "config"
-    version_base = None  # by default set the version base for hydra to None.
+    version_base= None # by default set the version base for hydra to None.
     version.setbase(version_base)
-
+    
     os.makedirs(config_path, exist_ok=True)
-    custom_config_file = os.path.join(config_path, config_name + ".yaml")
+    custom_config_file = os.path.join(config_path,config_name+".yaml")
     if not os.path.exists(custom_config_file):
-        custom_config = {"seed": None}
+        custom_config = {'seed':None}
         with open(custom_config_file, "w") as f:
-            yaml.dump(custom_config, f)
-
-    work_dir = os.getcwd()
+            yaml.dump(custom_config, f) 
 
     def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
         # task_function = launch(task_function)
@@ -144,15 +141,17 @@ def launch(
                 args_parser = get_args_parser()
                 args = args_parser.parse_args()
 
-                # Setting hydra defaults
+                ### Setting hydra defaults 
                 hydra_defaults = [
-                    key + "=" + value for key, value in hydra_defaults_dict.items()
+                    key + "=" + value
+                    for key, value in hydra_defaults_dict.items()
                 ]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
 
-                clean_dir()
-
+                _clean_dir()
+               
+                
                 _run_hydra(
                     args=args,
                     args_parser=args_parser,
@@ -160,8 +159,8 @@ def launch(
                     config_path=config_path,
                     config_name=config_name,
                 )
-
-                clean_dir()
+                
+                _clean_dir()
 
         return decorated_main
 
@@ -169,115 +168,114 @@ def launch(
         @functools.wraps(task_function)
         def decorated_task(cfg):
             cfg = _build_config(cfg, config_path)
-
+            
             now = datetime.now()
-            info = {
-                "hostname": socket.gethostname(),
-                "process_id": os.getpid(),
-                "executable": task_function.__code__.co_filename,
-                "app": os.environ["_"],
-                "start_date": now.strftime("%d/%m/%Y"),
-                "start_time": now.strftime("%H:%M:%S"),
-                "status": Status.STARTING.value,
-            }
-
-            cfg.update({"info": info})
+            info = {'hostname': socket.gethostname(),
+                    'process_id': os.getpid(),
+                    'executable':task_function.__code__.co_filename,
+                    'app': os.environ["_"],
+                    'start_date':now.strftime("%d/%m/%Y"),
+                    'start_time':now.strftime("%H:%M:%S"),
+                    'status':Status.STARTING.value}
+            
+            cfg.update({'info':info})
 
             if cfg.mlxpy.use_version_manager:
                 version_manager = _instance_from_config(cfg.mlxpy.version_manager)
-                version_manager._handle_interactive_mode(
-                    cfg.mlxpy.interactive_mode, vm_choices_file
-                )
+                version_manager._handle_interactive_mode(cfg.mlxpy.interactive_mode, vm_choices_file)
                 work_dir = version_manager.make_working_directory()
-                cfg.update({"info": {"version_manager": version_manager.get_info()}})
+                cfg.update({'info':{'version_manager': version_manager.get_info()} })
             else:
                 work_dir = os.getcwd()
 
-            cfg.update({"info": {"work_dir": work_dir}})
+            cfg.update({'info': {'work_dir':work_dir}})
 
             if cfg.mlxpy.use_scheduler:
-
-                scheduler = _instance_from_config(cfg.mlxpy.scheduler)
+                
+                scheduler = _instance_from_config(cfg.mlxpy.scheduler) 
                 if not cfg.mlxpy.use_logger:
                     print("Logger is currently disabled.")
                     print("To use the scheduler, the logger must be enabled")
                     print("Enabling the logger...")
-                    cfg.mlxpy.use_logger = True
+                    cfg.mlxpy.use_logger=True
             else:
                 scheduler = None
+
 
             if cfg.mlxpy.use_logger:
                 logger = _instance_from_config(cfg.mlxpy.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
-                cfg.update({"info": {"logger": logger.get_info()}})
+                cfg.update({'info':{'logger':logger.get_info()}})
             else:
                 logger = None
-
+            
             if cfg.mlxpy.use_scheduler:
 
-                main_cmd = _main_job_command(
-                    cfg.info.app, cfg.info.executable, work_dir, parent_log_dir, log_id
-                )
-
+                main_cmd = _main_job_command(cfg.info.app,
+                                             cfg.info.executable,
+                                             work_dir,
+                                             parent_log_dir,
+                                             log_id)
+                
                 scheduler.submit_job(main_cmd, log_dir)
-                cfg.update({"info": {"scheduler": scheduler.get_info()}})
+                cfg.update({'info':{'scheduler':scheduler.get_info()}})
                 logger._log_configs(cfg)
-
+                
             else:
-
+                
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
                 _set_work_dir(work_dir)
 
-                if logger:
-                    cfg.update({"info": _get_mlxpy_configs(log_dir)})
-                try:
+                
 
-                    cfg.update({"info": {"status": Status.RUNNING.value}})
+                if logger:
+                    cfg.update({'info': _get_mlxpy_configs(log_dir)}) 
+                try:
+                    
+                    cfg.update({'info':{'status':Status.RUNNING.value}})
                     if logger:
                         logger._log_configs(cfg)
                     if seeding_function:
                         try:
-                            assert "seed" in cfg.config.keys()
+                            assert 'seed' in cfg.config.keys()
                         except AssertionError:
                             msg = "Missing field: The 'config' must contain a field 'seed'\n"
-                            msg += "provided as argument to the function 'seeding_function' "
+                            msg+= "provided as argument to the function 'seeding_function' "
                             raise MissingFieldError(msg)
                         seeding_function(cfg.config.seed)
 
-                    ctx = Context(
-                        config=cfg.config, mlxpy=cfg.mlxpy, info=cfg.info, logger=logger
-                    )
+
+                    ctx = Context(config=cfg.config,
+                                  mlxpy=cfg.mlxpy,
+                                  info=cfg.info,
+                                  logger = logger)
                     task_function(ctx)
-                    now = datetime.now()
-                    info = {
-                        "end_date": now.strftime("%d/%m/%Y"),
-                        "end_time": now.strftime("%H:%M:%S"),
-                        "status": Status.COMPLETE.value,
-                    }
-
-                    cfg.update({"info": info})
-
+                    now =  datetime.now()
+                    info = {'end_date':now.strftime("%d/%m/%Y"),
+                            'end_time':now.strftime("%H:%M:%S"),
+                            'status':Status.COMPLETE.value}
+            
+                    cfg.update({'info':info})
+                    
                     if logger:
                         logger._log_configs(cfg)
-
+                    
                     _reset_work_dir(cur_dir)
                     return None
                 except Exception:
-                    now = datetime.now()
-                    info = {
-                        "end_date": now.strftime("%d/%m/%Y"),
-                        "end_time": now.strftime("%H:%M:%S"),
-                        "status": Status.FAILED.value,
-                    }
-
-                    cfg.update({"info": info})
+                    now =  datetime.now()
+                    info = {'end_date':now.strftime("%d/%m/%Y"),
+                            'end_time':now.strftime("%H:%M:%S"),
+                            'status':Status.FAILED.value}
+            
+                    cfg.update({'info':info})
 
                     if logger:
                         logger._log_configs(cfg)
-
+                    
                     _reset_work_dir(cur_dir)
                     raise
 
@@ -294,6 +292,9 @@ def launch(
     return composed_decorator
 
 
+
+
+
 @dataclass
 class Context:
     """
@@ -302,52 +303,48 @@ class Context:
     .. py:attribute:: config
         :type: ConfigDict
 
-        A structure containing project-specific options provided by the user.
-        These options are loaded from a yaml file 'config.yaml' contained in the directory 'config_path'
-        provided as argument to the decorator mlxpy.launch. It's content can be overriden from the command line.
+        A structure containing project-specific options provided by the user. 
+        These options are loaded from a yaml file 'config.yaml' contained in the directory 'config_path' 
+        provided as argument to the decorator mlxpy.launch. It's content can be overriden from the command line. 
 
     .. py:attribute:: mlxpy
         :type: ConfigDict
 
-        A structure containing mlxpy's default settings for the project.
-        Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config.yaml'.
+        A structure containing mlxpy's default settings for the project. 
+        Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config.yaml'. 
 
     .. py:attribute:: info
         :type: ConfigDict
 
-        A structure containing information about the current run: ex. status, start time, hostname, etc.
+        A structure containing information about the current run: ex. status, start time, hostname, etc. 
 
     .. py:attribute:: logger
         :type: Union[Logger,None]
 
-        A logger object that can be used for logging variables (metrics, checkpoints, artifacts).
-        When logging is enabled, these variables are all stored in a uniquely defined directory.
+        A logger object that can be used for logging variables (metrics, checkpoints, artifacts). 
+        When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
     """
-
-    config: ConfigDict = None
-    mlxpy: ConfigDict = None
+    
+    config : ConfigDict = None
+    mlxpy : ConfigDict = None
     info: ConfigDict = None
-    logger: Union[Logger, None] = None
+    logger: Union[Logger,None] = None
 
 
-T = TypeVar("T")
+T = TypeVar('T')
 
+def instance_from_dict(class_name: str, arguments: Dict[str, Any])->T:
+    """Create an instance of a class based on a dictionary of arguments.
 
-def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
+    :param class_name: The name of the class 
+    :param arguments: A dictionary of arguments to the class constructor
+    :type class_name: str
+    :type arguments: Dict[str,Any]
+    :return: An instance of a class 'class_name' constructed using the arguments in 'arguments'.
+    :rtype: T
     """
-        A factory function that dynamically creates an instance of a class
-        based on a dictionary of arguments.
-
-        :param class_name: The name of the class
-        :param arguments: A dictionary of arguments to the class constructor
-        :type class_name: str
-        :type arguments: Dict[str,Any]
-        :return: An instance of a class 'class_name' constructed using the arguments in 'arguments'.
-        :rtype: T
-    """
-
-    attr = import_module(class_name)
+    attr = _import_module(class_name)
     if arguments:
         attr = attr(**arguments)
     else:
@@ -356,20 +353,21 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
     return attr
 
 
-def import_module(module_name):
+def _import_module(module_name):
     module, attr = os.path.splitext(module_name)
     if not attr:
-        return getattr(mlxpy, module)
+        return  getattr(mlxpy, module)
     else:
         try:
             module = importlib.import_module(module)
             return getattr(module, attr[1:])
-        except BaseException:
+        except:
             try:
-                module = import_module(module)
+                module = _import_module(module)
                 return getattr(module, attr[1:])
-            except BaseException:
-                return eval(module + attr[1:])
+            except:
+                return eval(module+attr[1:])
+
 
 
 def _instance_from_config(config):
@@ -381,13 +379,13 @@ def _instance_from_config(config):
 
 
 def _set_work_dir(work_dir):
-    os.chdir(work_dir)
-    sys.path.insert(0, work_dir)
-
+    os.chdir(work_dir)            
+    sys.path.insert(0, work_dir)    
 
 def _reset_work_dir(cur_dir):
     os.chdir(cur_dir)
-    sys.path = sys.path[1:]
+    sys.path  = sys.path[1:]
+
 
 
 def _set_co_filename(func, co_filename):
@@ -413,27 +411,28 @@ def _set_co_filename(func, co_filename):
 
 
 def _get_mlxpy_configs(log_dir):
-    from mlxpy.enumerations import Directories
-
-    abs_name = os.path.join(log_dir, Directories.Metadata.value, "info.yaml")
+    from mlxpy.enumerations import Directories 
+    abs_name = os.path.join(log_dir, Directories.Metadata.value,'info.yaml')
     configs_info = {}
-
+    
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-            if "scheduler" in configs:
-                configs_info.update({"scheduler": configs["scheduler"]})
-            if "version_manager" in configs:
-                configs_info.update({"version_manager": configs["version_manager"]})
-            if "logger" in configs:
-                configs_info.update({"logger": configs["logger"]})
+            if 'scheduler' in configs:
+                configs_info.update({'scheduler':configs['scheduler']})
+            if 'version_manager' in configs:
+                configs_info.update({'version_manager':configs['version_manager']})
+            if 'logger' in configs:
+                configs_info.update({'logger':configs['logger']})
 
-    return configs_info
+    return  configs_info
 
 
-def _main_job_command(app, executable, work_dir, parent_log_dir, job_id):
-    # exec_file = info.cmd
+
+
+def _main_job_command(app,executable,work_dir, parent_log_dir, job_id):
     exec_file = os.path.relpath(executable, os.getcwd())
+    
 
     args = _get_overrides()
     values = [
@@ -442,24 +441,18 @@ def _main_job_command(app, executable, work_dir, parent_log_dir, job_id):
             +mlxpy.logger.forced_log_id={job_id}\
             +mlxpy.logger.parent_log_dir={parent_log_dir} \
             +mlxpy.use_scheduler={False}\
-            +mlxpy.use_version_manager={False}",
+            +mlxpy.use_version_manager={False}"
     ]
 
     values = [f"{val}\n" for val in values]
     return "".join(values)
 
-
 def _get_overrides():
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
-
     def filter_fn(x):
-        return (
-            ("version_manager" not in x)
-            and ("scheduler" not in x)
-            and ("logger.parent_log_dir" not in x)
-        )
-
+        return ("version_manager" not in x) and ("scheduler" not in x) and ("logger.parent_log_dir" not in x)
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args
+

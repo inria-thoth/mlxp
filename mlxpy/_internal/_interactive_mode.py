@@ -1,4 +1,4 @@
-class bcolors:
+class _bcolors:
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKCYAN = "\033[96m"
@@ -10,9 +10,6 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
-def printc(color, text):
-    print(color + text + bcolors.ENDC)
+def _printc(color, text):
+    print(color + text + _bcolors.ENDC)
 
-
-def inputc(color, text):
-    input(color + text + bcolors.ENDC)

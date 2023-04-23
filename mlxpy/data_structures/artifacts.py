@@ -1,3 +1,5 @@
+"""Artifacts objects that can be saved by a Logger object."""
+
 import abc
 from typing import Any
 from dataclasses import dataclass
@@ -7,6 +9,7 @@ import dill as pkl
 @dataclass
 class Artifact(abc.ABC):
     """An abstract base class for any types of artifacts.
+    
     This class can deal with different objects structures
     such as numpy arrays, torch tensors, checkpoints, etc.
     Instances of this class are meant to be used as inputs
@@ -23,31 +26,34 @@ class Artifact(abc.ABC):
         :type: str
 
         The extension under which the object obj is saved
-
     """
 
     obj: Any
     ext: str
 
     @abc.abstractmethod
-    def save(self, fname: str) -> None:
-        """Saves the attribute obj into a file named fname.
+    def _save(self, fname: str) -> None:
+        """Save the attribute obj into a file named fname.
 
         :param fname: The name of the file where the object must be saved.
         :type fname: str
         :return: None
-
         """
         pass
 
 
 @dataclass
 class Checkpoint(Artifact):
-    """An subclass of Artifact for saving any python object that is serializable.
-    """
+    """An subclass of Artifact for saving any python object that is serializable."""
 
     ext = ".pkl"
 
-    def save(self, fname):
+    def _save(self, fname):
+        """Save the attribute obj into a file named fname.
+
+        :param fname: The name of the file where the object must be saved.
+        :type fname: str
+        :return: None
+        """
         with open(f"{fname}{self.ext}", "wb") as f:
             pkl.dump(self.obj, f)

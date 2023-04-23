@@ -1,3 +1,5 @@
+"""Structures for validating the configurations."""
+
 from dataclasses import dataclass, field
 import os
 
@@ -7,8 +9,7 @@ from omegaconf import MISSING
 
 @dataclass
 class ConfigScheduler:
-    """
-    Structure of the scheduler config file.
+    """Structure of the scheduler config file.
 
     .. py:attribute:: name
         :type: str
@@ -45,7 +46,6 @@ class ConfigScheduler:
         A list of strings containing the scheduler's options for the job.
         This allows to specify the desired resources to the scheduler such as
         the duration of the job, the quantity and type of resources, etc.
-
     """
 
     name: str = "NoScheduler"
@@ -58,15 +58,12 @@ class ConfigScheduler:
 
 @dataclass
 class ConfigVersionManager:
-    """
-    Structure of the config file for the version manager.
-
+    """Structure of the config file for the version manager.
 
     .. py:attribute:: name
         :type: str
 
         Name of the version manager's class.
-
     """
 
     name: str = MISSING
@@ -74,9 +71,8 @@ class ConfigVersionManager:
 
 @dataclass
 class ConfigGitVM(ConfigVersionManager):
-
-    """
-    Configs for using the GitVM version manager.
+    """Configs for using the GitVM version manager.
+    
     It inherits the structure of the class VersionManager.
 
     .. py:attribute:: name
@@ -94,7 +90,6 @@ class ConfigGitVM(ConfigVersionManager):
         :type: bool
 
         When set to true, the version manager stores a list of requirements and their version.
-
     """
 
     name: str = "GitVM"
@@ -104,11 +99,10 @@ class ConfigGitVM(ConfigVersionManager):
 
 @dataclass
 class ConfigLogger:
-    """
-    Structure of the config file for the logs.
+    """Structure of the config file for the logs.
+    
     The outputs for each run are saved in a directory of the form
-    'parent_log_dir/log_id'
-    which is stored in the variable 'path' during execution.
+    'parent_log_dir/log_id' which is stored in the variable 'path' during execution.
 
     .. py:attribute:: name
         :type: str
@@ -136,7 +130,6 @@ class ConfigLogger:
 
         If true logs the system stdout and stderr of a run to a file named
         "log.stdour" and "log.stderr" in the log directory.
-
     """
 
     name: str = "DefaultLogger"
@@ -147,8 +140,7 @@ class ConfigLogger:
 
 @dataclass
 class Info:
-    """
-    A structure storing general information about the run.
+    """A structure storing general information about the run.
 
     The following variables are assigned during execution.
 
@@ -225,8 +217,6 @@ class Info:
         :type: Any
 
         version_manager info, whenever used.
-
-
     """
 
     status: str = "STARTING"
@@ -247,9 +237,7 @@ class Info:
 
 @dataclass
 class MlxpyConfig:
-    """
-
-    Default settings of mlxpy.
+    """Default settings of mlxpy.
 
     .. py:attribute:: logger
         :type: ConfigLogger
@@ -309,7 +297,6 @@ class MlxpyConfig:
 
                     - Existing untracked files or uncommitted changes are ignored.
                     - A copy of the code is made based on the latest commit (if not already existing) and code is executed from there.
-
     """
 
     logger: ConfigLogger = ConfigLogger()
@@ -323,9 +310,7 @@ class MlxpyConfig:
 
 @dataclass
 class Metadata:
-    """
-
-    The structure of the config file.
+    """The structure of the config file.
 
     .. py:attribute:: info
         :type: Info
@@ -345,7 +330,6 @@ class Metadata:
         :type: Any
 
         Contains the user's defined configs that are specific to the run.
-
     """
 
     info: Info = Info()

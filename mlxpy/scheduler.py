@@ -1,3 +1,5 @@
+"""The scheduler allows submitting several jobs to a cluster queue using hydra."""
+
 import os
 import subprocess
 from omegaconf.errors import OmegaConfBaseException
@@ -8,9 +10,7 @@ from mlxpy.errors import JobSubmissionError
 
 
 class Scheduler(abc.ABC):
-    """
-    An abstract class whose children allow to submit jobs
-    using a particular job scheduler such as OAR or SLURM.
+    """An abstract class whose children allow to submit jobs using a particular job scheduler such as OAR or SLURM.
 
     .. py:attribute:: directive
         :type: str
@@ -55,11 +55,8 @@ class Scheduler(abc.ABC):
 
         Command for configuring the shell when submitting a job using a scheduler.
         (e.g.: 'source ~/.bashrc')
-
-
-
     """
-
+    
     def __init__(
         self,
         directive: str,
@@ -70,8 +67,7 @@ class Scheduler(abc.ABC):
         cleanup_cmd: str = "",
         option_cmd: List[str] = [],
     ):
-        """
-        Constructor
+        """Create a scheduler object.
 
         :param directive: The string that preceeds the command options of a scheduler in a script.
         :param submission_cmd: The command for submitting a job defined in a script to the scheduler.
@@ -80,9 +76,6 @@ class Scheduler(abc.ABC):
         :param env_cmd: A command for activating the working environment.
         :param cleanup_cmd: A command for cleaning up the environment before executing code.
         :param option_cmd: A list of strings containing the scheduler's options for the job.
-
-
-
         :type directive: str
         :type submission_cmd: str
         :type shell_path: str
@@ -90,9 +83,7 @@ class Scheduler(abc.ABC):
         :type env_cmd: str
         :type cleanup_cmd: str
         :type option_cmd: List[str]
-
         """
-
         self.directive = directive
         self.cleanup_cmd = cleanup_cmd
         self.submission_cmd = submission_cmd
@@ -104,42 +95,34 @@ class Scheduler(abc.ABC):
 
     @abc.abstractmethod
     def make_job_details(self, log_dir: str) -> List[str]:
-        """
-        Returns a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.
+        """Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.
 
         :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.
         :type log_dir: str
         :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.
         :rtype: List[str]
-
         """
         pass
 
     @abc.abstractmethod
     def get_info(self) -> Dict[str, Any]:
+        """Return the scheduler's job id of the submited job.
+
+        :return: The job id assigned by the scheduler to the submited job.
+        :rtype: int
         """
-            Returns the scheduler's job id of the submited job.
-
-            :return: The job id assigned by the scheduler to the submited job.
-            :rtype: int
-
-        """
-
         pass
 
     def submit_job(self, main_cmd, log_dir) -> None:
-        """
-            Submits the job to the scheduler and returns
-            a string containing the output of the submission command.
+        """Submit the job to the scheduler and returns a string containing the output of the submission command.
 
-            .. note:: There is generally no need to customize this function.
+        .. note:: There is generally no need to customize this function.
 
-            :param main_cmd: A string of the main bash command to be executed.
-            :param log_dir: The log directory where the main script will be saved. The job will be launched from their.
-            :type main_cmd: str
-            :type log_dir: str
-            :raises JobSubmissionError: if the scheduler failed to submit the job.
-
+        :param main_cmd: A string of the main bash command to be executed.
+        :param log_dir: The log directory where the main script will be saved. The job will be launched from their.
+        :type main_cmd: str
+        :type log_dir: str
+        :raises JobSubmissionError: if the scheduler failed to submit the job.
         """
         cmd = self._make_job(main_cmd, log_dir)
         print(cmd)
@@ -187,9 +170,7 @@ class Scheduler(abc.ABC):
 
 
 class OARScheduler(Scheduler):
-    """
-        OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs
-    """
+    """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
     def __init__(
         self,
@@ -210,14 +191,11 @@ class OARScheduler(Scheduler):
         )
 
     def get_info(self) -> Dict[str, Any]:
+        """Return a dictionary containing the job_id assigned to the run by the scheduler.
+
+        :return: A dictionary containing the job_id assigned to the run by the scheduler.
+        :rtype: Dict[str,Any]
         """
-            Returns a dictionary containing the job_id assigned to the run by the scheduler.
-
-            :return: A dictionary containing the job_id assigned to the run by the scheduler.
-            :rtype: Dict[str,Any]
-
-        """
-
         if self.process_output:
             scheduler_job_id = self.process_output.split("\n")[-2].split("=")[-1]
             return {"scheduler_job_id": scheduler_job_id}
@@ -225,6 +203,13 @@ class OARScheduler(Scheduler):
             return {}
 
     def make_job_details(self, log_dir):
+        """Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.
+
+        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.
+        :type log_dir: str
+        :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.
+        :rtype: List[str]
+        """
         job_name = log_dir.split(os.sep)
         job_name = os.sep.join(job_name[-2:])
         # Creating job string
@@ -240,9 +225,7 @@ class OARScheduler(Scheduler):
 
 
 class SLURMScheduler(Scheduler):
-    """
-    SLURM job scheduler, see documentation in: https://slurm.schedmd.com/documentation.html
-    """
+    """SLURM job scheduler, see documentation in: https://slurm.schedmd.com/documentation.html."""
 
     def __init__(
         self,
@@ -263,16 +246,22 @@ class SLURMScheduler(Scheduler):
         )
 
     def get_info(self) -> Dict[str, Any]:
-        """
-            Returns a dictionary containing the job_id assigned to the run by the scheduler.
+        """Return a dictionary containing the job_id assigned to the run by the scheduler.
 
-            :return: A dictionary containing the job_id assigned to the run by the scheduler.
-            :rtype: Dict[str,Any]
-        """
+        :return: A dictionary containing the job_id assigned to the run by the scheduler.
+        :rtype: Dict[str,Any]
+        """        
         # Not implemented yet!
         return {}
 
     def make_job_details(self, log_dir):
+        """Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.
+
+        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.
+        :type log_dir: str
+        :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.
+        :rtype: List[str]
+        """
         job_name = log_dir.split(os.sep)
         job_name = os.sep.join(job_name[-2:])
         # Creating job string

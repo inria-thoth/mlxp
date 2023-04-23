@@ -1,7 +1,7 @@
 The scheduler
 =============
 
-The scheduler allows submitting several jobs to a cluster queue using hydra.
+
 
 
 

@@ -1,3 +1,5 @@
+"""Data structures returned by Reader object."""
+
 from __future__ import annotations
 import os
 import json
@@ -10,7 +12,7 @@ from collections.abc import (
     ItemsView,
 )
 
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 
 from mlxpy.errors import InvalidKeyError, InvalidAggregationMapError
 
@@ -18,22 +20,26 @@ LAZYDATA = "LAZYDATA"
 
 
 class AggregationMap:
-    """
-    An abstract class whose children can perform aggregations on arrays.
-
-    """
+    """An abstract class whose children can perform aggregations on arrays."""
 
     def __init__(self, keys, func=None, args={}, map_name=""):
         self.func = func
         self.keys = keys
         self.args = args
         self.map_name = map_name
-        self.name = self.make_name()
+        self.name = self._make_name()
 
-    def make_name(self):
+    def _make_name(self):
         return self.map_name + "(" + ",".join(self.keys) + ")"
 
-    def apply(self, data):
+    def _apply(self, data:List[Dict[str,Any]])->Dict[str,Any]:
+        """Apply a map to input data and return the result.
+        
+        :param data: List of dictionaries containing data to be aggregated.
+        :type data: List[Dict[str,Any]]
+        :return: A dictionary containing the aggregated result.
+        :rtype: Dict[str,Any]
+        """
         # Input: List of dicts where each entry of the list
         # contains data corresponding to a config.
         # Output: Dict of outputs
@@ -41,83 +47,84 @@ class AggregationMap:
 
 
 class DataDict(Mapping):
-    """
-    A dictionary of key values pairs where some values are loaded lazyly
-    from a specific path whenever they are accessed.
-
-
-    """
+    """A dictionary of key values pairs where some values are loaded lazyly from a specific path whenever they are accessed."""
 
     def __init__(self, flattened_dict, parent_dir=None):
-        self.config = {"flattened": flattened_dict, "lazy": LazyDict(flattened_dict)}
+        self.config = {"flattened": flattened_dict, "lazy": _LazyDict(flattened_dict)}
 
         self.parent_dir = parent_dir
         if self.parent_dir:
             self._make_lazydict()
 
+    def _flattened(self):
+        return self.config["flattened"]
+
+    def _lazy(self):
+        return self.config["lazy"]
+
     def __getitem__(self, key):
-        return self.config["lazy"][key]
+        """Get item corresponding to a key."""
+        return self._lazy()[key]
 
     def __iter__(self):
-        return iter(self.config["lazy"])
+        """Iterate over elements of the dictionary."""
+        return iter(self._lazy())
 
     def __len__(self):
-        return len(self.config["lazy"])
+        """Return the number of items in the dictionary."""
+        return len(self._lazy())
 
     def __repr__(self):
-        return repr(self.config["flattened"])
+        """Return a view of the dictionary."""
+        return repr(self._flattened())
 
     def _repr_html_(self):
+        """Return a view of the dictionary compatible with html."""
         import pandas as pd
 
-        df = pd.DataFrame([self.config["flattened"]])
+        df = pd.DataFrame([self._flattened()])
         return df._repr_html_()
 
     def keys(self):
-
-        return self.config["flattened"].keys()
+        """Return keys of the dictionary."""
+        return self._flattened().keys()
 
     def items(self):
-
-        return self.config["lazy"].items()
-
-    def flattened(self):
-        return self.config["flattened"]
-
-    def lazy(self):
-        return self.config["lazy"]
+        """Return items of the dictionary."""
+        return self._lazy().items()
 
     def _make_lazydict(self):
         all_keys = [
-            key for key, value in self.config["flattened"].items() if value == LAZYDATA
+            key for key, value in self._flattened().items() if value == LAZYDATA
         ]
         parent_keys = set([key.split(".")[0] for key in all_keys])
         # try:
         self.lazydata_dict = {
-            parent_key: LazyData(self.parent_dir, parent_key)
+            parent_key: _LazyData(self.parent_dir, parent_key)
             for parent_key in parent_keys
         }
         # except:
         #    pass
 
-        self.config["lazy"].update(
+        self._lazy().update(
             {key: self.lazydata_dict[key.split(".")[0]].get_data for key in all_keys}
         )
 
     def update(self, new_dict):
+        """Update the dictionary with values from another dictionary."""
         copy_dict = {
             key: LAZYDATA if callable(value) else value
             for key, value in new_dict.items()
         }
-        self.config["lazy"].update(new_dict)
-        self.config["flattened"].update(copy_dict)
+        self._lazy().update(new_dict)
+        self._flattened().update(copy_dict)
 
-    def free_unused(self):
+    def _free_unused(self):
         for key, data in self.lazydata_dict.items():
-            data.free_unused()
+            data._free_unused()
 
 
-class LazyDict(MutableMapping):
+class _LazyDict(MutableMapping):
     def __init__(self, *args, **kw):
         self._raw_dict = dict(*args, **kw)
 
@@ -141,7 +148,7 @@ class LazyDict(MutableMapping):
         self._raw_dict[key] = value
 
 
-class LazyData(object):
+class _LazyData(object):
     def __init__(self, parent_dir, file_name, extension=".json"):
         self.file_name = file_name
         self.parent_dir = parent_dir
@@ -155,7 +162,7 @@ class LazyData(object):
             self.used_keys.add(key)
         return self._data[key]
 
-    def free_unused(self):
+    def _free_unused(self):
         all_keys = set(self._data.keys())
         unused_keys = all_keys.difference(self.used_keys)
         for key in unused_keys:
@@ -171,8 +178,9 @@ class _MyListProxy:
 
 
 class DataDictList(list):
-    """
-    A list of elements of type DataDict. This list can be viewed as a dataframe
+    """A list of elements of type DataDict.
+
+    This list can be viewed as a dataframe
     where each row represents a given entry (a DataDict) and columns represent
     the keys of the DataDicts.  This structure allows to load some columns lazyly.
     the content of some columns is loaded from its corresponding file
@@ -180,8 +188,6 @@ class DataDictList(list):
 
     It is displayed as a pandas dataframe and
     can be converted to it using the method toPandasDF.
-
-
     """
 
     def __init__(self, iterable: List[DataDict]):
@@ -195,39 +201,39 @@ class DataDictList(list):
         self._keys = None
 
     def __repr__(self):
+        """Display the DataDictList object as a pandas dataframe."""
         return str(self.toPandasDF())
 
+    def _repr_html_(self):
+        """Display the DataDictList object as a pandas dataframe for html."""
+        return self.toPandasDF()._repr_html_()
+
     def __getitem__(self, index):
+        """Return the item at a given index."""
         if isinstance(index, slice):
             return _MyListProxy([d for d in super().__getitem__(index)])
         else:
             return super().__getitem__(index)
 
-    def _repr_html_(self):
-        return self.toPandasDF()._repr_html_()
-
     def toPandasDF(self, lazy=True) -> pd.DataFrame:
-        """
-        Converts the list into a pandas dataframe.
+        """Convert the list into a pandas dataframe.
 
         :param lazy: If true the pandas dataframe does not contain the results of data loaded lazyly.
         :return: A panda dataframe containing logs (configs and data)
         of the DataDictList object
         :rtype: pd.DataFrame
-
         """
         if lazy:
             if self.pandas_lazy is None:
-                self.pandas_lazy = pd.DataFrame([config.flattened() for config in self])
+                self.pandas_lazy = pd.DataFrame([config._flattened() for config in self])
             return self.pandas_lazy
         else:
             if self.pandas is None:
-                self.pandas = pd.DataFrame([config.lazy() for config in self])
+                self.pandas = pd.DataFrame([config._lazy() for config in self])
             return self.pandas
 
     def keys(self) -> List[str]:
-        """
-        Returns a list of column names of the dataframe.
+        """Return a list of column names of the dataframe.
 
         :return: List of strings containing the column names of the dataframe
         :rtype: List[str]
@@ -237,17 +243,15 @@ class DataDictList(list):
         return self._keys
 
     def groupBy(self, list_group_keys: List[str]) -> GroupedDataDicts:
-        """
-            Performs a groupby operation on the dataframe
-            according to a list of colum names (list_group_keys).
-            Returns an object of the class GroupedDataDicts
+        """Perform a groupby operation on the dataframe according to a list of colum names (list_group_keys).
+        
+        Returns an object of the class GroupedDataDicts
 
-            :params list_group_keys: a list of strings containing the names of the columns to be grouped.
-            :type list_group_keys: List[str]
-            :return: A hierarchical dataframe grouped by the values of the columns provided to list_group_keys.
-            :rtype: GroupedDataDicts
-            :raises InvalidKeyError: if one of the provided keys does not match any columns of the dataframe.
-
+        :params list_group_keys: a list of strings containing the names of the columns to be grouped.
+        :type list_group_keys: List[str]
+        :return: A hierarchical dataframe grouped by the values of the columns provided to list_group_keys.
+        :rtype: GroupedDataDicts
+        :raises InvalidKeyError: if one of the provided keys does not match any columns of the dataframe.
         """
         # Check if keys are valid
         valid_keys = self.keys()
@@ -265,17 +269,14 @@ class DataDictList(list):
         return grouped_config
 
     def config_diff(self, start_key="config") -> List[str]:
-        """
-            Returns a list of colums keys starting with 'start_key'
-            and whose value varies in the dataframe.
+        """Return a list of colums keys starting with 'start_key' and whose value varies in the dataframe.
 
-            :param start_key: A string with which all column names to be considered must start.
-            :type start_key: str (default 'config')
-            :return: A list of strings containing the column names
-            starting with 'start_key' and whose values vary in the dataframe.
-            :rtype: List[str]
+        :param start_key: A string with which all column names to be considered must start.
+        :type start_key: str (default 'config')
+        :return: A list of strings containing the column names
+        starting with 'start_key' and whose values vary in the dataframe.
+        :rtype: List[str]
         """
-
         diff_keys = []
         ref_dict = None
 
@@ -295,8 +296,8 @@ class DataDictList(list):
 
 
 class GroupedDataDicts:
-    """
-    A dictionary where each key represents the tuple of values taken by the grouped column of some processed dataframe.
+    """A dictionary where each key represents the tuple of values taken by the grouped column of some processed dataframe.
+    
     The values corresponsing to each key are objects of type DataDictList containing a group.
     This object is usually obtained as the output of the group_by method of the class  DataDictList.
     It is displayed as a hierarchical pandas dataframe and
@@ -320,8 +321,8 @@ class GroupedDataDicts:
     def __init__(
         self, group_keys: List[str], grouped_dict: Dict[Tuple[str, ...], DataDictList]
     ):
-        """
-        Constructor
+        """Create an GroupedDataDicts object.
+        
         :param group_keys: A list of string containing the column names used for grouping.
         :param grouped_dict: A dictionary where each key represents the tuple of values
         taken by the grouped column of some processed dataframe.
@@ -329,9 +330,7 @@ class GroupedDataDicts:
 
         :type group_keys: List[str]
         :type grouped_dict: Dict[Tuple[str, ...], DataDictList]
-
         """
-
         self.group_keys = group_keys
         self.grouped_dict = grouped_dict
         self.group_vals = list(self.grouped_dict.keys())
@@ -340,52 +339,44 @@ class GroupedDataDicts:
         self.pandas = None
 
     def __iter__(self):
+        """Iterate over the groups of the GroupedDataDicts object."""
         return iter(self.grouped_dict)
 
     def __getitem__(self, key: Tuple[str, ...]) -> DataDictList:
-        """
-        Returns the value of the dictionary at a given key
-        """
-
+        """Return the group corresponding to a given group key."""
         return self.grouped_dict[key]
 
     def __repr__(self):
-
+        """Display the GroupedDataDicts object as a pandas dataframe."""
         return str(self.toPandasDF())
 
     def items(self) -> ItemsView:
-        """
-        Return the items of the grouped dictionary
+        """Return the items of the grouped dictionary.
 
         :return: items of the dictionary
         :rtype: ItemsView
         """
-
         return self.grouped_dict.items()
 
     def keys(self) -> KeysView:
-        """
-        Return the keys of the grouped dictionary
+        """Return the keys of the grouped dictionary.
 
         :return: keys of the dictionary
         :rtype: KeysView
         """
-
         return self.grouped_dict.keys()
 
     def toPandasDF(self) -> pd.DataFrame:
-        """
-        Converts the list into a pandas dataframe.
+        """Convert. the list into a pandas dataframe.
 
         :return: A panda dataframe containing logs (configs and data)
         of the DataDictList object
         :rtype: pd.DataFrame
-
         """
         if self.pandas is None:
             all_configs = []
             for key, value in self.grouped_dict.items():
-                data_dict = value[0].flattened()
+                data_dict = value[0]._flattened()
                 for name_key, val_key in zip(self.group_keys, list(key)):
                     if name_key not in data_dict.keys():
                         data_dict[name_key] = val_key
@@ -400,9 +391,9 @@ class GroupedDataDicts:
     def aggregate(
         self, aggregation_maps: List[AggregationMap]
     ) -> Dict[str, GroupedDataDicts]:
-        """
-        Performs aggregation of the leaf dataframes according to some aggregation maps provided as input.
-        It returns a DataDictList object where each row represents a group
+        """Perform aggregation of the leaf dataframes according to some aggregation maps provided as input.
+        
+        This function returns a DataDictList object where each row represents a group
         and each column consist of one of the following:
 
             - The results of the aggregation maps.
@@ -430,7 +421,7 @@ def _group_by(config_dicts, list_group_keys):
     for config_dict in config_dicts:
 
         pkey_list = [
-            config_dict.flattened()[group_key] for group_key in list_group_keys
+            config_dict._flattened()[group_key] for group_key in list_group_keys
         ]
         pkey_val = [str(pkey) for pkey in pkey_list if pkey is not None]
         group_vals.add(tuple(pkey_val))
@@ -481,11 +472,11 @@ def _aggregate_collection(collection, agg_maps):
     for config_dict in collection:
         data = {key: config_dict[key] for key in value_keys}
         val_array.append(data)
-        config_dict.free_unused()
+        config_dict._free_unused()
 
     data_dict = {}
     for agg_map in agg_maps:
-        agg_val, index = agg_map.apply(val_array)
+        agg_val, index = agg_map._apply(val_array)
         data_dict.update(agg_val)
     return data_dict
 

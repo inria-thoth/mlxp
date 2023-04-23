@@ -1,7 +1,6 @@
-# class for reading resuls of experiments
+"""The reader allows queryring the logs of several experiments and performing operations on the content of these logs (e.g. grouping and aggregation)."""
 
 import os
-import json
 import yaml
 
 from tinydb import TinyDB
@@ -9,7 +8,7 @@ from tinydb.storages import JSONStorage
 from tinydb.table import Document
 
 from mlxpy.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
-from mlxpy.parser import Parser, DefaultParser, is_searchable
+from mlxpy.parser import Parser, DefaultParser, _is_searchable
 from typing import Union, Optional
 import pandas as pd
 
@@ -18,8 +17,8 @@ from mlxpy.enumerations import DataFrameType, Directories
 
 
 class Reader(object):
-    """
-    Constructs a database for the runs contained in a source directory 'src_dir'.
+    """A class for exploiting the results stored in several runs contained in a same parent directory 'src_dir'.
+    
     Once, created, it is possible to query the database using the method 'filter'
     to get the results matching a specific configuration setting.
     The result of the query is returned either as a DataDictList object or a pandas dataframe.
@@ -44,7 +43,6 @@ class Reader(object):
         By default it is set to the source directory 'src_dir'.
         The user can select a different location for the database
         by setting the variable 'dst_dir' of the constructor to a different directory.
-
     """
 
     def __init__(
@@ -54,8 +52,7 @@ class Reader(object):
         parser: Parser = DefaultParser(),
         reload: bool = False,
     ):
-        """
-        Constructor
+        """Create a reader object.
 
         :param src_dir: The path to the parent directory containing logs of several runs.
         :param dst_dir: The destination directory where the database will be created.
@@ -66,9 +63,7 @@ class Reader(object):
         :type parser: Parser (default DefaultParser)
         :type reload: bool (default False)
         :raises PermissionError: if user has no writing priviledges on dst_dir
-
         """
-
         self.parser = parser
         self.src_dir = os.path.abspath(src_dir)
         self.file_name = "database"
@@ -89,7 +84,12 @@ class Reader(object):
         if not self.db.tables() or reload:
             self._create_base()
 
-    def __len__(self):
+    def __len__(self)->int:
+        """Return the number of runs contained in the database created by the reader.
+        
+        :return: Number of runs contained in the database. 
+        :rtype: int
+        """
         return len(self.runs)
 
     def filter(
@@ -97,8 +97,7 @@ class Reader(object):
         query_string: str = "",
         result_format: str = DataFrameType.DataDictList.value,
     ) -> Union[DataDictList, pd.DataFrame]:
-        """
-        Searching a query in a database of runs.
+        """Search a query in a database of runs.
 
         :param query_string: a string defining the query constaints.
         :param result_format: format of the result (either a pandas dataframe or an object of type DataDictList).
@@ -108,7 +107,6 @@ class Reader(object):
         :return: The result of a query either as a DataDictList or a pandas dataframe.
         :rtype: Union[DataDictList,pd.DataFrame]
         :raises SyntaxError: if the query string does not follow expected syntax.
-
         """
         is_valid = False
         for member in DataFrameType:
@@ -135,13 +133,10 @@ class Reader(object):
 
     @property
     def fields(self) -> pd.DataFrame:
-        """
-        Returns all fields of the database except those specific to mlxpy,
-        excluding the fields contained in the file 'mlxpy.yaml'.
+        """Return all fields of the database except those specific to mlxpy, excluding the fields contained in the file 'mlxpy.yaml'.
 
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame
-
         """
         fields_dict = {
             k: v
@@ -157,17 +152,13 @@ class Reader(object):
 
     @property
     def searchable(self) -> pd.DataFrame:
-        """
-        Returns all fields of the database that are searchable,
-        excluding the fields contained in the file 'mlxpy.yaml'.
+        """Return all fields of the database that are searchable, excluding the fields contained in the file 'mlxpy.yaml'.
 
         return: a dataframe of all fields contained in the database that can be searched using the method filter
         rtype: pd.DataFrame
-
         """
-
         fields_dict = {
-            k: v for d in self._fields.all() for k, v in d.items() if is_searchable(k)
+            k: v for d in self._fields.all() for k, v in d.items() if _is_searchable(k)
         }
         df = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
         df.set_index("Fields", inplace=True)

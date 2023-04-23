@@ -1,15 +1,16 @@
+"""Implementation of some Artifact objects."""
+
 from dataclasses import dataclass
 from mlxpy.logging.artifacts import Artifact
 
 
 @dataclass
 class NumpyArray(Artifact):
-    """A subclass of Artifact for saving dictionaries of numpy arrays.
-    """
+    """A subclass of Artifact for saving dictionaries of numpy arrays."""
 
     ext = ".npz"
 
-    def save(self, fname):
+    def _save(self, fname):
 
         import numpy as np
 
@@ -18,12 +19,11 @@ class NumpyArray(Artifact):
 
 @dataclass
 class PNGImage(Artifact):
-    """An subclass of Artifact for saving a instance of matplotlib.figure.Figure.
-    """
+    """A subclass of Artifact for saving a instance of matplotlib.figure.Figure."""
 
     ext = ".png"
 
-    def save(self, fname):
+    def _save(self, fname):
         import matplotlib
 
         assert isinstance(self.obj, matplotlib.figure.Figure)
@@ -32,13 +32,11 @@ class PNGImage(Artifact):
 
 @dataclass
 class TorchModel(Artifact):
-    """An subclass of Artifact for saving pytorch objects: Tensor, Module, or
-    a dictionary containing the whole state of a module.
-    """
+    """A subclass of Artifact for saving pytorch objects: Tensor, Module, or a dictionary containing the whole state of a module."""
 
     ext = ".pth"
 
-    def save(self, fname):
+    def _save(self, fname):
         import torch
 
         torch.save(self.obj, f"{fname}{self.ext}")

@@ -1,3 +1,5 @@
+"""A few aggregation maps."""
+
 import numpy as np
 
 
@@ -5,10 +7,12 @@ from mlxpy.data_structures.data_dict import AggregationMap
 
 
 class Last(AggregationMap):
+    """Return the last element of a list."""
+
     def __init__(self, key):
         super().__init__([key], map_name="last")
 
-    def apply(self, data):
+    def _apply(self, data):
         key = self.keys[0]
         try:
             return {self.name: data[key][-1]}
@@ -19,10 +23,12 @@ class Last(AggregationMap):
 
 
 class Min(AggregationMap):
+    """Return the smallest element in a list."""
+
     def __init__(self, key):
         super().__init__([key], map_name="min")
 
-    def apply(self, data):
+    def _apply(self, data):
         index = -1
         selected_data = [d[self.keys[0]] for d in data]
         try:
@@ -33,10 +39,12 @@ class Min(AggregationMap):
 
 
 class Max(AggregationMap):
+    """Return the largest element in a list."""
+
     def __init__(self, key):
         super().__init__([key], map_name="max")
 
-    def apply(self, data):
+    def _apply(self, data):
         index = -1
         selected_data = [d[self.keys[0]] for d in data]
         try:
@@ -47,10 +55,12 @@ class Max(AggregationMap):
 
 
 class AvgStd(AggregationMap):
+    """Compute the mean and standard deviation of a list of arrays."""
+    
     def __init__(self, key):
         super().__init__([key], map_name="avgstd")
 
-    def apply(self, data):
+    def _apply(self, data):
 
         data = [{key: d[key] for key in self.keys} for d in data]
         out, _ = _compute_mean_and_std(data)
