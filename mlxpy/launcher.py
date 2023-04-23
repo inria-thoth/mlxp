@@ -338,7 +338,7 @@ def launch(
                 
 
                 if logger:
-                    cfg.update(_get_scheduler_configs(log_dir)) # Checks if a metadata file exists and loads the scheduler configs
+                    cfg.update({'info': _get_mlxpy_configs(log_dir)}) 
                 try:
                     
                     cfg.update({'info':{'status':Status.RUNNING.value}})
@@ -430,19 +430,23 @@ def _set_co_filename(func, co_filename):
     )
 
 
-def _get_scheduler_configs(log_dir):
-    abs_name = os.path.join(log_dir, 'metadata','info.yaml')
-    scheduler_configs = {}
+def _get_mlxpy_configs(log_dir):
+    from mlxpy.logger import Directories 
+    abs_name = os.path.join(log_dir, Directories.Metadata.value,'info.yaml')
+    configs_info = {}
     
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-            try:
-                scheduler_configs = {'info':{'scheduler':configs['scheduler']}}
-            except KeyError:
-                pass
+            if 'scheduler' in configs:
+                configs_info.update({'scheduler':configs['scheduler']})
+            if 'version_manager' in configs:
+                configs_info.update({'version_manager':configs['version_manager']})
+            if 'logger' in configs:
+                configs_info.update({'logger':configs['logger']})
 
-    return  scheduler_configs
+
+    return  configs_info
 
 
 
