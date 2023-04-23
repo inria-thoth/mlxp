@@ -1,33 +1,22 @@
-2- Easy logging 
----------------
+2- Logging 
+----------
 
 
+Logging metrics and artifacts
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The logger provides four methods for logging objects:
+    
+    - 'log_metrics': For logging dictionaries of scalars in a json file. This method can be used to log the loss and other scalar quantities that can evolve during the run. These dictionaries are stored in a json file.
+    - 'log_artifacts': For logging more complex objects such as the weights of a network, etc. This method requires passing objects inheriting from the abstract class Artifacts.
+    - 'log_checkpoint': A simpler method for logging serializable objects as a pickle file.
+    - 'load_checkpoint': A method for loading a saved checkpoint.
 
 
+The file structure of the logs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The parent log directory
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-When the logger is activated, it stores the results of a run in a sub-directory of the parent directory './logs'. This parent directory is created automatically if it does not exists already. By default it is set to './logs', but this value can be overriden from the command-line:
-
-.. code-block:: console
-
-   $ python main.py mlxpy.logger.parent_log_dir='./new_logs'
-
-
-Alternatively, the parent directory can be modified directly in the mlxpy default settings file 'configs/mlxpy.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using mlxpy in the current project:
-
-.. code-block:: yaml
-   :caption: ./configs/mlxpy.yaml
-
-   logger:
-     ...
-     parent_log_dir: ./logs
-     ...
-
-
-Structure of the parent log directory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When the logger is activated, it stores the results of a run in a sub-directory of the parent directory './logs'. This parent directory is created automatically if it does not exists already. By default it is set to './logs', but this behavior can be modified (see :ref: `Customizing the parent log directory'<custom_log_dir>`).
 
 First, the logger assigns a 'log_id' to the run. Every time 'main.py' is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of './logs' is created and named after the assigned log_id. 
 Since we executed the code three times in total, we should expect three sub-directories under './logs' called '1', '2', and '3', all having the same structure:
@@ -39,6 +28,7 @@ Since we executed the code three times in total, we should expect three sub-dire
    ├── 1/...
    ├── 2/...
    └── 3/...
+
 
 Each log directory contains three sub-directories: 'metadata', 'metrics' and 'artifacts':
 
@@ -156,6 +146,7 @@ The directory 'artifacts' is where all data passed to the logger's methods 'log_
 
 
 
+
 Checkpointing
 ^^^^^^^^^^^^^
 
@@ -220,3 +211,24 @@ Of course, if you execute 'main.py' without further options, the logger will cre
    Starting from epoch 10
    Completed training with learning rate: 1e-3
 
+.. _custom_log_dir:
+
+Customizing the parent log directory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can change the parent directory by overriding the option '+mlxpy.logger.parent_log_dir' from the command-line:
+
+.. code-block:: console
+
+   $ python main.py +mlxpy.logger.parent_log_dir='./new_logs'
+
+
+Alternatively, the parent directory can be modified directly in the mlxpy default settings file 'configs/mlxpy.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using mlxpy in the current project:
+
+.. code-block:: yaml
+   :caption: ./configs/mlxpy.yaml
+
+   logger:
+     ...
+     parent_log_dir: ./logs
+     ...

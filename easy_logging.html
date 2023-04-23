@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="3- Easy reading" href="easy_reading.html" /><link rel="prev" title="1- Easy launching" href="easy_launching.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="3- Reading" href="easy_reading.html" /><link rel="prev" title="1- Launching" href="easy_launching.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>2- Easy logging - Mlxpy 0.1 documentation</title>
+        <title>2- Logging - Mlxpy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -160,9 +160,9 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Easy launching</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">2- Easy logging</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Easy reading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
 <li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
@@ -212,31 +212,27 @@
           </label>
         </div>
         <article role="main">
-          <section id="easy-logging">
-<h1>2- Easy logging<a class="headerlink" href="#easy-logging" title="Permalink to this heading">#</a></h1>
-<section id="the-parent-log-directory">
-<h2>The parent log directory<a class="headerlink" href="#the-parent-log-directory" title="Permalink to this heading">#</a></h2>
-<p>When the logger is activated, it stores the results of a run in a sub-directory of the parent directory ‘./logs’. This parent directory is created automatically if it does not exists already. By default it is set to ‘./logs’, but this value can be overriden from the command-line:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>mlxpy.logger.parent_log_dir<span class="o">=</span><span class="s1">&#39;./new_logs&#39;</span>
-</pre></div>
-</div>
-<p>Alternatively, the parent directory can be modified directly in the mlxpy default settings file ‘configs/mlxpy.yaml’. This file is created automatically if it doesn’t exist already and contains all the defaults options for using mlxpy in the current project:</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">./configs/mlxpy.yaml</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">parent_log_dir</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./logs</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-</pre></div>
-</div>
-</div>
+          <section id="logging">
+<h1>2- Logging<a class="headerlink" href="#logging" title="Permalink to this heading">#</a></h1>
+<section id="logging-metrics-and-artifacts">
+<h2>Logging metrics and artifacts<a class="headerlink" href="#logging-metrics-and-artifacts" title="Permalink to this heading">#</a></h2>
+<p>The logger provides four methods for logging objects:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘log_metrics’: For logging dictionaries of scalars in a json file. This method can be used to log the loss and other scalar quantities that can evolve during the run. These dictionaries are stored in a json file.</p></li>
+<li><p>‘log_artifacts’: For logging more complex objects such as the weights of a network, etc. This method requires passing objects inheriting from the abstract class Artifacts.</p></li>
+<li><p>‘log_checkpoint’: A simpler method for logging serializable objects as a pickle file.</p></li>
+<li><p>‘load_checkpoint’: A method for loading a saved checkpoint.</p></li>
+</ul>
+</div></blockquote>
 </section>
-<section id="structure-of-the-parent-log-directory">
-<h2>Structure of the parent log directory<a class="headerlink" href="#structure-of-the-parent-log-directory" title="Permalink to this heading">#</a></h2>
+<section id="the-file-structure-of-the-logs">
+<h2>The file structure of the logs<a class="headerlink" href="#the-file-structure-of-the-logs" title="Permalink to this heading">#</a></h2>
+<p>When the logger is activated, it stores the results of a run in a sub-directory of the parent directory ‘./logs’. This parent directory is created automatically if it does not exists already. By default it is set to ‘./logs’, but this behavior can be modified (see :ref: <cite>Customizing the parent log directory’&lt;custom_log_dir&gt;</cite>).</p>
 <p>First, the logger assigns a ‘log_id’ to the run. Every time ‘main.py’ is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of ‘./logs’ is created and named after the assigned log_id.
 Since we executed the code three times in total, we should expect three sub-directories under ‘./logs’ called ‘1’, ‘2’, and ‘3’, all having the same structure:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
 ├── 1/...
 ├── 2/...
@@ -245,8 +241,8 @@ Since we executed the code three times in total, we should expect three sub-dire
 </div>
 </div>
 <p>Each log directory contains three sub-directories: ‘metadata’, ‘metrics’ and ‘artifacts’:</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
 ├── 1/
 │   ├── metadata/
@@ -270,8 +266,8 @@ Since we executed the code three times in total, we should expect three sub-dire
 <section id="the-metrics-directory">
 <h3>The ‘metrics’ directory<a class="headerlink" href="#the-metrics-directory" title="Permalink to this heading">#</a></h3>
 <p>This directory contains JSON files created when calling the logger’s method ‘log_metrics(dict, log_name)’. Each file is named after the variable ‘log_name’ and stores the dictionaries provided as input to the ‘log_metrics’ method.</p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metrics/train.json</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">./logs/1/metrics/train.json</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.030253788456320763</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;epoch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
 <span class="p">{</span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02899891696870327</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;epoch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
 <span class="p">{</span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.026649776846170425</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;epoch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
@@ -291,8 +287,8 @@ Since we executed the code three times in total, we should expect three sub-dire
 <h3>The ‘metadata’ directory<a class="headerlink" href="#the-metadata-directory" title="Permalink to this heading">#</a></h3>
 <p>The ‘metadata’ directory contains three yaml files: ‘config’, ‘info’, and ‘mlxpy’, each storing the content of the corresponding fields of the context object ‘ctx’.
 ‘config’ stores the user config of the run, ‘info’ stores general information about the run such as the assigned ‘log_id’ and the absolute path to the logs of the run ‘log_dir’. Finally, ‘mlxpy’ stores the mlxpy’s settings used for the run (e.g. the logger settings).</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/config.yaml</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/config.yaml</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="nt">num_epoch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="nt">model</span><span class="p">:</span>
@@ -305,8 +301,8 @@ Since we executed the code three times in total, we should expect three sub-dire
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/info.yaml</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/info.yaml</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/bin/python</span>
 <span class="nt">cmd</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20/04/2023</span>
@@ -323,8 +319,8 @@ Since we executed the code three times in total, we should expect three sub-dire
 </pre></div>
 </div>
 </div>
-<div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/mlxpy.yaml</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/mlxpy.yaml</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">forced_log_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-1</span>
 <span class="w">  </span><span class="nt">log_streams_to_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -357,8 +353,8 @@ Since we executed the code three times in total, we should expect three sub-dire
 <section id="checkpointing">
 <h2>Checkpointing<a class="headerlink" href="#checkpointing" title="Permalink to this heading">#</a></h2>
 <p>Checkpointing can be particularly useful if you need to restart a job from its latest state without having to re-run it from scratch. To do this, you only need to slightly modify the function ‘train’ to load the latest checkpoint by default:</p>
-<div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">OneHiddenLayer</span>
 
@@ -416,6 +412,23 @@ Since we executed the code three times in total, we should expect three sub-dire
 </pre></div>
 </div>
 </section>
+<section id="customizing-the-parent-log-directory">
+<span id="custom-log-dir"></span><h2>Customizing the parent log directory<a class="headerlink" href="#customizing-the-parent-log-directory" title="Permalink to this heading">#</a></h2>
+<p>You can change the parent directory by overriding the option ‘+mlxpy.logger.parent_log_dir’ from the command-line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxpy.logger.parent_log_dir<span class="o">=</span><span class="s1">&#39;./new_logs&#39;</span>
+</pre></div>
+</div>
+<p>Alternatively, the parent directory can be modified directly in the mlxpy default settings file ‘configs/mlxpy.yaml’. This file is created automatically if it doesn’t exist already and contains all the defaults options for using mlxpy in the current project:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">./configs/mlxpy.yaml</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">parent_log_dir</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./logs</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
         </article>
@@ -428,7 +441,7 @@ Since we executed the code three times in total, we should expect three sub-dire
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">3- Easy reading</div>
+                <div class="title">3- Reading</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -439,7 +452,7 @@ Since we executed the code three times in total, we should expect three sub-dire
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">1- Easy launching</div>
+                <div class="title">1- Launching</div>
                 
               </div>
             </a>
@@ -473,15 +486,16 @@ Since we executed the code three times in total, we should expect three sub-dire
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">2- Easy logging</a><ul>
-<li><a class="reference internal" href="#the-parent-log-directory">The parent log directory</a></li>
-<li><a class="reference internal" href="#structure-of-the-parent-log-directory">Structure of the parent log directory</a><ul>
+<li><a class="reference internal" href="#">2- Logging</a><ul>
+<li><a class="reference internal" href="#logging-metrics-and-artifacts">Logging metrics and artifacts</a></li>
+<li><a class="reference internal" href="#the-file-structure-of-the-logs">The file structure of the logs</a><ul>
 <li><a class="reference internal" href="#the-metrics-directory">The ‘metrics’ directory</a></li>
 <li><a class="reference internal" href="#the-metadata-directory">The ‘metadata’ directory</a></li>
 <li><a class="reference internal" href="#the-artifacts-directory">The ‘artifacts’ directory</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#checkpointing">Checkpointing</a></li>
+<li><a class="reference internal" href="#customizing-the-parent-log-directory">Customizing the parent log directory</a></li>
 </ul>
 </li>
 </ul>

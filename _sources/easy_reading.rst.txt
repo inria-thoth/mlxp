@@ -1,5 +1,5 @@
-3- Easy reading
----------------
+3- Reading
+----------
 
 We have already stored information about 3 runs so far. 
 We can access this information easily using mlxpy's reader module, which allows querying results, grouping, and aggregating them. Let's do this interactively!

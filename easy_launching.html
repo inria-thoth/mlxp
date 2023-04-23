@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="2- Easy logging" href="easy_logging.html" /><link rel="prev" title="Introduction" href="tutorial_introduction.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="2- Logging" href="easy_logging.html" /><link rel="prev" title="Introduction" href="tutorial_introduction.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>1- Easy launching - Mlxpy 0.1 documentation</title>
+        <title>1- Launching - Mlxpy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -160,9 +160,9 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">1- Easy launching</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Easy logging</a></li>
-<li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Easy reading</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">1- Launching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
 <li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
@@ -212,8 +212,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="easy-launching">
-<h1>1- Easy launching<a class="headerlink" href="#easy-launching" title="Permalink to this heading">#</a></h1>
+          <section id="launching">
+<h1>1- Launching<a class="headerlink" href="#launching" title="Permalink to this heading">#</a></h1>
 <p>We will see how to modify the file ‘main.py’ to use mlxpy using the decorator ‘mlxpy.launch’.
 But first, let’s introduce the ‘mlxpy.Context’ class which allows using mlxpy’s logging and configuring functionalities.</p>
 <section id="defining-a-default-config-file">
@@ -354,10 +354,6 @@ Of course, it is also possible to perform seeding inside the function ‘train�
 </div>
 <p>That’s it, launching a job using mlxpy is as easy as this!</p>
 </section>
-<section id="the-mlxpy-default-settings-file">
-<h2>The mlxpy default settings file<a class="headerlink" href="#the-mlxpy-default-settings-file" title="Permalink to this heading">#</a></h2>
-<p>When the code is executed for the first time, mlxpy creates a file ‘configs/mlxpy.py’ containing the defaults options for using the mlxpy in the current project. The user can customise these depending on their needs (See: <a class="reference internal" href="getting_started.html#configuring-mlxpy"><span class="std std-ref">Configuring mlxpy</span></a>).</p>
-</section>
 </section>
 
         </article>
@@ -370,7 +366,7 @@ Of course, it is also possible to perform seeding inside the function ‘train�
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">2- Easy logging</div>
+                <div class="title">2- Logging</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -415,7 +411,7 @@ Of course, it is also possible to perform seeding inside the function ‘train�
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">1- Easy launching</a><ul>
+<li><a class="reference internal" href="#">1- Launching</a><ul>
 <li><a class="reference internal" href="#defining-a-default-config-file">Defining a default config file</a></li>
 <li><a class="reference internal" href="#adapting-code-for-using-mlxpy">Adapting code for using mlxpy</a><ul>
 <li><a class="reference internal" href="#the-context-object">The Context object</a></li>
@@ -423,7 +419,6 @@ Of course, it is also possible to perform seeding inside the function ‘train�
 </li>
 <li><a class="reference internal" href="#launching-using-mlxpy">Launching using mlxpy</a></li>
 <li><a class="reference internal" href="#seeding-code-using-mlxpy">Seeding code using mlxpy</a></li>
-<li><a class="reference internal" href="#the-mlxpy-default-settings-file">The mlxpy default settings file</a></li>
 </ul>
 </li>
 </ul>

@@ -7,11 +7,9 @@ Then we will see how to enhance reproducibility of experiments using the git-bas
 
 To make things concrete, we will consider a simple use-case where we are interested in training a neural network on a regression task. You can find code for reproducing this tutorial by following this link https://github.com/MichaelArbel/mlxpy/tree/master/tutorial.
 
-We will now give a quick overview of our working example, where we present the directory structure of the code and its main content. 
-
-
-Directory structure
+The working example 
 ^^^^^^^^^^^^^^^^^^^
+We will now give a quick overview of our working example, where we present the directory structure of the code and its main content. 
 
 The first step is to create a directory 'tutorial' containing the code needed for this project. The directory is structured as follow:
 
@@ -129,7 +127,7 @@ The file 'main.py' contains code for training the model 'OneHiddenLayer' on data
 
 
 Training the model
-^^^^^^^^^^^^^^^^^^
+""""""""""""""""""
 
 If we execute the function 'main.py', we can see that the training performs 10 'epochs' and then prints a message confirming that the training is complete. 
 
