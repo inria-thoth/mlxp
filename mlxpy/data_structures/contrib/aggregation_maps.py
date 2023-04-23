@@ -1,12 +1,13 @@
-import os
 import numpy as np
 
 
 from mlxpy.data_structures.data_dict import AggregationMap
-    
+
+
 class Last(AggregationMap):
     def __init__(self, key):
         super().__init__([key], map_name="last")
+
     def apply(self, data):
         key = self.keys[0]
         try:
@@ -48,6 +49,7 @@ class Max(AggregationMap):
 class AvgStd(AggregationMap):
     def __init__(self, key):
         super().__init__([key], map_name="avgstd")
+
     def apply(self, data):
 
         data = [{key: d[key] for key in self.keys} for d in data]

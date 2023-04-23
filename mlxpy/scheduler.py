@@ -1,87 +1,83 @@
 import os
 import subprocess
-from hydra.core.hydra_config import HydraConfig
-from datetime import datetime
-import omegaconf
 from omegaconf.errors import OmegaConfBaseException
 import abc
-from typing import List, Union, Dict, Any
+from typing import List, Dict, Any
 
 from mlxpy.errors import JobSubmissionError
-
-from mlxpy.enumerations import DefaultSchedulers
 
 
 class Scheduler(abc.ABC):
     """
-    An abstract class whose children allow to submit jobs 
-    using a particular job scheduler such as OAR or SLURM. 
+    An abstract class whose children allow to submit jobs
+    using a particular job scheduler such as OAR or SLURM.
 
     .. py:attribute:: directive
-        :type: str 
+        :type: str
 
-        The string that preceeds the command options of a scheduler in a script. 
+        The string that preceeds the command options of a scheduler in a script.
         (e.g.: '#OAR' for OAR and '#SBATCH' for SLURM)
 
     .. py:attribute:: submission_cmd
-        :type: str 
+        :type: str
 
         The command for submitting a job defined in a script to the scheduler.
         (e.g.: 'oarsub -S' for OAR and 'sbatch' for SLURM).
 
 
     .. py:attribute:: cleanup_cmd
-        :type: str 
+        :type: str
 
         A command used in a script to prepare the environment before executing the main code.
-        (e.g.: 'module purge' for SLURM)  
+        (e.g.: 'module purge' for SLURM)
 
     .. py:attribute:: option_cmd
-        :type: List[str] 
-        
-        A list of strings containing the scheduler's options for the job. 
+        :type: List[str]
+
+        A list of strings containing the scheduler's options for the job.
         This allows to specify the desired resources to the scheduler such as
-        the duration of the job, the quantity and type of resources, etc. 
+        the duration of the job, the quantity and type of resources, etc.
 
     .. py:attribute:: env_cmd
         :type: str
-        
-        Command for activating the working environment. 
+
+        Command for activating the working environment.
         (e.g.: 'conda activate my_env')
-        By default no environment is activated.  
+        By default no environment is activated.
 
     .. py:attribute:: shell_path
         :type: Any
-        
+
         Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
 
     .. py:attribute:: shell_config_cmd
         :type: bool
-        
-        Command for configuring the shell when submitting a job using a scheduler. 
+
+        Command for configuring the shell when submitting a job using a scheduler.
         (e.g.: 'source ~/.bashrc')
 
 
 
     """
 
-
-    def __init__(self, 
-                directive: str,
-                submission_cmd: str,  
-                shell_path: str ="/bin/bash",
-                shell_config_cmd:str ="",
-                env_cmd:str="",
-                cleanup_cmd: str ="", 
-                option_cmd:List[str]=[]):
+    def __init__(
+        self,
+        directive: str,
+        submission_cmd: str,
+        shell_path: str = "/bin/bash",
+        shell_config_cmd: str = "",
+        env_cmd: str = "",
+        cleanup_cmd: str = "",
+        option_cmd: List[str] = [],
+    ):
         """
         Constructor
 
-        :param directive: The string that preceeds the command options of a scheduler in a script. 
+        :param directive: The string that preceeds the command options of a scheduler in a script.
         :param submission_cmd: The command for submitting a job defined in a script to the scheduler.
         :param shell_path: Path to the shell used for submitting a job using a scheduler.
-        :param shell_config_cmd: Command for configuring the shell when submitting a job using a scheduler. 
-        :param env_cmd: A command for activating the working environment. 
+        :param shell_config_cmd: Command for configuring the shell when submitting a job using a scheduler.
+        :param env_cmd: A command for activating the working environment.
         :param cleanup_cmd: A command for cleaning up the environment before executing code.
         :param option_cmd: A list of strings containing the scheduler's options for the job.
 
@@ -93,11 +89,9 @@ class Scheduler(abc.ABC):
         :type shell_config_cmd: str
         :type env_cmd: str
         :type cleanup_cmd: str
-        :type option_cmd: List[str] 
+        :type option_cmd: List[str]
 
         """
-
-
 
         self.directive = directive
         self.cleanup_cmd = cleanup_cmd
@@ -109,46 +103,45 @@ class Scheduler(abc.ABC):
         self.process_output = None
 
     @abc.abstractmethod
-    def make_job_details(self, log_dir:str)->List[str]:
+    def make_job_details(self, log_dir: str) -> List[str]:
         """
-        Returns a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.   
-        
-        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.  
+        Returns a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.
+
+        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.
         :type log_dir: str
         :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.
-        :rtype: List[str] 
+        :rtype: List[str]
 
         """
-        pass 
+        pass
 
     @abc.abstractmethod
-    def get_info(self)->Dict[str,Any]:
+    def get_info(self) -> Dict[str, Any]:
         """
             Returns the scheduler's job id of the submited job.
 
             :return: The job id assigned by the scheduler to the submited job.
-            :rtype: int 
-   
-        """    
+            :rtype: int
+
+        """
 
         pass
 
-
-    def submit_job(self,main_cmd, log_dir)->None:
+    def submit_job(self, main_cmd, log_dir) -> None:
         """
-            Submits the job to the scheduler and returns 
-            a string containing the output of the submission command. 
+            Submits the job to the scheduler and returns
+            a string containing the output of the submission command.
 
             .. note:: There is generally no need to customize this function.
 
-            :param main_cmd: A string of the main bash command to be executed. 
-            :param log_dir: The log directory where the main script will be saved. The job will be launched from their. 
+            :param main_cmd: A string of the main bash command to be executed.
+            :param log_dir: The log directory where the main script will be saved. The job will be launched from their.
             :type main_cmd: str
             :type log_dir: str
             :raises JobSubmissionError: if the scheduler failed to submit the job.
-            
-        """ 
-        cmd = self._make_job(main_cmd,log_dir)
+
+        """
+        cmd = self._make_job(main_cmd, log_dir)
         print(cmd)
 
         job_path = job_path = os.path.join(log_dir, "script.sh")
@@ -159,7 +152,9 @@ class Scheduler(abc.ABC):
             chmod_cmd = f"chmod +x {job_path!r}"
             subprocess.check_call(chmod_cmd, shell=True)
             launch_cmd = f"{self.submission_cmd}  {job_path!r}"
-            process_output = subprocess.check_output(launch_cmd, shell=True).decode("utf-8")
+            process_output = subprocess.check_output(launch_cmd, shell=True).decode(
+                "utf-8"
+            )
             print(process_output)
             print("Job launched!")
         except subprocess.CalledProcessError as e:
@@ -167,22 +162,21 @@ class Scheduler(abc.ABC):
             raise JobSubmissionError(e)
         self.process_output = process_output
 
-    def _make_job(self,main_cmd,log_dir):
+    def _make_job(self, main_cmd, log_dir):
         job_command = [main_cmd]
 
-        ## Setting shell   
+        # Setting shell
         shell_cmd = [f"#!{self.shell_path}\n"]
-        
-        ## Setting scheduler options
-        
+
+        # Setting scheduler options
+
         option_cmd = self.make_job_details(log_dir)
         option_cmd += self.option_cmd
         option_cmd = [f"{self.directive} {val}\n" for val in option_cmd]
-        option_cmd= ["".join(option_cmd)]
-        
-        ## Setting environment
-        env_cmds = [f"{self.shell_config_cmd}\n", 
-                    f"{self.cleanup_cmd}\n"]
+        option_cmd = ["".join(option_cmd)]
+
+        # Setting environment
+        env_cmds = [f"{self.shell_config_cmd}\n", f"{self.cleanup_cmd}\n"]
         try:
             env_cmds += [f"{self.env_cmd}\n"]
         except OmegaConfBaseException:
@@ -192,49 +186,50 @@ class Scheduler(abc.ABC):
         return cmd
 
 
-
 class OARScheduler(Scheduler):
     """
         OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs
     """
 
-
-    def __init__(self,shell_path="/bin/bash", 
-                      shell_config_cmd="",
-                      env_cmd="", 
-                      cleanup_cmd="", 
-                      option_cmd = []):
+    def __init__(
+        self,
+        shell_path="/bin/bash",
+        shell_config_cmd="",
+        env_cmd="",
+        cleanup_cmd="",
+        option_cmd=[],
+    ):
         super().__init__(
-                        directive="#OAR", 
-                        submission_cmd="oarsub -S",
-                        shell_path=shell_path, 
-                        shell_config_cmd=shell_config_cmd,
-                        env_cmd=env_cmd,
-                        cleanup_cmd=cleanup_cmd, 
-                        option_cmd = option_cmd)
-    
-    def get_info(self)->Dict[str,Any]:
+            directive="#OAR",
+            submission_cmd="oarsub -S",
+            shell_path=shell_path,
+            shell_config_cmd=shell_config_cmd,
+            env_cmd=env_cmd,
+            cleanup_cmd=cleanup_cmd,
+            option_cmd=option_cmd,
+        )
+
+    def get_info(self) -> Dict[str, Any]:
         """
             Returns a dictionary containing the job_id assigned to the run by the scheduler.
 
             :return: A dictionary containing the job_id assigned to the run by the scheduler.
             :rtype: Dict[str,Any]
-            
+
         """
 
         if self.process_output:
             scheduler_job_id = self.process_output.split("\n")[-2].split("=")[-1]
-            return {'scheduler_job_id': scheduler_job_id}
+            return {"scheduler_job_id": scheduler_job_id}
         else:
             return {}
- 
-    def make_job_details(self,log_dir):
+
+    def make_job_details(self, log_dir):
         job_name = log_dir.split(os.sep)
         job_name = os.sep.join(job_name[-2:])
         # Creating job string
         err_path = os.path.join(log_dir, "log.stderr")
         out_path = os.path.join(log_dir, "log.stdout")
-
 
         values = [
             f"-n {job_name}",
@@ -249,33 +244,35 @@ class SLURMScheduler(Scheduler):
     SLURM job scheduler, see documentation in: https://slurm.schedmd.com/documentation.html
     """
 
-
-    def __init__(self,shell_path="/bin/bash", 
-                      shell_config_cmd="",
-                      env_cmd="", 
-                      cleanup_cmd="module purge", 
-                      option_cmd=[]):
+    def __init__(
+        self,
+        shell_path="/bin/bash",
+        shell_config_cmd="",
+        env_cmd="",
+        cleanup_cmd="module purge",
+        option_cmd=[],
+    ):
         super().__init__(
-                        directive="#SBATCH", 
-                        submission_cmd="sbatch",
-                        shell_path=shell_path, 
-                        shell_config_cmd=shell_config_cmd,
-                        env_cmd=env_cmd,
-                        cleanup_cmd=cleanup_cmd, 
-                        option_cmd= option_cmd)
+            directive="#SBATCH",
+            submission_cmd="sbatch",
+            shell_path=shell_path,
+            shell_config_cmd=shell_config_cmd,
+            env_cmd=env_cmd,
+            cleanup_cmd=cleanup_cmd,
+            option_cmd=option_cmd,
+        )
 
-    def get_info(self)->Dict[str,Any]:
+    def get_info(self) -> Dict[str, Any]:
         """
             Returns a dictionary containing the job_id assigned to the run by the scheduler.
 
             :return: A dictionary containing the job_id assigned to the run by the scheduler.
             :rtype: Dict[str,Any]
         """
-        # Not implemented yet! 
+        # Not implemented yet!
         return {}
 
-
-    def make_job_details(self,log_dir):
+    def make_job_details(self, log_dir):
         job_name = log_dir.split(os.sep)
         job_name = os.sep.join(job_name[-2:])
         # Creating job string
@@ -288,9 +285,3 @@ class SLURMScheduler(Scheduler):
             f"--error={err_path}",
         ]
         return values
-
-
-
-
-
-

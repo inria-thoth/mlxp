@@ -3,13 +3,10 @@ from mlxpy.reader import Reader
 from mlxpy.logger import DefaultLogger
 
 
-
 from mlxpy.scheduler import Scheduler, SLURMScheduler, OARScheduler
 
-from mlxpy.version_manager import GitVM 
 from mlxpy.data_structures.config_dict import ConfigDict
 from mlxpy.data_structures.data_dict import DataDictList
-
 
 
 __all__ = [
@@ -20,8 +17,8 @@ __all__ = [
     "ConfigDict",
     "Context",
     "DataDictList",
-    "OARScheduler", 
-    "SLURMScheduler"
+    "OARScheduler",
+    "SLURMScheduler",
 ]
 
 VERSION = (2023, 0, 1)
