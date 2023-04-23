@@ -177,7 +177,7 @@ class GitVM(VersionManager):
                     else:
                         print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Create a copy of the repository based on the latest commit and execute code from there.")
                         print(f"The copy will be created in: {self.dst}")
-                    printc(bcolors.OKGREEN,f"b: Execute code from the main repository")
+                    print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Execute code from the main repository")
                     choice = input(f"{bcolors.OKGREEN}Please enter you answer (a/b):{bcolors.ENDC}")
                     self.vm_choices['cloning'] = choice
                 
