@@ -6,7 +6,9 @@ from tinydb import TinyDB, where, Query
 from tinydb.queries import QueryInstance
 import abc
 from mlxpy.errors import InvalidKeyError
-from enum import Enum
+
+
+from mlxpy.enumerations import SearchableKeys
 
 class Parser(abc.ABC):
     """
@@ -227,9 +229,7 @@ def _build_field_struct(key):
     return field
 
 
-class SearchableKeys(Enum):
-    Info="info."
-    Config="config."
+
 
 def is_searchable(k):
     for member in SearchableKeys:

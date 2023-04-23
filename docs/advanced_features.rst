@@ -202,12 +202,14 @@ Here is what happens:
 Version management
 ^^^^^^^^^^^^^^^^^^
 
-Overview
-""""""""
-
 Sometimes, there can be a delay between the time when a job is submitted and when it gets executed. This typically happens when submitting jobs to a cluster queue. 
 Meanwhile, the development code might have already changed, with some potential bugs introduced! 
-Without careful version management, it is hard to know for sure what code was used to produce the results. Mlxpy proposes a simple way to avoid these issues by introducing two features:
+Without careful version management, it is hard to know for sure what code was used to produce the results.
+
+mlxpy's version manager
+"""""""""""""""""""""""
+
+Mlxpy proposes a simple way to avoid these issues by introducing two features:
 
 - Systematically checking for uncommitted change/ untracked files.
 - Systematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.

@@ -10,18 +10,14 @@ from tinydb import Query
 from tinydb.table import Document
 
 from mlxpy.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
-from mlxpy.parser import Parser, DefaultParser, SearchableKeys, is_searchable
+from mlxpy.parser import Parser, DefaultParser, is_searchable
 from typing import Union, Optional, List
 import pandas as pd
 import abc
-from mlxpy.logger import Directories
+
 from collections.abc import MutableMapping
-from enum import Enum
+from mlxpy.enumerations import DataFrameType, Directories, SearchableKeys
 
-
-class DataFrameType(Enum):
-    Pandas = "pandas"
-    DataDictList= "datadict"
 
 
 
@@ -196,6 +192,7 @@ class Reader(object):
         if files_not_found:
             print("Warning: The following files were not found:")
             print(files_not_found)
+
 
 def _get_data( path, metadata_file):
     data = {'config':{}, 'info':{},'mlxpy':{}}

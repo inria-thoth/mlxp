@@ -1,8 +1,8 @@
 Introduction
 ------------
 
-In this tutorial, we will see how to use mlxpy to run experiments using Python. 
-We will go through the three main functionalities: Launching, Logging, and Reading and explain these are easily handled by mlxpy. 
+  
+In this tutorial, we will go through the three main functionalities: Launching, Logging, and Reading and explain these are easily handled by mlxpy. 
 Then we will see how to enhance reproducibility of experiments using the git-based version manager provided by mlxpy and how to submit several jobs to a cluster in a single command using the mlxpy's scheduler. 
 
 To make things concrete, we will consider a simple use-case where we are interested in training a neural network on a regression task. You can find code for reproducing this tutorial by following this link https://github.com/MichaelArbel/mlxpy/tree/master/tutorial.

@@ -7,16 +7,9 @@ from omegaconf.errors import OmegaConfBaseException
 import abc
 from typing import List, Union, Dict, Any
 
-from enum import Enum
-
 from mlxpy.errors import JobSubmissionError
 
-
-class DefaultSchedulers(Enum):
-
-
-    OARScheduler="OARScheduler"
-    SLURMScheduler="SLURMScheduler"
+from mlxpy.enumerations import DefaultSchedulers
 
 
 class Scheduler(abc.ABC):
@@ -149,8 +142,7 @@ class Scheduler(abc.ABC):
             .. note:: There is generally no need to customize this function.
 
             :param main_cmd: A string of the main bash command to be executed. 
-            :param log_dir: The log directory where the main script will be saved. 
-            The job will be launched from their. 
+            :param log_dir: The log directory where the main script will be saved. The job will be launched from their. 
             :type main_cmd: str
             :type log_dir: str
             :raises JobSubmissionError: if the scheduler failed to submit the job.

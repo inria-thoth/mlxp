@@ -1,5 +1,6 @@
-mlxpy package
+Mlxpy package
 =============
+
 
 
 .. toctree::
@@ -8,3 +9,6 @@ mlxpy package
    mlxpy.launching 
    mlxpy.logging
    mlxpy.reading
+   mlxpy.scheduling
+   mlxpy.version_managment
+   mlxpy.data_structures

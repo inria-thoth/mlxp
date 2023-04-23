@@ -12,7 +12,7 @@ from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, 
 
 from typing import List, Dict, Tuple
 
-from mlxpy.logger import Directories
+from mlxpy.enumerations import Directories
 from mlxpy.errors import InvalidKeyError, InvalidAggregationMapError
 
 LAZYDATA="LAZYDATA" 
@@ -396,6 +396,7 @@ class GroupedDataDicts:
         Performs aggregation of the leaf dataframes according to some aggregation maps provided as input. 
         It returns a DataDictList object where each row represents a group 
         and each column consist of one of the following:
+
             - The results of the aggregation maps.
             - The original group keys of the current GroupedDataDicts object.
         

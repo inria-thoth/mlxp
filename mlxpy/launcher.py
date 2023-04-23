@@ -11,7 +11,6 @@ from types import CodeType
 from dataclasses import dataclass, field
 
 from omegaconf import DictConfig
-from enum import Enum
 
 from hydra import version
 from hydra._internal.deprecation_warning import deprecation_warning
@@ -31,31 +30,20 @@ from dataclasses import dataclass
 from mlxpy._internal.configure import _build_config
 import yaml
 import importlib
+from mlxpy.enumerations import Status
 
 
 
 _UNSPECIFIED_: Any = object()
 
 
-# hydra_defaults_dict = {
-#     "hydra": {
-#         "mode": "MULTIRUN",
-#         "output_subdir": "null",
-#         "run": {"dir": "."},
-#         "sweep": {"dir": ".", "subdir": "."},
-#     },
-#     "hydra/job_logging": "disabled",
-#     "hydra/hydra_logging": "disabled",
-# }
-
-
 hydra_defaults_dict = {"hydra.mode": "MULTIRUN",
-                                "hydra.output_subdir": "null",
-                                "hydra.run.dir": ".",
-                                "hydra.sweep.dir": ".",
-                                "hydra.sweep.subdir": ".",
-                                "hydra/job_logging":"disabled",
-                                "hydra/hydra_logging":"disabled",
+                        "hydra.output_subdir": "null",
+                        "hydra.run.dir": ".",
+                        "hydra.sweep.dir": ".",
+                        "hydra.sweep.subdir": ".",
+                        "hydra/job_logging":"disabled",
+                        "hydra/hydra_logging":"disabled",
                                 }
 
 
@@ -71,113 +59,38 @@ def clean_dir():
     except FileNotFoundError:
         pass   
 
-class Status(Enum):
-    """Status of a run. The status can take the following values:
-    - STARTING: The metadata for the run have been created.
-    - RUNNING: The experiment is currently running. 
-    - COMPLETE: The run is  complete and did not through any error.
-    - FAILED: The run stoped due to an error.
-    """
-
-
-    STARTING = "STARTING"
-    COMPLETE = "COMPLETE"
-    RUNNING = "RUNNING"
-    FAILED = "FAILED"
-
-
-@dataclass
-class Context:
-    """
-    The contex object passed to the decorated function when using decorator mlxpy.launch.
-
-    .. py:attribute:: config
-        :type: ConfigDict
-
-        A structure containing project-specific options provided by the user. 
-        These options are loaded from a yaml file 'config.yaml' contained in the directory 'config_path' 
-        provided as argument to the decorator mlxpy.launch. It's content can be overriden from the command line. 
-
-    .. py:attribute:: mlxpy
-        :type: ConfigDict
-
-        A structure containing mlxpy's default settings for the project. 
-        Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config.yaml'. 
-
-    .. py:attribute:: info
-        :type: ConfigDict
-
-        A structure containing information about the current run: ex. status, start time, hostname, etc. 
-
-    .. py:attribute:: logger
-        :type: Union[Logger,None]
-
-        A logger object that can be used for logging variables (metrics, checkpoints, artifacts). 
-        When logging is enabled, these variables are all stored in a uniquely defined directory. 
-    """
-    
-    config : ConfigDict = None
-    mlxpy : ConfigDict = None
-    info: ConfigDict = None
-    logger: Union[Logger,None] = None
-
-
-T = TypeVar('T')
-
-def instance_from_dict(class_name: str, arguments: Dict[str, Any])->T:
-    """
-        A factory function that dynamically creates an instance of a class 
-        based on a dictionary of arguments.
-        
-        :param class_name: The name of the class 
-        :param arguments: A dictionary of arguments to the class constructor
-        :type class_name: str
-        :type arguments: Dict[str,Any]
-        :return: An instance of a class 'class_name' constructed using the arguments in 'arguments'.
-        :rtype: 
-    """
-
-    attr = import_module(class_name)
-    if arguments:
-        attr = attr(**arguments)
-    else:
-        attr = attr()
-
-    return attr
-
-
-def import_module(module_name):
-    module, attr = os.path.splitext(module_name)
-    if not attr:
-        return  getattr(mlxpy, module)
-    else:
-        try:
-            module = importlib.import_module(module)
-            return getattr(module, attr[1:])
-        except:
-            try:
-                module = import_module(module)
-                return getattr(module, attr[1:])
-            except:
-                return eval(module+attr[1:])
-
-
-
-def _instance_from_config(config):
-    config_module_name = "name"
-    config = copy.deepcopy(config)
-    module_name = config.pop(config_module_name)
-
-    return instance_from_dict(module_name, config)
 
 def launch(
     config_path: str = './configs',
     seeding_function: Union[Callable[[Any], None],None] = None
 ) -> Callable[[TaskFunction], Any]:
-    """Decorator of the main function to be executed.  
+    """Creates a decorator of the main function to be executed.  
 
-    This function allows three main functionalities: 
-        - Composing configurations from multiple files using hydra (see hydra-core package). 
+    :example:
+
+    .. code-block:: python
+        
+        import mlxpy
+
+        @mlxpy.launch(config_path='./configs',
+                     seeding_function=set_seeds)
+        def my_func(ctx: mlxpy.Context)->None:
+
+            print(ctx.config)
+
+        if __name__ == "__main__":
+            my_func()
+
+    :param config_path: The config path, a directory where the default user configuration and mlxpy settings are stored.
+    :param seeding_function:  A callable for setting the seed of random number generators. It is called with the seed option in 'ctx.config.seed' passed to it.
+    :type config_path: str (default './configs')
+    :type seeding_function: Union[Callable[[Any], None],None] (default None)
+    :return: A decorator of the main function to be executed.
+    :type: Callable[[TaskFunction], Any]
+
+    This function allows four main functionalities: 
+
+        1. Composing configurations from multiple files using hydra (see hydra-core package). 
         This behavior is similar to the decorator hydra.main provided in the hydra-core package:
         https://github.com/facebookresearch/hydra/blob/main/hydra/main.py. 
         The configs are contained in a yaml file 'config.yaml' stored in 
@@ -192,18 +105,18 @@ def launch(
         to sweep over multiple values of a given configuration when executing python code.   
         See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
     
-        - Seeding: Additionally, mlxpy.launch takes an optional argument 'seeding_function'. 
+        2. Seeding: Additionally, mlxpy.launch takes an optional argument 'seeding_function'. 
         By default, 'seeding_function' is None and does nothing. If a callable object is passed to it, this object is called with the argument cfg.config.seed
         right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code. 
         In that case, the option 'ctx.config.seed' must be none empty.  
 
-        - Submitting jobs to a cluster queue using a scheduler. 
+        3. Submitting jobs to a cluster queue using a scheduler. 
         This is achieved by setting the config value scheduler.name to the name of a valid scheduler. 
         Two job schedulers are currently supported by default: ['OARScheduler', 'SLURMScheduler' ]. 
         It is possible to support other schedulers by 
         defining a subclass of the abstract class Scheduler.
 
-        - Version management: Creating a 'safe' working directory when submitting jobs to a cluster. 
+        4. Version management: Creating a 'safe' working directory when submitting jobs to a cluster. 
         This functionality sets the working directory to a new location 
         created by making a copy of the code based on the latest commit 
         to a separate destination, if it doesn't exist already. Executing code 
@@ -213,13 +126,6 @@ def launch(
         
         .. note:: Currently, this functionality expects the executed python file to part of a git repository. 
 
-    :param config_path: The config path, a directory where 
-    the default user configuration and mlxpy settings are stored.
-    :param seeding_function:  A callable for setting the seed of random number generators. 
-    It is called with the seed option in 'ctx.config.seed' passed to it.
-
-    :type config_path: str (default './configs')
-    :type seeding_function: Union[Callable[[Any], None],None] (default None)
 
     """
     config_name = "config"
@@ -233,7 +139,7 @@ def launch(
         with open(custom_config_file, "w") as f:
             yaml.dump(custom_config, f) 
 
-    work_dir =  os.getcwd()
+    work_dir =  os.getcwd() 
 
     def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
         # task_function = launch(task_function)
@@ -396,6 +302,95 @@ def launch(
     return composed_decorator
 
 
+
+
+
+@dataclass
+class Context:
+    """
+    The contex object passed to the decorated function when using decorator mlxpy.launch.
+
+    .. py:attribute:: config
+        :type: ConfigDict
+
+        A structure containing project-specific options provided by the user. 
+        These options are loaded from a yaml file 'config.yaml' contained in the directory 'config_path' 
+        provided as argument to the decorator mlxpy.launch. It's content can be overriden from the command line. 
+
+    .. py:attribute:: mlxpy
+        :type: ConfigDict
+
+        A structure containing mlxpy's default settings for the project. 
+        Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config.yaml'. 
+
+    .. py:attribute:: info
+        :type: ConfigDict
+
+        A structure containing information about the current run: ex. status, start time, hostname, etc. 
+
+    .. py:attribute:: logger
+        :type: Union[Logger,None]
+
+        A logger object that can be used for logging variables (metrics, checkpoints, artifacts). 
+        When logging is enabled, these variables are all stored in a uniquely defined directory. 
+
+    """
+    
+    config : ConfigDict = None
+    mlxpy : ConfigDict = None
+    info: ConfigDict = None
+    logger: Union[Logger,None] = None
+
+
+T = TypeVar('T')
+
+def instance_from_dict(class_name: str, arguments: Dict[str, Any])->T:
+    """
+        A factory function that dynamically creates an instance of a class 
+        based on a dictionary of arguments.
+        
+        :param class_name: The name of the class 
+        :param arguments: A dictionary of arguments to the class constructor
+        :type class_name: str
+        :type arguments: Dict[str,Any]
+        :return: An instance of a class 'class_name' constructed using the arguments in 'arguments'.
+        :rtype: T
+    """
+
+    attr = import_module(class_name)
+    if arguments:
+        attr = attr(**arguments)
+    else:
+        attr = attr()
+
+    return attr
+
+
+def import_module(module_name):
+    module, attr = os.path.splitext(module_name)
+    if not attr:
+        return  getattr(mlxpy, module)
+    else:
+        try:
+            module = importlib.import_module(module)
+            return getattr(module, attr[1:])
+        except:
+            try:
+                module = import_module(module)
+                return getattr(module, attr[1:])
+            except:
+                return eval(module+attr[1:])
+
+
+
+def _instance_from_config(config):
+    config_module_name = "name"
+    config = copy.deepcopy(config)
+    module_name = config.pop(config_module_name)
+
+    return instance_from_dict(module_name, config)
+
+
 def _set_work_dir(work_dir):
     os.chdir(work_dir)            
     sys.path.insert(0, work_dir)    
@@ -429,7 +424,7 @@ def _set_co_filename(func, co_filename):
 
 
 def _get_mlxpy_configs(log_dir):
-    from mlxpy.logger import Directories 
+    from mlxpy.enumerations import Directories 
     abs_name = os.path.join(log_dir, Directories.Metadata.value,'info.yaml')
     configs_info = {}
     

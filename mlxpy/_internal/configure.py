@@ -1,6 +1,8 @@
 import omegaconf
 from omegaconf import OmegaConf
-from mlxpy.scheduler import DefaultSchedulers, Scheduler
+from mlxpy.scheduler import Scheduler
+from mlxpy.enumerations import DefaultSchedulers
+
 from mlxpy.data_structures.schemas import Metadata
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
 from mlxpy._internal.interactive_mode import bcolors, printc, inputc

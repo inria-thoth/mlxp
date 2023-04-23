@@ -11,9 +11,8 @@ Welcome to mlxpy's documentation!
    :caption: Contents:
 
    
-   install
    guide
-   modules
+   mlxpy
 
 Indices and tables
 ==================

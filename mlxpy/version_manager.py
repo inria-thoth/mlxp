@@ -108,17 +108,18 @@ class GitVM(VersionManager):
         """
             Returns a dictionary containing 
             information about the version used for the run:
-                - requirements: the dependencies of the code and their versions. Empty if no requirements file was found.
-                - commit_hash: The hash of the latest commit.
-                - repo_path: Path to the repository.  
+
+            - requirements: the dependencies of the code and their versions. Empty if no requirements file was found.
+            - commit_hash: The hash of the latest commit.
+            - repo_path: Path to the repository.  
+
             :return: Dictionary containing 
             information about the version used for the run.
-
             :rtype: Dict[str, Any]         
         """
         return {"requirements": self.requirements,
-                        "commit_hash":self.commit_hash,
-                        "repo_path": self.repo_path
+                "commit_hash":self.commit_hash,
+                "repo_path": self.repo_path
                         }
                         
     def make_working_directory(self)->str:
@@ -126,9 +127,10 @@ class GitVM(VersionManager):
         """     
         This function creates and returns a target working directory. 
         Depending on the user's choice, the returned directory is either: 
-            - The current working directory.
-            - A directory under self.parent_target_work_dir/repo_name/latest_commit_hash. 
-            In this case, a copy of the code based on the latest git commit is created and used to run the experiment. 
+
+        - The current working directory.
+        - A directory under self.parent_target_work_dir/repo_name/latest_commit_hash. 
+        In this case, a copy of the code based on the latest git commit is created and used to run the experiment. 
 
         :rtype: str
         :return: A path to the target working directory

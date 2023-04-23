@@ -16,30 +16,12 @@ import shutil
 from dataclasses import dataclass
 from typing import Any, Type, Dict, Union, Callable
 import abc
-from enum import Enum
 
 from mlxpy.data_structures.artifacts import Artifact, Checkpoint
 from mlxpy.errors import InvalidKeyError, InvalidArtifact
 from mlxpy.data_structures.config_dict import ConfigDict
 
-class Directories(Enum):
-    """
-        The sub-directories created by the logger for each run. 
-
-        - Metrics: A directory containing the JSON files created when calling the method log_metrics of a Logger object.
-
-        - Metadata: A directory containing three files 'info.yaml', 'mlxpy.yaml' and 'config.yaml'.
-        
-        - Artifacts: A directory containing sub-directories created when calling the method log_artifacts of a Logger object.
-        
-    """
-
-
-    Metrics = "metrics"
-    Metadata = "metadata"
-    Artifacts = "artifacts"
-
-
+from mlxpy.enumerations import Directories
 
 
 class Logger(abc.ABC):
@@ -50,24 +32,22 @@ class Logger(abc.ABC):
     the specific run. 
     
     The logger creates a directory with a default file structure:
-        - parent_log_dir/log_id:
-
-            - metadata/
-
-                - metadata.yaml : Contains the configs of the run
+        
+        .. code-block:: console
             
-            -metrics/
 
-                - 'file_name'.json : Contains a the outputs stored 
-                                when running the method log_metrics(metrics_dict, file_name)
-                - .keys: Directory of yaml files containing the keys of dictionaries saved using log_metrics. 
-                     Each file 'file_name'.yaml corresponds to a json file 'file_name'.json containing the dictionaries.
-
-            - artifacts : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.
-
-            - log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
-            - log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
-            - script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)
+            parent_log_dir/log_id:
+            ├── metadata/
+            │   └── metadata.yaml : Contains the configs of the run
+            ├── metrics/
+            │   ├── 'file_name'.json : Contains a the outputs stored 
+            │   │                   when running the method log_metrics(metrics_dict, file_name)
+            │   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics. 
+            │            Each file 'file_name'.yaml corresponds to a json file 'file_name'.json containing the dictionaries.
+            ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.
+            ├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
+            ├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
+            └── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)
 
     .. py:attribute:: parent_log_dir
         :type: str
@@ -285,6 +265,8 @@ class DefaultLogger(Logger):
             checkpoint = pkl.load(f)
         return checkpoint
         
+
+
 
 
 def _make_log_dir(forced_log_id, root):

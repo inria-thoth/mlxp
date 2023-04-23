@@ -1,6 +1,10 @@
 Tutorial
 ========
 
+
+In this tutorial, we will see how to use mlxpy to run machine learning experiments. 
+
+
 .. toctree::
    :maxdepth: 2
 

@@ -1,5 +1,5 @@
-The reading package
-===================
+The reader
+==========
 
 This package provides a reader to queries the logs of several experiments and perform operations on the information contained in these logs (e.g. grouping and aggregation). 
 
@@ -21,11 +21,6 @@ The :class:`~mlxpy.parser.Parser` Module
    :show-inheritance:
 
 
-The :class:`~mlxpy.data_structures.data_dict` Module
-----------------------------------------------------
 
-.. automodule:: mlxpy.data_structures.data_dict
-   :members:
-   :show-inheritance:
 
 
