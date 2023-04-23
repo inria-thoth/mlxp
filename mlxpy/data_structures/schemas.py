@@ -111,11 +111,53 @@ class ConfigGitVM(ConfigVersionManager):
 
 
 @dataclass
+class ConfigLogger:
+	"""
+	Structure of the config file for the logs. 
+	The outputs for each run are saved in a directory of the form 
+	'parent_log_dir/log_id' 
+	which is stored in the variable 'path' during execution.
+
+	.. py:attribute:: name
+		:type: str
+		
+		Class name of the logger to use
+		(default "DefaultLogger")  
+
+
+	.. py:attribute:: parent_log_dir
+		:type: str
+		
+		Absolute path of the parent directory where the logs of a run are stored. 
+		(default "./logs")     
+
+	.. py:attribute:: forced_log_id
+		:type: int
+		
+		An id optionally provided by the user for the run. If forced_log_id is positive, 
+		then the logs of the run will be stored under 'parent_log_dir/forced_log_id'. Otherwise, 
+		the logs will be stored in a directory 'parent_log_dir/log_id' where 'log_id' 
+		is assigned uniquely for the run during execution. 
+
+	.. py:attribute:: log_streams_to_file
+		:type: bool
+		
+		If true logs the system stdout and stderr of a run to a file named 
+		"log.stdour" and "log.stderr" in the log directory.
+
+	"""
+
+	name: str="DefaultLogger"
+	parent_log_dir: str = "./logs"
+	forced_log_id: int = -1
+	log_streams_to_file: bool = False
+
+
+
+@dataclass
 class Info:
 	"""
 	A structure storing general information about the run. 
-
-
 
 	The following variables are assigned during execution.
 
@@ -131,28 +173,26 @@ class Info:
 		- COMPLETE: The run is  complete and did not through any error.
 		
 		- FAILED: The run stoped due to an error.
-
-
 	
 	.. py:attribute:: executable
 		:type: str
 		
-		(private) Name of the python file being executed. 
+		Name of the python file being executed. 
 
 	.. py:attribute:: app
 		:type: str
 		
-		(Private) Path to the python app used for executing the code.
+		Path to the python app used for executing the code.
 
 	.. py:attribute:: hostname
 		:type: str
 		
-		(private) Name of the host from which code is executed.
+		Name of the host from which code is executed.
 
 	.. py:attribute:: user
 		:type: str
 		
-		(private) User name executing the code. 
+		User name executing the code. 
 
 	.. py:attribute:: process_id
 		:type: int
@@ -162,22 +202,38 @@ class Info:
 	.. py:attribute:: start_date
 		:type: Any
 		
-		(Private) Date at which job started.
+		Date at which job started.
 
 	.. py:attribute:: start_time
 		:type: Any
 		
-		(Private) Time at which job started.
+		Time at which job started.
 
 	.. py:attribute:: end_date
 		:type: Any
 		
-		(Private) Date at which job ended.
+		Date at which job ended.
 
 	.. py:attribute:: end_time
 		:type: Any
 		
-		(Private) Time at which job ended.
+		Time at which job ended.
+
+
+	.. py:attribute:: logger
+		:type: Any
+		
+		Logger info, whenever used.
+
+	.. py:attribute:: scheduler
+		:type: Any
+		
+		scheduler info, whenever used.
+
+	.. py:attribute:: version_manager
+		:type: Any
+		
+		version_manager info, whenever used.
 
 
 	"""
@@ -199,51 +255,80 @@ class Info:
 	version_manager: Any = None
 	
 	
-@dataclass
-class ConfigLogger:
-	"""
-	Structure of the config file for the logs. 
-	The outputs for each run are saved in a directory of the form 
-	'parent_log_dir/log_id' 
-	which is stored in the variable 'path' during execution.
-
-	.. py:attribute:: parent_log_dir
-		:type: str
-		
-		Absolute path of the parent directory where the logs of a run are stored. 
-		(default "data/outputs")     
-
-	.. py:attribute:: forced_log_id
-		:type: Any
-		
-		An id optionally provided by the user for the run. If forced_log_id is an integer, 
-		then the logs of the run will be stored under 'parent_log_dir/forced_log_id'. Otherwise, 
-		the logs will be stured in a directory 'parent_log_dir/log_id' where 'log_id' 
-		is assigned uniquely for the run during execution. 
-
-	.. py:attribute:: log_streams_to_file
-		:type: bool
-		
-		If true logs the system stdout and stderr of a run to a file named 
-		"log.txt" in the path directory.
-
-	"""
-
-	name: str=MISSING
-	parent_log_dir: str = MISSING #os.path.join(os.getcwd(),"data","outputs")
-	forced_log_id: int = -1
-	log_streams_to_file: bool = False
-	parent_log_dir: str = "./logs" #os.path.join(os.getcwd(),"data","outputs")
-
-
-@dataclass
-class ConfigDefaultLogger(ConfigLogger):
-
-	name: str="DefaultLogger"	
 
 @dataclass
 class MlxpyConfig:
-	logger: ConfigLogger = ConfigDefaultLogger()
+	"""
+		Default settings of mlxpy.
+
+	.. py:attribute:: logger
+		:type: ConfigLogger
+		
+		The logger's settings. 
+		(default ConfigLogger)
+
+	.. py:attribute:: scheduler
+		:type: ConfigScheduler
+		
+		The scheduler's settings. 
+		(default ConfigScheduler)
+
+	.. py:attribute:: version_manager
+		:type: ConfigVersionManager
+		
+		The version_manager's settings. 
+		(default ConfigGitVM)
+
+	.. py:attribute:: use_version_manager
+		:type: bool
+		
+		If true, uses the version manager.
+		(default False)
+
+	.. py:attribute:: use_scheduler
+		:type: bool
+		
+		If true, uses the scheduler.
+		(default False)
+	
+	.. py:attribute:: use_logger
+		:type: bool
+		
+		If true, uses the logger.
+		(default True)
+
+	.. py:attribute:: interactive_mode
+		:type: bool
+		
+		If 'interactive_mode==True', mlxpy uses the interactive mode whenever applicable:
+			
+			- When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"': 
+			Asks the user to select a valid scheduler.
+			- When 'use_version_manager==True': 
+			Asks the user: 
+
+				* If untracked files should be added.
+				* If uncommitted changes should be committed.
+				* If a copy of the current repository based on the latest commit 
+					should be made (if not already existing) to execute the code from there. 
+					Otherwise, code is executed from the current directory. 
+					
+		If 'interactive_mode==False', no interactive mode is used and current options are used:
+			- When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"': An error is thrown
+			- When 'use_version_manager==True': 
+				* Existing untracked files or uncommitted changes are ignored.
+				* A copy of the code is made based on the latest commit (if not already existing) 
+				and code is executed from there. 
+
+		(default True)
+
+
+	"""
+
+
+
+
+	logger: ConfigLogger = ConfigLogger()
 	scheduler: ConfigScheduler = ConfigScheduler()
 	version_manager: ConfigVersionManager = ConfigGitVM()
 	use_version_manager: bool= False
@@ -262,55 +347,20 @@ class Metadata:
 		Contains config information of the run 
 		(hostname, command, application,  etc) 
 		(default Info) 
-
-	.. py:attribute:: logger
-		:type: Logger
 		
-		Contains config information for the logs (log directory, etc) (default None) 
-
-	.. py:attribute:: scheduler
-		:type: Scheduler
+	.. py:attribute:: mlxpy
+		:type: MlxpyConfig
 		
-		Contains config information for the scheduler  (default None) 
-
-	.. py:attribute:: version_manager
-		:type: WDManager
-		
-		Contains config information for the working directory manager  (default None) 
-
-	.. py:attribute:: seed_config
-		:type: Any
-		
-		Contains user defined parameters for seeding the code.
-		Can a number or a more complex structure following hydra configs options.
+		Default settings of mlxpy.
+		(default MlxpyConfig)
 
   
 	.. py:attribute:: config
 		:type: Any
 		
-		Contains user user configs
+		Contains the user's defined configs that are specific to the run. 
 
 	"""
 	info: Info = Info()
 	mlxpy: MlxpyConfig = MlxpyConfig()
 	config: Any = None
-
-#cs = ConfigStore.instance()
-# cs.store(group="mlxpy", 
-# 		 name="config", 
-# 		 node=mlxpy(), 
-# 		 provider="mlxpy")
-
-# cs.store(
-#     group="mlxpy",
-#     name="config",
-#     node=mlxpy(),
-#     provider="mlxpy")
-
-# cs.store(name="OAR", node=OARScheduler())
-# cs.store(name="SLURM", node=SLURMScheduler())
-# cs.store(name="", node=None)
-# cs.store(name="GitVM", node=GitVM())
-# cs.store(name="Logger", node=DefaultLogger())
-
-
