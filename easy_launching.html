@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="2- Logging" href="easy_logging.html" /><link rel="prev" title="Introduction" href="tutorial_introduction.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>1- Launching - Mlxpy 0.1 documentation</title>
+        <title>1- Launching - MLXPy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Mlxpy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">Mlxpy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -169,12 +169,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">Mlxpy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">The launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">The logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">The reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">The scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">The version manager</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlxpy.data_structures.html">Data structures</a></li>
 </ul>
 </li>
@@ -214,8 +214,8 @@
         <article role="main">
           <section id="launching">
 <h1>1- Launching<a class="headerlink" href="#launching" title="Permalink to this heading">#</a></h1>
-<p>We will see how to modify the file ‘main.py’ to use mlxpy using the decorator ‘mlxpy.launch’.
-But first, let’s introduce the ‘mlxpy.Context’ class which allows using mlxpy’s logging and configuring functionalities.</p>
+<p>We will see how to modify the file ‘main.py’ to use MLXPy using the decorator ‘mlxpy.launch’.
+But first, let’s introduce the ‘mlxpy.Context’ class which allows using MLXPy’s logging and configuring functionalities.</p>
 <section id="defining-a-default-config-file">
 <h2>Defining a default config file<a class="headerlink" href="#defining-a-default-config-file" title="Permalink to this heading">#</a></h2>
 <p>The first step is to provide all default options that will be used by the code in a separate ‘yaml’ file named ‘config.yaml’ and contained in the ‘./configs’ directory.</p>
@@ -234,12 +234,12 @@ But first, let’s introduce the ‘mlxpy.Context’ class which allows using ml
 </div>
 </div>
 <p>Here, we stored all options that were provided as input to the function ‘train’ in the ‘main.py’ file (such as the learning rate ‘lr’, number of epochs ‘num_epochs’, etc) into a structured yaml file. The user has the freedom to define their own structure: for instance, here we chose to group the input dimension ‘d_int’ and ‘device’ into the same ‘data’ group, but other (probably better choices) are possible.
-Mlxpy will load this file by default, just like in <a class="reference external" href="https://hydra.cc/">hydra</a> and provide these options as a hierachical dictionary to be used in the code (more about this later!).</p>
+MLXPy will load this file by default, just like in <a class="reference external" href="https://hydra.cc/">hydra</a> and provide these options as a hierachical dictionary to be used in the code (more about this later!).</p>
 </section>
 <section id="adapting-code-for-using-mlxpy">
-<h2>Adapting code for using mlxpy<a class="headerlink" href="#adapting-code-for-using-mlxpy" title="Permalink to this heading">#</a></h2>
-<p>To use mlxpy, we only need to slightly change the ‘main.py’ file.
-The first step is to import mlxpy and use the decorator ‘mlxpy.launch’ above the function ‘train’.
+<h2>Adapting code for using MLXPy<a class="headerlink" href="#adapting-code-for-using-mlxpy" title="Permalink to this heading">#</a></h2>
+<p>To use MLXPy, we only need to slightly change the ‘main.py’ file.
+The first step is to import MLXPy and use the decorator ‘mlxpy.launch’ above the function ‘train’.
 We also need to change the signature of the function ‘train’ so that it can accept an object ‘ctx’ of type ‘mlxpy.Context’ as an argument instead of the variables.
 Note, however, that ‘train’ is called later without explicitly passing any argument. The remaining modifications are:</p>
 <ul class="simple">
@@ -252,7 +252,7 @@ Note, however, that ‘train’ is called later without explicitly passing any a
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">OneHiddenLayer</span>
 
-<span class="kn">import</span> <span class="nn">mlxpy</span> <span class="k">as</span> <span class="nn">mlxpy</span>
+<span class="kn">import</span> <span class="nn">mlxpy</span>
 
 <span class="nd">@mlxpy</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxpy</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
@@ -293,18 +293,18 @@ Note, however, that ‘train’ is called later without explicitly passing any a
 </div>
 <section id="the-context-object">
 <h3>The Context object<a class="headerlink" href="#the-context-object" title="Permalink to this heading">#</a></h3>
-<p>Mlxpy uses an object ‘ctx’ of the class ‘mlxpy.Context’ that is created on the fly during the execution of the program to store information about the run.
+<p>MLXPy uses an object ‘ctx’ of the class ‘mlxpy.Context’ that is created on the fly during the execution of the program to store information about the run.
 More precisely, it contains 4 fields:</p>
 <ul class="simple">
 <li><p>ctx.config: Stores project-specific options provided by the user. These options are loaded from a yaml file ‘config.yaml’ located in the directory ‘config_path’ provided as input to the decorator (here config_path=’./configs’).</p></li>
-<li><p>ctx.mlxpy: Stores mlxpy’s default settings for the project. Its content is loaded from a yaml file ‘mlxpy.yaml’ located in the same directory ‘config_path’.</p></li>
+<li><p>ctx.mlxpy: Stores MLXPy’s default settings for the project. Its content is loaded from a yaml file ‘mlxpy.yaml’ located in the same directory ‘config_path’.</p></li>
 <li><p>ctx.info: Contains information about the current run: ex. status, start time, hostname, etc.</p></li>
 <li><p>ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory.</p></li>
 </ul>
 </section>
 </section>
 <section id="launching-using-mlxpy">
-<h2>Launching using mlxpy<a class="headerlink" href="#launching-using-mlxpy" title="Permalink to this heading">#</a></h2>
+<h2>Launching using MLXPy<a class="headerlink" href="#launching-using-mlxpy" title="Permalink to this heading">#</a></h2>
 <p>During execution, the default configurations will be read from the file ‘config.yaml’ located in the directory ‘./configs’ and passed to the object ‘ctx.config’. The code will be executed using these option:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py
 <span class="go">Completed training with learning rate: 10.0</span>
@@ -319,11 +319,11 @@ More precisely, it contains 4 fields:</p>
 <p>In the above instruction, we added an option ‘optimizer.lr=0.01,0.1’ which execute the code twice: once using a learning rate of 0.01 and a second time using 0.1.</p>
 </section>
 <section id="seeding-code-using-mlxpy">
-<h2>Seeding code using mlxpy<a class="headerlink" href="#seeding-code-using-mlxpy" title="Permalink to this heading">#</a></h2>
+<h2>Seeding code using MLXPy<a class="headerlink" href="#seeding-code-using-mlxpy" title="Permalink to this heading">#</a></h2>
 <p>In our example, the initialization of the model uses random initial parameters which might change from one run to another. To avoid this, the user can provide a function ‘set_seed’ to the mlxpy.launch decorator to set the global seeds of whatever random number generator is used.</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mlxpy</span> <span class="k">as</span> <span class="nn">mlxpy</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mlxpy</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Network</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Loss</span>
 
 <span class="k">def</span> <span class="nf">set_seeds</span><span class="p">(</span><span class="n">seed</span><span class="p">):</span>
@@ -344,7 +344,7 @@ More precisely, it contains 4 fields:</p>
 </pre></div>
 </div>
 </div>
-<p>The function ‘set_seeds’ will be called by mlxpy before executing the function ‘train’. The parameter seed is read from the user-defined option: ctx.config.seed. If the field seed is not provided by the user and a seeding function is passed, then the code throws an error.
+<p>The function ‘set_seeds’ will be called by MLXPy before executing the function ‘train’. The parameter seed is read from the user-defined option: ctx.config.seed. If the field seed is not provided by the user and a seeding function is passed, then the code throws an error.
 Note that the field ‘seed’ passed to the ‘set_seeds’ can be an integer or a dictionary or any object that can be stored in a yaml file.
 Of course, it is also possible to perform seeding inside the function ‘train’, but ‘seeding_function’  allows you to do it systematically.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span><span class="nv">seed</span><span class="o">=</span><span class="m">1</span>
@@ -352,7 +352,7 @@ Of course, it is also possible to perform seeding inside the function ‘train�
 <span class="go">Completed training with learning rate: 1e-3</span>
 </pre></div>
 </div>
-<p>That’s it, launching a job using mlxpy is as easy as this!</p>
+<p>That’s it, launching a job using MLXPy is as easy as this!</p>
 </section>
 </section>
 
@@ -413,12 +413,12 @@ Of course, it is also possible to perform seeding inside the function ‘train�
             <ul>
 <li><a class="reference internal" href="#">1- Launching</a><ul>
 <li><a class="reference internal" href="#defining-a-default-config-file">Defining a default config file</a></li>
-<li><a class="reference internal" href="#adapting-code-for-using-mlxpy">Adapting code for using mlxpy</a><ul>
+<li><a class="reference internal" href="#adapting-code-for-using-mlxpy">Adapting code for using MLXPy</a><ul>
 <li><a class="reference internal" href="#the-context-object">The Context object</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#launching-using-mlxpy">Launching using mlxpy</a></li>
-<li><a class="reference internal" href="#seeding-code-using-mlxpy">Seeding code using mlxpy</a></li>
+<li><a class="reference internal" href="#launching-using-mlxpy">Launching using MLXPy</a></li>
+<li><a class="reference internal" href="#seeding-code-using-mlxpy">Seeding code using MLXPy</a></li>
 </ul>
 </li>
 </ul>

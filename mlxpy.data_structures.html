@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="The version manager" href="mlxpy.version_managment.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Version manager" href="mlxpy.version_managment.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>Data structures - Mlxpy 0.1 documentation</title>
+        <title>Data structures - MLXPy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Mlxpy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">Mlxpy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -169,12 +169,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="mlxpy.html">Mlxpy package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">The launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">The logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">The reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">The scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">The version manager</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Data structures</a></li>
 </ul>
 </li>
@@ -214,7 +214,7 @@
         <article role="main">
           <section id="data-structures">
 <h1>Data structures<a class="headerlink" href="#data-structures" title="Permalink to this heading">#</a></h1>
-<p>These are the data structures provided by mlxpy to handle configuration options and data</p>
+<p>These are the data structures provided by MLXPy to handle configuration options and data</p>
 <section id="module-mlxpy.data_structures.schemas">
 <span id="the-schemas-classes"></span><h2>The <a class="reference internal" href="#module-mlxpy.data_structures.schemas" title="mlxpy.data_structures.schemas"><code class="xref py py-class docutils literal notranslate"><span class="pre">schemas</span></code></a> Classes<a class="headerlink" href="#module-mlxpy.data_structures.schemas" title="Permalink to this heading">#</a></h2>
 <p>Structures for validating the configurations.</p>
@@ -245,24 +245,20 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxpy.data_structures.schemas.ConfigScheduler.shell_config_cmd">
 <span class="sig-name descname"><span class="pre">shell_config_cmd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.ConfigScheduler.shell_config_cmd" title="Permalink to this definition">#</a></dt>
-<dd><p>command for configuring the shell when submitting a job using a scheduler.
-(default ‘source ~/.bashrc’)</p>
+<dd><p>command for configuring the shell when submitting a job using a scheduler. (default ‘source ~/.bashrc’)</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxpy.data_structures.schemas.ConfigScheduler.cleanup_cmd">
 <span class="sig-name descname"><span class="pre">cleanup_cmd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.ConfigScheduler.cleanup_cmd" title="Permalink to this definition">#</a></dt>
 <dd><p>A command for clearning the environment
-when executing a job submitted by the scheduler.
-(e.g.: ‘module purge’ for SLURM)</p>
+when executing a job submitted by the scheduler. (e.g.: ‘module purge’ for SLURM)</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxpy.data_structures.schemas.ConfigScheduler.option_cmd">
 <span class="sig-name descname"><span class="pre">option_cmd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mlxpy.data_structures.schemas.ConfigScheduler.option_cmd" title="Permalink to this definition">#</a></dt>
-<dd><p>A list of strings containing the scheduler’s options for the job.
-This allows to specify the desired resources to the scheduler such as
-the duration of the job, the quantity and type of resources, etc.</p>
+<dd><p>A list of strings containing the scheduler’s options for the job. This allows to specify the desired resources to the scheduler such as the duration of the job, the quantity and type of resources, etc.</p>
 </dd></dl>
 
 </dd></dl>
@@ -439,59 +435,59 @@ is assigned uniquely for the run during execution.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxpy.data_structures.schemas.</span></span><span class="sig-name descname"><span class="pre">MlxpyConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigLogger" title="mlxpy.data_structures.schemas.ConfigLogger"><span class="pre">ConfigLogger</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ConfigLogger(name='DefaultLogger',</span> <span class="pre">parent_log_dir='./logs',</span> <span class="pre">forced_log_id=-1,</span> <span class="pre">log_streams_to_file=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigScheduler" title="mlxpy.data_structures.schemas.ConfigScheduler"><span class="pre">ConfigScheduler</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ConfigScheduler(name='NoScheduler',</span> <span class="pre">shell_path='/bin/bash',</span> <span class="pre">shell_config_cmd='',</span> <span class="pre">env_cmd='',</span> <span class="pre">cleanup_cmd='',</span> <span class="pre">option_cmd=[])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigVersionManager" title="mlxpy.data_structures.schemas.ConfigVersionManager"><span class="pre">ConfigVersionManager</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ConfigGitVM(name='GitVM',</span> <span class="pre">parent_target_work_dir='./.workdir',</span> <span class="pre">compute_requirements=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_version_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactive_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxpy/data_structures/schemas.html#MlxpyConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxpy.data_structures.schemas.</span></span><span class="sig-name descname"><span class="pre">MLXPyConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigLogger" title="mlxpy.data_structures.schemas.ConfigLogger"><span class="pre">ConfigLogger</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ConfigLogger(name='DefaultLogger',</span> <span class="pre">parent_log_dir='./logs',</span> <span class="pre">forced_log_id=-1,</span> <span class="pre">log_streams_to_file=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigScheduler" title="mlxpy.data_structures.schemas.ConfigScheduler"><span class="pre">ConfigScheduler</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ConfigScheduler(name='NoScheduler',</span> <span class="pre">shell_path='/bin/bash',</span> <span class="pre">shell_config_cmd='',</span> <span class="pre">env_cmd='',</span> <span class="pre">cleanup_cmd='',</span> <span class="pre">option_cmd=[])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigVersionManager" title="mlxpy.data_structures.schemas.ConfigVersionManager"><span class="pre">ConfigVersionManager</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ConfigGitVM(name='GitVM',</span> <span class="pre">parent_target_work_dir='./.workdir',</span> <span class="pre">compute_requirements=False)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_version_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_scheduler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactive_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxpy/data_structures/schemas.html#MLXPyConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Default settings of mlxpy.</p>
+<p>Default settings of MLXPy.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.logger">
-<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigLogger" title="mlxpy.data_structures.schemas.ConfigLogger"><span class="pre">ConfigLogger</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.logger" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.logger">
+<span class="sig-name descname"><span class="pre">logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigLogger" title="mlxpy.data_structures.schemas.ConfigLogger"><span class="pre">ConfigLogger</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.logger" title="Permalink to this definition">#</a></dt>
 <dd><p>The logger’s settings.
 (default ConfigLogger)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.scheduler">
-<span class="sig-name descname"><span class="pre">scheduler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigScheduler" title="mlxpy.data_structures.schemas.ConfigScheduler"><span class="pre">ConfigScheduler</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.scheduler" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.scheduler">
+<span class="sig-name descname"><span class="pre">scheduler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigScheduler" title="mlxpy.data_structures.schemas.ConfigScheduler"><span class="pre">ConfigScheduler</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.scheduler" title="Permalink to this definition">#</a></dt>
 <dd><p>The scheduler’s settings.
 (default ConfigScheduler)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.version_manager">
-<span class="sig-name descname"><span class="pre">version_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigVersionManager" title="mlxpy.data_structures.schemas.ConfigVersionManager"><span class="pre">ConfigVersionManager</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.version_manager" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.version_manager">
+<span class="sig-name descname"><span class="pre">version_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.ConfigVersionManager" title="mlxpy.data_structures.schemas.ConfigVersionManager"><span class="pre">ConfigVersionManager</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.version_manager" title="Permalink to this definition">#</a></dt>
 <dd><p>The version_manager’s settings.
 (default ConfigGitVM)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.use_version_manager">
-<span class="sig-name descname"><span class="pre">use_version_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.use_version_manager" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.use_version_manager">
+<span class="sig-name descname"><span class="pre">use_version_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.use_version_manager" title="Permalink to this definition">#</a></dt>
 <dd><p>If true, uses the version manager.
 (default False)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.use_scheduler">
-<span class="sig-name descname"><span class="pre">use_scheduler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.use_scheduler" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.use_scheduler">
+<span class="sig-name descname"><span class="pre">use_scheduler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.use_scheduler" title="Permalink to this definition">#</a></dt>
 <dd><p>If true, uses the scheduler.
 (default False)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.use_logger">
-<span class="sig-name descname"><span class="pre">use_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.use_logger" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.use_logger">
+<span class="sig-name descname"><span class="pre">use_logger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.use_logger" title="Permalink to this definition">#</a></dt>
 <dd><p>If true, uses the logger.
 (default True)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MlxpyConfig.interactive_mode">
-<span class="sig-name descname"><span class="pre">interactive_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MlxpyConfig.interactive_mode" title="Permalink to this definition">#</a></dt>
-<dd><p>A variable controlling mlxpy’s interactive mode.</p>
+<dt class="sig sig-object py" id="mlxpy.data_structures.schemas.MLXPyConfig.interactive_mode">
+<span class="sig-name descname"><span class="pre">interactive_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.MLXPyConfig.interactive_mode" title="Permalink to this definition">#</a></dt>
+<dd><p>A variable controlling MLXPy’s interactive mode.</p>
 <blockquote>
 <div><ol class="arabic">
-<li><p>If ‘interactive_mode==True’, mlxpy uses the interactive mode whenever applicable:</p>
+<li><p>If ‘interactive_mode==True’, MLXPy uses the interactive mode whenever applicable:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>When ‘use_scheduler==True’ and ‘scheduler.name==”NoScheduler”’:</p></li>
@@ -530,7 +526,7 @@ is assigned uniquely for the run during execution.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxpy.data_structures.schemas.Metadata">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxpy.data_structures.schemas.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.Info" title="mlxpy.data_structures.schemas.Info"><span class="pre">Info</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Info(status='STARTING',</span> <span class="pre">executable='',</span> <span class="pre">app='',</span> <span class="pre">hostname='',</span> <span class="pre">user='${oc.env:USER}',</span> <span class="pre">process_id=-1,</span> <span class="pre">start_date='',</span> <span class="pre">start_time='',</span> <span class="pre">end_date='',</span> <span class="pre">end_time='',</span> <span class="pre">work_dir='/Users/MichaelArbel/Documents/Academia/INRIA/projects/mlxpy_project/code/mlxpy/docs',</span> <span class="pre">logger=None,</span> <span class="pre">scheduler=None,</span> <span class="pre">version_manager=None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlxpy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig" title="mlxpy.data_structures.schemas.MlxpyConfig"><span class="pre">MlxpyConfig</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">MlxpyConfig(logger=ConfigLogger(name='DefaultLogger',</span> <span class="pre">parent_log_dir='./logs',</span> <span class="pre">forced_log_id=-1,</span> <span class="pre">log_streams_to_file=False),</span> <span class="pre">scheduler=ConfigScheduler(name='NoScheduler',</span> <span class="pre">shell_path='/bin/bash',</span> <span class="pre">shell_config_cmd='',</span> <span class="pre">env_cmd='',</span> <span class="pre">cleanup_cmd='',</span> <span class="pre">option_cmd=[]),</span> <span class="pre">version_manager=ConfigGitVM(name='GitVM',</span> <span class="pre">parent_target_work_dir='./.workdir',</span> <span class="pre">compute_requirements=False),</span> <span class="pre">use_version_manager=False,</span> <span class="pre">use_scheduler=False,</span> <span class="pre">use_logger=True,</span> <span class="pre">interactive_mode=True)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxpy/data_structures/schemas.html#Metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxpy.data_structures.schemas.Metadata" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxpy.data_structures.schemas.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.Info" title="mlxpy.data_structures.schemas.Info"><span class="pre">Info</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Info(status='STARTING',</span> <span class="pre">executable='',</span> <span class="pre">app='',</span> <span class="pre">hostname='',</span> <span class="pre">user='${oc.env:USER}',</span> <span class="pre">process_id=-1,</span> <span class="pre">start_date='',</span> <span class="pre">start_time='',</span> <span class="pre">end_date='',</span> <span class="pre">end_time='',</span> <span class="pre">work_dir='/Users/MichaelArbel/Documents/Academia/INRIA/projects/mlxpy_project/code/mlxpy/docs',</span> <span class="pre">logger=None,</span> <span class="pre">scheduler=None,</span> <span class="pre">version_manager=None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlxpy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig" title="mlxpy.data_structures.schemas.MLXPyConfig"><span class="pre">MLXPyConfig</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">MLXPyConfig(logger=ConfigLogger(name='DefaultLogger',</span> <span class="pre">parent_log_dir='./logs',</span> <span class="pre">forced_log_id=-1,</span> <span class="pre">log_streams_to_file=False),</span> <span class="pre">scheduler=ConfigScheduler(name='NoScheduler',</span> <span class="pre">shell_path='/bin/bash',</span> <span class="pre">shell_config_cmd='',</span> <span class="pre">env_cmd='',</span> <span class="pre">cleanup_cmd='',</span> <span class="pre">option_cmd=[]),</span> <span class="pre">version_manager=ConfigGitVM(name='GitVM',</span> <span class="pre">parent_target_work_dir='./.workdir',</span> <span class="pre">compute_requirements=False),</span> <span class="pre">use_version_manager=False,</span> <span class="pre">use_scheduler=False,</span> <span class="pre">use_logger=True,</span> <span class="pre">interactive_mode=True)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxpy/data_structures/schemas.html#Metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxpy.data_structures.schemas.Metadata" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The structure of the config file.</p>
 <dl class="py attribute">
@@ -543,9 +539,9 @@ is assigned uniquely for the run during execution.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxpy.data_structures.schemas.Metadata.mlxpy">
-<span class="sig-name descname"><span class="pre">mlxpy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig" title="mlxpy.data_structures.schemas.MlxpyConfig"><span class="pre">MlxpyConfig</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.Metadata.mlxpy" title="Permalink to this definition">#</a></dt>
-<dd><p>Default settings of mlxpy.
-(default MlxpyConfig)</p>
+<span class="sig-name descname"><span class="pre">mlxpy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig" title="mlxpy.data_structures.schemas.MLXPyConfig"><span class="pre">MLXPyConfig</span></a></em><a class="headerlink" href="#mlxpy.data_structures.schemas.Metadata.mlxpy" title="Permalink to this definition">#</a></dt>
+<dd><p>Default settings of MLXPy.
+(default MLXPyConfig)</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -881,7 +877,7 @@ Each map must be an instance of class inheriting from the abstract class Aggrega
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">The version manager</div>
+                <div class="title">Version manager</div>
                 
               </div>
             </a>
@@ -959,14 +955,14 @@ Each map must be an instance of class inheriting from the abstract class Aggrega
 <li><a class="reference internal" href="#mlxpy.data_structures.schemas.Info.version_manager"><code class="docutils literal notranslate"><span class="pre">Info.version_manager</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig</span></code></a><ul>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.logger"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.logger</span></code></a></li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.scheduler"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.scheduler</span></code></a></li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.version_manager"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.version_manager</span></code></a></li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.use_version_manager"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.use_version_manager</span></code></a></li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.use_scheduler"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.use_scheduler</span></code></a></li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.use_logger"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.use_logger</span></code></a></li>
-<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MlxpyConfig.interactive_mode"><code class="docutils literal notranslate"><span class="pre">MlxpyConfig.interactive_mode</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig</span></code></a><ul>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.logger"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.logger</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.scheduler"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.scheduler</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.version_manager"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.version_manager</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.use_version_manager"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.use_version_manager</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.use_scheduler"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.use_scheduler</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.use_logger"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.use_logger</span></code></a></li>
+<li><a class="reference internal" href="#mlxpy.data_structures.schemas.MLXPyConfig.interactive_mode"><code class="docutils literal notranslate"><span class="pre">MLXPyConfig.interactive_mode</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#mlxpy.data_structures.schemas.Metadata"><code class="docutils literal notranslate"><span class="pre">Metadata</span></code></a><ul>

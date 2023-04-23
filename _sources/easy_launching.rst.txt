@@ -1,8 +1,8 @@
 1- Launching
 ------------
 
-We will see how to modify the file 'main.py' to use mlxpy using the decorator 'mlxpy.launch'. 
-But first, let's introduce the 'mlxpy.Context' class which allows using mlxpy's logging and configuring functionalities. 
+We will see how to modify the file 'main.py' to use MLXPy using the decorator 'mlxpy.launch'. 
+But first, let's introduce the 'mlxpy.Context' class which allows using MLXPy's logging and configuring functionalities. 
 
 
 Defining a default config file
@@ -24,16 +24,16 @@ The first step is to provide all default options that will be used by the code i
      lr: 10.
 
 Here, we stored all options that were provided as input to the function 'train' in the 'main.py' file (such as the learning rate 'lr', number of epochs 'num_epochs', etc) into a structured yaml file. The user has the freedom to define their own structure: for instance, here we chose to group the input dimension 'd_int' and 'device' into the same 'data' group, but other (probably better choices) are possible. 
-Mlxpy will load this file by default, just like in `hydra <https://hydra.cc/>`_ and provide these options as a hierachical dictionary to be used in the code (more about this later!).
+MLXPy will load this file by default, just like in `hydra <https://hydra.cc/>`_ and provide these options as a hierachical dictionary to be used in the code (more about this later!).
 
 
 
 
-Adapting code for using mlxpy 
+Adapting code for using MLXPy 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To use mlxpy, we only need to slightly change the 'main.py' file. 
-The first step is to import mlxpy and use the decorator 'mlxpy.launch' above the function 'train'.
+To use MLXPy, we only need to slightly change the 'main.py' file. 
+The first step is to import MLXPy and use the decorator 'mlxpy.launch' above the function 'train'.
 We also need to change the signature of the function 'train' so that it can accept an object 'ctx' of type 'mlxpy.Context' as an argument instead of the variables. 
 Note, however, that 'train' is called later without explicitly passing any argument. The remaining modifications are:
 
@@ -49,7 +49,7 @@ Here is how the code would look like:
     import torch
     from core import DataLoader, OneHiddenLayer
 
-    import mlxpy as mlxpy
+    import mlxpy
 
     @mlxpy.launch(config_path='./configs')
     def train(ctx: mlxpy.Context)->None:
@@ -90,17 +90,17 @@ Here is how the code would look like:
 The Context object
 """"""""""""""""""
 
-Mlxpy uses an object 'ctx' of the class 'mlxpy.Context' that is created on the fly during the execution of the program to store information about the run. 
+MLXPy uses an object 'ctx' of the class 'mlxpy.Context' that is created on the fly during the execution of the program to store information about the run. 
 More precisely, it contains 4 fields: 
 
 - ctx.config: Stores project-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-- ctx.mlxpy: Stores mlxpy's default settings for the project. Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config_path'.  
+- ctx.mlxpy: Stores MLXPy's default settings for the project. Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config_path'.  
 - ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
 - ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
 
 
-Launching using mlxpy 
+Launching using MLXPy 
 ^^^^^^^^^^^^^^^^^^^^^
 
 During execution, the default configurations will be read from the file 'config.yaml' located in the directory './configs' and passed to the object 'ctx.config'. The code will be executed using these option:
@@ -121,7 +121,7 @@ Just like with `hydra <https://hydra.cc/>`_, we can run the code again with diff
 In the above instruction, we added an option 'optimizer.lr=0.01,0.1' which execute the code twice: once using a learning rate of 0.01 and a second time using 0.1. 
 
 
-Seeding code using mlxpy
+Seeding code using MLXPy
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 In our example, the initialization of the model uses random initial parameters which might change from one run to another. To avoid this, the user can provide a function 'set_seed' to the mlxpy.launch decorator to set the global seeds of whatever random number generator is used. 
@@ -130,7 +130,7 @@ In our example, the initialization of the model uses random initial parameters w
 .. code-block:: python
     :caption: main.py
 
-    import mlxpy as mlxpy
+    import mlxpy
     from core import DataLoader, Network, Optimizer, Loss
 
     def set_seeds(seed):
@@ -150,7 +150,7 @@ In our example, the initialization of the model uses random initial parameters w
         train()
 
 
-The function 'set_seeds' will be called by mlxpy before executing the function 'train'. The parameter seed is read from the user-defined option: ctx.config.seed. If the field seed is not provided by the user and a seeding function is passed, then the code throws an error.  
+The function 'set_seeds' will be called by MLXPy before executing the function 'train'. The parameter seed is read from the user-defined option: ctx.config.seed. If the field seed is not provided by the user and a seeding function is passed, then the code throws an error.  
 Note that the field 'seed' passed to the 'set_seeds' can be an integer or a dictionary or any object that can be stored in a yaml file. 
 Of course, it is also possible to perform seeding inside the function 'train', but 'seeding_function'  allows you to do it systematically. 
 
@@ -161,4 +161,4 @@ Of course, it is also possible to perform seeding inside the function 'train', b
 
    Completed training with learning rate: 1e-3
 
-That's it, launching a job using mlxpy is as easy as this! 
+That's it, launching a job using MLXPy is as easy as this! 

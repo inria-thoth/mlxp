@@ -1,5 +1,5 @@
-The scheduler
-=============
+Scheduler
+=========
 
 
 

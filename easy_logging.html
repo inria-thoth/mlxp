@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="3- Reading" href="easy_reading.html" /><link rel="prev" title="1- Launching" href="easy_launching.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>2- Logging - Mlxpy 0.1 documentation</title>
+        <title>2- Logging - MLXPy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Mlxpy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">Mlxpy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -169,12 +169,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">Mlxpy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">The launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">The logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">The reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">The scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">The version manager</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlxpy.data_structures.html">Data structures</a></li>
 </ul>
 </li>
@@ -226,8 +226,8 @@
 </ul>
 </div></blockquote>
 </section>
-<section id="the-file-structure-of-the-logs">
-<h2>The file structure of the logs<a class="headerlink" href="#the-file-structure-of-the-logs" title="Permalink to this heading">#</a></h2>
+<section id="file-structure-of-the-logs">
+<h2>File structure of the logs<a class="headerlink" href="#file-structure-of-the-logs" title="Permalink to this heading">#</a></h2>
 <p>When the logger is activated, it stores the results of a run in a sub-directory of the parent directory ‘./logs’. This parent directory is created automatically if it does not exists already. By default it is set to ‘./logs’, but this behavior can be modified (see :ref: <cite>Customizing the parent log directory’&lt;custom_log_dir&gt;</cite>).</p>
 <p>First, the logger assigns a ‘log_id’ to the run. Every time ‘main.py’ is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of ‘./logs’ is created and named after the assigned log_id.
 Since we executed the code three times in total, we should expect three sub-directories under ‘./logs’ called ‘1’, ‘2’, and ‘3’, all having the same structure:</p>
@@ -281,12 +281,12 @@ Since we executed the code three times in total, we should expect three sub-dire
 </pre></div>
 </div>
 </div>
-<p>The hidden directory ‘.keys’ is used by the reader module of mlxpy and is not something to worry about here. Instead, we inspect the remaining directories below.</p>
+<p>The hidden directory ‘.keys’ is used by the reader module of MLXPy and is not something to worry about here. Instead, we inspect the remaining directories below.</p>
 </section>
 <section id="the-metadata-directory">
 <h3>The ‘metadata’ directory<a class="headerlink" href="#the-metadata-directory" title="Permalink to this heading">#</a></h3>
 <p>The ‘metadata’ directory contains three yaml files: ‘config’, ‘info’, and ‘mlxpy’, each storing the content of the corresponding fields of the context object ‘ctx’.
-‘config’ stores the user config of the run, ‘info’ stores general information about the run such as the assigned ‘log_id’ and the absolute path to the logs of the run ‘log_dir’. Finally, ‘mlxpy’ stores the mlxpy’s settings used for the run (e.g. the logger settings).</p>
+‘config’ stores the user config of the run, ‘info’ stores general information about the run such as the assigned ‘log_id’ and the absolute path to the logs of the run ‘log_dir’. Finally, ‘mlxpy’ stores the MLXPy’s settings used for the run (e.g. the logger settings).</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">./logs/1/metadata/config.yaml</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
@@ -358,7 +358,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">OneHiddenLayer</span>
 
-<span class="kn">import</span> <span class="nn">mlxpy</span> <span class="k">as</span> <span class="nn">mlxpy</span>
+<span class="kn">import</span> <span class="nn">mlxpy</span>
 
 <span class="nd">@mlxpy</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxpy</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
@@ -418,7 +418,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxpy.logger.parent_log_dir<span class="o">=</span><span class="s1">&#39;./new_logs&#39;</span>
 </pre></div>
 </div>
-<p>Alternatively, the parent directory can be modified directly in the mlxpy default settings file ‘configs/mlxpy.yaml’. This file is created automatically if it doesn’t exist already and contains all the defaults options for using mlxpy in the current project:</p>
+<p>Alternatively, the parent directory can be modified directly in the MLXPy default settings file ‘configs/mlxpy.yaml’. This file is created automatically if it doesn’t exist already and contains all the defaults options for using MLXPy in the current project:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
 <div class="code-block-caption"><span class="caption-text">./configs/mlxpy.yaml</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
@@ -488,7 +488,7 @@ Since we executed the code three times in total, we should expect three sub-dire
             <ul>
 <li><a class="reference internal" href="#">2- Logging</a><ul>
 <li><a class="reference internal" href="#logging-metrics-and-artifacts">Logging metrics and artifacts</a></li>
-<li><a class="reference internal" href="#the-file-structure-of-the-logs">The file structure of the logs</a><ul>
+<li><a class="reference internal" href="#file-structure-of-the-logs">File structure of the logs</a><ul>
 <li><a class="reference internal" href="#the-metrics-directory">The ‘metrics’ directory</a></li>
 <li><a class="reference internal" href="#the-metadata-directory">The ‘metadata’ directory</a></li>
 <li><a class="reference internal" href="#the-artifacts-directory">The ‘artifacts’ directory</a></li>

@@ -2,8 +2,8 @@ Introduction
 ------------
 
   
-In this tutorial, we will go through the three main functionalities: Launching, Logging, and Reading and explain these are easily handled by mlxpy. 
-Then we will see how to enhance reproducibility of experiments using the git-based version manager provided by mlxpy and how to submit several jobs to a cluster in a single command using the mlxpy's scheduler. 
+In this tutorial, we will go through the three main functionalities: Launching, Logging, and Reading and explain these are easily handled by MLXPy. 
+Then we will see how to enhance reproducibility of experiments using the git-based version manager provided by MLXPy and how to submit several jobs to a cluster in a single command using the MLXPy's scheduler. 
 
 To make things concrete, we will consider a simple use-case where we are interested in training a neural network on a regression task. You can find code for reproducing this tutorial by following this link https://github.com/MichaelArbel/mlxpy/tree/master/tutorial.
 
@@ -23,7 +23,7 @@ The first step is to create a directory 'tutorial' containing the code needed fo
    ├── main.py
    └── results.py
 
-The directory contains three files: 'core.py', 'main.py' and 'results.py'. It also contains a directory 'configs' that will be used later by mlxpy. For now, we will only have a look at the 'core.py' and 'main.py' files.
+The directory contains three files: 'core.py', 'main.py' and 'results.py'. It also contains a directory 'configs' that will be used later by MLXPy. For now, we will only have a look at the 'core.py' and 'main.py' files.
 
 
 The 'core.py' file
@@ -148,5 +148,5 @@ If we execute the function 'main.py', we can see that the training performs 10 '
 
 
 In this basic example, we have not used any specific tool for launching or logging. 
-Next, we will see how you can use mlxpy to keep track of all options, results, and code versions seamlessly! 
+Next, we will see how you can use MLXPy to keep track of all options, results, and code versions seamlessly! 
 

@@ -1,5 +1,5 @@
-The reader
-==========
+Reader
+======
 
 
 The :class:`~mlxpy.reader.Reader` Class

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="The scheduler" href="mlxpy.scheduling.html" /><link rel="prev" title="The logger" href="mlxpy.logging.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Scheduler" href="mlxpy.scheduling.html" /><link rel="prev" title="Logger" href="mlxpy.logging.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>The reader - Mlxpy 0.1 documentation</title>
+        <title>Reader - MLXPy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Mlxpy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">Mlxpy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -169,12 +169,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="mlxpy.html">Mlxpy package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">The launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">The logger</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">The reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">The scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">The version manager</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlxpy.data_structures.html">Data structures</a></li>
 </ul>
 </li>
@@ -212,8 +212,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="the-reader">
-<h1>The reader<a class="headerlink" href="#the-reader" title="Permalink to this heading">#</a></h1>
+          <section id="reader">
+<h1>Reader<a class="headerlink" href="#reader" title="Permalink to this heading">#</a></h1>
 <section id="module-mlxpy.reader">
 <span id="the-reader-class"></span><h2>The <a class="reference internal" href="#mlxpy.reader.Reader" title="mlxpy.reader.Reader"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reader</span></code></a> Class<a class="headerlink" href="#module-mlxpy.reader" title="Permalink to this heading">#</a></h2>
 <p>The reader allows queryring the logs of several experiments and performing operations on the content of these logs (e.g. grouping and aggregation).</p>
@@ -271,7 +271,7 @@ by setting the variable ‘dst_dir’ of the constructor to a different director
 <dl class="py property">
 <dt class="sig sig-object py" id="mlxpy.reader.Reader.fields">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mlxpy.reader.Reader.fields" title="Permalink to this definition">#</a></dt>
-<dd><p>Return all fields of the database except those specific to mlxpy, excluding the fields contained in the file ‘mlxpy.yaml’.</p>
+<dd><p>Return all fields of the database except those specific to MLXPy, excluding the fields contained in the file ‘mlxpy.yaml’.</p>
 <p>return: a dataframe of all fields contained in the database
 rtype: pd.DataFrame</p>
 </dd></dl>
@@ -321,7 +321,7 @@ rtype: pd.DataFrame</p>
 <dt class="sig sig-object py" id="mlxpy.parser.DefaultParser">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxpy.parser.</span></span><span class="sig-name descname"><span class="pre">DefaultParser</span></span><a class="reference internal" href="_modules/mlxpy/parser.html#DefaultParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxpy.parser.DefaultParser" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mlxpy.parser.Parser" title="mlxpy.parser.Parser"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parser</span></code></a></p>
-<p>Mlxpy’s deafult parser inspired from python’s syntax.</p>
+<p>MLXPy’s deafult parser inspired from python’s syntax.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxpy.parser.DefaultParser.parse">
 <span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QueryInstance</span></span></span><a class="reference internal" href="_modules/mlxpy/parser.html#DefaultParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxpy.parser.DefaultParser.parse" title="Permalink to this definition">#</a></dt>
@@ -343,7 +343,7 @@ rtype: pd.DataFrame</p>
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">The scheduler</div>
+                <div class="title">Scheduler</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -354,7 +354,7 @@ rtype: pd.DataFrame</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">The logger</div>
+                <div class="title">Logger</div>
                 
               </div>
             </a>
@@ -388,7 +388,7 @@ rtype: pd.DataFrame</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">The reader</a><ul>
+<li><a class="reference internal" href="#">Reader</a><ul>
 <li><a class="reference internal" href="#module-mlxpy.reader">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Reader</span></code> Class</a><ul>
 <li><a class="reference internal" href="#mlxpy.reader.Reader"><code class="docutils literal notranslate"><span class="pre">Reader</span></code></a><ul>
 <li><a class="reference internal" href="#mlxpy.reader.Reader.src_dir"><code class="docutils literal notranslate"><span class="pre">Reader.src_dir</span></code></a></li>

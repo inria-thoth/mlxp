@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Conclusion" href="tutorial_conclusion.html" /><link rel="prev" title="3- Reading" href="easy_reading.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>4- Advanced features - Mlxpy 0.1 documentation</title>
+        <title>4- Advanced features - MLXPy 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Mlxpy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">Mlxpy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -169,12 +169,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">Mlxpy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">The launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">The logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">The reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">The scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">The version manager</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlxpy.data_structures.html">Data structures</a></li>
 </ul>
 </li>
@@ -217,10 +217,10 @@
 <section id="launching-jobs-using-a-scheduler">
 <h2>Launching jobs using a scheduler<a class="headerlink" href="#launching-jobs-using-a-scheduler" title="Permalink to this heading">#</a></h2>
 <p>If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs.
-Mlxpy allows you to combine the ‘multirun’ capabilities of <a class="reference external" href="https://hydra.cc/">hydra</a> with job scheduling to easily submit multiple experiments to a cluster.</p>
+MLXPy allows you to combine the ‘multirun’ capabilities of <a class="reference external" href="https://hydra.cc/">hydra</a> with job scheduling to easily submit multiple experiments to a cluster.</p>
 <section id="configuring-the-scheduler">
 <h3>Configuring the scheduler<a class="headerlink" href="#configuring-the-scheduler" title="Permalink to this heading">#</a></h3>
-<p>The scheduler’s options are stored in the mlxpy settings file ‘./configs/mlxpy.yaml’. By default, the option ‘use_scheduler’ is set to ‘False’, which means that jobs will not be submitted using a scheduler. Additionally, the field ‘scheduler.name’ is set to ‘NoScheduler’ which means that no valid scheduler is defined.
+<p>The scheduler’s options are stored in the MLXPy settings file ‘./configs/mlxpy.yaml’. By default, the option ‘use_scheduler’ is set to ‘False’, which means that jobs will not be submitted using a scheduler. Additionally, the field ‘scheduler.name’ is set to ‘NoScheduler’ which means that no valid scheduler is defined.
 If the settings file ‘./configs/mlxpy.yaml’ does not exist or if you set the option ‘mlxpy.user_scheduler’ to true while still leaving the ‘scheduler.name’ field in the ‘mlxpy.yaml’ as ‘NoScheduler’, you will have access to an interactive platform to set up the scheduler’s options from the terminal when executing the ‘main.py’ file:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python main.py +mlxpy.use_scheduler=True</span>
 
@@ -234,7 +234,7 @@ If the settings file ‘./configs/mlxpy.yaml’ does not exist or if you set the
 <span class="go">Please enter your answer (y/n):</span>
 </pre></div>
 </div>
-<p>Mlxpy provides two options: ‘y’ or ‘n’. If you choose ‘n’, then mlxpy skips configuration and tries to execute code without a scheduler. If you choose ‘y’, you’ll be able to set up a scheduler. Let’s select ‘y’:</p>
+<p>MLXPy provides two options: ‘y’ or ‘n’. If you choose ‘n’, then MLXPy skips configuration and tries to execute code without a scheduler. If you choose ‘y’, you’ll be able to set up a scheduler. Let’s select ‘y’:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">You can either choose one of the job schedulers available by default,</span>
 <span class="go">or define a custom one by inheriting from the abstract class &lt;class &#39;mlxpy.scheduler.Scheduler&#39;&gt; (see documentation)</span>
 
@@ -247,15 +247,15 @@ If the settings file ‘./configs/mlxpy.yaml’ does not exist or if you set the
 <span class="go"> Please enter your choice (or hit Enter to skip) :</span>
 </pre></div>
 </div>
-<p>By default, Mlxpy supports two job schedulers ‘OAR’ and ‘SLURM’.  You can also specify your custom scheduler by defining a class inheriting from the abstract class ‘mlxpy.scheduler.Scheduler’ and providing the full name of the class so that mlxpy can import it. Here, we select one of the default schedulers provided by mlxpy ‘OARScheduler’ as we have access to a cluster using the OAR scheduler:</p>
+<p>By default, MLXPy supports two job schedulers ‘OAR’ and ‘SLURM’.  You can also specify your custom scheduler by defining a class inheriting from the abstract class ‘mlxpy.scheduler.Scheduler’ and providing the full name of the class so that MLXPy can import it. Here, we select,’OARScheduler’, one of the default schedulers provided by MLXPy as we have access to a cluster using the OAR scheduler:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Please enter your choice (or hit Enter to skip): OARScheduler</span>
 
 <span class="go">Setting Scheduler to OARScheduler</span>
 
-<span class="go">Default settings for mlxpy will be created in ./configs/mlxpy.yaml</span>
+<span class="go">Default settings for MLXPy will be created in ./configs/mlxpy.yaml</span>
 </pre></div>
 </div>
-<p>Mlxpy then sets up the scheduler, updates/creates the mlxpy settings file ‘./configs/mlxpy.yaml’ with an option for using ‘OARScheduler’ and continues execution of the code (see next section for what is executed). We can double-check that the mlxpy settings file ‘./configs/mlxpy.yaml’ was correctly modified:</p>
+<p>MLXPy then sets up the scheduler, updates/creates the MLXPy settings file ‘./configs/mlxpy.yaml’ with an option for using ‘OARScheduler’ and continues execution of the code (see next section for what is executed). We can double-check that the MLXPy settings file ‘./configs/mlxpy.yaml’ was correctly modified:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">./configs/mlxpy.yaml</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
@@ -279,7 +279,7 @@ Since we are using OAR, these options must follow OAR’s syntax.</p>
 </section>
 <section id="submitting-job-to-a-cluster-queue">
 <h3>Submitting job to a cluster queue<a class="headerlink" href="#submitting-job-to-a-cluster-queue" title="Permalink to this heading">#</a></h3>
-<p>After configuring the scheduler or if it was already configured in the mlxpy file settings, mlxpy falls back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: ‘OAR’).
+<p>After configuring the scheduler or if it was already configured in the MLXPy file settings, MLXPy falls back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: ‘OAR’).
 In the console, you can see the content of the script followed by a message ‘Job launched!’ indicating that the scheduler succeeded in launching the job:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
 <span class="gp">#</span>OAR<span class="w"> </span>-n<span class="w"> </span>logs/5
@@ -298,7 +298,7 @@ In the console, you can see the content of the script followed by a message ‘J
 <span class="go">Job launched!</span>
 </pre></div>
 </div>
-<p>Under the woods mlxpy first assigns a ‘log_id’ to the run and then creates its corresponding log directory ‘./logs/log_id’ (, using the logger).
+<p>Under the woods MLXPy first assigns a ‘log_id’ to the run and then creates its corresponding log directory ‘./logs/log_id’ (, using the logger).
 Here, log_id=5, since this is the 5th run that we launched in ‘./logs’. Then instead of executing the job, the scheduler creates a script ‘script.sh’ that is saved in ‘./logs/log_id’. This script is then submitted automatically to the OAR cluster queue using the command: ‘sbatch ./script.sh’.
 At this point, the program exits after displaying the script along with a message: ‘Job launched!’.
 Let’s have a look at the content of the script:</p>
@@ -379,7 +379,7 @@ It is only useful in case you need to debug or re-run an experiment.</p>
 <p>Here is what happens:</p>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://hydra.cc/">hydra</a> performs a cross-product of the options provided and creates as many jobs are needed (3x4).</p></li>
-<li><p>The mlxpy’s logger creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id.</p></li>
+<li><p>The MLXPy’s logger creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id.</p></li>
 <li><p>The scheduler creates a script for each of these jobs in their corresponding directory, then submits these scripts to the cluster queue.</p></li>
 </ol>
 </section>
@@ -390,15 +390,15 @@ It is only useful in case you need to debug or re-run an experiment.</p>
 Meanwhile, the development code might have already changed, with some potential bugs introduced!
 Without careful version management, it is hard to know for sure what code was used to produce the results.</p>
 <section id="mlxpy-s-version-manager">
-<h3>mlxpy’s version manager<a class="headerlink" href="#mlxpy-s-version-manager" title="Permalink to this heading">#</a></h3>
-<p>Mlxpy proposes a simple way to avoid these issues by introducing two features:</p>
+<h3>MLXPy’s version manager<a class="headerlink" href="#mlxpy-s-version-manager" title="Permalink to this heading">#</a></h3>
+<p>MLXPy proposes a simple way to avoid these issues by introducing two features:</p>
 <ul class="simple">
 <li><p>Systematically checking for uncommitted change/ untracked files.</p></li>
 <li><p>Systematically copying the code from the git repository containing the executable to another ‘safe’ location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.</p></li>
 </ul>
 </section>
 <section id="using-mlxpy-s-version-manager">
-<h3>Using mlxpy’s version manager<a class="headerlink" href="#using-mlxpy-s-version-manager" title="Permalink to this heading">#</a></h3>
+<h3>Using MLXPy’s version manager<a class="headerlink" href="#using-mlxpy-s-version-manager" title="Permalink to this heading">#</a></h3>
 <p>Let’s see how this works! We simply need to set the option ‘use_version_manager’ to true. This launches an interactive session where the user can tell the version manager what to do.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxpy.use_version_manager<span class="o">=</span>True
 
@@ -434,7 +434,7 @@ Here, we just choose option ‘c’ which ignores the untracked directory ‘./l
 <p>We see that there is one uncommitted change. The user can either ignore this, commit the changes from a different interface and check again or commit the changes from the version manager interface. Here, we just choose the option ‘a’ which creates an automatic commit of the changes.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Committing changes....</span>
 
-<span class="go">[master e22179c] mlxpy: Automatically committing all changes</span>
+<span class="go">[master e22179c] MLXPy: Automatically committing all changes</span>
 
 <span class="go"> 1 files changed, 2 insertions(+), 1 deletions(-)</span>
 
@@ -452,7 +452,7 @@ Here, we just choose option ‘c’ which ignores the untracked directory ‘./l
 </pre></div>
 </div>
 <p>We choose the safe copy!
-The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). Mlxpy then proceeds to execute the code from that copy:</p>
+The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). MLXPy then proceeds to execute the code from that copy:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Creating a copy of the repository at absolute_path_to/.workdir/mlxpy/commit_hash</span>
 <span class="go">Starting from epoch: 0</span>
 <span class="go">Completed training with a learning rate of 10.0</span>
@@ -489,9 +489,9 @@ The copy is created in a directory named after the latest commit hash during exe
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+optimizer.lr<span class="o">=</span>1e-3,1e-2,1e-1<span class="w"> </span>+seed<span class="o">=</span><span class="m">1</span>,2,3,4<span class="w">  </span>+mlxpy.use_scheduler<span class="o">=</span>True<span class="w"> </span>+mlxpy.use_version_manager<span class="o">=</span>True
 </pre></div>
 </div>
-<p>In this case, mlxpy will go through the following step:</p>
+<p>In this case, MLXPy will go through the following step:</p>
 <ol class="arabic simple">
-<li><p>Mlxpy first asks the user to set up a scheduler, if not already configured.</p></li>
+<li><p>MLXPy first asks the user to set up a scheduler, if not already configured.</p></li>
 <li><p>The version manager asks the user to decide how to handle untracked/uncommitted files and whether or not to create a ‘safe’ directory from which the code will be run.</p></li>
 <li><p>Once the user’s choices are entered, the jobs are submitted to the scheduler, and you only need to wait for the results to come!</p></li>
 </ol>
@@ -561,8 +561,8 @@ The copy is created in a directory named after the latest commit hash during exe
 </ul>
 </li>
 <li><a class="reference internal" href="#version-management">Version management</a><ul>
-<li><a class="reference internal" href="#mlxpy-s-version-manager">mlxpy’s version manager</a></li>
-<li><a class="reference internal" href="#using-mlxpy-s-version-manager">Using mlxpy’s version manager</a></li>
+<li><a class="reference internal" href="#mlxpy-s-version-manager">MLXPy’s version manager</a></li>
+<li><a class="reference internal" href="#using-mlxpy-s-version-manager">Using MLXPy’s version manager</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#using-both-scheduler-and-version-manager">Using both scheduler and version manager</a></li>

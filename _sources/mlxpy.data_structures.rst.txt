@@ -2,7 +2,7 @@ Data structures
 ===============
 
 
-These are the data structures provided by mlxpy to handle configuration options and data  
+These are the data structures provided by MLXPy to handle configuration options and data  
 
 
 The :class:`~mlxpy.data_structures.schemas` Classes 

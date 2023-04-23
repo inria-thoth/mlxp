@@ -8,14 +8,14 @@ Launching jobs using a scheduler
 
 
 If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs. 
-Mlxpy allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster.
+MLXPy allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster.
 
 
 
 Configuring the scheduler
 """""""""""""""""""""""""
 
-The scheduler's options are stored in the mlxpy settings file './configs/mlxpy.yaml'. By default, the option 'use_scheduler' is set to 'False', which means that jobs will not be submitted using a scheduler. Additionally, the field 'scheduler.name' is set to 'NoScheduler' which means that no valid scheduler is defined.
+The scheduler's options are stored in the MLXPy settings file './configs/mlxpy.yaml'. By default, the option 'use_scheduler' is set to 'False', which means that jobs will not be submitted using a scheduler. Additionally, the field 'scheduler.name' is set to 'NoScheduler' which means that no valid scheduler is defined.
 If the settings file './configs/mlxpy.yaml' does not exist or if you set the option 'mlxpy.user_scheduler' to true while still leaving the 'scheduler.name' field in the 'mlxpy.yaml' as 'NoScheduler', you will have access to an interactive platform to set up the scheduler's options from the terminal when executing the 'main.py' file:
 
 .. code-block:: console
@@ -31,7 +31,7 @@ If the settings file './configs/mlxpy.yaml' does not exist or if you set the opt
     
     Please enter your answer (y/n):
 
-Mlxpy provides two options: 'y' or 'n'. If you choose 'n', then mlxpy skips configuration and tries to execute code without a scheduler. If you choose 'y', you'll be able to set up a scheduler. Let's select 'y':
+MLXPy provides two options: 'y' or 'n'. If you choose 'n', then MLXPy skips configuration and tries to execute code without a scheduler. If you choose 'y', you'll be able to set up a scheduler. Let's select 'y':
 
 
 .. code-block:: console
@@ -48,7 +48,7 @@ Mlxpy provides two options: 'y' or 'n'. If you choose 'n', then mlxpy skips conf
      Please enter your choice (or hit Enter to skip) :
 
 
-By default, Mlxpy supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your custom scheduler by defining a class inheriting from the abstract class 'mlxpy.scheduler.Scheduler' and providing the full name of the class so that mlxpy can import it. Here, we select one of the default schedulers provided by mlxpy 'OARScheduler' as we have access to a cluster using the OAR scheduler:
+By default, MLXPy supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your custom scheduler by defining a class inheriting from the abstract class 'mlxpy.scheduler.Scheduler' and providing the full name of the class so that MLXPy can import it. Here, we select,'OARScheduler', one of the default schedulers provided by MLXPy as we have access to a cluster using the OAR scheduler:
 
 .. code-block:: console
 
@@ -56,9 +56,9 @@ By default, Mlxpy supports two job schedulers 'OAR' and 'SLURM'.  You can also s
 
     Setting Scheduler to OARScheduler
 
-    Default settings for mlxpy will be created in ./configs/mlxpy.yaml
+    Default settings for MLXPy will be created in ./configs/mlxpy.yaml
 
-Mlxpy then sets up the scheduler, updates/creates the mlxpy settings file './configs/mlxpy.yaml' with an option for using 'OARScheduler' and continues execution of the code (see next section for what is executed). We can double-check that the mlxpy settings file './configs/mlxpy.yaml' was correctly modified: 
+MLXPy then sets up the scheduler, updates/creates the MLXPy settings file './configs/mlxpy.yaml' with an option for using 'OARScheduler' and continues execution of the code (see next section for what is executed). We can double-check that the MLXPy settings file './configs/mlxpy.yaml' was correctly modified: 
 
 
 .. code-block:: yaml
@@ -86,7 +86,7 @@ Since we are using OAR, these options must follow OAR's syntax.
 Submitting job to a cluster queue
 """""""""""""""""""""""""""""""""
 
-After configuring the scheduler or if it was already configured in the mlxpy file settings, mlxpy falls back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: 'OAR'). 
+After configuring the scheduler or if it was already configured in the MLXPy file settings, MLXPy falls back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: 'OAR'). 
 In the console, you can see the content of the script followed by a message 'Job launched!' indicating that the scheduler succeeded in launching the job:
 
 .. code-block:: console
@@ -108,7 +108,7 @@ In the console, you can see the content of the script followed by a message 'Job
     Job launched!
 
 
-Under the woods mlxpy first assigns a 'log_id' to the run and then creates its corresponding log directory './logs/log_id' (, using the logger). 
+Under the woods MLXPy first assigns a 'log_id' to the run and then creates its corresponding log directory './logs/log_id' (, using the logger). 
 Here, log_id=5, since this is the 5th run that we launched in './logs'. Then instead of executing the job, the scheduler creates a script 'script.sh' that is saved in './logs/log_id'. This script is then submitted automatically to the OAR cluster queue using the command: 'sbatch ./script.sh'. 
 At this point, the program exits after displaying the script along with a message: 'Job launched!'.
 Let's have a look at the content of the script:
@@ -195,7 +195,7 @@ You can also launch several jobs to the cluster from a single command! Let's say
 Here is what happens:
 
 1. `hydra <https://hydra.cc/>`_ performs a cross-product of the options provided and creates as many jobs are needed (3x4).
-2. The mlxpy's logger creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id.
+2. The MLXPy's logger creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id.
 3. The scheduler creates a script for each of these jobs in their corresponding directory, then submits these scripts to the cluster queue.
 
 
@@ -206,15 +206,15 @@ Sometimes, there can be a delay between the time when a job is submitted and whe
 Meanwhile, the development code might have already changed, with some potential bugs introduced! 
 Without careful version management, it is hard to know for sure what code was used to produce the results.
 
-mlxpy's version manager
+MLXPy's version manager
 """""""""""""""""""""""
 
-Mlxpy proposes a simple way to avoid these issues by introducing two features:
+MLXPy proposes a simple way to avoid these issues by introducing two features:
 
 - Systematically checking for uncommitted change/ untracked files.
 - Systematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.
 
-Using mlxpy's version manager
+Using MLXPy's version manager
 """""""""""""""""""""""""""""
 
 Let's see how this works! We simply need to set the option 'use_version_manager' to true. This launches an interactive session where the user can tell the version manager what to do.
@@ -263,7 +263,7 @@ We see that there is one uncommitted change. The user can either ignore this, co
 
     Committing changes....
     
-    [master e22179c] mlxpy: Automatically committing all changes
+    [master e22179c] MLXPy: Automatically committing all changes
 
      1 files changed, 2 insertions(+), 1 deletions(-)
     
@@ -286,7 +286,7 @@ Finally, the version manager asks if we want to create a 'safe' copy (if it does
 
 
 We choose the safe copy! 
-The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). Mlxpy then proceeds to execute the code from that copy:
+The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). MLXPy then proceeds to execute the code from that copy:
 
 
 .. code-block:: console
@@ -332,8 +332,8 @@ You can combine both features to run several reproducible jobs with a controlled
    
    $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxpy.use_scheduler=True +mlxpy.use_version_manager=True
 
-In this case, mlxpy will go through the following step:
+In this case, MLXPy will go through the following step:
 
-1. Mlxpy first asks the user to set up a scheduler, if not already configured. 
+1. MLXPy first asks the user to set up a scheduler, if not already configured. 
 2. The version manager asks the user to decide how to handle untracked/uncommitted files and whether or not to create a 'safe' directory from which the code will be run. 
 3. Once the user's choices are entered, the jobs are submitted to the scheduler, and you only need to wait for the results to come!

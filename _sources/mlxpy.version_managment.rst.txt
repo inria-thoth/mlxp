@@ -1,5 +1,5 @@
-The version manager
-===================
+Version manager
+===============
 
 
 
