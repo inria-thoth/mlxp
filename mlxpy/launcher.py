@@ -137,20 +137,14 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any])->T:
         :rtype: 
     """
 
-    attr = import_module(module_name)
-    if config:
-        attr = attr(**config)
+    attr = import_module(class_name)
+    if arguments:
+        attr = attr(**arguments)
     else:
         attr = attr()
 
     return attr
 
-def _instance_from_config(config):
-    config_module_name = "name"
-    config = copy.deepcopy(config)
-    module_name = config.pop(config_module_name)
-
-    return instance_from_dict(module_name, config)
 
 def import_module(module_name):
     module, attr = os.path.splitext(module_name)
@@ -168,6 +162,13 @@ def import_module(module_name):
                 return eval(module+attr[1:])
 
 
+
+def _instance_from_config(config):
+    config_module_name = "name"
+    config = copy.deepcopy(config)
+    module_name = config.pop(config_module_name)
+
+    return instance_from_dict(module_name, config)
 
 def launch(
     config_path: str = './configs',

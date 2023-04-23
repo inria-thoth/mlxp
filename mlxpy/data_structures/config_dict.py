@@ -37,7 +37,7 @@ class ConfigDict(dict):
             if key in self.keys():
                 if isinstance(value, dict):
                     if isinstance(self[key], ConfigDict):
-                        self[key].update_dict(value)
+                        self[key].update(value)
                     else:
                         self[key] = convert_dict(value,src_class=dict)
                 else: 

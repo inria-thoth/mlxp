@@ -4,7 +4,7 @@ from mlxpy.logger import DefaultLogger
 
 
 
-from mlxpy.scheduler import Scheduler, SLURMScheduler, OARScheduler, NoScheduler
+from mlxpy.scheduler import Scheduler, SLURMScheduler, OARScheduler
 
 from mlxpy.version_manager import GitVM 
 from mlxpy.data_structures.config_dict import ConfigDict
@@ -16,7 +16,6 @@ __all__ = [
     "launch",
     "Reader",
     "DefaultLogger",
-    "NoScheduler",
     "Scheduler",
     "ConfigDict",
     "Context",
