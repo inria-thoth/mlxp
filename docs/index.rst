@@ -3,12 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Mlxpy's documentation!
-=================================
+Welcome MLXPy's documentation!
+==============================
 
 
-Mlxpy is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results.
+MLXPy is an open-source Python package for managing multiple machine learning experiments with a flexible option structure from launching, and logging to querying results.
 
+MLXPy stands for Machine Learning eXperiments Python package.
 
 .. toctree::
    :maxdepth: 2
