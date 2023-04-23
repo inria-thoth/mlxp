@@ -1,4 +1,4 @@
-Mlxpy package
+MLXPy package
 =============
 
 

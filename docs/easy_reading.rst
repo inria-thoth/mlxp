@@ -2,7 +2,7 @@
 ----------
 
 We have already stored information about 3 runs so far. 
-We can access this information easily using mlxpy's reader module, which allows querying results, grouping, and aggregating them. Let's do this interactively!
+We can access this information easily using MLXPy's reader module, which allows querying results, grouping, and aggregating them. Let's do this interactively!
 
 
 Creating a result database
@@ -11,7 +11,7 @@ Creating a result database
 
 .. code-block:: ipython
 
-    In [1]: import mlxpy as mlxpy
+    In [1]: import mlxpy
 
     In [2]: # Creates a database of results stored by the logger that is accessible using a reader object.
        ...: parent_log_dir = './logs/'
@@ -178,7 +178,7 @@ Grouping and aggregation
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 While it is possible to directly convert the results of a query to a pandas dataframe which supports grouping and aggregation operations, 
-mlxpy also provides basic support for these operations. Let's see how this works:
+MLXPy also provides basic support for these operations. Let's see how this works:
 
 
 .. code-block:: ipython

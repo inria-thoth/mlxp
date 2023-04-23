@@ -133,7 +133,7 @@ class Reader(object):
 
     @property
     def fields(self) -> pd.DataFrame:
-        """Return all fields of the database except those specific to mlxpy, excluding the fields contained in the file 'mlxpy.yaml'.
+        """Return all fields of the database except those specific to MLXPy, excluding the fields contained in the file 'mlxpy.yaml'.
 
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame

@@ -74,7 +74,7 @@ def launch(
         if __name__ == "__main__":
             my_func()
 
-    :param config_path: The config path, a directory where the default user configuration and mlxpy settings are stored.
+    :param config_path: The config path, a directory where the default user configuration and MLXPy settings are stored.
     :param seeding_function:  A callable for setting the seed of random number generators. It is called with the seed option in 'ctx.config.seed' passed to it.
     :type config_path: str (default './configs')
     :type seeding_function: Union[Callable[[Any], None],None] (default None)
@@ -302,7 +302,7 @@ class Context:
     .. py:attribute:: mlxpy
         :type: ConfigDict
 
-        A structure containing mlxpy's default settings for the project.
+        A structure containing MLXPy's default settings for the project.
         Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config.yaml'.
 
     .. py:attribute:: info

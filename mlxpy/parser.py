@@ -30,7 +30,7 @@ class Parser(abc.ABC):
 
 
 class DefaultParser(Parser):
-    """Mlxpy's deafult parser inspired from python's syntax."""
+    """MLXPy's deafult parser inspired from python's syntax."""
 
     def __init__(self):
         self.lexer = _Lexer()

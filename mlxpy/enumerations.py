@@ -18,7 +18,7 @@ class DataFrameType(Enum):
 
 
 class DefaultSchedulers(Enum):
-    """Schedulers supported by default by Mlxpy."""
+    """Schedulers supported by default by MLXPy."""
 
     OARScheduler = "OARScheduler"
     SLURMScheduler = "SLURMScheduler"

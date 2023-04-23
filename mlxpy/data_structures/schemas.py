@@ -236,8 +236,8 @@ class Info:
 
 
 @dataclass
-class MlxpyConfig:
-    """Default settings of mlxpy.
+class MLXPyConfig:
+    """Default settings of MLXPy.
 
     .. py:attribute:: logger
         :type: ConfigLogger
@@ -278,9 +278,9 @@ class MlxpyConfig:
     .. py:attribute:: interactive_mode
         :type: bool
 
-        A variable controlling mlxpy's interactive mode.
+        A variable controlling MLXPy's interactive mode.
 
-            1. If 'interactive_mode==True', mlxpy uses the interactive mode whenever applicable:
+            1. If 'interactive_mode==True', MLXPy uses the interactive mode whenever applicable:
 
                 - When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"':
                 Asks the user to select a valid scheduler.
@@ -320,10 +320,10 @@ class Metadata:
         (default Info)
 
     .. py:attribute:: mlxpy
-        :type: MlxpyConfig
+        :type: MLXPyConfig
 
-        Default settings of mlxpy.
-        (default MlxpyConfig)
+        Default settings of MLXPy.
+        (default MLXPyConfig)
 
 
     .. py:attribute:: config
@@ -333,5 +333,5 @@ class Metadata:
     """
 
     info: Info = Info()
-    mlxpy: MlxpyConfig = MlxpyConfig()
+    mlxpy: MLXPyConfig = MLXPyConfig()
     config: Any = None

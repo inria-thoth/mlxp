@@ -2,7 +2,7 @@ Tutorial
 ========
 
 
-In this tutorial, we will see how to use mlxpy to run machine learning experiments. 
+In this tutorial, we will see how to use MLXPy to run machine learning experiments. 
 
 
 .. toctree::

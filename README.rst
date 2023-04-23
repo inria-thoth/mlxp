@@ -1,7 +1,7 @@
 Introduction
 ^^^^^^^^^^^^
 
-Mlxpy is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. 
+MLXPy is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. 
 
 MLXPy stands for Machine Learning eXperiments Python package.
 
@@ -35,11 +35,11 @@ Requirements
    * - GitPython
 
 
-Installing mlxpy
+Installing MLXPy
 ^^^^^^^^^^^^^^^^
 
 You can install this package by cloning it from the GitHub repository
-and then installing it with `pip`. Before installing mlxpy, make sure you the requirements are installed.
+and then installing it with `pip`. Before installing MLXPy, make sure you the requirements are installed.
 
 
 1. Clone the repository:
@@ -76,7 +76,7 @@ Note: You may need to use `pip3` instead of `pip` depending on your setup.
 Quick start guide
 ^^^^^^^^^^^^^^^^^
 
-Let's say you have a python file 'main.py' that calls a function 'my_task' performing some task. To use mlxpy for launching a job, you can use the decorator 'mlxpy.launch' above the function 'my_task'. 
+Let's say you have a python file 'main.py' that calls a function 'my_task' performing some task. To use MLXPy for launching a job, you can use the decorator 'mlxpy.launch' above the function 'my_task'. 
 
 .. code-block:: python
    :caption: main.py
@@ -99,7 +99,7 @@ The decorated function 'my_func' must take a  variable 'ctx' of type 'mlxpy.Cont
 The 'ctx' variable is automatically created on the fly during execution and stores information about the run. It contains four fields: 'config', 'mlxpy', 'info', and 'logger':
 
   * ctx.config: Stores task-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-  * ctx.mlxpy: Stores options contained in a yaml file 'mlxpy.yaml' located in the same directory 'config_path' and which configures the package mlxpy (see section below).  
+  * ctx.mlxpy: Stores options contained in a yaml file 'mlxpy.yaml' located in the same directory 'config_path' and which configures the package MLXPy (see section below).  
   * ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
   * ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
@@ -168,10 +168,10 @@ If the file 'config.yaml' or its parent directory 'config_path' do not exist, th
 
 .. _Configuring_mlxpy:
 
-Configuring mlxpy
+Configuring MLXPy
 ^^^^^^^^^^^^^^^^^
 
-Mlxpy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
+MLXPy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
 The package default settings are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
 By default, 'mlxpy.yaml' contains the following:
 
@@ -201,7 +201,7 @@ By default, 'mlxpy.yaml' contains the following:
 
 The logger
 """"""""""
-The options under 'logger' are specific to the mlxpy logger object. The field 'name' must contain the class name of the used logger. By default, it is set to 'DefaultLogger'. The user can provide a custom Logger provided that it inherits from the abstract class 'Logger'. The remaining fields refer to logger's options:
+The options under 'logger' are specific to the MLXPy logger object. The field 'name' must contain the class name of the used logger. By default, it is set to 'DefaultLogger'. The user can provide a custom Logger provided that it inherits from the abstract class 'Logger'. The remaining fields refer to logger's options:
 
 - parent_log_dir: The location where the directories of each run will be stored. The outputs for each run are saved in a directory of the form 
   'parent_log_dir/log_id' where 'log_id' is an integer uniquely assigned by the logger to the run.
@@ -210,7 +210,7 @@ The options under 'logger' are specific to the mlxpy logger object. The field 'n
 
 The scheduler
 """""""""""""
-The options under 'scheduler' are specific to the mlxpy scheduler object. The field 'name' must contain the class name of the used scheduler. By default, it is set to 'NoScheduler' meaning that no scheduler is defined. Mlxpy currently supports two job schedulers 'OAR' and 'SLUM'. In order to use them, the field 'name' must be modified to 'OARScheduler' of 'SLURMScheduler'. Additionally, the user can provide a custom scheduler inheriting from the abstract class 'Scheduler'. The remaining fields refer to scheduler's options:
+The options under 'scheduler' are specific to the MLXPy scheduler object. The field 'name' must contain the class name of the used scheduler. By default, it is set to 'NoScheduler' meaning that no scheduler is defined. MLXPy currently supports two job schedulers 'OAR' and 'SLUM'. In order to use them, the field 'name' must be modified to 'OARScheduler' of 'SLURMScheduler'. Additionally, the user can provide a custom scheduler inheriting from the abstract class 'Scheduler'. The remaining fields refer to scheduler's options:
 
 
 - env_cmd: Command for activating the working environment. 
@@ -223,7 +223,7 @@ The options under 'scheduler' are specific to the mlxpy scheduler object. The fi
 
 The version manager
 """""""""""""""""""
-The options under 'version_manager' are specific to the mlxpy version manager object. The field 'name' must contain the class name of the used version manager. By default, it is set to 'GitVM', which is the version manager based on git. The user can provide a custom version manager inheriting from the abstract class 'VersionManager'. The remaining fields refer to manager's options:
+The options under 'version_manager' are specific to the MLXPy version manager object. The field 'name' must contain the class name of the used version manager. By default, it is set to 'GitVM', which is the version manager based on git. The user can provide a custom version manager inheriting from the abstract class 'VersionManager'. The remaining fields refer to manager's options:
 
 - parent_target_work_dir: The target parent directory of the new working directory returned by the version manager
 - compute_requirements: When set to true, the version manager stores a list of requirements and their version.
@@ -231,24 +231,24 @@ The options under 'version_manager' are specific to the mlxpy version manager ob
 
 The interactive mode
 """"""""""""""""""""
-This option allows to enable/disable mlxpy's interactive mode. 
+This option allows to enable/disable MLXPy's interactive mode. 
 
-When set to 'True', mlxpy uses the interactive mode whenever applicable:
+When set to 'True', MLXPy uses the interactive mode whenever applicable:
   
-  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"', mlxpy asks the user to select a valid scheduler.
-  - Version managment: When 'use_version_manager==True', mlxpy asks the user to handle uncommited/untracked files and to choose the location from which code will be executed: 
+  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"', MLXPy asks the user to select a valid scheduler.
+  - Version managment: When 'use_version_manager==True', MLXPy asks the user to handle uncommited/untracked files and to choose the location from which code will be executed: 
       
 When set to 'False', no interactive mode is used and the following behavior occurs:
 
-  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"' mlxpy throws an error.
+  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"' MLXPy throws an error.
   -  Version managment: When 'use_version_manager==True':
 
     * Existing untracked files or uncommitted changes are ignored.
     * A copy of the code is made based on the latest commit (if not already existing) and code is executed from there. 
 
 
-Overriding the mlxpy setting
-""""""""""""""""""""""""""""
+Overriding MLXPy's settings
+"""""""""""""""""""""""""""
 
 It is possible to override these options from the command line by adding the prefix '+mlxpy' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
 
@@ -267,17 +267,17 @@ It is possible to override these options from the command line by adding the pre
 
 
 
-Citing mlxpy
+Citing MLXPy
 ^^^^^^^^^^^^
 
-If you use mlxpy in your research please use the following BibTeX entry:
+If you use MLXPy in your research please use the following BibTeX entry:
 
 
 .. code-block:: bibtex 
 
-   @Misc{Arbel2023Mlxpy,
+   @Misc{Arbel2023MLXPy,
      author = {Michae Arbel},
-     title = {mlxpy},
+     title = {MLXPy},
      howpublished = {Github},
      year = {2023},
      url = {https://github.com/MichaelArbel/mlxpy}

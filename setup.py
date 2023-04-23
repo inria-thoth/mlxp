@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 import os
 
 setup(
-    name="mlxpy",
+    name="MLXPy",
     version="0.1",
     description="A framework for conducting machine learning experiments in python",
     long_description=open(

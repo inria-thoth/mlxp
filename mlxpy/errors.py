@@ -1,4 +1,4 @@
-"""Errors raised by Mlxpy."""
+"""Errors raised by MLXPy."""
 
 
 class JobSubmissionError(Exception):
