@@ -1,7 +1,7 @@
 from mlxpy.launcher import launch, Context
 from mlxpy.reader import Reader
 from mlxpy.logger import DefaultLogger
-
+from mlxpy.version_manager import GitVM
 
 from mlxpy.scheduler import Scheduler, SLURMScheduler, OARScheduler
 
@@ -19,6 +19,7 @@ __all__ = [
     "DataDictList",
     "OARScheduler",
     "SLURMScheduler",
+    "GitVM"
 ]
 
 VERSION = (2023, 0, 1)
