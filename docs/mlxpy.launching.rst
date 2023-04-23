@@ -1,5 +1,5 @@
-The launcher
-============
+Launcher
+========
 
 
 The :class:`~mlxpy.launcher.launch` Function

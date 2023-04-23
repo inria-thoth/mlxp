@@ -1,5 +1,5 @@
-The logger
-==========
+Logger
+======
 
 
 
