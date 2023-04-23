@@ -1,5 +1,5 @@
-1- Easy launching
------------------
+1- Launching
+------------
 
 We will see how to modify the file 'main.py' to use mlxpy using the decorator 'mlxpy.launch'. 
 But first, let's introduce the 'mlxpy.Context' class which allows using mlxpy's logging and configuring functionalities. 
@@ -162,10 +162,3 @@ Of course, it is also possible to perform seeding inside the function 'train', b
    Completed training with learning rate: 1e-3
 
 That's it, launching a job using mlxpy is as easy as this! 
-
-
-
-The mlxpy default settings file  
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-When the code is executed for the first time, mlxpy creates a file 'configs/mlxpy.py' containing the defaults options for using the mlxpy in the current project. The user can customise these depending on their needs (See: :ref:`Configuring mlxpy <Configuring_mlxpy>`).
