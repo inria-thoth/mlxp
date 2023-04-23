@@ -81,7 +81,7 @@ class GitVM(VersionManager):
         The target parent directory of 
         the new working directory returned by the version manager
 
-    .. py:attribute:: store_requirements
+    .. py:attribute:: compute_requirements
         :type: bool 
 
         When set to true, the version manager stores a list of requirements and their version.
@@ -90,11 +90,11 @@ class GitVM(VersionManager):
 
     def __init__(self,
                 parent_target_work_dir: str,
-                store_requirements: bool):
+                compute_requirements: bool):
         super().__init__()
 
         self.parent_target_work_dir = os.path.abspath(parent_target_work_dir)
-        self.store_requirements = store_requirements
+        self.compute_requirements = compute_requirements
         self.dst = None 
         self.commit_hash = None
         self.repo_path = None
@@ -108,7 +108,7 @@ class GitVM(VersionManager):
         """
             Returns a dictionary containing 
             information about the version used for the run:
-                - requirements: the dependencies of the code and their versions. Empty if 'store_requirements' is false.
+                - requirements: the dependencies of the code and their versions. Empty if no requirements file was found.
                 - commit_hash: The hash of the latest commit.
                 - repo_path: Path to the repository.  
             :return: Dictionary containing 
@@ -157,7 +157,7 @@ class GitVM(VersionManager):
         if not os.path.isdir(self.dst):
             print(f"{bcolors.OKBLUE}Creating a copy of the repository at {self.dst}{bcolors.ENDC}")
             repo.clone(self.dst)
-            if self.store_requirements:
+            if self.compute_requirements:
                 self._make_requirements_file()
         else:
             if not self._existing_choices:
@@ -320,7 +320,7 @@ class GitVM(VersionManager):
         fname = os.path.join(self.dst, 'requirements.txt')
         
 
-        if os.path.exists(fname) or not self.store_requirements:
+        if os.path.exists(fname) or not self.compute_requirements:
             pass
         else:
             self._make_requirements_file()

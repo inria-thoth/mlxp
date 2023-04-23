@@ -134,7 +134,7 @@ By default, 'mlxpy.yaml' contains the following:
    version_manager:
      name: GitVM
      parent_target_work_dir: ./.workdir
-     store_requirements: false
+     compute_requirements: false
    use_version_manager: false
    use_scheduler: false
    use_logger: true

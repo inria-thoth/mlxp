@@ -98,7 +98,7 @@ class ConfigGitVM(ConfigVersionManager):
         the new working directory returned by the version manager
 
 
-    .. py:attribute:: store_requirements
+    .. py:attribute:: compute_requirements
         :type: bool 
 
         When set to true, the version manager stores a list of requirements and their version.
@@ -107,7 +107,7 @@ class ConfigGitVM(ConfigVersionManager):
 
 	name: str="GitVM"
 	parent_target_work_dir: str = "./.workdir"
-	store_requirements: bool = False
+	compute_requirements: bool = False
 
 
 @dataclass

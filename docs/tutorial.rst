@@ -474,7 +474,7 @@ The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy
     version_manager:
       name: GitVM
       parent_target_work_dir: ./.workdir
-      store_requirements: false
+      compute_requirements: false
     use_logger: true
     use_scheduler: false
     use_version_manager: false
@@ -1091,11 +1091,23 @@ We can double check where the code was executed from by inspecting the 'info.yam
 
     ...
     work_dir: absolute_path_to/.workdir/mlxpy/commit_hash/tutorial
-
+    version_manager:
+        commit_hash: f02c8e5aa1a4c71d348141543a20543a2e4671b4
+        repo_path: absolute_path_to_repo 
+        requirements:
+        - dill==0.3.6
+        - GitPython==3.1.31
+        - hydra-core==1.3.2
+        - omegaconf==2.2.3
+        - pandas==1.2.4
+        - ply==3.11
+        - PyYAML==6.0
+        - setuptools==52.0.0.post20210125
+        - tinydb==4.7.1
 
 If other jobs are submitted later, and if the code did not change meanwhile, then these jobs will also be executed from this same working directory. This avoids copying the same content multiple times. 
 
-Finally, a copy of the dependencies used by the code is also stored along with their versions in the field 'requirements' if the option 'mlxpy.version_manager.store_requirements' is set to 'True'.
+Finally, a copy of the dependencies used by the code along with their versions is also made in the field 'requirements' if the option 'mlxpy.version_manager.compute_requirements' is set to 'True'.
 
 
 Using both scheduler and version manager
