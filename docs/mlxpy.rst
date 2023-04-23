@@ -8,4 +8,3 @@ mlxpy package
    mlxpy.launching 
    mlxpy.logging
    mlxpy.reading
-   mlxpy.errors

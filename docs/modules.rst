@@ -1,5 +1,5 @@
 mlxpy
-===============
+=====
 
 .. toctree::
    :maxdepth: 4

@@ -48,7 +48,6 @@ class ConfigScheduler:
 		This allows to specify the desired resources to the scheduler such as
 		the duration of the job, the quantity and type of resources, etc. 
 		
-		Structure containing the arguments to instantiate the class name.
 	"""
 	name: str = "NoScheduler"
 	shell_path: str = "/bin/bash"

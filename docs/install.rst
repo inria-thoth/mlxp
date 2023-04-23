@@ -8,15 +8,15 @@ and then installing it with `pip`. Before installing, make sure you have
 the following dependencies installed:
 
 
-	- hydra-core
-	- omegaconf
-	- tinydb
-	- setuptools
-	- PyYAML
-	- pandas
-	- ply
-	- dill
-	- GitPython
+- hydra-core
+- omegaconf
+- tinydb
+- setuptools
+- PyYAML
+- pandas
+- ply
+- dill
+- GitPython
 
 
 

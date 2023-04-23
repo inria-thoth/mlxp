@@ -53,7 +53,6 @@ class Reader(object):
         The user can select a different location for the database 
         by setting the variable 'dst_dir' of the constructor to a different directory.  
 
-
     """
 
 
@@ -68,14 +67,12 @@ class Reader(object):
         :param dst_dir: The destination directory where the database will be created.
         :param parser: A parser for querying the database.
         :param reload: Re-create the database even if it already exists.
-   
-
         :type src_dir: str
         :type dst_dir: str (default None)
         :type parser: Parser (default DefaultParser)
         :type reload: bool (default False)
-    
         :raises PermissionError: if user has no writing priviledges on dst_dir  
+        
         """
 
 
@@ -109,12 +106,12 @@ class Reader(object):
         :param query_string: a string defining the query constaints.
         :param result_format: format of the result (either a pandas dataframe or an object of type DataDictList). 
         By default returns a DataDictList object.
-
         :type query_string: str (default "")
         :type result_format: str (default False)
         :return: The result of a query either as a DataDictList or a pandas dataframe.
         :rtype: Union[DataDictList,pd.DataFrame]
         :raises SyntaxError: if the query string does not follow expected syntax. 
+        
         """
         is_valid = False
         for member in DataFrameType:
@@ -145,6 +142,7 @@ class Reader(object):
         
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame
+
         """
         fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if not k.startswith("mlxpy")}
         df = pd.DataFrame(list(fields_dict.items()), columns=['Fields', 'Type'])
@@ -161,6 +159,7 @@ class Reader(object):
         
         return: a dataframe of all fields contained in the database that can be searched using the method filter
         rtype: pd.DataFrame
+
         """
 
         fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if is_searchable(k)}

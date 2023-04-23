@@ -72,18 +72,11 @@ def clean_dir():
         pass   
 
 class Status(Enum):
-    """
-        Status of a run. 
-
-        The status can take the following values:
-
-        - STARTING: The metadata for the run have been created.
-
-        - RUNNING: The experiment is currently running. 
-        
-        - COMPLETE: The run is  complete and did not through any error.
-        
-        - FAILED: The run stoped due to an error.
+    """Status of a run. The status can take the following values:
+    - STARTING: The metadata for the run have been created.
+    - RUNNING: The experiment is currently running. 
+    - COMPLETE: The run is  complete and did not through any error.
+    - FAILED: The run stoped due to an error.
     """
 
 
@@ -121,8 +114,6 @@ class Context:
 
         A logger object that can be used for logging variables (metrics, checkpoints, artifacts). 
         When logging is enabled, these variables are all stored in a uniquely defined directory. 
-
-
     """
     
     config : ConfigDict = None
@@ -220,8 +211,7 @@ def launch(
         It also allows recovering exactly the code used for a given run.
         This behavior can be modified by using a different version manager VersionManager (default GitVM). 
         
-        .. note:: Currently, this functionality expects 
-        the executed python file to part of a git repository. 
+        .. note:: Currently, this functionality expects the executed python file to part of a git repository. 
 
     :param config_path: The config path, a directory where 
     the default user configuration and mlxpy settings are stored.
