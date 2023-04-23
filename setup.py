@@ -6,7 +6,7 @@ setup(
     version="0.1",
     description="A framework for conducting machine learning experiments in python",
     long_description=open(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.md")
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.rst")
     ).read(),
     long_description_content_type="text/markdown",
     url="git@github.com:MichaelArbel/mlxpy.git",
