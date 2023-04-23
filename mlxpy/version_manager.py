@@ -172,13 +172,13 @@ class GitVM(VersionManager):
                 else: 
                     printc(bcolors.OKGREEN,f"Where would you like to run your code from? (a/b):")
                     if os.path.isdir(self.dst):
-                        printc(bcolors.OKGREEN, f"a: Execute code from an existing copy of the repository based on the latest commit.")
+                        print(f"{bcolors.OKGREEN} a {bcolors.ENDC}: Execute code from an existing copy of the repository based on the latest commit.")
                         print(f"The copy is located in: {self.dst}")
                     else:
-                        printc(bcolors.OKGREEN,f"a: Create a copy of the repository based on the latest commit and execute code from there.")
+                        print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Create a copy of the repository based on the latest commit and execute code from there.")
                         print(f"The copy will be created in: {self.dst}")
                     printc(bcolors.OKGREEN,f"b: Execute code from the main repository")
-                    choice = inputc(bcolors.OKGREEN,f"Please enter your answer (a/b):")
+                    choice = input(f"{bcolors.OKGREEN}Please enter you answer (a/b):{bcolors.ENDC}")
                     self.vm_choices['cloning'] = choice
                 
                 if choice=='a':
@@ -211,11 +211,10 @@ class GitVM(VersionManager):
                     printc(bcolors.OKBLUE,f"There are uncommitted changes in the repository:")
                     _disp_uncommited_files(repo)
                     printc(bcolors.OKGREEN,f"How would you like to handle uncommitted changes? (a/b/c)")
-                    printc(bcolors.OKGREEN,f"a: Create a new automatic commit before launching jobs.")
-                    printc(bcolors.OKGREEN,f"b: Check again for uncommitted changes (assuming you manually committed them). ")
-                    printc(bcolors.OKGREEN,f"c: Ignore uncommitted changes.")
-                    choice = inputc(bcolors.OKGREEN,f"[Uncommitted changes]: Please enter your choice (a/b/c):")
-
+                    print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Create a new automatic commit before launching jobs.")
+                    print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Check again for uncommitted changes (assuming you manually committed them). ")
+                    print(f"{bcolors.OKGREEN}c{bcolors.ENDC}: Ignore uncommitted changes.")
+                    choice = input(f"{bcolors.OKGREEN}[Uncommitted changes]: Please enter your choice (a/b/c): {bcolors.ENDC}")
                     if choice == 'a':
                         printc(bcolors.OKBLUE,f"Commiting changes....")
                         output_msg = repo.git.commit("-a", "-m", "mlxpy: Automatically committing all changes")
@@ -258,10 +257,10 @@ class GitVM(VersionManager):
                     printc(bcolors.OKBLUE,f"There are untracked files in the repository:")
                     _disp_untracked_files(repo)
                     printc(bcolors.OKGREEN,f"How would you like to handle untracked files? (a/b/c)")
-                    printc(bcolors.OKGREEN,f"a: Add untracked files directly from here?")
-                    printc(bcolors.OKGREEN,f"b: Check again for untrakced files (assuming you manually added them).")
-                    printc(bcolors.OKGREEN,f"c: Ignore untracked files.")
-                    choice = inputc(bcolors.OKGREEN,f"[Untracked files]: Please enter your choice (a/b/c):")
+                    print(f"{bcolors.OKGREEN}a{bcolors.ENDC}: Add untracked files directly from here?")
+                    print(f"{bcolors.OKGREEN}b{bcolors.ENDC}: Check again for untrakced files (assuming you manually added them).")
+                    print(f"{bcolors.OKGREEN}c{bcolors.ENDC}: Ignore untracked files.")
+                    choice = input(f"{bcolors.OKGREEN}[Untracked files]: Please enter your choice (a/b/c):{bcolors.ENDC}")
                     if choice=='a':
                         print("Untracked files:")
                         _disp_untracked_files(repo)

@@ -1,6 +1,5 @@
-from enum import Enum
 
-class bcolors(Enum):
+class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
@@ -15,8 +14,8 @@ class bcolors(Enum):
 
 
 def printc(color, text):
-    print(color.value +text+ bcolors.ENDC.value)
+    print(color +text+ bcolors.ENDC)
 
 
 def inputc(color, text):
-    input(color.value + text + bcolors.ENDC.value)
+    input(color + text + bcolors.ENDC)

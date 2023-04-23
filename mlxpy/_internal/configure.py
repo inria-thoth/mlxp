@@ -11,16 +11,15 @@ import os
 
 def _configure_scheduler(mlxpy_config):
     while True:
-        printc(bcolors.OKBLUE,f"You can either choose one of the job schedulers available by default ,")
+        print(f"You can either choose one of the job schedulers available by default ,")
         
-        printc(bcolors.OKBLUE,f"or define a custom one by inheriting from the abstract class {Scheduler} (see documentation)  ")
+        print(f"or define a custom one by inheriting from the abstract class {Scheduler} (see documentation)  ")
         
         printc(bcolors.OKBLUE,f"For a default scheduler, you can choose one from this list:")
         printc(bcolors.FAIL,f"{[member.value for member in DefaultSchedulers]}")
-        print(f"For a custom scheduler, you must provide the full name of the user-defined Scheduler subclass (ex. my_app.CustomScheduler):")
-        files_input = inputc(bcolors.OKCYAN,f" Please enter your choice (or hit Enter to skip): ")
-         
-
+        printc(bcolors.OKBLUE,f"For a custom scheduler, you must provide the full name of the user-defined Scheduler subclass (ex. my_app.CustomScheduler).")
+        
+        files_input = input(f"{bcolors.OKGREEN} Please enter your choice (or hit Enter to skip) :{bcolors.ENDC}")
         if files_input:
             names = files_input.strip().rsplit('.', 1)
             is_valid=True 
@@ -44,10 +43,10 @@ def _ask_configure_scheduler(mlxpy_config,mlxpy_file):
     while True:
         
         printc(bcolors.OKGREEN,f" Would you like to select a default job scheduler now ?  (y/n):")
-        printc(bcolors.OKGREEN,f"y: The job scheduler configs will be stored in the file {mlxpy_file}")
-        printc(bcolors.OKGREEN,f"n: No scheduler will be selected by default.")
-        choice = inputc(bcolors.OKGREEN,f" Please enter your answer (y/n):")
+        print(f"{bcolors.OKGREEN}y{bcolors.ENDC}: The job scheduler configs will be stored in the file {mlxpy_file}")
+        print(f"{bcolors.OKGREEN}n{bcolors.ENDC}: No scheduler will be selected by default.")
 
+        choice = input(f"{bcolors.OKGREEN}Please enter you answer (y/n):{bcolors.ENDC}")
 
         if choice=='y':
             _configure_scheduler(mlxpy_config)
