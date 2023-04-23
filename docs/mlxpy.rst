@@ -1,5 +1,5 @@
 mlxpy package
-=======================
+=============
 
 
 .. toctree::
@@ -8,3 +8,4 @@ mlxpy package
    mlxpy.launching 
    mlxpy.logging
    mlxpy.reading
+   mlxpy.errors

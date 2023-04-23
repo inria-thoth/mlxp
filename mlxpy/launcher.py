@@ -19,8 +19,6 @@ from hydra._internal.utils import _run_hydra, get_args_parser
 from hydra.core.hydra_config import HydraConfig
 from hydra.types import TaskFunction
 
-
-from mlxpy.utils import _flatten_dict
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
 from mlxpy.logger import Logger
 from mlxpy.errors import MissingFieldError
@@ -39,23 +37,34 @@ import importlib
 _UNSPECIFIED_: Any = object()
 
 
-hydra_defaults_dict = {
-    "hydra": {
-        "mode": "MULTIRUN",
-        "output_subdir": "null",
-        "run": {"dir": "."},
-        "sweep": {"dir": ".", "subdir": "."},
-    },
-    "hydra/job_logging": "disabled",
-    "hydra/hydra_logging": "disabled",
-}
+# hydra_defaults_dict = {
+#     "hydra": {
+#         "mode": "MULTIRUN",
+#         "output_subdir": "null",
+#         "run": {"dir": "."},
+#         "sweep": {"dir": ".", "subdir": "."},
+#     },
+#     "hydra/job_logging": "disabled",
+#     "hydra/hydra_logging": "disabled",
+# }
 
-vm_choices_file = os.path.join(hydra_defaults_dict["hydra"]["sweep"]["dir"],
+
+hydra_defaults_dict = {"hydra.mode": "MULTIRUN",
+                                "hydra.output_subdir": "null",
+                                "hydra.run.dir": ".",
+                                "hydra.sweep.dir": ".",
+                                "hydra.sweep.subdir": ".",
+                                "hydra/job_logging":"disabled",
+                                "hydra/hydra_logging":"disabled",
+                                }
+
+
+vm_choices_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"],
                                             "vm_choices.yaml")
 
 
 def clean_dir():
-    sweep_dir = hydra_defaults_dict["hydra"]["sweep"]["dir"]
+    sweep_dir = hydra_defaults_dict["hydra.sweep.dir"]
     try:
         os.remove(os.path.join(sweep_dir, "multirun.yaml"))
         os.remove(vm_choices_file)
@@ -247,10 +256,9 @@ def launch(
                 args = args_parser.parse_args()
 
                 ### Setting hydra defaults 
-                flattened_hydra_default_dict = _flatten_dict(hydra_defaults_dict)
                 hydra_defaults = [
                     key + "=" + value
-                    for key, value in flattened_hydra_default_dict.items()
+                    for key, value in hydra_defaults_dict.items()
                 ]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)

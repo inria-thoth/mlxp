@@ -3,7 +3,7 @@ from omegaconf import OmegaConf
 from mlxpy.scheduler import DefaultSchedulers, Scheduler
 from mlxpy.data_structures.schemas import Metadata
 from mlxpy.data_structures.config_dict import convert_dict, ConfigDict
-from mlxpy.utils import bcolors
+from mlxpy._internal.interactive_mode import bcolors, printc, inputc
 import yaml
 import os
 
@@ -11,14 +11,14 @@ import os
 
 def _configure_scheduler(mlxpy_config):
     while True:
-        print(f"{bcolors.OKBLUE}You can either choose one of the job schedulers available by default {bcolors.ENDC},")
+        printc(bcolors.OKBLUE,f"You can either choose one of the job schedulers available by default ,")
         
-        print(f"{bcolors.OKBLUE}or define a custom one by inheriting from the abstract class {Scheduler} (see documentation)  {bcolors.ENDC}")
+        printc(bcolors.OKBLUE,f"or define a custom one by inheriting from the abstract class {Scheduler} (see documentation)  ")
         
-        print(f"{bcolors.OKCYAN}For a default scheduler, you can choose one from this list:")
-        print(f"{bcolors.FAIL}{[member.value for member in DefaultSchedulers]}{bcolors.ENDC}")
+        printc(bcolors.OKBLUE,f"For a default scheduler, you can choose one from this list:")
+        printc(bcolors.FAIL,f"{[member.value for member in DefaultSchedulers]}")
         print(f"For a custom scheduler, you must provide the full name of the user-defined Scheduler subclass (ex. my_app.CustomScheduler):")
-        files_input = input(f"{bcolors.OKCYAN} Please enter your choice (or hit Enter to skip): {bcolors.ENDC}")
+        files_input = inputc(bcolors.OKCYAN,f" Please enter your choice (or hit Enter to skip): ")
          
 
         if files_input:
@@ -32,10 +32,10 @@ def _configure_scheduler(mlxpy_config):
                 with omegaconf.open_dict(mlxpy_config):
                     mlxpy_config.mlxpy.scheduler.name = files_input
                 omegaconf.OmegaConf.set_struct(mlxpy_config, False)
-                print(f"{bcolors.OKBLUE} Setting Scheduler to {files_input} {bcolors.ENDC}")
+                printc(bcolors.OKBLUE,f" Setting Scheduler to {files_input} ")
                 break
             else:
-                print(f"{bcolors.OKBLUE} {files_input} is not a valid class identifier. Please try again  {bcolors.ENDC}")
+                printc(bcolors.OKBLUE,f" {files_input} is not a valid class identifier. Please try again  ")
         else:
             break
 
@@ -43,10 +43,10 @@ def _configure_scheduler(mlxpy_config):
 def _ask_configure_scheduler(mlxpy_config,mlxpy_file):
     while True:
         
-        print(f"{bcolors.OKGREEN} Would you like to select a default job scheduler now ? {bcolors.ENDC} {bcolors.OKGREEN}(y/n){bcolors.ENDC}:")
-        print(f"{bcolors.OKGREEN}y{bcolors.ENDC}: The job scheduler configs will be stored in the file {mlxpy_file}")
-        print(f"{bcolors.OKGREEN}n{bcolors.ENDC}: No scheduler will be selected by default.")
-        choice = input(f"{bcolors.OKGREEN}Please enter your answer (y/n):{bcolors.ENDC}")
+        printc(bcolors.OKGREEN,f" Would you like to select a default job scheduler now ?  (y/n):")
+        printc(bcolors.OKGREEN,f"y: The job scheduler configs will be stored in the file {mlxpy_file}")
+        printc(bcolors.OKGREEN,f"n: No scheduler will be selected by default.")
+        choice = inputc(bcolors.OKGREEN,f" Please enter your answer (y/n):")
 
 
         if choice=='y':
@@ -54,11 +54,11 @@ def _ask_configure_scheduler(mlxpy_config,mlxpy_file):
             break
         elif choice=='n':
 
-            print(f"{bcolors.OKBLUE}No scheduler will be selected by default.{bcolors.ENDC}")
-            print(f"{bcolors.OKBLUE}To use a scheduler, you will need to select one later.{bcolors.ENDC}")
+            printc(bcolors.OKBLUE,f"No scheduler will be selected by default.")
+            printc(bcolors.OKBLUE,f"To use a scheduler, you will need to select one later.")
             break
         else:
-            print(f"{bcolors.OKBLUE}Invalid choice. Please try again. (y/n){bcolors.ENDC}")
+            printc(bcolors.OKBLUE,f"Invalid choice. Please try again. (y/n)")
 
 
 
@@ -129,11 +129,11 @@ def _get_default_config(config_path,overrides):
     update_default_conifg = False
     if scheduler_name=="NoScheduler":
         if using_scheduler or not os.path.exists(mlxpy_file):
-            print(f"{bcolors.OKBLUE}No scheduler is configured by default {bcolors.ENDC}")
+            printc(bcolors.OKBLUE,f"No scheduler is configured by default ")
             if interactive_mode:
-                print(f"{bcolors.OKBLUE}Entering interactive mode {bcolors.ENDC}")
+                printc(bcolors.OKBLUE,f"Entering interactive mode ")
                 _ask_configure_scheduler(default_config,mlxpy_file)
-                print(f"{bcolors.OKBLUE}Leaving interactive mode {bcolors.ENDC}")
+                printc(bcolors.OKBLUE,f"Leaving interactive mode ")
                 update_default_conifg = True
             else: 
                 pass
@@ -145,10 +145,10 @@ def _get_default_config(config_path,overrides):
         omegaconf.OmegaConf.set_struct(default_config, False)
         if scheduler_name_default=="NoScheduler":
             update_default_conifg = True
-            print(f"{bcolors.OKBLUE}Setting Scheduler to: {scheduler_name} {bcolors.ENDC}")
+            printc(bcolors.OKBLUE,f"Setting Scheduler to: {scheduler_name} ")
 
     if not os.path.exists(mlxpy_file) or update_default_conifg:
-        print(f"{bcolors.OKBLUE}Default settings for mlxpy will be created in {mlxpy_file} {bcolors.ENDC}") 
+        printc(bcolors.OKBLUE,f"Default settings for mlxpy will be created in {mlxpy_file} ") 
         mlxpy = OmegaConf.create(default_config['mlxpy'])
         omegaconf.OmegaConf.save(config=mlxpy, f=mlxpy_file)
 

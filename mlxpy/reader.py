@@ -11,12 +11,11 @@ from tinydb.table import Document
 
 from mlxpy.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
 from mlxpy.parser import Parser, DefaultParser, SearchableKeys, is_searchable
-from mlxpy.utils import _flatten_dict
 from typing import Union, Optional, List
 import pandas as pd
 import abc
 from mlxpy.logger import Directories
-
+from collections.abc import MutableMapping
 from enum import Enum
 
 
@@ -243,4 +242,25 @@ def _ensure_writable(dst_dir):
         message = f"Unable to write in the destination directory {dst_dir}.\n"
         raise PermissionError(message + err_msg)            
     return dst_dir
+
+
+
+
+
+
+def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
+    return dict(_flatten_dict_gen(d, parent_key, sep))
+
+
+def _flatten_dict_gen(d, parent_key, sep):
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, MutableMapping):
+            yield from _flatten_dict(v, new_key, sep=sep).items()
+        else:
+            yield new_key, v
+
+
+
+
 

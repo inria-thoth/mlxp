@@ -5,7 +5,7 @@ This package provides a logger that can saves the configs and outputs of an expe
 
 
 The :class:`~mlxpy.logger.Logger` Class
--------------------------
+---------------------------------------
 
 
 .. automodule:: mlxpy.logger
@@ -14,7 +14,7 @@ The :class:`~mlxpy.logger.Logger` Class
 
 
 The :class:`~mlxpy.data_structures.artifacts.Artifact` Class
--------------------------
+------------------------------------------------------------
 
 
 .. automodule:: mlxpy.data_structures.artifacts

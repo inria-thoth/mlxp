@@ -12,7 +12,6 @@ from collections.abc import Mapping, MutableSequence, MutableMapping, KeysView, 
 
 from typing import List, Dict, Tuple
 
-from mlxpy.utils import _flatten_dict
 from mlxpy.logger import Directories
 from mlxpy.errors import InvalidKeyError, InvalidAggregationMapError
 
@@ -24,7 +23,6 @@ class AggregationMap:
     An abstract class whose children can perform aggregations on arrays. 
     
     """
-
 
     def __init__(self, keys, func=None, args={}, map_name=""):
         self.func = func
