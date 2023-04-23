@@ -214,7 +214,7 @@ Of course, if you execute 'main.py' without further options, the logger will cre
 .. _custom_log_dir:
 
 Customizing the parent log directory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can change the parent directory by overriding the option '+mlxpy.logger.parent_log_dir' from the command-line:
 

@@ -30,22 +30,18 @@ class ConfigScheduler:
     .. py:attribute:: shell_config_cmd
         :type: bool
 
-        command for configuring the shell when submitting a job using a scheduler.
-        (default 'source ~/.bashrc')
+        command for configuring the shell when submitting a job using a scheduler. (default 'source ~/.bashrc')
 
     .. py:attribute:: cleanup_cmd
         :type: str
 
         A command for clearning the environment
-        when executing a job submitted by the scheduler.
-        (e.g.: 'module purge' for SLURM)
+        when executing a job submitted by the scheduler. (e.g.: 'module purge' for SLURM)
 
     .. py:attribute:: option_cmd
         :type: List[str]
 
-        A list of strings containing the scheduler's options for the job.
-        This allows to specify the desired resources to the scheduler such as
-        the duration of the job, the quantity and type of resources, etc.
+        A list of strings containing the scheduler's options for the job. This allows to specify the desired resources to the scheduler such as the duration of the job, the quantity and type of resources, etc.
     """
 
     name: str = "NoScheduler"
