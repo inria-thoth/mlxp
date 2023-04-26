@@ -60,7 +60,7 @@ class GitVM(VersionManager):
 
     GitVM creates a copy of the current directory based on the latest commit, if it doesn't exist already, then sets the working directory to this copy.
 
-    .. py:attribute:: parent_target_work_dir
+    .. py:attribute:: parent_work_dir
         :type: str
 
         The target parent directory of
@@ -73,10 +73,10 @@ class GitVM(VersionManager):
 
     """
 
-    def __init__(self, parent_target_work_dir: str, compute_requirements: bool):
+    def __init__(self, parent_work_dir: str, compute_requirements: bool):
         super().__init__()
 
-        self.parent_target_work_dir = os.path.abspath(parent_target_work_dir)
+        self.parent_work_dir = os.path.abspath(parent_work_dir)
         self.compute_requirements = compute_requirements
         self.dst = None
         self.commit_hash = None
@@ -108,7 +108,7 @@ class GitVM(VersionManager):
         Depending on the user's choice, the returned directory is either:
 
         - The current working directory.
-        - A directory under self.parent_target_work_dir/repo_name/latest_commit_hash.
+        - A directory under self.parent_work_dir/repo_name/latest_commit_hash.
         In this case, a copy of the code based on the latest git commit is created and used to run the experiment.
 
         :rtype: str
@@ -121,7 +121,7 @@ class GitVM(VersionManager):
         repo_name = self.repo_path.split("/")[-1]
         self.commit_hash = repo.head.object.hexsha
         target_name = os.path.join(repo_name, self.commit_hash)
-        parent_work_dir = self.parent_target_work_dir
+        parent_work_dir = self.parent_work_dir
         self.dst = os.path.join(parent_work_dir, target_name)
 
         self._handle_cloning(repo, relpath)

@@ -13,24 +13,16 @@ MLXPy stands for Machine Learning eXperiments Python package.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Content:
 
    
    guide
    mlxpy
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
-
 
 Citing MLXPy
-============
+------------
 
 If you use MLXPy in your research please use the following BibTeX entry:
 
@@ -46,3 +38,8 @@ If you use MLXPy in your research please use the following BibTeX entry:
    }
 
 
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`modindex`

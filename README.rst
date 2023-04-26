@@ -192,7 +192,7 @@ By default, 'mlxpy.yaml' contains the following:
      option_cmd: []
    version_manager:
      name: GitVM
-     parent_target_work_dir: ./.workdir
+     parent_work_dir: ./.workdir
      compute_requirements: false
    use_version_manager: false
    use_scheduler: false
@@ -225,7 +225,7 @@ The version manager
 """""""""""""""""""
 The options under 'version_manager' are specific to the MLXPy version manager object. The field 'name' must contain the class name of the used version manager. By default, it is set to 'GitVM', which is the version manager based on git. The user can provide a custom version manager inheriting from the abstract class 'VersionManager'. The remaining fields refer to manager's options:
 
-- parent_target_work_dir: The target parent directory of the new working directory returned by the version manager
+- parent_work_dir: The target parent directory of the new working directory returned by the version manager
 - compute_requirements: When set to true, the version manager stores a list of requirements and their version.
 
 

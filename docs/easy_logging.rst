@@ -131,7 +131,7 @@ The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy
       shell_path: /bin/bash
     version_manager:
       name: GitVM
-      parent_target_work_dir: ./.workdir
+      parent_work_dir: ./.workdir
       compute_requirements: false
     use_logger: true
     use_scheduler: false
@@ -214,7 +214,7 @@ Of course, if you execute 'main.py' without further options, the logger will cre
 .. _custom_log_dir:
 
 Customizing the parent log directory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can change the parent directory by overriding the option '+mlxpy.logger.parent_log_dir' from the command-line:
 

@@ -76,7 +76,7 @@ class ConfigGitVM(ConfigVersionManager):
 
         Name of the version manager's class.
 
-    .. py:attribute:: parent_target_work_dir
+    .. py:attribute:: parent_work_dir
         :type: str
 
         The target parent directory of
@@ -89,7 +89,7 @@ class ConfigGitVM(ConfigVersionManager):
     """
 
     name: str = "GitVM"
-    parent_target_work_dir: str = "./.workdir"
+    parent_work_dir: str = "./.workdir"
     compute_requirements: bool = False
 
 

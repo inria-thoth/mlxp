@@ -12,7 +12,7 @@ scheduler:
   option_cmd: []
 version_manager:
   name: GitVM
-  parent_target_work_dir: ./.workdir
+  parent_work_dir: ./.workdir
   compute_requirements: false
 use_version_manager: false
 use_scheduler: false
