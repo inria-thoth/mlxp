@@ -170,8 +170,8 @@ def launch(
             now = datetime.now()
             info = {'hostname': socket.gethostname(),
                     'process_id': os.getpid(),
-                    'executable': task_function.__code__.co_filename,
-                    'app': os.environ["_"],
+                    'executable': sys.executable,
+                    'current_file_path': task_function.__code__.co_filename,
                     'start_date': now.strftime("%d/%m/%Y"),
                     'start_time': now.strftime("%H:%M:%S"),
                     'status': Status.STARTING.value}
@@ -211,8 +211,8 @@ def launch(
 
             if cfg.mlxpy.use_scheduler:
 
-                main_cmd = _main_job_command(cfg.info.app,
-                                             cfg.info.executable,
+                main_cmd = _main_job_command(cfg.info.executable,
+                                             cfg.info.current_file_path,
                                              work_dir,
                                              parent_log_dir,
                                              log_id)
@@ -420,13 +420,13 @@ def _get_mlxpy_configs(log_dir):
     return configs_info
 
 
-def _main_job_command(app, executable, work_dir, parent_log_dir, job_id):
-    exec_file = os.path.relpath(executable, os.getcwd())
+def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, job_id):
+    exec_file = os.path.relpath(current_file_path, os.getcwd())
 
     args = _get_overrides()
     values = [
         f"cd {work_dir}",
-        f"{app} {exec_file} {args} \
+        f"{executable} {exec_file} {args} \
             +mlxpy.logger.forced_log_id={job_id}\
             +mlxpy.logger.parent_log_dir={parent_log_dir} \
             +mlxpy.use_scheduler={False}\

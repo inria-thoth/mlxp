@@ -100,11 +100,11 @@ The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy
 .. code-block:: yaml
     :caption: ./logs/1/metadata/info.yaml
     
-    app: absolute_path_to/bin/python
+    executable: absolute_path_to/bin/python
     cmd: ''
     end_date: 20/04/2023
     end_time: '16:01:13'
-    exec: absolute_path_to/main.py
+    current_file_path: absolute_path_to/main.py
     log_dir: absolute_path_to/logs/1
     log_id: 1
     process_id: 7100
