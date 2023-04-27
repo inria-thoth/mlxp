@@ -153,15 +153,15 @@ class Info:
 
         - FAILED: The run stoped due to an error.
 
-    .. py:attribute:: executable
+    .. py:attribute:: current_file_path
         :type: str
 
         Name of the python file being executed.
 
-    .. py:attribute:: app
+    .. py:attribute:: executable
         :type: str
 
-        Path to the python app used for executing the code.
+        Path to the python executable used for executing the code.
 
     .. py:attribute:: hostname
         :type: str
@@ -216,8 +216,8 @@ class Info:
     """
 
     status: str = "STARTING"
+    current_file_path: str = ""
     executable: str = ""
-    app: str = ""
     hostname: str = ""
     user: str = "${oc.env:USER}"
     process_id: int = -1
