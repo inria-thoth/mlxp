@@ -82,8 +82,10 @@ class Reader(object):
         self._fields = self.db.table("fields")
 
         if not self.db.tables() or reload:
+            print("Creating a database file of the runs...")
             self._create_base()
-
+            print(f"Database file created in {self.dst_dir}")
+        
     def __len__(self) -> int:
         """Return the number of runs contained in the database created by the reader.
 
@@ -213,9 +215,10 @@ def _get_data(path, metadata_file):
                 full_file_name = os.path.join(keys_dir, file_name)
                 with open(full_file_name, "r") as f:
                     keys_dict = yaml.safe_load(f)
-                lazydata_dict.update(
-                    {prefix + "." + key: LAZYDATA for key in keys_dict.keys()}
-                )
+                if keys_dict:
+                    lazydata_dict.update(
+                        {prefix + "." + key: LAZYDATA for key in keys_dict.keys()}
+                    )
     except FileNotFoundError:
         pass
 
