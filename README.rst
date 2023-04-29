@@ -265,6 +265,18 @@ It is possible to override these options from the command line by adding the pre
    The logger object is an instance of:
    <class 'NoneType'>  
 
+Acknowledgments
+^^^^^^^^^^^^^^^
+
+I would like to acknowledge the following contributors for their contributions to the development of this package:
+
+- `Alexandre Zouaoui <https://azouaoui.me/>`_ kindly shared his python implementation for creating job scripts and submiting them to a cluster. His code served as the basis for the implementation of the Scheduler class. While I have significantly modified the process of job submission, by integrating it with MLXpy's launching functionality, I am grateful for Alexandre's contribution which were invaluable to the development of this project.
+
+
+- `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested a premature version of MLXPy. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXPy's functionalities.  
+
+`Romain Ménégaux <https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr>`_ provided valuable feedback and suggestions to improve MLXPy. He also found and reported several bugs in the software which helped improve its quality and stability. 
+
 
 
 Citing MLXPy
