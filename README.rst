@@ -79,7 +79,6 @@ Quick start guide
 Let's say you have a python file 'main.py' that calls a function 'my_task' performing some task. To use MLXPy for launching a job, you can use the decorator 'mlxpy.launch' above the function 'my_task'. 
 
 .. code-block:: text
-   :caption: main.py
 
    import mlxpy 
 
