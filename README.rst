@@ -275,7 +275,7 @@ I would like to acknowledge the following contributors for their contributions t
 
 - `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested a premature version of MLXPy. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXPy's functionalities.  
 
-`Romain Ménégaux <https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr>`_ provided valuable feedback and suggestions to improve MLXPy. He also found and reported several bugs in the software which helped improve its quality and stability. 
+- `Romain Ménégaux <https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr>`_ provided valuable feedback and suggestions to improve MLXPy. He also found and reported several bugs in the software which helped improve its quality and stability. 
 
 
 
