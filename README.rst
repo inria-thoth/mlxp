@@ -210,9 +210,7 @@ The scheduler
 """""""""""""
 The options under 'scheduler' are specific to the MLXPy scheduler object. The field 'name' must contain the class name of the used scheduler. By default, it is set to 'NoScheduler' meaning that no scheduler is defined. MLXPy currently supports two job schedulers 'OAR' and 'SLUM'. In order to use them, the field 'name' must be modified to 'OARScheduler' of 'SLURMScheduler'. Additionally, the user can provide a custom scheduler inheriting from the abstract class 'Scheduler'. The remaining fields refer to scheduler's options:
 
-
-- env_cmd: Command for activating the working environment. 
-    (e.g. 'conda activate my_env')
+- env_cmd: Command for activating the working environment. (e.g. 'conda activate my_env')
 - shell_path: Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
 - shell_config_cmd: command for configuring the shell when submitting a job using a scheduler. (default 'source ~/.bashrc')
 - cleanup_cmd: A command for clearning the environment when executing a job submitted by the scheduler. (e.g.: 'module purge' for SLURM) 
