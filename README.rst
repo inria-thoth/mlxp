@@ -121,10 +121,9 @@ When executing the Python file 'main.py' from the command line, we get the follo
    The logger object is an instance of:
    <class 'mlxpy.logger.DefaultLogger'>
    
-One can check that these outputs match the content of the yaml file 'config.yaml':
+One can check that these outputs match the content of the yaml file './configs/config.yaml':
 
 .. code-block:: yaml
-   :caption: ./configs/config.yaml
   
    seed: 0
    num_epoch: 10
