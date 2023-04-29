@@ -15,7 +15,7 @@ print(reader.searchable)
 
 
 # Searching using a query string
-query = "info.status == 'COMPLETE' & config.optimizer.lr <= 0.1"
+query = "info.status in ['COMPLETE', 'RUNNING'] & config.optimizer.lr <= 0.1"
 results = reader.filter(query_string=query, result_format="pandas")
 
 print(results)
