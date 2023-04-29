@@ -171,10 +171,9 @@ Configuring MLXPy
 
 MLXPy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
 The package default settings are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
-By default, 'mlxpy.yaml' contains the following:
+By default, './configs/mlxpy.yaml' contains the following:
 
 .. code-block:: yaml
-   :caption: ./configs/mlxpy.yaml
 
    logger:
      name: DefaultLogger
