@@ -109,10 +109,10 @@ In this example, the file 'main.py' contains a function 'my_task' that performs 
 The decorated function 'my_func' must take a  variable 'ctx' of type 'mlxpy.Context' as an argument. Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
 The 'ctx' variable is automatically created on the fly during execution and stores information about the run. It contains four fields: 'config', 'mlxpy', 'info', and 'logger':
 
-* ctx.config: Stores task-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-* ctx.mlxpy: Stores MLXPy's settings used for the run. 
-* ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
-* ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
+  * ctx.config: Stores task-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
+  * ctx.mlxpy: Stores MLXPy's settings used for the run. 
+  * ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
+  * ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
 When executing the Python file 'main.py' from the command line, we get the following output:
 
