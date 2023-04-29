@@ -1,9 +1,8 @@
 Introduction
 ^^^^^^^^^^^^
 
-MLXPy is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. 
+MLXPy (Machine Learning eXperiments Python) package is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. 
 
-MLXPy stands for Machine Learning eXperiments Python package.
 
 
 Key functionalities
