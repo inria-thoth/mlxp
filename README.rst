@@ -11,10 +11,12 @@ Key functionalities
 
 
 1. 
+
 .. raw:: html
 
     <span style="color: blue;">Launching</span>
 .. raw:: rst
+
 several jobs automatically using `hydra <https://hydra.cc/>`_ and hierarchical configs by adding a single decorator to the main task function.   
 2. Logging outputs (metrics, artifacts, checkpoints) of a job in a uniquely assigned directory along with all metadata and configuration options to reproduce the experiment.
 3. Code version management by automatically generating a deployment version of the code based on the latest git commit. 
