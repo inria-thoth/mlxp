@@ -9,6 +9,7 @@ Guide
 
 
    getting_started
+   configuring_mlxpy
    tutorial
 
       
