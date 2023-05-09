@@ -176,6 +176,8 @@ def launch(
                     'start_time': now.strftime("%H:%M:%S"),
                     'status': Status.STARTING.value}
 
+            
+
             cfg.update({'info': info})
 
             if cfg.mlxpy.use_version_manager:
@@ -206,6 +208,7 @@ def launch(
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
                 cfg.update({'info': {'logger': logger.get_info()}})
+                cfg.update({'config': _get_configs(log_dir)})
             else:
                 logger = None
 
@@ -420,6 +423,19 @@ def _get_mlxpy_configs(log_dir):
     return configs_info
 
 
+def _get_configs(log_dir):
+    from mlxpy.enumerations import Directories
+    abs_name = os.path.join(log_dir, Directories.Metadata.value, 'config.yaml')
+    configs = {}
+
+    if os.path.isfile(abs_name):
+        with open(abs_name, "r") as file:
+            configs = yaml.safe_load(file)
+
+
+    return configs
+
+
 def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, job_id):
     exec_file = os.path.relpath(current_file_path, os.getcwd())
 
@@ -443,7 +459,7 @@ def _get_overrides():
 
     def filter_fn(x):
         return ("version_manager" not in x) and (
-            "scheduler" not in x) and ("logger.parent_log_dir" not in x)
+            "scheduler" not in x) and ("logger.parent_log_dir" not in x) and ("logger.forced_log_id" not in x)
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args
