@@ -86,12 +86,40 @@ def _ask_configure_scheduler(mlxpy_config, mlxpy_file):
 
 
 def _build_config(overrides, config_path):
+    overrides_mlxpy, overrides_config = _process_overrides(overrides)
 
-    cfg = _get_default_config(config_path, overrides)
 
+    cfg = _get_default_config(config_path, overrides_mlxpy)
+
+    cfg = OmegaConf.merge(cfg, overrides_config)
+
+    cfg = convert_dict(
+        cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict
+    )
+
+    return cfg
+
+
+def _add_config_overrides(cfg, overrides):
+    overrides_mlxpy, overrides_config = _process_overrides(overrides)
+    cfg = convert_dict(
+        cfg, src_class=ConfigDict, dst_class=omegaconf.dictconfig.DictConfig
+    )   
+    cfg = OmegaConf.merge(cfg, overrides_config)
+
+    cfg = convert_dict(
+        cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict
+    )
+    return cfg
+
+
+def _process_overrides(overrides):
     if "mlxpy" in overrides:
         overrides_mlxpy = OmegaConf.create({"mlxpy": overrides["mlxpy"]})
-        cfg = OmegaConf.merge(cfg, overrides_mlxpy)
+#        cfg = OmegaConf.merge(cfg, overrides_mlxpy)
+    else:
+        overrides_mlxpy = None
+
     overrides = convert_dict(
         overrides, src_class=omegaconf.dictconfig.DictConfig, dst_class=dict
     )
@@ -101,14 +129,9 @@ def _build_config(overrides, config_path):
         overrides, src_class=dict, dst_class=omegaconf.dictconfig.DictConfig
     )
 
-    config = OmegaConf.create({"config": overrides})
-    cfg = OmegaConf.merge(cfg, config)
+    overrides_config = OmegaConf.create({"config": overrides})
 
-    cfg = convert_dict(
-        cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict
-    )
-
-    return cfg
+    return overrides_mlxpy, overrides_config
 
 
 def _get_default_config(config_path, overrides):
@@ -138,14 +161,14 @@ def _get_default_config(config_path, overrides):
     scheduler_name_default = default_config.mlxpy.scheduler.name
     scheduler_name = scheduler_name_default
     interactive_mode = default_config.mlxpy.interactive_mode
-    if "mlxpy" in overrides:
-        if "use_scheduler" in overrides["mlxpy"]:
-            using_scheduler = overrides["mlxpy"]["use_scheduler"]
-        if "scheduler" in overrides["mlxpy"]:
-            if "name" in overrides["mlxpy"]["scheduler"]:
-                scheduler_name = overrides["mlxpy"]["scheduler"]
-        if "interactive_mode" in overrides["mlxpy"]:
-            interactive_mode = overrides["mlxpy"]["interactive_mode"]
+    if overrides:
+        if "use_scheduler" in overrides:
+            using_scheduler = overrides["use_scheduler"]
+        if "scheduler" in overrides:
+            if "name" in overrides["scheduler"]:
+                scheduler_name = overrides["scheduler"]
+        if "interactive_mode" in overrides:
+            interactive_mode = overrides["interactive_mode"]
 
     update_default_conifg = False
     if scheduler_name == "NoScheduler":
@@ -175,5 +198,6 @@ def _get_default_config(config_path, overrides):
         )
         mlxpy = OmegaConf.create(default_config["mlxpy"])
         omegaconf.OmegaConf.save(config=mlxpy, f=mlxpy_file)
-
+    if overrides:
+        default_config = OmegaConf.merge(default_config, overrides)
     return default_config

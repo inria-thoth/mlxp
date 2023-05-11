@@ -21,7 +21,7 @@ from datetime import datetime
 import socket
 import sys
 from dataclasses import dataclass
-from mlxpy._internal.configure import _build_config
+from mlxpy._internal.configure import _build_config, _add_config_overrides
 import yaml
 import importlib
 from mlxpy.enumerations import Status
@@ -164,8 +164,8 @@ def launch(
 
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
-        def decorated_task(cfg):
-            cfg = _build_config(cfg, config_path)
+        def decorated_task(overrides):
+            cfg = _build_config(overrides, config_path)
 
             now = datetime.now()
             info = {'hostname': socket.gethostname(),
@@ -209,6 +209,7 @@ def launch(
                 parent_log_dir = logger.parent_log_dir
                 cfg.update({'info': {'logger': logger.get_info()}})
                 cfg.update({'config': _get_configs(log_dir)})
+                #cfg = _add_config_overrides(cfg,overrides)
             else:
                 logger = None
 

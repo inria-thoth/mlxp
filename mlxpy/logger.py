@@ -236,18 +236,26 @@ class DefaultLogger(Logger):
         """
         self.log_artifact(Checkpoint(checkpoint, ".pkl"), log_name=log_name)
 
-    def load_checkpoint(self, log_name) -> Any:
-        """Restore a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl'.
+    def load_checkpoint(self, log_name,root=None) -> Any:
+        """Restore a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl' 
+        or a user defined directory root. 
 
         Raises an error if it fails to do so.
 
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
+        :param root: Absolute path to the checkpoint. 
+        If set to None, the logger looks for the checkpoint in 'run_dir/Artifacts/Checkpoint'.
+        :type root: Union[str,None] (default 'None')
         return: Any serializable object stored in 'run_dir/Artifacts/Checkpoint/last.pkl'.
         rtype: Any
         """
-        checkpoint_name = os.path.join(
-            self.artifacts_dir, 'Checkpoint', log_name + '.pkl')
+
+        if root:
+            checkpoint_name = os.path.join(root,log_name+'.pkl')
+        else:
+            checkpoint_name = os.path.join(
+                self.artifacts_dir, 'Checkpoint', log_name + '.pkl')
         with open(checkpoint_name, 'rb') as f:
             checkpoint = pkl.load(f)
         return checkpoint
