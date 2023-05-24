@@ -163,10 +163,12 @@ class _LazyData(object):
         return self._data[key]
 
     def _free_unused(self):
-        all_keys = set(self._data.keys())
-        unused_keys = all_keys.difference(self.used_keys)
-        for key in unused_keys:
-            del self._data[key]
+        if self._data:
+            all_keys = set(self._data.keys())
+            unused_keys = all_keys.difference(self.used_keys)
+            for key in unused_keys:
+                    del self._data[key]
+
 
 
 class _MyListProxy:
@@ -177,7 +179,7 @@ class _MyListProxy:
         return [d[key] for d in self.list_of_dicts]
 
 
-class DataDictList(list):
+class DataDictList(list):  
     """A list of elements of type DataDict.
 
     This list can be viewed as a dataframe
@@ -412,6 +414,8 @@ class GroupedDataDicts:
             _assert_valid_map(agg_map)
 
         return _aggregate(self, aggregation_maps)
+
+        
 
 
 def _group_by(config_dicts, list_group_keys):

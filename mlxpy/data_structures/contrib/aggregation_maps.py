@@ -22,7 +22,7 @@ class Last(AggregationMap):
             return {}
 
 
-class Min(AggregationMap):
+class MinLast(AggregationMap):
     """Return the smallest element in a list."""
 
     def __init__(self, key):
@@ -30,12 +30,13 @@ class Min(AggregationMap):
 
     def _apply(self, data):
         index = -1
-        selected_data = [d[self.keys[0]] for d in data]
+        selected_data = [d[self.keys[0]][-1] for d in data]
         try:
             index = np.nanargmin(np.asarray(selected_data), axis=0)
         except ValueError:
             pass
-        return {self.name: selected_data[index]}, index
+        return {self.name: selected_data[index],
+                'arg_'+self.name: index}, None
 
 
 class Max(AggregationMap):
@@ -51,7 +52,8 @@ class Max(AggregationMap):
             index = np.nanargmax(np.asarray(selected_data), axis=0)
         except ValueError:
             pass
-        return {self.name: selected_data[index]}, index
+        return {self.name: selected_data[index],
+                'arg_'+self.name: index}, None
 
 
 class AvgStd(AggregationMap):
