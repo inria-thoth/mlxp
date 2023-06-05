@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>mlxpy.version_manager - MLXPy 0.1 documentation</title>
+        <title>mlxpy.version_manager - MLXPy 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXPy 0.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -153,10 +153,12 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installing.html">Installing MLXPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuring_mlxpy.html">Configuring MLXPy</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_launching.html">1- Launching</a></li>
@@ -273,7 +275,7 @@
 
 <span class="sd">    GitVM creates a copy of the current directory based on the latest commit, if it doesn&#39;t exist already, then sets the working directory to this copy.</span>
 
-<span class="sd">    .. py:attribute:: parent_target_work_dir</span>
+<span class="sd">    .. py:attribute:: parent_work_dir</span>
 <span class="sd">        :type: str</span>
 
 <span class="sd">        The target parent directory of</span>
@@ -286,10 +288,10 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_target_work_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compute_requirements</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_work_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">compute_requirements</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent_target_work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">parent_target_work_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">parent_work_dir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compute_requirements</span> <span class="o">=</span> <span class="n">compute_requirements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dst</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span> <span class="o">=</span> <span class="kc">None</span>
@@ -321,7 +323,7 @@
 <span class="sd">        Depending on the user&#39;s choice, the returned directory is either:</span>
 
 <span class="sd">        - The current working directory.</span>
-<span class="sd">        - A directory under self.parent_target_work_dir/repo_name/latest_commit_hash.</span>
+<span class="sd">        - A directory under self.parent_work_dir/repo_name/latest_commit_hash.</span>
 <span class="sd">        In this case, a copy of the code based on the latest git commit is created and used to run the experiment.</span>
 
 <span class="sd">        :rtype: str</span>
@@ -334,7 +336,7 @@
         <span class="n">repo_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">hexsha</span>
         <span class="n">target_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repo_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span><span class="p">)</span>
-        <span class="n">parent_work_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_target_work_dir</span>
+        <span class="n">parent_work_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_work_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent_work_dir</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle_cloning</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
@@ -662,7 +664,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2023, Michael Arbel
+                Copyright &#169; Copyright (C) 2023 Michael Arbel
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

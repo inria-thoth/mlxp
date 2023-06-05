@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="3- Reading" href="easy_reading.html" /><link rel="prev" title="1- Launching" href="easy_launching.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>2- Logging - MLXPy 0.1 documentation</title>
+        <title>2- Logging - MLXP 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -154,10 +154,11 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="guide.html">Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Quick start guide</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
@@ -169,13 +170,13 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.data_structures.html">Data structures</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlxp.html">MLXP package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.version_managment.html">Version manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.data_structures.html">Data structures</a></li>
 </ul>
 </li>
 </ul>
@@ -248,7 +249,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 │   ├── metadata/
 │   │   ├── config.yaml
 │   │   ├── info.yaml
-│   │   └── mlxpy.yaml
+│   │   └── mlxp.yaml
 │   ├── metrics/
 │   │   ├── train.json
 │   │   └──.keys/
@@ -281,12 +282,12 @@ Since we executed the code three times in total, we should expect three sub-dire
 </pre></div>
 </div>
 </div>
-<p>The hidden directory ‘.keys’ is used by the reader module of MLXPy and is not something to worry about here. Instead, we inspect the remaining directories below.</p>
+<p>The hidden directory ‘.keys’ is used by the reader module of MLXP and is not something to worry about here. Instead, we inspect the remaining directories below.</p>
 </section>
 <section id="the-metadata-directory">
 <h3>The ‘metadata’ directory<a class="headerlink" href="#the-metadata-directory" title="Permalink to this heading">#</a></h3>
-<p>The ‘metadata’ directory contains three yaml files: ‘config’, ‘info’, and ‘mlxpy’, each storing the content of the corresponding fields of the context object ‘ctx’.
-‘config’ stores the user config of the run, ‘info’ stores general information about the run such as the assigned ‘log_id’ and the absolute path to the logs of the run ‘log_dir’. Finally, ‘mlxpy’ stores the MLXPy’s settings used for the run (e.g. the logger settings).</p>
+<p>The ‘metadata’ directory contains three yaml files: ‘config’, ‘info’, and ‘mlxp’, each storing the content of the corresponding fields of the context object ‘ctx’.
+‘config’ stores the user config of the run, ‘info’ stores general information about the run such as the assigned ‘log_id’ and the absolute path to the logs of the run ‘log_dir’. Finally, ‘mlxp’ stores the MLXP’s settings used for the run (e.g. the logger settings).</p>
 <div class="literal-block-wrapper docutils container" id="id4">
 <div class="code-block-caption"><span class="caption-text">./logs/1/metadata/config.yaml</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
@@ -303,11 +304,11 @@ Since we executed the code three times in total, we should expect three sub-dire
 </div>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">./logs/1/metadata/info.yaml</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/bin/python</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">executable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/bin/python</span>
 <span class="nt">cmd</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20/04/2023</span>
 <span class="nt">end_time</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;16:01:13&#39;</span>
-<span class="nt">exec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/main.py</span>
+<span class="nt">current_file_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/main.py</span>
 <span class="nt">log_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/logs/1</span>
 <span class="nt">log_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 <span class="nt">process_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7100</span>
@@ -320,7 +321,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/mlxpy.yaml</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/mlxp.yaml</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">forced_log_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-1</span>
 <span class="w">  </span><span class="nt">log_streams_to_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -335,7 +336,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 <span class="w">  </span><span class="nt">shell_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/bash</span>
 <span class="nt">version_manager</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GitVM</span>
-<span class="w">  </span><span class="nt">parent_target_work_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./.workdir</span>
+<span class="w">  </span><span class="nt">parent_work_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./.workdir</span>
 <span class="w">  </span><span class="nt">compute_requirements</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="nt">use_logger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="nt">use_scheduler</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
@@ -358,10 +359,10 @@ Since we executed the code three times in total, we should expect three sub-dire
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">OneHiddenLayer</span>
 
-<span class="kn">import</span> <span class="nn">mlxpy</span>
+<span class="kn">import</span> <span class="nn">mlxp</span>
 
-<span class="nd">@mlxpy</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxpy</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="nd">@mlxp</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
 
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">config</span>
     <span class="n">logger</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">logger</span>
@@ -406,7 +407,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 </div>
 </div>
 <p>Of course, if you execute ‘main.py’ without further options, the logger will create a new ‘log_id’ where there is no checkpoint yet, so it cannot resume a previous job. Instead, you need to force the ‘log_id’ using the option ‘logger.forced_log_id’:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxpy.logger.forced_log_id<span class="o">=</span><span class="m">1</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxp.logger.forced_log_id<span class="o">=</span><span class="m">1</span>
 <span class="go">Starting from epoch 10</span>
 <span class="go">Completed training with learning rate: 1e-3</span>
 </pre></div>
@@ -414,13 +415,13 @@ Since we executed the code three times in total, we should expect three sub-dire
 </section>
 <section id="customizing-the-parent-log-directory">
 <span id="custom-log-dir"></span><h2>Customizing the parent log directory<a class="headerlink" href="#customizing-the-parent-log-directory" title="Permalink to this heading">#</a></h2>
-<p>You can change the parent directory by overriding the option ‘+mlxpy.logger.parent_log_dir’ from the command-line:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxpy.logger.parent_log_dir<span class="o">=</span><span class="s1">&#39;./new_logs&#39;</span>
+<p>You can change the parent directory by overriding the option ‘+mlxp.logger.parent_log_dir’ from the command-line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxp.logger.parent_log_dir<span class="o">=</span><span class="s1">&#39;./new_logs&#39;</span>
 </pre></div>
 </div>
-<p>Alternatively, the parent directory can be modified directly in the MLXPy default settings file ‘configs/mlxpy.yaml’. This file is created automatically if it doesn’t exist already and contains all the defaults options for using MLXPy in the current project:</p>
+<p>Alternatively, the parent directory can be modified directly in the MLXP default settings file ‘configs/mlxp.yaml’. This file is created automatically if it doesn’t exist already and contains all the defaults options for using MLXP in the current project:</p>
 <div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">./configs/mlxpy.yaml</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./configs/mlxp.yaml</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">parent_log_dir</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./logs</span>
@@ -460,7 +461,7 @@ Since we executed the code three times in total, we should expect three sub-dire
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2023, Michael Arbel
+                Copyright &#169; Copyright (C) 2023 Michael Arbel
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="4- Advanced features" href="advanced_features.html" /><link rel="prev" title="2- Logging" href="easy_logging.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>3- Reading - MLXPy 0.1 documentation</title>
+        <title>3- Reading - MLXP 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -154,10 +154,11 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="guide.html">Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Quick start guide</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
@@ -169,13 +170,13 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="mlxpy.html">MLXPy package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.launching.html">Launcher</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.logging.html">Logger</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.reading.html">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.scheduling.html">Scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.version_managment.html">Version manager</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mlxpy.data_structures.html">Data structures</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="mlxp.html">MLXP package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.version_managment.html">Version manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlxp.data_structures.html">Data structures</a></li>
 </ul>
 </li>
 </ul>
@@ -215,14 +216,14 @@
           <section id="reading">
 <h1>3- Reading<a class="headerlink" href="#reading" title="Permalink to this heading">#</a></h1>
 <p>We have already stored information about 3 runs so far.
-We can access this information easily using MLXPy’s reader module, which allows querying results, grouping, and aggregating them. Let’s do this interactively!</p>
+We can access this information easily using MLXP’s reader module, which allows querying results, grouping, and aggregating them. Let’s do this interactively!</p>
 <section id="creating-a-result-database">
 <h2>Creating a result database<a class="headerlink" href="#creating-a-result-database" title="Permalink to this heading">#</a></h2>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">mlxpy</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">mlxp</span>
 
 <span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="c1"># Creates a database of results stored by the logger that is accessible using a reader object.</span>
    <span class="o">...</span><span class="p">:</span> <span class="n">parent_log_dir</span> <span class="o">=</span> <span class="s1">&#39;./logs/&#39;</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">mlxpy</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">parent_log_dir</span><span class="p">)</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="n">parent_log_dir</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Under the woods, the reader object creates a JSON file ‘database.json’ in the directory parent_log_dir and stores metadata about all runs contained in that directory.</p>
@@ -291,10 +292,10 @@ Not all fields can make a valid query. Only those obtained when displaying the a
 <span class="n">config</span><span class="o">.</span><span class="n">num_epoch</span>          <span class="s1">&#39;&lt;class &#39;</span><span class="nb">int</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">config</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">lr</span>     <span class="s1">&#39;&lt;class &#39;</span><span class="nb">float</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">config</span><span class="o">.</span><span class="n">seed</span>               <span class="s1">&#39;&lt;class &#39;</span><span class="nb">int</span><span class="s1">&#39;&gt;&#39;</span>
-<span class="n">info</span><span class="o">.</span><span class="n">app</span>                  <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
+<span class="n">info</span><span class="o">.</span><span class="n">executable</span>           <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">info</span><span class="o">.</span><span class="n">cmd</span>                  <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">info</span><span class="o">.</span><span class="n">end_date</span>             <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
-<span class="n">info</span><span class="o">.</span><span class="n">end_time</span>             <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>    <span class="n">info</span><span class="o">.</span><span class="n">exec</span>                 <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
+<span class="n">info</span><span class="o">.</span><span class="n">end_time</span>             <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>    <span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span>    <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">info</span><span class="o">.</span><span class="n">hostname</span>             <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">info</span><span class="o">.</span><span class="n">log_dir</span>              <span class="s1">&#39;&lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt;&#39;</span>
 <span class="n">info</span><span class="o">.</span><span class="n">log_id</span>               <span class="s1">&#39;&lt;class &#39;</span><span class="nb">int</span><span class="s1">&#39;&gt;&#39;</span>
@@ -330,7 +331,7 @@ This can be avoided using ‘lazy evaluation’ which we describe next.</p>
 </section>
 <section id="lazy-evaluation">
 <h2>Lazy evaluation<a class="headerlink" href="#lazy-evaluation" title="Permalink to this heading">#</a></h2>
-<p>Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, ‘train.json’ file, we can return a ‘mlxpy.DataDictList’ object.
+<p>Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, ‘train.json’ file, we can return a ‘mlxp.DataDictList’ object.
 This object can also be rendered as a dataframe but does not load the ‘train.json’ files in memory unless the corresponding fields are explicitly accessed.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="c1"># Returning a DataDictList as a result</span>
    <span class="o">...</span> <span class="n">results</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">query_string</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
@@ -357,7 +358,7 @@ This object can also be rendered as a dataframe but does not load the ‘train.j
 <section id="grouping-and-aggregation">
 <h2>Grouping and aggregation<a class="headerlink" href="#grouping-and-aggregation" title="Permalink to this heading">#</a></h2>
 <p>While it is possible to directly convert the results of a query to a pandas dataframe which supports grouping and aggregation operations,
-MLXPy also provides basic support for these operations. Let’s see how this works:</p>
+MLXP also provides basic support for these operations. Let’s see how this works:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="c1"># List of group keys.</span>
    <span class="o">...</span> <span class="n">group_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;config.optimizer.lr&#39;</span><span class="p">]</span>
 
@@ -376,7 +377,7 @@ MLXPy also provides basic support for these operations. Let’s see how this wor
 <p>The output is an object of type GroupedDataDicts. It can be viewed as a dictionary whose keys are given by the different values taken by the group variables. Here the group variable is the learning rate ‘config.optimizer.lr’ which takes the values ‘0.01’ and ‘0.10’. Hence, the keys of GroupedDataDicts are ‘0.01’ and ‘0.10’. Each group (for instance the group with key ‘0.01’) is a DataDictList object containing the different runs belonging to that group.</p>
 <p>Finally, we can aggregate these groups according to some aggregation operations:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="c1"># Creating the aggregation maps</span>
-    <span class="o">...</span> <span class="kn">from</span> <span class="nn">mlxpy.data_structures.contrib.aggregation_maps</span> <span class="kn">import</span> <span class="n">AvgStd</span>
+    <span class="o">...</span> <span class="kn">from</span> <span class="nn">mlxp.data_structures.contrib.aggregation_maps</span> <span class="kn">import</span> <span class="n">AvgStd</span>
     <span class="o">...</span> <span class="n">agg_maps</span> <span class="o">=</span> <span class="p">[</span><span class="n">AvgStd</span><span class="p">(</span><span class="s1">&#39;train.loss&#39;</span><span class="p">),</span><span class="n">AvgStd</span><span class="p">(</span><span class="s1">&#39;train.epoch&#39;</span><span class="p">)]</span>
 
 
@@ -429,7 +430,7 @@ MLXPy also provides basic support for these operations. Let’s see how this wor
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2023, Michael Arbel
+                Copyright &#169; Copyright (C) 2023 Michael Arbel
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

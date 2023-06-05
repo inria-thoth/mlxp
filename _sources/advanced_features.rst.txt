@@ -8,36 +8,36 @@ Launching jobs using a scheduler
 
 
 If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs. 
-MLXPy allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster.
+MLXP allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster.
 
 
 
 Configuring the scheduler
 """""""""""""""""""""""""
 
-The scheduler's options are stored in the MLXPy settings file './configs/mlxpy.yaml'. By default, the option 'use_scheduler' is set to 'False', which means that jobs will not be submitted using a scheduler. Additionally, the field 'scheduler.name' is set to 'NoScheduler' which means that no valid scheduler is defined.
-If the settings file './configs/mlxpy.yaml' does not exist or if you set the option 'mlxpy.user_scheduler' to true while still leaving the 'scheduler.name' field in the 'mlxpy.yaml' as 'NoScheduler', you will have access to an interactive platform to set up the scheduler's options from the terminal when executing the 'main.py' file:
+The scheduler's options are stored in the MLXP settings file './configs/mlxp.yaml'. By default, the option 'use_scheduler' is set to 'False', which means that jobs will not be submitted using a scheduler. Additionally, the field 'scheduler.name' is set to 'NoScheduler' which means that no valid scheduler is defined.
+If the settings file './configs/mlxp.yaml' does not exist or if you set the option 'mlxp.user_scheduler' to true while still leaving the 'scheduler.name' field in the 'mlxp.yaml' as 'NoScheduler', you will have access to an interactive platform to set up the scheduler's options from the terminal when executing the 'main.py' file:
 
 .. code-block:: console
 
-    python main.py +mlxpy.use_scheduler=True
+    python main.py +mlxp.use_scheduler=True
 
     No scheduler is configured by default
     
     Would you like to select a default job scheduler now ?  (y/n):
     
-    y: The job scheduler configs will be stored in the file ./configs/mlxpy.yaml
+    y: The job scheduler configs will be stored in the file ./configs/mlxp.yaml
     n: No scheduler will be selected by default.
     
     Please enter your answer (y/n):
 
-MLXPy provides two options: 'y' or 'n'. If you choose 'n', then MLXPy skips configuration and tries to execute code without a scheduler. If you choose 'y', you'll be able to set up a scheduler. Let's select 'y':
+MLXP provides two options: 'y' or 'n'. If you choose 'n', then MLXP skips configuration and tries to execute code without a scheduler. If you choose 'y', you'll be able to set up a scheduler. Let's select 'y':
 
 
 .. code-block:: console
 
     You can either choose one of the job schedulers available by default,
-    or define a custom one by inheriting from the abstract class <class 'mlxpy.scheduler.Scheduler'> (see documentation)
+    or define a custom one by inheriting from the abstract class <class 'mlxp.scheduler.Scheduler'> (see documentation)
 
     For a default scheduler, you can choose one from this list:
     
@@ -48,7 +48,7 @@ MLXPy provides two options: 'y' or 'n'. If you choose 'n', then MLXPy skips conf
      Please enter your choice (or hit Enter to skip) :
 
 
-By default, MLXPy supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your custom scheduler by defining a class inheriting from the abstract class 'mlxpy.scheduler.Scheduler' and providing the full name of the class so that MLXPy can import it. Here, we select,'OARScheduler', one of the default schedulers provided by MLXPy as we have access to a cluster using the OAR scheduler:
+By default, MLXP supports two job schedulers 'OAR' and 'SLURM'.  You can also specify your custom scheduler by defining a class inheriting from the abstract class 'mlxp.scheduler.Scheduler' and providing the full name of the class so that MLXP can import it. Here, we select,'OARScheduler', one of the default schedulers provided by MLXP as we have access to a cluster using the OAR scheduler:
 
 .. code-block:: console
 
@@ -56,13 +56,13 @@ By default, MLXPy supports two job schedulers 'OAR' and 'SLURM'.  You can also s
 
     Setting Scheduler to OARScheduler
 
-    Default settings for MLXPy will be created in ./configs/mlxpy.yaml
+    Default settings for MLXP will be created in ./configs/mlxp.yaml
 
-MLXPy then sets up the scheduler, updates/creates the MLXPy settings file './configs/mlxpy.yaml' with an option for using 'OARScheduler' and continues execution of the code (see next section for what is executed). We can double-check that the MLXPy settings file './configs/mlxpy.yaml' was correctly modified: 
+MLXP then sets up the scheduler, updates/creates the MLXP settings file './configs/mlxp.yaml' with an option for using 'OARScheduler' and continues execution of the code (see next section for what is executed). We can double-check that the MLXP settings file './configs/mlxp.yaml' was correctly modified: 
 
 
 .. code-block:: yaml
-   :caption: ./configs/mlxpy.yaml
+   :caption: ./configs/mlxp.yaml
 
    logger: ... 
   
@@ -76,7 +76,7 @@ MLXPy then sets up the scheduler, updates/creates the MLXPy settings file './con
 
    version_manager: ...
 
-You can also directly edit the 'mlxpy.yaml' file to configure the scheduler (by setting the field scheduler.name to a valid value). 
+You can also directly edit the 'mlxp.yaml' file to configure the scheduler (by setting the field scheduler.name to a valid value). 
 Additionally, there are other options that the scheduler need, and that are, by default, set to an empty string for most of them. The most important option is the 'option_cmd' which specifies the resources required by the job. 
 It contains a list of strings, each string providing some instruction to the scheduler (e.g.: number of cores, wall time, gpu memory). These instructions must follow the syntax required by the scheduler. 
 Since we are using OAR, these options must follow OAR's syntax. 
@@ -86,7 +86,7 @@ Since we are using OAR, these options must follow OAR's syntax.
 Submitting job to a cluster queue
 """""""""""""""""""""""""""""""""
 
-After configuring the scheduler or if it was already configured in the MLXPy file settings, MLXPy falls back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: 'OAR'). 
+After configuring the scheduler or if it was already configured in the MLXP file settings, MLXP falls back into scheduling mode and creates a script for the job that is then launched using the scheduler (here: 'OAR'). 
 In the console, you can see the content of the script followed by a message 'Job launched!' indicating that the scheduler succeeded in launching the job:
 
 .. code-block:: console
@@ -99,7 +99,7 @@ In the console, you can see the content of the script followed by a message 'Job
 
 
     cd absolute_path_to/tutorial
-    absolute_path_to/bin/python main.py              +mlxpy.logger.forced_log_id=12            +mlxpy.logger.parent_log_dir=absolute_path_to/logs             +mlxpy.use_scheduler=False            +mlxpy.use_version_manager=False
+    absolute_path_to/bin/python main.py              +mlxp.logger.forced_log_id=12            +mlxp.logger.parent_log_dir=absolute_path_to/logs             +mlxp.use_scheduler=False            +mlxp.use_version_manager=False
 
     [ADMISSION RULE] Set default walltime to 7200.
     [ADMISSION RULE] Modify resource description with type constraints
@@ -108,7 +108,7 @@ In the console, you can see the content of the script followed by a message 'Job
     Job launched!
 
 
-Under the woods MLXPy first assigns a 'log_id' to the run and then creates its corresponding log directory './logs/log_id' (, using the logger). 
+Under the woods MLXP first assigns a 'log_id' to the run and then creates its corresponding log directory './logs/log_id' (, using the logger). 
 Here, log_id=5, since this is the 5th run that we launched in './logs'. Then instead of executing the job, the scheduler creates a script 'script.sh' that is saved in './logs/log_id'. This script is then submitted automatically to the OAR cluster queue using the command: 'sbatch ./script.sh'. 
 At this point, the program exits after displaying the script along with a message: 'Job launched!'.
 Let's have a look at the content of the script:
@@ -125,19 +125,19 @@ Let's have a look at the content of the script:
 
 
     cd absolute_path_to_work_dir
-    absolute_path_to/python main.py  +mlxpy.logger.forced_log_id=5           
-    +mlxpy.logger.parent_log_dir=absolute_path_to/logs             
-    +mlxpy.use_scheduler=False            
-    +mlxpy.use_version_manager=False
+    absolute_path_to/python main.py  +mlxp.logger.forced_log_id=5           
+    +mlxp.logger.parent_log_dir=absolute_path_to/logs             
+    +mlxp.use_scheduler=False            
+    +mlxp.use_version_manager=False
 
 
 Let's now go through this script:
 
-1. The first line of the script specifies the shell used for running the script. It is determined by the scheduler's option 'shell_path' of the 'mlxpy.yaml' file settings. We chose to set it to '/bin/bash'. 
+1. The first line of the script specifies the shell used for running the script. It is determined by the scheduler's option 'shell_path' of the 'mlxp.yaml' file settings. We chose to set it to '/bin/bash'. 
 2. The next lines specify the OAR resource option provided in 'option_cmd'. When the script is created,  the OAR directive '#OAR' is automatically added before these options so that the scheduler can interpret them. You can have a look at the OAR documentation for how to set those options. 
 3. The first instruction is to go to the 'working directory' set by the launcher (which can be different from the current working directory if we are using the version manager).
 4. Finally, we find the instructiosn for executing the 'main.py' file with some additional options:
-    * First, the log_id is forced to be the same as the one assigned for the job during launching (by setting mlxpy.logger.forced_log_id=5). 
+    * First, the log_id is forced to be the same as the one assigned for the job during launching (by setting mlxp.logger.forced_log_id=5). 
     * Then, we make sure that the 'parent_log_dir' is also the same as the one we used during job submission to the cluster. 
     * Finally, the submitted job must no longer use any scheduler or version manager anymore! That is because the script was already submitted to a cluster queue using the scheduler and must readily be executed once a resource is allocated.
 
@@ -168,7 +168,7 @@ Once, the job finishes execution, we can double-check that everything went well 
    │   ├── metadata/
    │   │   ├── config.yaml
    │   │   ├── info.yaml
-   │   │   └── mlxpy.yaml
+   │   │   └── mlxp.yaml
    │   ├── metrics/
    │   │   ├── train.json
    │   │   └── .keys/
@@ -190,12 +190,12 @@ You can also launch several jobs to the cluster from a single command! Let's say
 
 .. code-block:: console
 
-   $ python main.py optimizer.lr=1e-3,1e-2,1e-1 seed=1,2,3,4  +mlxpy.use_scheduler=True
+   $ python main.py optimizer.lr=1e-3,1e-2,1e-1 seed=1,2,3,4  +mlxp.use_scheduler=True
 
 Here is what happens:
 
 1. `hydra <https://hydra.cc/>`_ performs a cross-product of the options provided and creates as many jobs are needed (3x4).
-2. The MLXPy's logger creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id.
+2. The MLXP's logger creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id.
 3. The scheduler creates a script for each of these jobs in their corresponding directory, then submits these scripts to the cluster queue.
 
 
@@ -206,22 +206,22 @@ Sometimes, there can be a delay between the time when a job is submitted and whe
 Meanwhile, the development code might have already changed, with some potential bugs introduced! 
 Without careful version management, it is hard to know for sure what code was used to produce the results.
 
-MLXPy's version manager
+MLXP's version manager
 """""""""""""""""""""""
 
-MLXPy proposes a simple way to avoid these issues by introducing two features:
+MLXP proposes a simple way to avoid these issues by introducing two features:
 
 - Systematically checking for uncommitted change/ untracked files.
 - Systematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.
 
-Using MLXPy's version manager
+Using MLXP's version manager
 """""""""""""""""""""""""""""
 
 Let's see how this works! We simply need to set the option 'use_version_manager' to true. This launches an interactive session where the user can tell the version manager what to do.
 
 .. code-block:: console
 
-   $ python main.py +mlxpy.use_version_manager=True
+   $ python main.py +mlxp.use_version_manager=True
     
     There are untracked files in the repository:
     
@@ -263,7 +263,7 @@ We see that there is one uncommitted change. The user can either ignore this, co
 
     Committing changes....
     
-    [master e22179c] MLXPy: Automatically committing all changes
+    [master e22179c] MLXP: Automatically committing all changes
 
      1 files changed, 2 insertions(+), 1 deletions(-)
     
@@ -277,7 +277,7 @@ Finally, the version manager asks if we want to create a 'safe' copy (if it does
     Where would you like to run your code from? (a/b):
     
     a: Create a copy of the repository based on the latest commit and execute code from there.
-    The copy will be created in absolute_path_to/.workdir/mlxpy/commit_hash
+    The copy will be created in absolute_path_to/.workdir/mlxp/commit_hash
     b: Execute code from the main repository
     
     Please enter your answer (a/b):
@@ -286,12 +286,12 @@ Finally, the version manager asks if we want to create a 'safe' copy (if it does
 
 
 We choose the safe copy! 
-The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). MLXPy then proceeds to execute the code from that copy:
+The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). MLXP then proceeds to execute the code from that copy:
 
 
 .. code-block:: console
 
-    Creating a copy of the repository at absolute_path_to/.workdir/mlxpy/commit_hash
+    Creating a copy of the repository at absolute_path_to/.workdir/mlxp/commit_hash
     Starting from epoch: 0
     Completed training with a learning rate of 10.0
 
@@ -303,7 +303,7 @@ We can double check where the code was executed from by inspecting the 'info.yam
    :caption: ./logs/4/metadata/info.yaml
 
     ...
-    work_dir: absolute_path_to/.workdir/mlxpy/commit_hash/tutorial
+    work_dir: absolute_path_to/.workdir/mlxp/commit_hash/tutorial
     version_manager:
         commit_hash: f02c8e5aa1a4c71d348141543a20543a2e4671b4
         repo_path: absolute_path_to_repo 
@@ -320,7 +320,7 @@ We can double check where the code was executed from by inspecting the 'info.yam
 
 If other jobs are submitted later, and if the code did not change meanwhile, then these jobs will also be executed from this same working directory. This avoids copying the same content multiple times. 
 
-Finally, a copy of the dependencies used by the code along with their versions is also made in the field 'requirements' if the option 'mlxpy.version_manager.compute_requirements' is set to 'True'.
+Finally, a copy of the dependencies used by the code along with their versions is also made in the field 'requirements' if the option 'mlxp.version_manager.compute_requirements' is set to 'True'.
 
 
 Using both scheduler and version manager
@@ -330,10 +330,10 @@ You can combine both features to run several reproducible jobs with a controlled
 
 .. code-block:: console
    
-   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxpy.use_scheduler=True +mlxpy.use_version_manager=True
+   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxp.use_scheduler=True +mlxp.use_version_manager=True
 
-In this case, MLXPy will go through the following step:
+In this case, MLXP will go through the following step:
 
-1. MLXPy first asks the user to set up a scheduler, if not already configured. 
+1. MLXP first asks the user to set up a scheduler, if not already configured. 
 2. The version manager asks the user to decide how to handle untracked/uncommitted files and whether or not to create a 'safe' directory from which the code will be run. 
 3. Once the user's choices are entered, the jobs are submitted to the scheduler, and you only need to wait for the results to come!

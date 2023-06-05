@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 6.1.3 and Furo 2023.03.27 -->
-        <title>mlxpy.launcher - MLXPy 0.1 documentation</title>
+        <title>mlxpy.launcher - MLXPy 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXPy 0.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXPy 0.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXPy 0.1 documentation</span>
+  <span class="sidebar-brand-text">MLXPy 0.1.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -153,10 +153,12 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installing.html">Installing MLXPy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuring_mlxpy.html">Configuring MLXPy</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_launching.html">1- Launching</a></li>
@@ -234,7 +236,7 @@
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">mlxpy._internal.configure</span> <span class="kn">import</span> <span class="n">_build_config</span>
+<span class="kn">from</span> <span class="nn">mlxpy._internal.configure</span> <span class="kn">import</span> <span class="n">_build_config</span><span class="p">,</span> <span class="n">_add_config_overrides</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">from</span> <span class="nn">mlxpy.enumerations</span> <span class="kn">import</span> <span class="n">Status</span>
@@ -377,17 +379,19 @@
 
     <span class="k">def</span> <span class="nf">launcher_decorator</span><span class="p">(</span><span class="n">task_function</span><span class="p">):</span>
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">task_function</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">decorated_task</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
-            <span class="n">cfg</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">config_path</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">decorated_task</span><span class="p">(</span><span class="n">overrides</span><span class="p">):</span>
+            <span class="n">cfg</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span><span class="n">overrides</span><span class="p">,</span> <span class="n">config_path</span><span class="p">)</span>
 
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hostname&#39;</span><span class="p">:</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">(),</span>
                     <span class="s1">&#39;process_id&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
-                    <span class="s1">&#39;executable&#39;</span><span class="p">:</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span>
-                    <span class="s1">&#39;app&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;_&quot;</span><span class="p">],</span>
+                    <span class="s1">&#39;executable&#39;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                    <span class="s1">&#39;current_file_path&#39;</span><span class="p">:</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span>
                     <span class="s1">&#39;start_date&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
                     <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
                     <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">STARTING</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
+
+            
 
             <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
 
@@ -419,13 +423,15 @@
                 <span class="n">log_dir</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">log_dir</span>
                 <span class="n">parent_log_dir</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">parent_log_dir</span>
                 <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;logger&#39;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="n">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
+                <span class="c1">#cfg = _add_config_overrides(cfg,overrides)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxpy</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
 
-                <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">app</span><span class="p">,</span>
-                                             <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                                             <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span>
                                              <span class="n">work_dir</span><span class="p">,</span>
                                              <span class="n">parent_log_dir</span><span class="p">,</span>
                                              <span class="n">log_id</span><span class="p">)</span>
@@ -633,13 +639,26 @@
     <span class="k">return</span> <span class="n">configs_info</span>
 
 
-<span class="k">def</span> <span class="nf">_main_job_command</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
-    <span class="n">exec_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">mlxpy.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
+    <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">abs_name</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">abs_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">configs</span>
+
+
+<span class="k">def</span> <span class="nf">_main_job_command</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="n">current_file_path</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+    <span class="n">exec_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">_get_overrides</span><span class="p">()</span>
     <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
         <span class="sa">f</span><span class="s2">&quot;cd </span><span class="si">{</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">app</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">exec_file</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">executable</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">exec_file</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">            +mlxpy.logger.forced_log_id=</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="se">\</span>
 <span class="s2">            +mlxpy.logger.parent_log_dir=</span><span class="si">{</span><span class="n">parent_log_dir</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">            +mlxpy.use_scheduler=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="se">\</span>
@@ -656,7 +675,7 @@
 
     <span class="k">def</span> <span class="nf">filter_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;version_manager&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.parent_log_dir&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+            <span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.parent_log_dir&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.forced_log_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
     <span class="n">filtered_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">,</span> <span class="n">overrides</span><span class="p">))</span>
     <span class="n">args</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filtered_args</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">args</span>
@@ -672,7 +691,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2023, Michael Arbel
+                Copyright &#169; Copyright (C) 2023 Michael Arbel
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
