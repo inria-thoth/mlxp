@@ -11,7 +11,7 @@ with urlopen(_conf_url) as _inf:
 ver_dic = {}
 exec(
     compile(
-        open("../mlxpy/__init__.py").read(), "../mlxpy/__init__.py", "exec"
+        open("../mlxp/__init__.py").read(), "../mlxp/__init__.py", "exec"
     ),
     ver_dic,
 )

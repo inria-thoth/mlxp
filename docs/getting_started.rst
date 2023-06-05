@@ -16,14 +16,14 @@ Let's say you are given a directory 'my_project' containing a python file 'main.
    └── main.py
 
 
-In this example, the file 'main.py' contains a function 'my_task' that performs some task when called. To use MLXP for launching a job, you can use the decorator 'mlxpy.launch' above the function 'my_task'. 
+In this example, the file 'main.py' contains a function 'my_task' that performs some task when called. To use MLXP for launching a job, you can use the decorator 'mlxp.launch' above the function 'my_task'. 
 
 .. code-block:: python
 
-   import mlxpy 
+   import mlxp 
 
-   @mlxpy.launch(config_path='./configs')
-   def my_task(ctx: mlxpy.Context)->None:
+   @mlxp.launch(config_path='./configs')
+   def my_task(ctx: mlxp.Context)->None:
 
      print("ctx.config")
 
@@ -34,11 +34,11 @@ In this example, the file 'main.py' contains a function 'my_task' that performs 
    if __name__ == "__main__":
      my_task()
 
-The decorated function 'my_func' must take a  variable 'ctx' of type 'mlxpy.Context' as an argument. Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
-The 'ctx' variable is automatically created on the fly during execution and stores information about the run. It contains four fields: 'config', 'mlxpy', 'info', and 'logger':
+The decorated function 'my_func' must take a  variable 'ctx' of type 'mlxp.Context' as an argument. Note that 'my_task' is later called without providing the context variable just like in  `hydra <https://hydra.cc/>`_.
+The 'ctx' variable is automatically created on the fly during execution and stores information about the run. It contains four fields: 'config', 'mlxp', 'info', and 'logger':
 
 - **ctx.config**: Stores task-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-- **ctx.mlxpy**: Stores MLXP's settings used for the run. 
+- **ctx.mlxp**: Stores MLXP's settings used for the run. 
 - **ctx.info**: Contains information about the current run: ex. status, start time, hostname, etc. 
 - **ctx.logger**: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
@@ -59,7 +59,7 @@ When executing the Python file 'main.py' from the command line, we get the follo
     lr: 10.
 
    The logger object is an instance of:
-   <class 'mlxpy.logger.DefaultLogger'>
+   <class 'mlxp.logger.DefaultLogger'>
    
 One can check that these outputs match the content of the yaml file './configs/config.yaml':
 
@@ -92,7 +92,7 @@ Just like in `hydra <https://hydra.cc/>`_, you can also override the options con
     lr: 0.1
 
    The logger object is an instance of:
-   <class 'mlxpy.logger.DefaultLogger'>
+   <class 'mlxp.logger.DefaultLogger'>
 
 If the file 'config.yaml' or its parent directory 'config_path' do not exist, they will be created automatically. When created automatically,  'config.yaml' contains a single field 'seed' ('null' by default) which is intended for seeding random number generators.
 

@@ -5,7 +5,7 @@ Introduction
 In this tutorial, we will go through the three main functionalities: Launching, Logging, and Reading and explain these are easily handled by MLXP. 
 Then we will see how to enhance reproducibility of experiments using the git-based version manager provided by MLXP and how to submit several jobs to a cluster in a single command using the MLXP's scheduler. 
 
-To make things concrete, we will consider a simple use-case where we are interested in training a neural network on a regression task. You can find code for reproducing this tutorial by following this link https://github.com/MichaelArbel/mlxpy/tree/master/tutorial.
+To make things concrete, we will consider a simple use-case where we are interested in training a neural network on a regression task. You can find code for reproducing this tutorial by following this link https://github.com/MichaelArbel/mlxp/tree/master/tutorial.
 
 The working example 
 ^^^^^^^^^^^^^^^^^^^

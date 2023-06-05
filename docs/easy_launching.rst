@@ -1,8 +1,8 @@
 1- Launching
 ------------
 
-We will see how to modify the file 'main.py' to use MLXP using the decorator 'mlxpy.launch'. 
-But first, let's introduce the 'mlxpy.Context' class which allows using MLXP's logging and configuring functionalities. 
+We will see how to modify the file 'main.py' to use MLXP using the decorator 'mlxp.launch'. 
+But first, let's introduce the 'mlxp.Context' class which allows using MLXP's logging and configuring functionalities. 
 
 
 Defining a default config file
@@ -33,8 +33,8 @@ Adapting code for using MLXP
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To use MLXP, we only need to slightly change the 'main.py' file. 
-The first step is to import MLXP and use the decorator 'mlxpy.launch' above the function 'train'.
-We also need to change the signature of the function 'train' so that it can accept an object 'ctx' of type 'mlxpy.Context' as an argument instead of the variables. 
+The first step is to import MLXP and use the decorator 'mlxp.launch' above the function 'train'.
+We also need to change the signature of the function 'train' so that it can accept an object 'ctx' of type 'mlxp.Context' as an argument instead of the variables. 
 Note, however, that 'train' is called later without explicitly passing any argument. The remaining modifications are:
 
 - Using the option values stored in ctx.config as a replacement of the variables provided in the older version of the code (See: :ref:`the old 'main.py' file <old_main_file>`). 
@@ -49,10 +49,10 @@ Here is how the code would look like:
     import torch
     from core import DataLoader, OneHiddenLayer
 
-    import mlxpy
+    import mlxp
 
-    @mlxpy.launch(config_path='./configs')
-    def train(ctx: mlxpy.Context)->None:
+    @mlxp.launch(config_path='./configs')
+    def train(ctx: mlxp.Context)->None:
 
         cfg = ctx.config
         logger = ctx.logger
@@ -90,11 +90,11 @@ Here is how the code would look like:
 The Context object
 """"""""""""""""""
 
-MLXP uses an object 'ctx' of the class 'mlxpy.Context' that is created on the fly during the execution of the program to store information about the run. 
+MLXP uses an object 'ctx' of the class 'mlxp.Context' that is created on the fly during the execution of the program to store information about the run. 
 More precisely, it contains 4 fields: 
 
 - ctx.config: Stores project-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-- ctx.mlxpy: Stores MLXP's default settings for the project. Its content is loaded from a yaml file 'mlxpy.yaml' located in the same directory 'config_path'.  
+- ctx.mlxp: Stores MLXP's default settings for the project. Its content is loaded from a yaml file 'mlxp.yaml' located in the same directory 'config_path'.  
 - ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
 - ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
@@ -124,22 +124,22 @@ In the above instruction, we added an option 'optimizer.lr=0.01,0.1' which execu
 Seeding code using MLXP
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-In our example, the initialization of the model uses random initial parameters which might change from one run to another. To avoid this, the user can provide a function 'set_seed' to the mlxpy.launch decorator to set the global seeds of whatever random number generator is used. 
+In our example, the initialization of the model uses random initial parameters which might change from one run to another. To avoid this, the user can provide a function 'set_seed' to the mlxp.launch decorator to set the global seeds of whatever random number generator is used. 
 
 
 .. code-block:: python
     :caption: main.py
 
-    import mlxpy
+    import mlxp
     from core import DataLoader, Network, Optimizer, Loss
 
     def set_seeds(seed):
         import torch
         torch.manual_seed(seed)
 
-    @mlxpy.launch(config_path='./configs',
+    @mlxp.launch(config_path='./configs',
                 seeding_function=set_seeds)
-    def train(ctx: mlxpy.Context)->None:
+    def train(ctx: mlxp.Context)->None:
 
         cfg = ctx.config
         logger = ctx.logger

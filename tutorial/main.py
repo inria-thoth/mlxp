@@ -1,4 +1,4 @@
-import mlxpy
+import mlxp
 import torch
 from core_app import DataLoader, OneHiddenLayer, train_epoch
 
@@ -9,10 +9,10 @@ def set_seeds(seed):
 
 
 
-@mlxpy.launch(config_path='./configs',
+@mlxp.launch(config_path='./configs',
              seeding_function=set_seeds)
 
-def train(ctx: mlxpy.Context)->None:
+def train(ctx: mlxp.Context)->None:
 
 
     cfg = ctx.config

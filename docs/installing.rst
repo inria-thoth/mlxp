@@ -25,13 +25,13 @@ and then installing it with `pip`.
 
 .. code-block:: console
    
-   $ git clone git@github.com:MichaelArbel/mlxpy.git
+   $ git clone git@github.com:MichaelArbel/mlxp.git
 
 2. Change to the package directory:
 
 .. code-block:: console
    
-   $ cd mlxpy
+   $ cd mlxp
 
 3. Install the requirements using `pip`:
 

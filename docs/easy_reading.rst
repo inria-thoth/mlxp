@@ -11,11 +11,11 @@ Creating a result database
 
 .. code-block:: ipython
 
-    In [1]: import mlxpy
+    In [1]: import mlxp
 
     In [2]: # Creates a database of results stored by the logger that is accessible using a reader object.
        ...: parent_log_dir = './logs/'
-            reader = mlxpy.Reader(parent_log_dir)
+            reader = mlxp.Reader(parent_log_dir)
 
 
 Under the woods, the reader object creates a JSON file 'database.json' in the directory parent_log_dir and stores metadata about all runs contained in that directory. 
@@ -142,7 +142,7 @@ This can be avoided using 'lazy evaluation' which we describe next.
 Lazy evaluation
 ^^^^^^^^^^^^^^^
 
-Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, 'train.json' file, we can return a 'mlxpy.DataDictList' object. 
+Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, 'train.json' file, we can return a 'mlxp.DataDictList' object. 
 This object can also be rendered as a dataframe but does not load the 'train.json' files in memory unless the corresponding fields are explicitly accessed. 
 
 
@@ -207,7 +207,7 @@ Finally, we can aggregate these groups according to some aggregation operations:
 
 
     In [13]: # Creating the aggregation maps 
-        ... from mlxpy.data_structures.contrib.aggregation_maps import AvgStd
+        ... from mlxp.data_structures.contrib.aggregation_maps import AvgStd
         ... agg_maps = [AvgStd('train.loss'),AvgStd('train.epoch')]
 
 

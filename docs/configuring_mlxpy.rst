@@ -1,14 +1,14 @@
 
 
 
-.. _Configuring_mlxpy:
+.. _Configuring_mlxp:
 
 Configuring MLXP
 =================
 
 MLXP is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
-The package default settings are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
-By default, './configs/mlxpy.yaml' contains the following:
+The package default settings are stored in a file 'mlxp.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
+By default, './configs/mlxp.yaml' contains the following:
 
 .. code-block:: yaml
 
@@ -82,11 +82,11 @@ When set to 'False', no interactive mode is used and the following behavior occu
 Overriding MLXP's settings
 ---------------------------
 
-It is possible to override these options from the command line by adding the prefix '+mlxpy' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
+It is possible to override these options from the command line by adding the prefix '+mlxp' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 
 
 .. code-block:: console
 
-   $ python main.py +mlxpy.use_logger=false 
+   $ python main.py +mlxp.use_logger=false 
    
    seed: null
    model:

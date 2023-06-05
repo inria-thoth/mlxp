@@ -1,4 +1,4 @@
-import mlxpy as expy
+import mlxp as expy
 
 # Create a reader object to access the results stored by the logger.
 parent_log_dir = './logs/'
@@ -38,7 +38,7 @@ grouped_results = results.groupBy(group_keys)
 print(grouped_results)
 
 # Creating the aggregation maps 
-from mlxpy.data_structures.contrib.aggregation_maps import AvgStd
+from mlxp.data_structures.contrib.aggregation_maps import AvgStd
 agg_maps = [AvgStd('train.loss')]
 
 agg_results = grouped_results.aggregate(agg_maps)

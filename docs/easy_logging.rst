@@ -40,7 +40,7 @@ Each log directory contains three sub-directories: 'metadata', 'metrics' and 'ar
    │   ├── metadata/
    │   │   ├── config.yaml
    │   │   ├── info.yaml
-   │   │   └── mlxpy.yaml
+   │   │   └── mlxp.yaml
    │   ├── metrics/
    │   │   ├── train.json
    │   │   └──.keys/
@@ -80,8 +80,8 @@ The hidden directory '.keys' is used by the reader module of MLXP and is not som
 The 'metadata' directory
 """"""""""""""""""""""""
 
-The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy', each storing the content of the corresponding fields of the context object 'ctx'. 
-'config' stores the user config of the run, 'info' stores general information about the run such as the assigned 'log_id' and the absolute path to the logs of the run 'log_dir'. Finally, 'mlxpy' stores the MLXP's settings used for the run (e.g. the logger settings). 
+The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxp', each storing the content of the corresponding fields of the context object 'ctx'. 
+'config' stores the user config of the run, 'info' stores general information about the run such as the assigned 'log_id' and the absolute path to the logs of the run 'log_dir'. Finally, 'mlxp' stores the MLXP's settings used for the run (e.g. the logger settings). 
 
 
 .. code-block:: yaml
@@ -115,7 +115,7 @@ The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy
     work_dir: absolute_path_to/tutorial
 
 .. code-block:: yaml
-    :caption: ./logs/1/metadata/mlxpy.yaml
+    :caption: ./logs/1/metadata/mlxp.yaml
 
     logger:
       forced_log_id: -1
@@ -158,10 +158,10 @@ Checkpointing can be particularly useful if you need to restart a job from its l
     import torch
     from core import DataLoader, OneHiddenLayer
 
-    import mlxpy
+    import mlxp
 
-    @mlxpy.launch(config_path='./configs')
-    def train(ctx: mlxpy.Context)->None:
+    @mlxp.launch(config_path='./configs')
+    def train(ctx: mlxp.Context)->None:
 
         cfg = ctx.config
         logger = ctx.logger
@@ -207,7 +207,7 @@ Of course, if you execute 'main.py' without further options, the logger will cre
 
 .. code-block:: console
 
-   $ python main.py +mlxpy.logger.forced_log_id=1
+   $ python main.py +mlxp.logger.forced_log_id=1
    Starting from epoch 10
    Completed training with learning rate: 1e-3
 
@@ -216,17 +216,17 @@ Of course, if you execute 'main.py' without further options, the logger will cre
 Customizing the parent log directory
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can change the parent directory by overriding the option '+mlxpy.logger.parent_log_dir' from the command-line:
+You can change the parent directory by overriding the option '+mlxp.logger.parent_log_dir' from the command-line:
 
 .. code-block:: console
 
-   $ python main.py +mlxpy.logger.parent_log_dir='./new_logs'
+   $ python main.py +mlxp.logger.parent_log_dir='./new_logs'
 
 
-Alternatively, the parent directory can be modified directly in the MLXP default settings file 'configs/mlxpy.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using MLXP in the current project:
+Alternatively, the parent directory can be modified directly in the MLXP default settings file 'configs/mlxp.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using MLXP in the current project:
 
 .. code-block:: yaml
-   :caption: ./configs/mlxpy.yaml
+   :caption: ./configs/mlxp.yaml
 
    logger:
      ...

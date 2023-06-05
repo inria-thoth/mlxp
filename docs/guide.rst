@@ -9,7 +9,7 @@ Guide
 
    installing
    getting_started
-   configuring_mlxpy
+   configuring_mlxp
    tutorial
 
       
