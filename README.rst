@@ -1,7 +1,7 @@
 Introduction
 ^^^^^^^^^^^^
 
-MLXPy (Machine Learning eXperiments Python) package is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. A full documentation is available in the `MLXPy's official  documentation website <https://michaelarbel.github.io/mlxpy/>`_. 
+MLXP (Machine Learning eXperiments Python) package is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. A full documentation is available in the `MLXP's official  documentation website <https://michaelarbel.github.io/mlxpy/>`_. 
 
 
 
@@ -18,30 +18,30 @@ Key functionalities
 License
 ^^^^^^^
 
-MLXPy is distributed under MIT license.
+MLXP is distributed under MIT license.
 
-Citing MLXPy
+Citing MLXP
 ^^^^^^^^^^^^
 
-Even though this is non-legally binding, the author kindly ask users to cite MLXPy in their publications if they use 
+Even though this is non-legally binding, the author kindly ask users to cite MLXP in their publications if they use 
 it in their research as follows:
 
 
 .. code-block:: bibtex 
 
-   @Misc{Arbel2023MLXPy,
+   @Misc{Arbel2023MLXP,
      author = {Michae Arbel},
-     title = {MLXPy: },
+     title = {MLXP: },
      howpublished = {Github},
      year = {2023},
      url = {https://github.com/MichaelArbel/mlxpy}
    }
 
 
-Installing MLXPy
+Installing MLXP
 ^^^^^^^^^^^^^^^^
 
-You can install MLXPy either from PyPI or by cloning the GitHub.
+You can install MLXP either from PyPI or by cloning the GitHub.
 
 
 From PyPI
@@ -51,7 +51,7 @@ You can simply run the following command:
 
 .. code-block:: console
    
-   $ pip install MLXPy
+   $ pip install MLXP
 
 
 From GitHub
@@ -90,7 +90,7 @@ Note: You may need to use `pip3` instead of `pip` depending on your setup.
 
 
 
-Before installing MLXPy, make sure you the requirements are installed.
+Before installing MLXP, make sure you the requirements are installed.
 
 
 Requirements
@@ -121,9 +121,9 @@ I would like to acknowledge the following contributors for their contributions t
 - `Alexandre Zouaoui <https://azouaoui.me/>`_ kindly shared his python implementation for creating job scripts and submiting them to a cluster. His code served as the basis for the implementation of the Scheduler class. While I have significantly modified the process of job submission, by integrating it with MLXpy's launching functionality, I am grateful for Alexandre's contribution which were invaluable to the development of this project.
 
 
-- `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested a premature version of MLXPy. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXPy's functionalities.  
+- `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested a premature version of MLXP. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXP's functionalities.  
 
-- `Romain Ménégaux <https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr>`_ provided valuable feedback and suggestions to improve MLXPy. He also found and reported several bugs in the software which helped improve its quality and stability. 
+- `Romain Ménégaux <https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr>`_ provided valuable feedback and suggestions to improve MLXP. He also found and reported several bugs in the software which helped improve its quality and stability. 
 
 
 

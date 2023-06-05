@@ -74,14 +74,14 @@ This directory contains JSON files created when calling the logger's method 'log
     {"loss": 0.005932427477091551, "epoch": 8}
     {"loss": 0.003738593542948365, "epoch": 9}
 
-The hidden directory '.keys' is used by the reader module of MLXPy and is not something to worry about here. Instead, we inspect the remaining directories below. 
+The hidden directory '.keys' is used by the reader module of MLXP and is not something to worry about here. Instead, we inspect the remaining directories below. 
 
 
 The 'metadata' directory
 """"""""""""""""""""""""
 
 The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxpy', each storing the content of the corresponding fields of the context object 'ctx'. 
-'config' stores the user config of the run, 'info' stores general information about the run such as the assigned 'log_id' and the absolute path to the logs of the run 'log_dir'. Finally, 'mlxpy' stores the MLXPy's settings used for the run (e.g. the logger settings). 
+'config' stores the user config of the run, 'info' stores general information about the run such as the assigned 'log_id' and the absolute path to the logs of the run 'log_dir'. Finally, 'mlxpy' stores the MLXP's settings used for the run (e.g. the logger settings). 
 
 
 .. code-block:: yaml
@@ -223,7 +223,7 @@ You can change the parent directory by overriding the option '+mlxpy.logger.pare
    $ python main.py +mlxpy.logger.parent_log_dir='./new_logs'
 
 
-Alternatively, the parent directory can be modified directly in the MLXPy default settings file 'configs/mlxpy.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using MLXPy in the current project:
+Alternatively, the parent directory can be modified directly in the MLXP default settings file 'configs/mlxpy.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using MLXP in the current project:
 
 .. code-block:: yaml
    :caption: ./configs/mlxpy.yaml

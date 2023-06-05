@@ -3,10 +3,10 @@
 
 .. _Configuring_mlxpy:
 
-Configuring MLXPy
+Configuring MLXP
 =================
 
-MLXPy is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
+MLXP is intended to be a configurable tool with default functionalities that can be adjusted by the user. 
 The package default settings are stored in a file 'mlxpy.yaml' located in the same directory as the 'config.yaml' file. These files are created automatically if they don't already exist. 
 By default, './configs/mlxpy.yaml' contains the following:
 
@@ -35,7 +35,7 @@ By default, './configs/mlxpy.yaml' contains the following:
 
 The logger
 ----------
-The options under 'logger' are specific to the MLXPy logger object. The field 'name' must contain the class name of the used logger. By default, it is set to 'DefaultLogger'. The user can provide a custom Logger provided that it inherits from the abstract class 'Logger'. The remaining fields refer to logger's options:
+The options under 'logger' are specific to the MLXP logger object. The field 'name' must contain the class name of the used logger. By default, it is set to 'DefaultLogger'. The user can provide a custom Logger provided that it inherits from the abstract class 'Logger'. The remaining fields refer to logger's options:
 
 - parent_log_dir: The location where the directories of each run will be stored. The outputs for each run are saved in a directory of the form 
   'parent_log_dir/log_id' where 'log_id' is an integer uniquely assigned by the logger to the run.
@@ -44,7 +44,7 @@ The options under 'logger' are specific to the MLXPy logger object. The field 'n
 
 The scheduler
 -------------
-The options under 'scheduler' are specific to the MLXPy scheduler object. The field 'name' must contain the class name of the used scheduler. By default, it is set to 'NoScheduler' meaning that no scheduler is defined. MLXPy currently supports two job schedulers 'OAR' and 'SLUM'. In order to use them, the field 'name' must be modified to 'OARScheduler' of 'SLURMScheduler'. Additionally, the user can provide a custom scheduler inheriting from the abstract class 'Scheduler'. The remaining fields refer to scheduler's options:
+The options under 'scheduler' are specific to the MLXP scheduler object. The field 'name' must contain the class name of the used scheduler. By default, it is set to 'NoScheduler' meaning that no scheduler is defined. MLXP currently supports two job schedulers 'OAR' and 'SLUM'. In order to use them, the field 'name' must be modified to 'OARScheduler' of 'SLURMScheduler'. Additionally, the user can provide a custom scheduler inheriting from the abstract class 'Scheduler'. The remaining fields refer to scheduler's options:
 
 - env_cmd: Command for activating the working environment. (e.g. 'conda activate my_env')
 - shell_path: Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
@@ -55,7 +55,7 @@ The options under 'scheduler' are specific to the MLXPy scheduler object. The fi
 
 The version manager
 -------------------
-The options under 'version_manager' are specific to the MLXPy version manager object. The field 'name' must contain the class name of the used version manager. By default, it is set to 'GitVM', which is the version manager based on git. The user can provide a custom version manager inheriting from the abstract class 'VersionManager'. The remaining fields refer to manager's options:
+The options under 'version_manager' are specific to the MLXP version manager object. The field 'name' must contain the class name of the used version manager. By default, it is set to 'GitVM', which is the version manager based on git. The user can provide a custom version manager inheriting from the abstract class 'VersionManager'. The remaining fields refer to manager's options:
 
 - parent_work_dir: The target parent directory of the new working directory returned by the version manager
 - compute_requirements: When set to true, the version manager stores a list of requirements and their version.
@@ -63,23 +63,23 @@ The options under 'version_manager' are specific to the MLXPy version manager ob
 
 The interactive mode
 --------------------
-This option allows to enable/disable MLXPy's interactive mode. 
+This option allows to enable/disable MLXP's interactive mode. 
 
-When set to 'True', MLXPy uses the interactive mode whenever applicable:
+When set to 'True', MLXP uses the interactive mode whenever applicable:
   
-  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"', MLXPy asks the user to select a valid scheduler.
-  - Version managment: When 'use_version_manager==True', MLXPy asks the user to handle uncommited/untracked files and to choose the location from which code will be executed: 
+  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"', MLXP asks the user to select a valid scheduler.
+  - Version managment: When 'use_version_manager==True', MLXP asks the user to handle uncommited/untracked files and to choose the location from which code will be executed: 
       
 When set to 'False', no interactive mode is used and the following behavior occurs:
 
-  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"' MLXPy throws an error.
+  - Sheduling: When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"' MLXP throws an error.
   -  Version managment: When 'use_version_manager==True':
 
     * Existing untracked files or uncommitted changes are ignored.
     * A copy of the code is made based on the latest commit (if not already existing) and code is executed from there. 
 
 
-Overriding MLXPy's settings
+Overriding MLXP's settings
 ---------------------------
 
 It is possible to override these options from the command line by adding the prefix '+mlxpy' before the options. For instance, setting the option 'use_logger' to False disables logging. In this case, the logger object in ctx.logger has a 'Null' value: 

@@ -1,7 +1,7 @@
-Installing MLXPy
+Installing MLXP
 ^^^^^^^^^^^^^^^^
 
-You can install MLXPy either from PyPI or by cloning the GitHub.
+You can install MLXP either from PyPI or by cloning the GitHub.
 
 
 From PyPI
@@ -11,7 +11,7 @@ You can simply run the following command:
 
 .. code-block:: console
    
-   $ pip install MLXPy
+   $ pip install MLXP
 
 
 From GitHub
@@ -50,7 +50,7 @@ Note: You may need to use `pip3` instead of `pip` depending on your setup.
 
 
 
-Before installing MLXPy, make sure you the requirements are installed.
+Before installing MLXP, make sure you the requirements are installed.
 
 
 Requirements
