@@ -31,7 +31,7 @@ it in their research as follows:
 
    @Misc{Arbel2023MLXP,
      author = {Michae Arbel},
-     title = {MLXP: },
+     title = {MLXP: A framework for conducting machine learning experiments in python},
      howpublished = {Github},
      year = {2023},
      url = {https://github.com/MichaelArbel/mlxp}
