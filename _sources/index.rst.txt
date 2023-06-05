@@ -7,7 +7,7 @@ Welcome MLXP's documentation!
 ==============================
 
 
-MLXP (Machine Learning eXperiments Python) package is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. A full documentation is available in the `MLXP's official  documentation website <https://michaelarbel.github.io/mlxp/>`_. 
+MLXP (Machine Learning eXperimentalist for Python) package is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. A full documentation is available in the `MLXP's official  documentation website <https://michaelarbel.github.io/mlxp/>`_. 
 
 
 
