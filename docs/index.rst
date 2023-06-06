@@ -40,7 +40,7 @@ it in their research as follows:
      title = {MLXP: A framework for conducting machine learning experiments in python},
      howpublished = {Github},
      year = {2023},
-     url = {https://github.com/MichaelArbel/mlxp}
+     url = {https://github.com/inria-thoth/mlxp}
    }
 
 Acknowledgments

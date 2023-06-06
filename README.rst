@@ -34,7 +34,7 @@ it in their research as follows:
      title = {MLXP: A framework for conducting machine learning experiments in python},
      howpublished = {Github},
      year = {2023},
-     url = {https://github.com/MichaelArbel/mlxp}
+     url = {https://github.com/inria-thoth/mlxp}
    }
 
 
@@ -65,7 +65,7 @@ and then installing it with `pip`.
 
 .. code-block:: console
    
-   $ git clone git@github.com:MichaelArbel/mlxp.git
+   $ git clone git@github.com:inria-thoth/mlxp.git
 
 2. Change to the package directory:
 
