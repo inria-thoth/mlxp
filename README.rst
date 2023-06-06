@@ -23,7 +23,7 @@ MLXP is distributed under MIT license.
 Citing MLXP
 ^^^^^^^^^^^^
 
-Even though this is non-legally binding, the author kindly ask users to cite MLXP in their publications if they use 
+Even though this is non-legally binding, the author kindly asks users to cite MLXP in their publications if they use 
 it in their research as follows:
 
 
@@ -90,7 +90,7 @@ Note: You may need to use `pip3` instead of `pip` depending on your setup.
 
 
 
-Before installing MLXP, make sure you the requirements are installed.
+Before installing MLXP, make sure requirements are installed.
 
 
 Requirements
@@ -118,7 +118,7 @@ Acknowledgments
 
 I would like to acknowledge the following contributors for their contributions to the development of this package:
 
-- `Alexandre Zouaoui <https://azouaoui.me/>`_ kindly shared his python implementation for creating job scripts and submiting them to a cluster. His code served as the basis for the implementation of the Scheduler class. While I have significantly modified the process of job submission, by integrating it with MLXpy's launching functionality, I am grateful for Alexandre's contribution which were invaluable to the development of this project.
+- `Alexandre Zouaoui <https://azouaoui.me/>`_ kindly shared his python implementation for creating job scripts and submiting them to a cluster. His code served as the basis for the implementation of the Scheduler class. While the process of job submission significantly evolved, by integrating it with MLXP's launching functionality, I am grateful for Alexandre's contributions which were invaluable to the development of this project.
 
 - `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested a premature version of MLXP. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXP's functionalities.  
 
