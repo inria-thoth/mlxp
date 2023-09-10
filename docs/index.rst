@@ -20,6 +20,45 @@ Key functionalities
 4. Submitting jobs to a cluster using a job scheduler. 
 5. Exploiting the results of several experiments by easily reading, querying, grouping, and aggregating the output of several jobs. 
 
+.. |green| image:: images/Green-checkmark.png
+   :width: 20px
+   :align: middle
+
+.. |red| image:: images/red_checkmark.png
+   :width: 20px
+   :align: middle
+
+
++-----------------------------+-----------------+-----------------+-----------------+
+| Features                    |      MLXP       | MLFlow tracking | Weights & Biases|
++=============================+=================+=================+=================+
+| Configuration management    |     |green|     |      |red|      |      |red|      |
++-----------------------------+-----------------+-----------------+-----------------+
+| Hyperparameter Sweeps       |     |green|     |      |red|      |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Launching/Job submission    |     |green|     |      |red|      |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Logging/Tracking            |     |green|     |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Experiment Search/Filtering |     |green|     |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Experiment Comparison       |     |green|     |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Lazy loading results        |     |green|     |      |red|      |      |red|      |
++-----------------------------+-----------------+-----------------+-----------------+
+| Code versioning             |     |green|     |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Code version checking       |     |green|     |      |red|      |      |red|      |
++-----------------------------+-----------------+-----------------+-----------------+
+| Model Versioning            |      |red|      |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Interactive Visualizations  |      |red|      |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+| Collaboration and Sharing   |      |red|      |     |green|     |     |green|     |
++-----------------------------+-----------------+-----------------+-----------------+
+
+
+
 
 License
 ^^^^^^^
