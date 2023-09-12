@@ -1,6 +1,9 @@
 name: Calculate code coverage
 
-on: [push]
+on:   
+  push:
+    branches:
+      - master
 
 jobs:
   pytest_coverage:

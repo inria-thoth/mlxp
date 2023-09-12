@@ -8,8 +8,8 @@ on:
 
 jobs:
   build:
-    #runs-on: ubuntu-22.04
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
+    #runs-on: self-hosted
     env:
         AGENT_TOOLSDIRECTORY: /usr/local/bin/
     steps:
