@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     #runs-on: self-hosted
     env:
         AGENT_TOOLSDIRECTORY: /usr/local/bin/
@@ -36,4 +38,4 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/sphinx/source/_build/html
+        publish_dir: docs/_build/html
