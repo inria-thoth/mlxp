@@ -168,11 +168,6 @@ class Info:
 
         Name of the host from which code is executed.
 
-    .. py:attribute:: user
-        :type: str
-
-        User name executing the code.
-
     .. py:attribute:: process_id
         :type: int
 
@@ -219,7 +214,6 @@ class Info:
     current_file_path: str = ""
     executable: str = ""
     hostname: str = ""
-    user: str = "${oc.env:USER}"
     process_id: int = -1
     start_date: Any = ""
     start_time: Any = ""

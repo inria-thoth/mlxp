@@ -1,5 +1,6 @@
 import omegaconf
 from omegaconf import OmegaConf
+
 from mlxp.scheduler import Scheduler
 from mlxp.enumerations import DefaultSchedulers
 
@@ -85,7 +86,19 @@ def _ask_configure_scheduler(mlxp_config, mlxp_file):
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
 
 
-def _build_config(overrides, config_path):
+def _build_config(overrides, config_path, config_name):
+
+
+
+
+
+    os.makedirs(config_path, exist_ok=True)
+    custom_config_file = os.path.join(config_path, config_name + ".yaml")
+    if not os.path.exists(custom_config_file):
+        with open(custom_config_file, "w") as f:
+            pass
+
+
     overrides_mlxp, overrides_config = _process_overrides(overrides)
 
 
@@ -201,3 +214,11 @@ def _get_default_config(config_path, overrides):
     if overrides:
         default_config = OmegaConf.merge(default_config, overrides)
     return default_config
+
+def _process_config_path(config_path, file_name):
+    if os.path.isabs(config_path):
+        return config_path
+    else:
+        abs_path = os.path.abspath(config_path)
+        rel_path = os.path.relpath(config_path, os.getcwd())
+        return os.path.join(os.path.dirname(file_name),rel_path)

@@ -7,10 +7,10 @@ from typing import Any, Callable, Optional, Union, Dict, TypeVar
 from types import CodeType
 from omegaconf import DictConfig
 
-from hydra import version
 from hydra._internal.utils import _run_hydra, get_args_parser
 from hydra.core.hydra_config import HydraConfig
 from hydra.types import TaskFunction
+from hydra import version
 
 from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.logger import Logger
@@ -21,7 +21,7 @@ from datetime import datetime
 import socket
 import sys
 from dataclasses import dataclass
-from mlxp._internal.configure import _build_config, _add_config_overrides
+from mlxp._internal.configure import _build_config, _add_config_overrides, _process_config_path
 import yaml
 import importlib
 from mlxp.enumerations import Status
@@ -123,17 +123,11 @@ def launch(
     version_base = None  # by default set the version base for hydra to None.
     version.setbase(version_base)
 
-    os.makedirs(config_path, exist_ok=True)
-    custom_config_file = os.path.join(config_path, config_name + ".yaml")
-    if not os.path.exists(custom_config_file):
-        custom_config = {'seed': None}
-        with open(custom_config_file, "w") as f:
-            yaml.dump(custom_config, f)
-
     def hydra_decorator(task_function: TaskFunction) -> Callable[[], None]:
         # task_function = launch(task_function)
         @functools.wraps(task_function)
         def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
+            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
@@ -154,7 +148,7 @@ def launch(
                     args=args,
                     args_parser=args_parser,
                     task_function=task_function,
-                    config_path=config_path,
+                    config_path=processed_config_path,
                     config_name=config_name,
                 )
 
@@ -165,7 +159,9 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(overrides):
-            cfg = _build_config(overrides, config_path)
+            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
+
+            cfg = _build_config(overrides, processed_config_path, config_name)
 
             now = datetime.now()
             info = {'hostname': socket.gethostname(),

@@ -1,5 +1,6 @@
 import mlxp
 import torch
+#import numpy
 from core_app import DataLoader, OneHiddenLayer, train_epoch
 
 def set_seeds(seed):
@@ -49,8 +50,15 @@ def train(ctx: mlxp.Context)->None:
 
     print(f"Completed training with a learning rate of {cfg.optimizer.lr}")
 
+    assert True
+
+
 if __name__ == "__main__":
+    
     train()
+
+
+
 
 
 
