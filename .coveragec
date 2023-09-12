@@ -1,0 +1,15 @@
+[run]
+include =mlxp/mlxp/*
+omit =tests*
+
+
+[report]
+include =mlxp/*
+omit =tests*
+
+exclude_lines =
+    def __repr__
+    def __str__
+    if self\.debug
+    if 0:
+    if __name__ == .__main__.:
