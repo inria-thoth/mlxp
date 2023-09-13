@@ -28,28 +28,28 @@ jobs:
   #         flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
   #         flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
   #         find mlxp -type f -name "*.py" | xargs pylint
-  build_wheels:
-    needs: [lint_code]
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        #os: [macos-latest, windows-latest, ubuntu-latest]
-        os: [ubuntu-latest]
+  # build_wheels:
+  #   needs: [lint_code]
+  #   name: Build wheels on ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       #os: [macos-latest, windows-latest, ubuntu-latest]
+  #       os: [ubuntu-latest]
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v3
+  #     - uses: actions/setup-python@v3
           
-      # - name: Install dependencies
-      #   run: if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Build wheels
-        run: python -m pip wheel --wheel-dir=wheelhouse mlxp 
+  #     # - name: Install dependencies
+  #     #   run: if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  #     - name: Build wheels
+  #       run: python -m pip wheel --wheel-dir=wheelhouse mlxp 
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         path: ./wheelhouse/*.whl
 
   build_sdist:
     needs: [lint_code]
