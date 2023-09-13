@@ -91,8 +91,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: upload zip archive
-        uses: actions/upload-release-asset@v1
-        #uses: softprops/action-gh-release@v1
+        #uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -101,7 +101,7 @@ jobs:
           asset_name: MLXP-${{ env.PACKAGE_VERSION }}.zip
           asset_content_type: application/zip
       - name: upload targz archive
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
