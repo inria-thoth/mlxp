@@ -6,21 +6,21 @@ on:
       - master
 
 jobs:
-  # lint_code:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Set up Python 3.9
-  #       uses: actions/setup-python@v3
-  #       with:
-  #         python-version: 3.9
-  #     - name: Install dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install isort
-  #         pip install black
-  #         pip install flake8
-  #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  lint_code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install isort
+          pip install black
+          pip install flake8
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
   #     - name: Lint with flake8
   #       run: |
   #         isort mlxp
@@ -29,12 +29,13 @@ jobs:
   #         flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
   #         find mlxp -type f -name "*.py" | xargs pylint
   build_wheels:
-    #needs: [lint_code]
+    needs: [lint_code]
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        #os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v3
