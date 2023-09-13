@@ -214,8 +214,9 @@
           <h1>Source code for mlxp.data_structures.config_dict</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;A dictionary-like structure for storing the configurations.&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Type</span>
+
 <span class="kn">import</span> <span class="nn">omegaconf</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Type</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 
@@ -276,11 +277,10 @@
 <div class="viewcode-block" id="convert_dict">
 <a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.config_dict.convert_dict">[docs]</a>
 <span class="k">def</span> <span class="nf">convert_dict</span><span class="p">(</span>
-    <span class="n">src_dict</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="n">src_class</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="n">omegaconf</span><span class="o">.</span><span class="n">dictconfig</span><span class="o">.</span><span class="n">DictConfig</span><span class="p">,</span>
-    <span class="n">dst_class</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">,</span>
+    <span class="n">src_dict</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">src_class</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="n">omegaconf</span><span class="o">.</span><span class="n">dictconfig</span><span class="o">.</span><span class="n">DictConfig</span><span class="p">,</span> <span class="n">dst_class</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a dictionary-like object from a source class to a destination dictionary-like object of a destination class.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a dictionary-like object from a source class to a destination dictionary-</span>
+<span class="sd">    like object of a destination class.</span>
 
 <span class="sd">    :param src_dict: The source dictionary to be converted</span>
 <span class="sd">    :param src_class: The type of the src dictionary</span>
@@ -288,15 +288,14 @@
 <span class="sd">    :type src_dict: Any</span>
 <span class="sd">    :type src_class: Type</span>
 <span class="sd">    :type dst_class: Type</span>
-<span class="sd">    :return: A dictionary-like instance of the dst_class copying the data from the src_dict.</span>
+<span class="sd">    :return: A dictionary-like instance of the dst_class copying the data from the</span>
+<span class="sd">        src_dict.</span>
 <span class="sd">    :rtype: Any</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dst_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">src_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">src_class</span><span class="p">):</span>
-            <span class="n">dst_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_dict</span><span class="p">(</span>
-                <span class="n">value</span><span class="p">,</span> <span class="n">src_class</span><span class="o">=</span><span class="n">src_class</span><span class="p">,</span> <span class="n">dst_class</span><span class="o">=</span><span class="n">dst_class</span>
-            <span class="p">)</span>
+            <span class="n">dst_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">src_class</span><span class="o">=</span><span class="n">src_class</span><span class="p">,</span> <span class="n">dst_class</span><span class="o">=</span><span class="n">dst_class</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">omegaconf</span><span class="o">.</span><span class="n">listconfig</span><span class="o">.</span><span class="n">ListConfig</span><span class="p">):</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>

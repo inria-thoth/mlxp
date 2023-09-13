@@ -214,11 +214,12 @@
           <h1>Source code for mlxp.scheduler</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The scheduler allows submitting several jobs to a cluster queue using hydra.&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
 <span class="kn">from</span> <span class="nn">omegaconf.errors</span> <span class="kn">import</span> <span class="n">OmegaConfBaseException</span>
-<span class="kn">import</span> <span class="nn">abc</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span> 
 
 <span class="kn">from</span> <span class="nn">mlxp.errors</span> <span class="kn">import</span> <span class="n">JobSubmissionError</span>
 
@@ -226,7 +227,8 @@
 <div class="viewcode-block" id="Scheduler">
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.Scheduler">[docs]</a>
 <span class="k">class</span> <span class="nc">Scheduler</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract class whose children allow to submit jobs using a particular job scheduler such as OAR or SLURM.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract class whose children allow to submit jobs using a particular job</span>
+<span class="sd">    scheduler such as OAR or SLURM.</span>
 
 <span class="sd">    .. py:attribute:: directive</span>
 <span class="sd">        :type: str</span>
@@ -285,13 +287,19 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a scheduler object.</span>
 
-<span class="sd">        :param directive: The string that preceeds the command options of a scheduler in a script.</span>
-<span class="sd">        :param submission_cmd: The command for submitting a job defined in a script to the scheduler.</span>
-<span class="sd">        :param shell_path: Path to the shell used for submitting a job using a scheduler.</span>
-<span class="sd">        :param shell_config_cmd: Command for configuring the shell when submitting a job using a scheduler.</span>
+<span class="sd">        :param directive: The string that preceeds the command options of a scheduler in</span>
+<span class="sd">            a script.</span>
+<span class="sd">        :param submission_cmd: The command for submitting a job defined in a script to</span>
+<span class="sd">            the scheduler.</span>
+<span class="sd">        :param shell_path: Path to the shell used for submitting a job using a</span>
+<span class="sd">            scheduler.</span>
+<span class="sd">        :param shell_config_cmd: Command for configuring the shell when submitting a job</span>
+<span class="sd">            using a scheduler.</span>
 <span class="sd">        :param env_cmd: A command for activating the working environment.</span>
-<span class="sd">        :param cleanup_cmd: A command for cleaning up the environment before executing code.</span>
-<span class="sd">        :param option_cmd: A list of strings containing the scheduler&#39;s options for the job.</span>
+<span class="sd">        :param cleanup_cmd: A command for cleaning up the environment before executing</span>
+<span class="sd">            code.</span>
+<span class="sd">        :param option_cmd: A list of strings containing the scheduler&#39;s options for the</span>
+<span class="sd">            job.</span>
 <span class="sd">        :type directive: str</span>
 <span class="sd">        :type submission_cmd: str</span>
 <span class="sd">        :type shell_path: str</span>
@@ -313,11 +321,14 @@
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.Scheduler.make_job_details">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">make_job_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of three strings specifying the job name, the paths to the</span>
+<span class="sd">        log.stdout and log.stderr files.</span>
 
-<span class="sd">        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.</span>
+<span class="sd">        :param log_dir: The directory where the logs (e.g.: std.out,</span>
+<span class="sd">            std.err) are saved.</span>
 <span class="sd">        :type log_dir: str</span>
-<span class="sd">        :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.</span>
+<span class="sd">        :return: a list of three strings specifying information about</span>
+<span class="sd">            the job: job name, path towards log.stdout and log.stderr.</span>
 <span class="sd">        :rtype: List[str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -338,7 +349,8 @@
 <div class="viewcode-block" id="Scheduler.submit_job">
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.Scheduler.submit_job">[docs]</a>
     <span class="k">def</span> <span class="nf">submit_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Submit the job to the scheduler and returns a string containing the output of the submission command.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Submit the job to the scheduler and returns a string containing the output of</span>
+<span class="sd">        the submission command.</span>
 
 <span class="sd">        .. note:: There is generally no need to customize this function.</span>
 
@@ -359,9 +371,7 @@
             <span class="n">chmod_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;chmod +x </span><span class="si">{</span><span class="n">job_path</span><span class="si">!r}</span><span class="s2">&quot;</span>
             <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span><span class="n">chmod_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">launch_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">submission_cmd</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">job_path</span><span class="si">!r}</span><span class="s2">&quot;</span>
-            <span class="n">process_output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">launch_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
-                <span class="s2">&quot;utf-8&quot;</span>
-            <span class="p">)</span>
+            <span class="n">process_output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">launch_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">process_output</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Job launched!&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -401,12 +411,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">shell_path</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">,</span>
-        <span class="n">shell_config_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">env_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">cleanup_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">option_cmd</span><span class="o">=</span><span class="p">[],</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">shell_path</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="n">shell_config_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">env_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">cleanup_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">option_cmd</span><span class="o">=</span><span class="p">[],</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">directive</span><span class="o">=</span><span class="s2">&quot;#OAR&quot;</span><span class="p">,</span>
@@ -421,9 +426,11 @@
 <div class="viewcode-block" id="OARScheduler.get_info">
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.OARScheduler.get_info">[docs]</a>
     <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary containing the job_id assigned to the run by the scheduler.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary containing the job_id assigned to the run by the</span>
+<span class="sd">        scheduler.</span>
 
-<span class="sd">        :return: A dictionary containing the job_id assigned to the run by the scheduler.</span>
+<span class="sd">        :return: A dictionary containing the job_id assigned to the run by the</span>
+<span class="sd">            scheduler.</span>
 <span class="sd">        :rtype: Dict[str,Any]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_output</span><span class="p">:</span>
@@ -436,11 +443,14 @@
 <div class="viewcode-block" id="OARScheduler.make_job_details">
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.OARScheduler.make_job_details">[docs]</a>
     <span class="k">def</span> <span class="nf">make_job_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of three strings specifying the job name, the paths to the</span>
+<span class="sd">        log.stdout and log.stderr files.</span>
 
-<span class="sd">        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.</span>
+<span class="sd">        :param log_dir: The directory where the logs (e.g.: std.out,</span>
+<span class="sd">            std.err) are saved.</span>
 <span class="sd">        :type log_dir: str</span>
-<span class="sd">        :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.</span>
+<span class="sd">        :return: a list of three strings specifying information about</span>
+<span class="sd">            the job: job name, path towards log.stdout and log.stderr.</span>
 <span class="sd">        :rtype: List[str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">job_name</span> <span class="o">=</span> <span class="n">log_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
@@ -485,9 +495,11 @@
 <div class="viewcode-block" id="SLURMScheduler.get_info">
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.SLURMScheduler.get_info">[docs]</a>
     <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary containing the job_id assigned to the run by the scheduler.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary containing the job_id assigned to the run by the</span>
+<span class="sd">        scheduler.</span>
 
-<span class="sd">        :return: A dictionary containing the job_id assigned to the run by the scheduler.</span>
+<span class="sd">        :return: A dictionary containing the job_id assigned to the run by the</span>
+<span class="sd">            scheduler.</span>
 <span class="sd">        :rtype: Dict[str,Any]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Not implemented yet!</span>
@@ -497,11 +509,14 @@
 <div class="viewcode-block" id="SLURMScheduler.make_job_details">
 <a class="viewcode-back" href="../../mlxp.scheduling.html#mlxp.scheduler.SLURMScheduler.make_job_details">[docs]</a>
     <span class="k">def</span> <span class="nf">make_job_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of three strings specifying the job name, the paths to the</span>
+<span class="sd">        log.stdout and log.stderr files.</span>
 
-<span class="sd">        :param log_dir: The directory where the logs (e.g.: std.out, std.err) are saved.</span>
+<span class="sd">        :param log_dir: The directory where the logs (e.g.: std.out,</span>
+<span class="sd">            std.err) are saved.</span>
 <span class="sd">        :type log_dir: str</span>
-<span class="sd">        :return: a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.</span>
+<span class="sd">        :return: a list of three strings specifying information about</span>
+<span class="sd">            the job: job name, path towards log.stdout and log.stderr.</span>
 <span class="sd">        :rtype: List[str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">job_name</span> <span class="o">=</span> <span class="n">log_dir</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>

@@ -215,47 +215,45 @@
 <span></span><span class="sd">&quot;&quot;&quot;The launcher allows launching multiple experiments on a cluster using hydra.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">TypeVar</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">CodeType</span>
-<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span>
-
-<span class="kn">from</span> <span class="nn">hydra._internal.utils</span> <span class="kn">import</span> <span class="n">_run_hydra</span><span class="p">,</span> <span class="n">get_args_parser</span>
-<span class="kn">from</span> <span class="nn">hydra.core.hydra_config</span> <span class="kn">import</span> <span class="n">HydraConfig</span>
-<span class="kn">from</span> <span class="nn">hydra.types</span> <span class="kn">import</span> <span class="n">TaskFunction</span>
-<span class="kn">from</span> <span class="nn">hydra</span> <span class="kn">import</span> <span class="n">version</span>
-
-<span class="kn">from</span> <span class="nn">mlxp.data_structures.config_dict</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
-<span class="kn">from</span> <span class="nn">mlxp.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span> <span class="nn">mlxp.errors</span> <span class="kn">import</span> <span class="n">MissingFieldError</span>
-<span class="kn">import</span> <span class="nn">mlxp</span>
-
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">mlxp._internal.configure</span> <span class="kn">import</span> <span class="n">_build_config</span><span class="p">,</span> <span class="n">_add_config_overrides</span><span class="p">,</span> <span class="n">_process_config_path</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Status</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">CodeType</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">hydra</span> <span class="kn">import</span> <span class="n">version</span>
+<span class="kn">from</span> <span class="nn">hydra._internal.utils</span> <span class="kn">import</span> <span class="n">_run_hydra</span><span class="p">,</span> <span class="n">get_args_parser</span>
+<span class="kn">from</span> <span class="nn">hydra.core.hydra_config</span> <span class="kn">import</span> <span class="n">HydraConfig</span>
+<span class="kn">from</span> <span class="nn">hydra.types</span> <span class="kn">import</span> <span class="n">TaskFunction</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span>
+
+<span class="kn">import</span> <span class="nn">mlxp</span>
+<span class="kn">from</span> <span class="nn">mlxp._internal.configure</span> <span class="kn">import</span> <span class="n">_build_config</span><span class="p">,</span> <span class="n">_process_config_path</span>
+<span class="kn">from</span> <span class="nn">mlxp.data_structures.config_dict</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
+<span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Status</span>
+<span class="kn">from</span> <span class="nn">mlxp.errors</span> <span class="kn">import</span> <span class="n">MissingFieldError</span>
+<span class="kn">from</span> <span class="nn">mlxp.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="n">_UNSPECIFIED_</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 
 
-<span class="n">hydra_defaults_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hydra.mode&quot;</span><span class="p">:</span> <span class="s2">&quot;MULTIRUN&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;hydra.output_subdir&quot;</span><span class="p">:</span> <span class="s2">&quot;null&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;hydra.run.dir&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;hydra.sweep.dir&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;hydra.sweep.subdir&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;hydra/job_logging&quot;</span><span class="p">:</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
-                       <span class="s2">&quot;hydra/hydra_logging&quot;</span><span class="p">:</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
-                       <span class="p">}</span>
+<span class="n">hydra_defaults_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;hydra.mode&quot;</span><span class="p">:</span> <span class="s2">&quot;MULTIRUN&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hydra.output_subdir&quot;</span><span class="p">:</span> <span class="s2">&quot;null&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hydra.run.dir&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hydra.sweep.dir&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hydra.sweep.subdir&quot;</span><span class="p">:</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hydra/job_logging&quot;</span><span class="p">:</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hydra/hydra_logging&quot;</span><span class="p">:</span> <span class="s2">&quot;disabled&quot;</span><span class="p">,</span>
+<span class="p">}</span>
 
 
-<span class="n">vm_choices_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hydra_defaults_dict</span><span class="p">[</span><span class="s2">&quot;hydra.sweep.dir&quot;</span><span class="p">],</span>
-                               <span class="s2">&quot;vm_choices.yaml&quot;</span><span class="p">)</span>
+<span class="n">vm_choices_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hydra_defaults_dict</span><span class="p">[</span><span class="s2">&quot;hydra.sweep.dir&quot;</span><span class="p">],</span> <span class="s2">&quot;vm_choices.yaml&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_clean_dir</span><span class="p">():</span>
@@ -270,8 +268,7 @@
 <div class="viewcode-block" id="launch">
 <a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.launch">[docs]</a>
 <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span>
-    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;./configs&#39;</span><span class="p">,</span>
-    <span class="n">seeding_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./configs&quot;</span><span class="p">,</span> <span class="n">seeding_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">TaskFunction</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a decorator of the main function to be executed.</span>
 
@@ -351,10 +348,7 @@
                 <span class="n">args</span> <span class="o">=</span> <span class="n">args_parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
                 <span class="c1"># Setting hydra defaults</span>
-                <span class="n">hydra_defaults</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">value</span>
-                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hydra_defaults_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="p">]</span>
+                <span class="n">hydra_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hydra_defaults_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
                 <span class="n">overrides</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">overrides</span> <span class="o">+</span> <span class="n">hydra_defaults</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;overrides&quot;</span><span class="p">,</span> <span class="n">overrides</span><span class="p">)</span>
 
@@ -380,28 +374,27 @@
             <span class="n">cfg</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span><span class="n">overrides</span><span class="p">,</span> <span class="n">processed_config_path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span>
 
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hostname&#39;</span><span class="p">:</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">(),</span>
-                    <span class="s1">&#39;process_id&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
-                    <span class="s1">&#39;executable&#39;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
-                    <span class="s1">&#39;current_file_path&#39;</span><span class="p">:</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span>
-                    <span class="s1">&#39;start_date&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
-                    <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
-                    <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">STARTING</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">(),</span>
+                <span class="s2">&quot;process_id&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
+                <span class="s2">&quot;executable&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                <span class="s2">&quot;current_file_path&quot;</span><span class="p">:</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span>
+                <span class="s2">&quot;start_date&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">STARTING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">}</span>
 
-            
-
-            <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_version_manager</span><span class="p">:</span>
                 <span class="n">version_manager</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">version_manager</span><span class="p">)</span>
-                <span class="n">version_manager</span><span class="o">.</span><span class="n">_handle_interactive_mode</span><span class="p">(</span>
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">,</span> <span class="n">vm_choices_file</span><span class="p">)</span>
+                <span class="n">version_manager</span><span class="o">.</span><span class="n">_handle_interactive_mode</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">,</span> <span class="n">vm_choices_file</span><span class="p">)</span>
                 <span class="n">work_dir</span> <span class="o">=</span> <span class="n">version_manager</span><span class="o">.</span><span class="n">make_working_directory</span><span class="p">()</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;version_manager&#39;</span><span class="p">:</span> <span class="n">version_manager</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;version_manager&quot;</span><span class="p">:</span> <span class="n">version_manager</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
-            <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;work_dir&#39;</span><span class="p">:</span> <span class="n">work_dir</span><span class="p">}})</span>
+            <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;work_dir&quot;</span><span class="p">:</span> <span class="n">work_dir</span><span class="p">}})</span>
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
 
@@ -419,22 +412,19 @@
                 <span class="n">log_id</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">log_id</span>
                 <span class="n">log_dir</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">log_dir</span>
                 <span class="n">parent_log_dir</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">parent_log_dir</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;logger&#39;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="n">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
-                <span class="c1">#cfg = _add_config_overrides(cfg,overrides)</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
 
-                <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
-                                             <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span>
-                                             <span class="n">work_dir</span><span class="p">,</span>
-                                             <span class="n">parent_log_dir</span><span class="p">,</span>
-                                             <span class="n">log_id</span><span class="p">)</span>
+                <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">log_id</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="n">scheduler</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">)</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;scheduler&#39;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
+                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -444,32 +434,31 @@
                 <span class="n">_set_work_dir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
                 <span class="k">try</span><span class="p">:</span>
 
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="o">.</span><span class="n">value</span><span class="p">}})</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="o">.</span><span class="n">value</span><span class="p">}})</span>
                     <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">seeding_function</span><span class="p">:</span>
                         <span class="k">try</span><span class="p">:</span>
-                            <span class="k">assert</span> <span class="s1">&#39;seed&#39;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                            <span class="k">assert</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
                             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Missing field: The &#39;config&#39; must contain a field &#39;seed&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
                             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;provided as argument to the function &#39;seeding_function&#39; &quot;</span>
                             <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                         <span class="n">seeding_function</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
 
-                    <span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
-                                  <span class="n">mlxp</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="p">,</span>
-                                  <span class="n">info</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
-                                  <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">mlxp</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
                     <span class="n">task_function</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
                     <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-                    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;end_date&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
-                            <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
-                            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">COMPLETE</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
+                    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">COMPLETE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="p">}</span>
 
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
 
                     <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
@@ -478,11 +467,13 @@
                     <span class="k">return</span> <span class="kc">None</span>
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-                    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;end_date&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
-                            <span class="s1">&#39;end_time&#39;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
-                            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
+                    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;end_date&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
+                        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="p">}</span>
 
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
 
                     <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
@@ -508,8 +499,8 @@
 <a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.Context">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Context</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The contex object passed to the decorated function when using decorator mlxp.launch.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The contex object passed to the decorated function when using decorator</span>
+<span class="sd">    mlxp.launch.</span>
 
 <span class="sd">    .. py:attribute:: config</span>
 <span class="sd">        :type: ConfigDict</span>
@@ -534,7 +525,6 @@
 
 <span class="sd">        A logger object that can be used for logging variables (metrics, checkpoints, artifacts).</span>
 <span class="sd">        When logging is enabled, these variables are all stored in a uniquely defined directory.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">config</span><span class="p">:</span> <span class="n">ConfigDict</span> <span class="o">=</span> <span class="kc">None</span>
@@ -544,7 +534,7 @@
 
 
 
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="instance_from_dict">
@@ -556,7 +546,8 @@
 <span class="sd">    :param arguments: A dictionary of arguments to the class constructor</span>
 <span class="sd">    :type class_name: str</span>
 <span class="sd">    :type arguments: Dict[str,Any]</span>
-<span class="sd">    :return: An instance of a class &#39;class_name&#39; constructed using the arguments in &#39;arguments&#39;.</span>
+<span class="sd">    :return: An instance of a class &#39;class_name&#39; constructed using the arguments in</span>
+<span class="sd">        &#39;arguments&#39;.</span>
 <span class="sd">    :rtype: T</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">attr</span> <span class="o">=</span> <span class="n">_import_module</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
@@ -627,31 +618,32 @@
 
 <span class="k">def</span> <span class="nf">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
-    <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;info.yaml&#39;</span><span class="p">)</span>
+
+    <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;info.yaml&quot;</span><span class="p">)</span>
     <span class="n">configs_info</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">abs_name</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">abs_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">&#39;scheduler&#39;</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
-                <span class="n">configs_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;scheduler&#39;</span><span class="p">:</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;scheduler&#39;</span><span class="p">]})</span>
-            <span class="k">if</span> <span class="s1">&#39;version_manager&#39;</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
-                <span class="n">configs_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;version_manager&#39;</span><span class="p">:</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;version_manager&#39;</span><span class="p">]})</span>
-            <span class="k">if</span> <span class="s1">&#39;logger&#39;</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
-                <span class="n">configs_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;logger&#39;</span><span class="p">:</span> <span class="n">configs</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]})</span>
+            <span class="k">if</span> <span class="s2">&quot;scheduler&quot;</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
+                <span class="n">configs_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;scheduler&quot;</span><span class="p">]})</span>
+            <span class="k">if</span> <span class="s2">&quot;version_manager&quot;</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
+                <span class="n">configs_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;version_manager&quot;</span><span class="p">:</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;version_manager&quot;</span><span class="p">]})</span>
+            <span class="k">if</span> <span class="s2">&quot;logger&quot;</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
+                <span class="n">configs_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;logger&quot;</span><span class="p">]})</span>
 
     <span class="k">return</span> <span class="n">configs_info</span>
 
 
 <span class="k">def</span> <span class="nf">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
-    <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+
+    <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
     <span class="n">configs</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">abs_name</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">abs_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-
 
     <span class="k">return</span> <span class="n">configs</span>
 
@@ -666,7 +658,7 @@
 <span class="s2">            +mlxp.logger.forced_log_id=</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="se">\</span>
 <span class="s2">            +mlxp.logger.parent_log_dir=</span><span class="si">{</span><span class="n">parent_log_dir</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
 <span class="s2">            +mlxp.use_scheduler=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="se">\</span>
-<span class="s2">            +mlxp.use_version_manager=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            +mlxp.use_version_manager=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
@@ -678,8 +670,13 @@
     <span class="n">overrides</span> <span class="o">=</span> <span class="n">hydra_cfg</span><span class="o">.</span><span class="n">overrides</span><span class="o">.</span><span class="n">task</span>
 
     <span class="k">def</span> <span class="nf">filter_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;version_manager&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.parent_log_dir&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.forced_log_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;version_manager&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.parent_log_dir&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.forced_log_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+        <span class="p">)</span>
+
     <span class="n">filtered_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">,</span> <span class="n">overrides</span><span class="p">))</span>
     <span class="n">args</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filtered_args</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">args</span>

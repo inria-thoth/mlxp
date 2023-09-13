@@ -212,28 +212,29 @@
         </div>
         <article role="main">
           <h1>Source code for mlxp.reader</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The reader allows queryring the logs of several experiments and performing operations on the content of these logs (e.g. grouping and aggregation).&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;The reader allows queryring the logs of several experiments and performing operations</span>
+<span class="sd">on the content of these logs (e.g. grouping and aggregation).&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">tinydb</span> <span class="kn">import</span> <span class="n">TinyDB</span>
 <span class="kn">from</span> <span class="nn">tinydb.storages</span> <span class="kn">import</span> <span class="n">JSONStorage</span>
 <span class="kn">from</span> <span class="nn">tinydb.table</span> <span class="kn">import</span> <span class="n">Document</span>
 
-<span class="kn">from</span> <span class="nn">mlxp.data_structures.data_dict</span> <span class="kn">import</span> <span class="n">DataDictList</span><span class="p">,</span> <span class="n">DataDict</span><span class="p">,</span> <span class="n">LAZYDATA</span>
-<span class="kn">from</span> <span class="nn">mlxp.parser</span> <span class="kn">import</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">DefaultParser</span><span class="p">,</span> <span class="n">_is_searchable</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">mlxp.data_structures.data_dict</span> <span class="kn">import</span> <span class="n">LAZYDATA</span><span class="p">,</span> <span class="n">DataDict</span><span class="p">,</span> <span class="n">DataDictList</span>
 <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">DataFrameType</span><span class="p">,</span> <span class="n">Directories</span>
+<span class="kn">from</span> <span class="nn">mlxp.parser</span> <span class="kn">import</span> <span class="n">DefaultParser</span><span class="p">,</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">_is_searchable</span>
 
 
 <div class="viewcode-block" id="Reader">
 <a class="viewcode-back" href="../../mlxp.reading.html#mlxp.reader.Reader">[docs]</a>
 <span class="k">class</span> <span class="nc">Reader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class for exploiting the results stored in several runs contained in a same parent directory &#39;src_dir&#39;.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class for exploiting the results stored in several runs contained in a same</span>
+<span class="sd">    parent directory &#39;src_dir&#39;.</span>
 
 <span class="sd">    Once, created, it is possible to query the database using the method &#39;filter&#39;</span>
 <span class="sd">    to get the results matching a specific configuration setting.</span>
@@ -270,7 +271,8 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a reader object.</span>
 
-<span class="sd">        :param src_dir: The path to the parent directory containing logs of several runs.</span>
+<span class="sd">        :param src_dir: The path to the parent directory containing logs of several</span>
+<span class="sd">            runs.</span>
 <span class="sd">        :param dst_dir: The destination directory where the database will be created.</span>
 <span class="sd">        :param parser: A parser for querying the database.</span>
 <span class="sd">        :param reload: Re-create the database even if it already exists.</span>
@@ -301,7 +303,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating a database file of the runs...&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_create_base</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database file created in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of runs contained in the database created by the reader.</span>
 
@@ -313,15 +315,13 @@
 <div class="viewcode-block" id="Reader.filter">
 <a class="viewcode-back" href="../../mlxp.reading.html#mlxp.reader.Reader.filter">[docs]</a>
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">query_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">result_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DataFrameType</span><span class="o">.</span><span class="n">DataDictList</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">query_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">result_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DataFrameType</span><span class="o">.</span><span class="n">DataDictList</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">DataDictList</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Search a query in a database of runs.</span>
 
 <span class="sd">        :param query_string: a string defining the query constaints.</span>
-<span class="sd">        :param result_format: format of the result (either a pandas dataframe or an object of type DataDictList).</span>
-<span class="sd">        By default returns a DataDictList object.</span>
+<span class="sd">        :param result_format: format of the result (either a pandas dataframe or an</span>
+<span class="sd">            object of type DataDictList). By default returns a DataDictList object.</span>
 <span class="sd">        :type query_string: str (default &quot;&quot;)</span>
 <span class="sd">        :type result_format: str (default False)</span>
 <span class="sd">        :return: The result of a query either as a DataDictList or a pandas dataframe.</span>
@@ -344,7 +344,7 @@
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataDict</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="n">_get_metrics_dir</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">src_dir</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataDict</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="n">_get_metrics_dir</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">src_dir</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">DataDictList</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">result_format</span> <span class="o">==</span> <span class="n">DataFrameType</span><span class="o">.</span><span class="n">Pandas</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">toPandasDF</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -354,17 +354,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all fields of the database except those specific to MLXP, excluding the fields contained in the file &#39;mlxp.yaml&#39;.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all fields of the database except those specific to MLXP, excluding</span>
+<span class="sd">        the fields contained in the file &#39;mlxp.yaml&#39;.</span>
 
 <span class="sd">        return: a dataframe of all fields contained in the database</span>
 <span class="sd">        rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fields_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
-            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mlxp&quot;</span><span class="p">)</span>
-        <span class="p">}</span>
+        <span class="n">fields_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mlxp&quot;</span><span class="p">)}</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">fields_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Fields&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">])</span>
         <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Fields&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
@@ -373,14 +369,13 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">searchable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all fields of the database that are searchable, excluding the fields contained in the file &#39;mlxp.yaml&#39;.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all fields of the database that are searchable, excluding the fields</span>
+<span class="sd">        contained in the file &#39;mlxp.yaml&#39;.</span>
 
 <span class="sd">        return: a dataframe of all fields contained in the database that can be searched using the method filter</span>
 <span class="sd">        rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fields_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">_is_searchable</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-        <span class="p">}</span>
+        <span class="n">fields_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">_is_searchable</span><span class="p">(</span><span class="n">k</span><span class="p">)}</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">fields_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Fields&quot;</span><span class="p">,</span> <span class="s2">&quot;Type&quot;</span><span class="p">])</span>
         <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Fields&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
@@ -415,13 +410,13 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_metrics_dir</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">src_dir</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_metrics_dir</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">src_dir</span><span class="p">):</span>
     <span class="n">abs_metrics_dir</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;info.logger.metrics_dir&quot;</span><span class="p">]</span>
     <span class="n">parent_log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;info.logger.log_dir&quot;</span><span class="p">])</span>
 
-    <span class="n">relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">abs_metrics_dir</span><span class="p">,</span><span class="n">parent_log_dir</span><span class="p">)</span>
+    <span class="n">relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">abs_metrics_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_dir</span><span class="p">,</span><span class="n">relpath</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_dir</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">metadata_file</span><span class="p">):</span>
@@ -445,9 +440,7 @@
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">full_file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">keys_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">keys_dict</span><span class="p">:</span>
-                    <span class="n">lazydata_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                        <span class="p">{</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="p">:</span> <span class="n">LAZYDATA</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
-                    <span class="p">)</span>
+                    <span class="n">lazydata_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">key</span><span class="p">:</span> <span class="n">LAZYDATA</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()})</span>
     <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
         <span class="k">pass</span>
 

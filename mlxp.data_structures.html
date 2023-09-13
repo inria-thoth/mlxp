@@ -587,7 +587,8 @@ is assigned uniquely for the run during execution.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.data_structures.config_dict.convert_dict">
 <span class="sig-prename descclassname"><span class="pre">mlxp.data_structures.config_dict.</span></span><span class="sig-name descname"><span class="pre">convert_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_dict:</span> <span class="pre">~typing.Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_class:</span> <span class="pre">~typing.Type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'omegaconf.dictconfig.DictConfig'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_class:</span> <span class="pre">~typing.Type</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'mlxp.data_structures.config_dict.ConfigDict'&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="_modules/mlxp/data_structures/config_dict.html#convert_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.config_dict.convert_dict" title="Link to this definition">#</a></dt>
-<dd><p>Convert a dictionary-like object from a source class to a destination dictionary-like object of a destination class.</p>
+<dd><p>Convert a dictionary-like object from a source class to a destination dictionary-
+like object of a destination class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -597,7 +598,8 @@ is assigned uniquely for the run during execution.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary-like instance of the dst_class copying the data from the src_dict.</p>
+<dd class="field-even"><p>A dictionary-like instance of the dst_class copying the data from the
+src_dict.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Any</p>
@@ -656,7 +658,8 @@ can be created by the user depending on the need.</p>
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.DataDict">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.data_structures.data_dict.</span></span><span class="sig-name descname"><span class="pre">DataDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flattened_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#DataDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.DataDict" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a></p>
-<p>A dictionary of key values pairs where some values are loaded lazyly from a specific path whenever they are accessed.</p>
+<p>A dictionary of key values pairs where some values are loaded lazyly from a
+specific path whenever they are accessed.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.DataDict.keys">
 <span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#DataDict.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.DataDict.keys" title="Link to this definition">#</a></dt>
@@ -682,27 +685,29 @@ can be created by the user depending on the need.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.data_structures.data_dict.</span></span><span class="sig-name descname"><span class="pre">DataDictList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mlxp.data_structures.data_dict.DataDict" title="mlxp.data_structures.data_dict.DataDict"><span class="pre">DataDict</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#DataDictList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.DataDictList" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
 <p>A list of elements of type DataDict.</p>
-<p>This list can be viewed as a dataframe
-where each row represents a given entry (a DataDict) and columns represent
-the keys of the DataDicts.  This structure allows to load some columns lazyly.
-the content of some columns is loaded from its corresponding file
-only when that column is explicitly accessed.</p>
-<p>It is displayed as a pandas dataframe and
-can be converted to it using the method toPandasDF.</p>
+<p>This list can be viewed as a dataframe where each row represents a given entry (a
+DataDict) and columns represent the keys of the DataDicts.  This structure allows to
+load some columns lazyly. the content of some columns is loaded from its
+corresponding file only when that column is explicitly accessed.</p>
+<p>It is displayed as a pandas dataframe and can be converted to it using the method
+toPandasDF.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.DataDictList.toPandasDF">
 <span class="sig-name descname"><span class="pre">toPandasDF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lazy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#DataDictList.toPandasDF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.DataDictList.toPandasDF" title="Link to this definition">#</a></dt>
 <dd><p>Convert the list into a pandas dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lazy</strong> – If true the pandas dataframe does not contain the results of data loaded lazyly.</p>
+<dd class="field-odd"><p><strong>lazy</strong> – If true the pandas dataframe does not contain the results of data
+loaded lazyly.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A panda dataframe containing logs (configs and data)</p>
+<dd class="field-even"><p>A panda dataframe containing logs (configs and data) of the
+DataDictList object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
-<p>of the DataDictList object
-:rtype: pd.DataFrame</p>
 </dd></dl>
 
 <dl class="py method">
@@ -722,20 +727,24 @@ can be converted to it using the method toPandasDF.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.DataDictList.groupBy">
 <span class="sig-name descname"><span class="pre">groupBy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_group_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mlxp.data_structures.data_dict.GroupedDataDicts" title="mlxp.data_structures.data_dict.GroupedDataDicts"><span class="pre">GroupedDataDicts</span></a></span></span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#DataDictList.groupBy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.DataDictList.groupBy" title="Link to this definition">#</a></dt>
-<dd><p>Perform a groupby operation on the dataframe according to a list of colum names (list_group_keys).</p>
+<dd><p>Perform a groupby operation on the dataframe according to a list of colum
+names (list_group_keys).</p>
 <p>Returns an object of the class GroupedDataDicts</p>
 <dl class="field-list simple">
 <dt class="field-odd">Params list_group_keys<span class="colon">:</span></dt>
-<dd class="field-odd"><p>a list of strings containing the names of the columns to be grouped.</p>
+<dd class="field-odd"><p>a list of strings containing the names of the columns
+to be grouped.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A hierarchical dataframe grouped by the values of the columns provided to list_group_keys.</p>
+<dd class="field-even"><p>A hierarchical dataframe grouped by the values of the columns provided
+to list_group_keys.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#mlxp.data_structures.data_dict.GroupedDataDicts" title="mlxp.data_structures.data_dict.GroupedDataDicts">GroupedDataDicts</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>InvalidKeyError</strong> – if one of the provided keys does not match any columns of the dataframe.</p>
+<dd class="field-even"><p><strong>InvalidKeyError</strong> – if one of the provided keys does not match any columns
+of the dataframe.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -743,17 +752,21 @@ can be converted to it using the method toPandasDF.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.DataDictList.config_diff">
 <span class="sig-name descname"><span class="pre">config_diff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#DataDictList.config_diff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.DataDictList.config_diff" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of colums keys starting with ‘start_key’ and whose value varies in the dataframe.</p>
+<dd><p>Return a list of colums keys starting with ‘start_key’ and whose value varies
+in the dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>start_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> (</em><em>default 'config'</em><em>)</em>) – A string with which all column names to be considered must start.</p>
+<dd class="field-odd"><p><strong>start_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em> (</em><em>default 'config'</em><em>)</em>) – A string with which all column names to be considered must
+start.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of strings containing the column names</p>
+<dd class="field-even"><p>A list of strings containing the column names starting with ‘start_key’
+and whose values vary in the dataframe.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
 </dd>
 </dl>
-<p>starting with ‘start_key’ and whose values vary in the dataframe.
-:rtype: List[str]</p>
 </dd></dl>
 
 </dd></dl>
@@ -762,7 +775,8 @@ can be converted to it using the method toPandasDF.</p>
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.GroupedDataDicts">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.data_structures.data_dict.</span></span><span class="sig-name descname"><span class="pre">GroupedDataDicts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouped_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#mlxp.data_structures.data_dict.DataDictList" title="mlxp.data_structures.data_dict.DataDictList"><span class="pre">DataDictList</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#GroupedDataDicts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.GroupedDataDicts" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A dictionary where each key represents the tuple of values taken by the grouped column of some processed dataframe.</p>
+<p>A dictionary where each key represents the tuple of values taken by the grouped
+column of some processed dataframe.</p>
 <p>The values corresponsing to each key are objects of type DataDictList containing a group.
 This object is usually obtained as the output of the group_by method of the class  DataDictList.
 It is displayed as a hierarchical pandas dataframe and
@@ -817,17 +831,20 @@ by identifying self with self.grouped_dict:</p>
 <dd><p>Convert. the list into a pandas dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A panda dataframe containing logs (configs and data)</p>
+<dd class="field-odd"><p>A panda dataframe containing logs (configs and data) of the
+DataDictList object</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame</p>
 </dd>
 </dl>
-<p>of the DataDictList object
-:rtype: pd.DataFrame</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.data_structures.data_dict.GroupedDataDicts.aggregate">
 <span class="sig-name descname"><span class="pre">aggregate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aggregation_maps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#mlxp.data_structures.data_dict.AggregationMap" title="mlxp.data_structures.data_dict.AggregationMap"><span class="pre">AggregationMap</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#mlxp.data_structures.data_dict.GroupedDataDicts" title="mlxp.data_structures.data_dict.GroupedDataDicts"><span class="pre">GroupedDataDicts</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/data_structures/data_dict.html#GroupedDataDicts.aggregate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.data_structures.data_dict.GroupedDataDicts.aggregate" title="Link to this definition">#</a></dt>
-<dd><p>Perform aggregation of the leaf dataframes according to some aggregation maps provided as input.</p>
+<dd><p>Perform aggregation of the leaf dataframes according to some aggregation maps
+provided as input.</p>
 <p>This function returns a DataDictList object where each row represents a group
 and each column consist of one of the following:</p>
 <blockquote>

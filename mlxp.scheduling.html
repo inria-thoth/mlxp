@@ -222,7 +222,8 @@
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">Scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">submission_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
-<p>An abstract class whose children allow to submit jobs using a particular job scheduler such as OAR or SLURM.</p>
+<p>An abstract class whose children allow to submit jobs using a particular job
+scheduler such as OAR or SLURM.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.directive">
 <span class="sig-name descname"><span class="pre">directive</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.scheduler.Scheduler.directive" title="Link to this definition">#</a></dt>
@@ -276,13 +277,16 @@ By default no environment is activated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.make_job_details">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler.make_job_details" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.</p>
+<dd><p>Return a list of three strings specifying the job name, the paths to the
+log.stdout and log.stderr files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The directory where the logs (e.g.: std.out, std.err) are saved.</p>
+<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The directory where the logs (e.g.: std.out,
+std.err) are saved.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.</p>
+<dd class="field-even"><p>a list of three strings specifying information about
+the job: job name, path towards log.stdout and log.stderr.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
@@ -307,7 +311,8 @@ By default no environment is activated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.submit_job">
 <span class="sig-name descname"><span class="pre">submit_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler.submit_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler.submit_job" title="Link to this definition">#</a></dt>
-<dd><p>Submit the job to the scheduler and returns a string containing the output of the submission command.</p>
+<dd><p>Submit the job to the scheduler and returns a string containing the output of
+the submission command.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>There is generally no need to customize this function.</p>
@@ -335,10 +340,12 @@ By default no environment is activated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler.get_info">
 <span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#OARScheduler.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.OARScheduler.get_info" title="Link to this definition">#</a></dt>
-<dd><p>Return a dictionary containing the job_id assigned to the run by the scheduler.</p>
+<dd><p>Return a dictionary containing the job_id assigned to the run by the
+scheduler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the scheduler.</p>
+<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the
+scheduler.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>,Any]</p>
@@ -349,13 +356,16 @@ By default no environment is activated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler.make_job_details">
 <span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#OARScheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.OARScheduler.make_job_details" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.</p>
+<dd><p>Return a list of three strings specifying the job name, the paths to the
+log.stdout and log.stderr files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The directory where the logs (e.g.: std.out, std.err) are saved.</p>
+<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The directory where the logs (e.g.: std.out,
+std.err) are saved.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.</p>
+<dd class="field-even"><p>a list of three strings specifying information about
+the job: job name, path towards log.stdout and log.stderr.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
@@ -373,10 +383,12 @@ By default no environment is activated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.SLURMScheduler.get_info">
 <span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#SLURMScheduler.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler.get_info" title="Link to this definition">#</a></dt>
-<dd><p>Return a dictionary containing the job_id assigned to the run by the scheduler.</p>
+<dd><p>Return a dictionary containing the job_id assigned to the run by the
+scheduler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the scheduler.</p>
+<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the
+scheduler.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>,Any]</p>
@@ -387,13 +399,16 @@ By default no environment is activated.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.SLURMScheduler.make_job_details">
 <span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#SLURMScheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler.make_job_details" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of three strings specifying the job name, the paths to the log.stdout and log.stderr files.</p>
+<dd><p>Return a list of three strings specifying the job name, the paths to the
+log.stdout and log.stderr files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The directory where the logs (e.g.: std.out, std.err) are saved.</p>
+<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – The directory where the logs (e.g.: std.out,
+std.err) are saved.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of three strings specifying information about the job: job name, path towards log.stdout and log.stderr.</p>
+<dd class="field-even"><p>a list of three strings specifying information about
+the job: job name, path towards log.stdout and log.stderr.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
