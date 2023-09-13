@@ -1,10 +1,11 @@
 """The scheduler allows submitting several jobs to a cluster queue using hydra."""
 
+import abc
 import os
 import subprocess
+from typing import Any, Dict, List
+
 from omegaconf.errors import OmegaConfBaseException
-import abc
-from typing import List, Dict, Any 
 
 from mlxp.errors import JobSubmissionError
 

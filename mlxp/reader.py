@@ -1,19 +1,18 @@
 """The reader allows queryring the logs of several experiments and performing operations on the content of these logs (e.g. grouping and aggregation)."""
 
 import os
-import yaml
+from collections.abc import MutableMapping
+from typing import Optional, Union
 
+import pandas as pd
+import yaml
 from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.table import Document
 
-from mlxp.data_structures.data_dict import DataDictList, DataDict, LAZYDATA
-from mlxp.parser import Parser, DefaultParser, _is_searchable
-from typing import Union, Optional
-import pandas as pd
-
-from collections.abc import MutableMapping
+from mlxp.data_structures.data_dict import LAZYDATA, DataDict, DataDictList
 from mlxp.enumerations import DataFrameType, Directories
+from mlxp.parser import DefaultParser, Parser, _is_searchable
 
 
 class Reader(object):
@@ -85,7 +84,7 @@ class Reader(object):
             print("Creating a database file of the runs...")
             self._create_base()
             print(f"Database file created in {self.dst_dir}")
-        
+
     def __len__(self) -> int:
         """Return the number of runs contained in the database created by the reader.
 
@@ -126,7 +125,7 @@ class Reader(object):
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [DataDict(r, parent_dir=_get_metrics_dir(r,self.src_dir)) for r in res]
+        res = [DataDict(r, parent_dir=_get_metrics_dir(r, self.src_dir)) for r in res]
         res = DataDictList(res)
         if result_format == DataFrameType.Pandas.value:
             return res.toPandasDF(lazy=False)
@@ -195,13 +194,13 @@ class Reader(object):
             print(files_not_found)
 
 
-def _get_metrics_dir(r,src_dir):
+def _get_metrics_dir(r, src_dir):
     abs_metrics_dir = r["info.logger.metrics_dir"]
     parent_log_dir = os.path.dirname(r["info.logger.log_dir"])
 
-    relpath = os.path.relpath(abs_metrics_dir,parent_log_dir)
+    relpath = os.path.relpath(abs_metrics_dir, parent_log_dir)
 
-    return os.path.join(src_dir,relpath)
+    return os.path.join(src_dir, relpath)
 
 
 def _get_data(path, metadata_file):

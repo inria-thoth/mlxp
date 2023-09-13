@@ -1,47 +1,51 @@
 """The launcher allows launching multiple experiments on a cluster using hydra."""
 
 import copy
-import os
 import functools
-from typing import Any, Callable, Optional, Union, Dict, TypeVar
-from types import CodeType
-from omegaconf import DictConfig
-
-from hydra._internal.utils import _run_hydra, get_args_parser
-from hydra.core.hydra_config import HydraConfig
-from hydra.types import TaskFunction
-from hydra import version
-
-from mlxp.data_structures.config_dict import ConfigDict
-from mlxp.logger import Logger
-from mlxp.errors import MissingFieldError
-import mlxp
-
-from datetime import datetime
+import importlib
+import os
 import socket
 import sys
 from dataclasses import dataclass
-from mlxp._internal.configure import _build_config, _add_config_overrides, _process_config_path
-import yaml
-import importlib
-from mlxp.enumerations import Status
+from datetime import datetime
+from types import CodeType
+from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
+import yaml
+from hydra import version
+from hydra._internal.utils import _run_hydra, get_args_parser
+from hydra.core.hydra_config import HydraConfig
+from hydra.types import TaskFunction
+from omegaconf import DictConfig
+
+import mlxp
+from mlxp._internal.configure import (
+    _add_config_overrides,
+    _build_config,
+    _process_config_path,
+)
+from mlxp.data_structures.config_dict import ConfigDict
+from mlxp.enumerations import Status
+from mlxp.errors import MissingFieldError
+from mlxp.logger import Logger
 
 _UNSPECIFIED_: Any = object()
 
 
-hydra_defaults_dict = {"hydra.mode": "MULTIRUN",
-                       "hydra.output_subdir": "null",
-                       "hydra.run.dir": ".",
-                       "hydra.sweep.dir": ".",
-                       "hydra.sweep.subdir": ".",
-                       "hydra/job_logging": "disabled",
-                       "hydra/hydra_logging": "disabled",
-                       }
+hydra_defaults_dict = {
+    "hydra.mode": "MULTIRUN",
+    "hydra.output_subdir": "null",
+    "hydra.run.dir": ".",
+    "hydra.sweep.dir": ".",
+    "hydra.sweep.subdir": ".",
+    "hydra/job_logging": "disabled",
+    "hydra/hydra_logging": "disabled",
+}
 
 
-vm_choices_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"],
-                               "vm_choices.yaml")
+vm_choices_file = os.path.join(
+    hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml"
+)
 
 
 def _clean_dir():
@@ -54,8 +58,8 @@ def _clean_dir():
 
 
 def launch(
-    config_path: str = './configs',
-    seeding_function: Union[Callable[[Any], None], None] = None
+    config_path: str = "./configs",
+    seeding_function: Union[Callable[[Any], None], None] = None,
 ) -> Callable[[TaskFunction], Any]:
     """Create a decorator of the main function to be executed.
 
@@ -127,7 +131,9 @@ def launch(
         # task_function = launch(task_function)
         @functools.wraps(task_function)
         def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
-            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
+            processed_config_path = _process_config_path(
+                config_path, task_function.__code__.co_filename
+            )
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
@@ -136,8 +142,7 @@ def launch(
 
                 # Setting hydra defaults
                 hydra_defaults = [
-                    key + "=" + value
-                    for key, value in hydra_defaults_dict.items()
+                    key + "=" + value for key, value in hydra_defaults_dict.items()
                 ]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
@@ -159,33 +164,36 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(overrides):
-            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
+            processed_config_path = _process_config_path(
+                config_path, task_function.__code__.co_filename
+            )
 
             cfg = _build_config(overrides, processed_config_path, config_name)
 
             now = datetime.now()
-            info = {'hostname': socket.gethostname(),
-                    'process_id': os.getpid(),
-                    'executable': sys.executable,
-                    'current_file_path': task_function.__code__.co_filename,
-                    'start_date': now.strftime("%d/%m/%Y"),
-                    'start_time': now.strftime("%H:%M:%S"),
-                    'status': Status.STARTING.value}
+            info = {
+                "hostname": socket.gethostname(),
+                "process_id": os.getpid(),
+                "executable": sys.executable,
+                "current_file_path": task_function.__code__.co_filename,
+                "start_date": now.strftime("%d/%m/%Y"),
+                "start_time": now.strftime("%H:%M:%S"),
+                "status": Status.STARTING.value,
+            }
 
-            
-
-            cfg.update({'info': info})
+            cfg.update({"info": info})
 
             if cfg.mlxp.use_version_manager:
                 version_manager = _instance_from_config(cfg.mlxp.version_manager)
                 version_manager._handle_interactive_mode(
-                    cfg.mlxp.interactive_mode, vm_choices_file)
+                    cfg.mlxp.interactive_mode, vm_choices_file
+                )
                 work_dir = version_manager.make_working_directory()
-                cfg.update({'info': {'version_manager': version_manager.get_info()}})
+                cfg.update({"info": {"version_manager": version_manager.get_info()}})
             else:
                 work_dir = os.getcwd()
 
-            cfg.update({'info': {'work_dir': work_dir}})
+            cfg.update({"info": {"work_dir": work_dir}})
 
             if cfg.mlxp.use_scheduler:
 
@@ -203,22 +211,24 @@ def launch(
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
-                cfg.update({'info': {'logger': logger.get_info()}})
-                cfg.update({'config': _get_configs(log_dir)})
-                #cfg = _add_config_overrides(cfg,overrides)
+                cfg.update({"info": {"logger": logger.get_info()}})
+                cfg.update({"config": _get_configs(log_dir)})
+                # cfg = _add_config_overrides(cfg,overrides)
             else:
                 logger = None
 
             if cfg.mlxp.use_scheduler:
 
-                main_cmd = _main_job_command(cfg.info.executable,
-                                             cfg.info.current_file_path,
-                                             work_dir,
-                                             parent_log_dir,
-                                             log_id)
+                main_cmd = _main_job_command(
+                    cfg.info.executable,
+                    cfg.info.current_file_path,
+                    work_dir,
+                    parent_log_dir,
+                    log_id,
+                )
 
                 scheduler.submit_job(main_cmd, log_dir)
-                cfg.update({'info': {'scheduler': scheduler.get_info()}})
+                cfg.update({"info": {"scheduler": scheduler.get_info()}})
                 logger._log_configs(cfg)
 
             else:
@@ -228,32 +238,33 @@ def launch(
                 _set_work_dir(work_dir)
 
                 if logger:
-                    cfg.update({'info': _get_mlxp_configs(log_dir)})
+                    cfg.update({"info": _get_mlxp_configs(log_dir)})
                 try:
 
-                    cfg.update({'info': {'status': Status.RUNNING.value}})
+                    cfg.update({"info": {"status": Status.RUNNING.value}})
                     if logger:
                         logger._log_configs(cfg)
                     if seeding_function:
                         try:
-                            assert 'seed' in cfg.config.keys()
+                            assert "seed" in cfg.config.keys()
                         except AssertionError:
                             msg = "Missing field: The 'config' must contain a field 'seed'\n"
                             msg += "provided as argument to the function 'seeding_function' "
                             raise MissingFieldError(msg)
                         seeding_function(cfg.config.seed)
 
-                    ctx = Context(config=cfg.config,
-                                  mlxp=cfg.mlxp,
-                                  info=cfg.info,
-                                  logger=logger)
+                    ctx = Context(
+                        config=cfg.config, mlxp=cfg.mlxp, info=cfg.info, logger=logger
+                    )
                     task_function(ctx)
                     now = datetime.now()
-                    info = {'end_date': now.strftime("%d/%m/%Y"),
-                            'end_time': now.strftime("%H:%M:%S"),
-                            'status': Status.COMPLETE.value}
+                    info = {
+                        "end_date": now.strftime("%d/%m/%Y"),
+                        "end_time": now.strftime("%H:%M:%S"),
+                        "status": Status.COMPLETE.value,
+                    }
 
-                    cfg.update({'info': info})
+                    cfg.update({"info": info})
 
                     if logger:
                         logger._log_configs(cfg)
@@ -262,11 +273,13 @@ def launch(
                     return None
                 except Exception:
                     now = datetime.now()
-                    info = {'end_date': now.strftime("%d/%m/%Y"),
-                            'end_time': now.strftime("%H:%M:%S"),
-                            'status': Status.FAILED.value}
+                    info = {
+                        "end_date": now.strftime("%d/%m/%Y"),
+                        "end_time": now.strftime("%H:%M:%S"),
+                        "status": Status.FAILED.value,
+                    }
 
-                    cfg.update({'info': info})
+                    cfg.update({"info": info})
 
                     if logger:
                         logger._log_configs(cfg)
@@ -324,7 +337,7 @@ class Context:
     logger: Union[Logger, None] = None
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
@@ -404,31 +417,32 @@ def _set_co_filename(func, co_filename):
 
 def _get_mlxp_configs(log_dir):
     from mlxp.enumerations import Directories
-    abs_name = os.path.join(log_dir, Directories.Metadata.value, 'info.yaml')
+
+    abs_name = os.path.join(log_dir, Directories.Metadata.value, "info.yaml")
     configs_info = {}
 
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-            if 'scheduler' in configs:
-                configs_info.update({'scheduler': configs['scheduler']})
-            if 'version_manager' in configs:
-                configs_info.update({'version_manager': configs['version_manager']})
-            if 'logger' in configs:
-                configs_info.update({'logger': configs['logger']})
+            if "scheduler" in configs:
+                configs_info.update({"scheduler": configs["scheduler"]})
+            if "version_manager" in configs:
+                configs_info.update({"version_manager": configs["version_manager"]})
+            if "logger" in configs:
+                configs_info.update({"logger": configs["logger"]})
 
     return configs_info
 
 
 def _get_configs(log_dir):
     from mlxp.enumerations import Directories
-    abs_name = os.path.join(log_dir, Directories.Metadata.value, 'config.yaml')
+
+    abs_name = os.path.join(log_dir, Directories.Metadata.value, "config.yaml")
     configs = {}
 
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-
 
     return configs
 
@@ -443,7 +457,7 @@ def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, j
             +mlxp.logger.forced_log_id={job_id}\
             +mlxp.logger.parent_log_dir={parent_log_dir} \
             +mlxp.use_scheduler={False}\
-            +mlxp.use_version_manager={False}"
+            +mlxp.use_version_manager={False}",
     ]
 
     values = [f"{val}\n" for val in values]
@@ -455,8 +469,13 @@ def _get_overrides():
     overrides = hydra_cfg.overrides.task
 
     def filter_fn(x):
-        return ("version_manager" not in x) and (
-            "scheduler" not in x) and ("logger.parent_log_dir" not in x) and ("logger.forced_log_id" not in x)
+        return (
+            ("version_manager" not in x)
+            and ("scheduler" not in x)
+            and ("logger.parent_log_dir" not in x)
+            and ("logger.forced_log_id" not in x)
+        )
+
     filtered_args = list(filter(filter_fn, overrides))
     args = " ".join(filtered_args)
     return args

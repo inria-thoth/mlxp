@@ -1,16 +1,13 @@
-from mlxp.launcher import launch, Context
-from mlxp.reader import Reader
-from mlxp.logger import DefaultLogger
-from mlxp.version_manager import GitVM
-
-from mlxp.scheduler import Scheduler, SLURMScheduler, OARScheduler
-
 from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.data_structures.data_dict import DataDictList
-
+from mlxp.launcher import Context, launch
+from mlxp.logger import DefaultLogger
+from mlxp.reader import Reader
+from mlxp.scheduler import OARScheduler, Scheduler, SLURMScheduler
+from mlxp.version_manager import GitVM
 
 __all__ = [
-    "launch", 
+    "launch",
     "Reader",
     "DefaultLogger",
     "Scheduler",
@@ -19,13 +16,12 @@ __all__ = [
     "DataDictList",
     "OARScheduler",
     "SLURMScheduler",
-    "GitVM"
+    "GitVM",
 ]
 
 
-
 VERSION = (0, 1, 0)
-PROJECT = 'MLXP'
+PROJECT = "MLXP"
 AUTHOR = "Michael Arbel"
 AUTHOR_EMAIL = "michael.n.arbel@gmail.com"
 URL = "https://github.com/inria-thoth/mlxp"
@@ -40,9 +36,10 @@ RELEASE = VERSION_TEXT + VERSION_STATUS
 
 __version__ = VERSION_TEXT
 __author__ = AUTHOR
-__copyright__ = COPYRIGHT 
-__credits__ = ["Romain Ménégaux",
-                "Alexandre Zouaoui",
-                "Juliette Marrie",
-                "Pierre Wolinski"]
-
+__copyright__ = COPYRIGHT
+__credits__ = [
+    "Romain Ménégaux",
+    "Alexandre Zouaoui",
+    "Juliette Marrie",
+    "Pierre Wolinski",
+]

@@ -2,7 +2,6 @@
 
 import numpy as np
 
-
 from mlxp.data_structures.data_dict import AggregationMap
 
 
@@ -35,8 +34,7 @@ class MinLast(AggregationMap):
             index = np.nanargmin(np.asarray(selected_data), axis=0)
         except ValueError:
             pass
-        return {self.name: selected_data[index],
-                'arg_'+self.name: index}, None
+        return {self.name: selected_data[index], "arg_" + self.name: index}, None
 
 
 class Max(AggregationMap):
@@ -52,8 +50,7 @@ class Max(AggregationMap):
             index = np.nanargmax(np.asarray(selected_data), axis=0)
         except ValueError:
             pass
-        return {self.name: selected_data[index],
-                'arg_'+self.name: index}, None
+        return {self.name: selected_data[index], "arg_" + self.name: index}, None
 
 
 class AvgStd(AggregationMap):

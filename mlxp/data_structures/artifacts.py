@@ -1,8 +1,9 @@
 """Artifacts objects that can be saved by a Logger object."""
 
 import abc
-from typing import Any
 from dataclasses import dataclass
+from typing import Any
+
 import dill as pkl
 
 

@@ -1,10 +1,11 @@
 """The version manager allows to keep track of changes to the code and to automatically generate a deployment version of the code based on the latest git commit."""
 
-import os
 import abc
+import os
 import subprocess
-import yaml
 from typing import Any, Dict
+
+import yaml
 
 from mlxp._internal._interactive_mode import _bcolors, _printc
 
@@ -299,7 +300,9 @@ class GitVM(VersionManager):
                     print(
                         f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: Check again for untrakced files (assuming you manually added them)."
                     )
-                    print(f"{_bcolors.OKGREEN}c{_bcolors.ENDC}: Ignore untracked files.")
+                    print(
+                        f"{_bcolors.OKGREEN}c{_bcolors.ENDC}: Ignore untracked files."
+                    )
                     choice = input(
                         f"{_bcolors.OKGREEN}[Untracked files]: Please enter your choice (a/b/c):{_bcolors.ENDC}"
                     )
@@ -331,8 +334,8 @@ class GitVM(VersionManager):
                             break
                     elif choice == "b":
                         _printc(
-                            _bcolors.OKBLUE,
-                            "Checking again for untracked files...")
+                            _bcolors.OKBLUE, "Checking again for untracked files..."
+                        )
                         pass
                     elif choice == "c":
                         if repo.untracked_files:
@@ -422,7 +425,7 @@ def _disp_untracked_files(repo):
         line = line.decode(defenc)
         if not line.startswith(prefix):
             continue
-        filename = line[len(prefix):].rstrip("\n")
+        filename = line[len(prefix) :].rstrip("\n")
         # Special characters are escaped
         if filename[0] == filename[-1] == '"':
             filename = filename[1:-1]

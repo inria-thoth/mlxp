@@ -1,22 +1,21 @@
 """The logger can saves the configs and outputs of an experiment."""
 
 
-import sys
-import os
-
-import json
-import yaml
-import random
-from time import sleep
-import dill as pkl
-from typing import Any, Dict, Union
 import abc
+import json
+import os
+import random
+import sys
+from time import sleep
+from typing import Any, Dict, Union
+
+import dill as pkl
+import yaml
 
 from mlxp.data_structures.artifacts import Artifact, Checkpoint
-from mlxp.errors import InvalidKeyError, InvalidArtifactError
 from mlxp.data_structures.config_dict import ConfigDict
-
 from mlxp.enumerations import Directories
+from mlxp.errors import InvalidArtifactError, InvalidKeyError
 
 
 class Logger(abc.ABC):
@@ -46,10 +45,7 @@ class Logger(abc.ABC):
         The parent directory where the directory of the run is created.
     """
 
-    def __init__(self,
-                 parent_log_dir,
-                 forced_log_id=-1,
-                 log_streams_to_file=False):
+    def __init__(self, parent_log_dir, forced_log_id=-1, log_streams_to_file=False):
         """Create a logger object.
 
         :param parent_log_dir: The parent directory where the directory of the run is created.
@@ -62,8 +58,7 @@ class Logger(abc.ABC):
         self.parent_log_dir = os.path.abspath(parent_log_dir)
         self.forced_log_id = forced_log_id
         self._metric_dict_keys = {}
-        self._log_id, self._log_dir = _make_log_dir(forced_log_id,
-                                                    self.parent_log_dir)
+        self._log_id, self._log_dir = _make_log_dir(forced_log_id, self.parent_log_dir)
 
         self.metrics_dir = os.path.join(self._log_dir, Directories.Metrics.value)
         self.artifacts_dir = os.path.join(self._log_dir, Directories.Artifacts.value)
@@ -74,28 +69,22 @@ class Logger(abc.ABC):
 
         if log_streams_to_file:
             log_stdout = open(
-                os.path.join(
-                    self._log_dir,
-                    "log.stdout"),
-                "w",
-                buffering=1)
+                os.path.join(self._log_dir, "log.stdout"), "w", buffering=1
+            )
             sys.stdout = log_stdout
             log_stderr = open(
-                os.path.join(
-                    self._log_dir,
-                    "log.stderr"),
-                "w",
-                buffering=1)
+                os.path.join(self._log_dir, "log.stderr"), "w", buffering=1
+            )
             sys.stderr = log_stderr
 
     def _log_configs(self, config: ConfigDict) -> None:
-        file_name = os.path.join(self.metadata_dir, 'config')
+        file_name = os.path.join(self.metadata_dir, "config")
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.config.to_dict(), f)
-        file_name = os.path.join(self.metadata_dir, 'info')
+        file_name = os.path.join(self.metadata_dir, "info")
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.info.to_dict(), f)
-        file_name = os.path.join(self.metadata_dir, 'mlxp')
+        file_name = os.path.join(self.metadata_dir, "mlxp")
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.mlxp.to_dict(), f)
 
@@ -105,11 +94,13 @@ class Logger(abc.ABC):
         :return: Dictionary containing information about the logger settings used for the run.
         :rtype: Dict[str, Any]
         """
-        return {'log_id': self.log_id,
-                'log_dir': self.log_dir,
-                'metrics_dir': self.metrics_dir,
-                'metadata_dir': self.metadata_dir,
-                'artifacts_dir': self.artifacts_dir}
+        return {
+            "log_id": self.log_id,
+            "log_dir": self.log_dir,
+            "metrics_dir": self.metrics_dir,
+            "metadata_dir": self.metadata_dir,
+            "artifacts_dir": self.artifacts_dir,
+        }
 
     def log_metrics(self, metrics_dict, log_name):
         """Save a dictionary of scalars to a json file named log_name+'.json' in the directory log_dir/metrics.
@@ -127,14 +118,16 @@ class Logger(abc.ABC):
             assert log_name not in ["info", "config", "mlxp"]
         except AssertionError:
             raise InvalidKeyError(
-                f"The chosen log_nam:  {log_name} is invalid! It must be different from these protected names: {invalid_names} ")
+                f"The chosen log_nam:  {log_name} is invalid! It must be different from these protected names: {invalid_names} "
+            )
 
         self._log_metrics_key(metrics_dict, log_name)
         file_name = os.path.join(self.metrics_dir, log_name)
         return self._log_metrics(metrics_dict, file_name)
 
-    def _log_metrics(self, metrics_dict: Dict[str, Union[int, float, str]],
-                     file_name: str) -> None:
+    def _log_metrics(
+        self, metrics_dict: Dict[str, Union[int, float, str]], file_name: str
+    ) -> None:
         with open(file_name + ".json", "a") as f:
             json.dump(metrics_dict, f)
             f.write(os.linesep)
@@ -156,7 +149,8 @@ class Logger(abc.ABC):
             assert isinstance(artifact, Artifact)
         except AssertionError:
             raise InvalidArtifactError(
-                f"The object {artifact} must be an instance of the abstract class {Artifact}. Instead, it is of type {type(artifact)}")
+                f"The object {artifact} must be an instance of the abstract class {Artifact}. Instead, it is of type {type(artifact)}"
+            )
 
         subdir = os.path.join(self.artifacts_dir, type(artifact).__name__)
         os.makedirs(subdir, exist_ok=True)
@@ -185,8 +179,9 @@ class Logger(abc.ABC):
         """
         return self._log_dir
 
-    def _log_metrics_key(self, metrics_dict: Dict[str, Union[int, float, str]],
-                         log_name: str):
+    def _log_metrics_key(
+        self, metrics_dict: Dict[str, Union[int, float, str]], log_name: str
+    ):
         # Logging new keys appearing in a metrics dict
 
         if log_name not in self._metric_dict_keys.keys():
@@ -198,7 +193,7 @@ class Logger(abc.ABC):
                 new_keys.append(key)
         self._metric_dict_keys[log_name] += new_keys
         dict_file = {key: "" for key in new_keys}
-        keys_dir = os.path.join(self.metrics_dir, '.keys')
+        keys_dir = os.path.join(self.metrics_dir, ".keys")
         os.makedirs(keys_dir, exist_ok=True)
         log_name = os.path.join(keys_dir, log_name)
         cur_yaml = {}
@@ -215,14 +210,12 @@ class Logger(abc.ABC):
 class DefaultLogger(Logger):
     """A logger that provides methods for logging checkpoints and loading them."""
 
-    def __init__(self, parent_log_dir,
-                 forced_log_id,
-                 log_streams_to_file=False):
-        super().__init__(parent_log_dir,
-                         forced_log_id,
-                         log_streams_to_file=log_streams_to_file)
+    def __init__(self, parent_log_dir, forced_log_id, log_streams_to_file=False):
+        super().__init__(
+            parent_log_dir, forced_log_id, log_streams_to_file=log_streams_to_file
+        )
 
-    def log_checkpoint(self, checkpoint: Any, log_name: str = 'checkpoint') -> None:
+    def log_checkpoint(self, checkpoint: Any, log_name: str = "checkpoint") -> None:
         """Save a checkpoint for later use, this can be any serializable object.
 
         This method is intended for saving the latest state of the run, thus, by default,
@@ -236,7 +229,7 @@ class DefaultLogger(Logger):
         """
         self.log_artifact(Checkpoint(checkpoint, ".pkl"), log_name=log_name)
 
-    def load_checkpoint(self, log_name,root=None) -> Any:
+    def load_checkpoint(self, log_name, root=None) -> Any:
         """Restore a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl' 
         or a user defined directory root. 
 
@@ -252,11 +245,12 @@ class DefaultLogger(Logger):
         """
 
         if root:
-            checkpoint_name = os.path.join(root,log_name+'.pkl')
+            checkpoint_name = os.path.join(root, log_name + ".pkl")
         else:
             checkpoint_name = os.path.join(
-                self.artifacts_dir, 'Checkpoint', log_name + '.pkl')
-        with open(checkpoint_name, 'rb') as f:
+                self.artifacts_dir, "Checkpoint", log_name + ".pkl"
+            )
+        with open(checkpoint_name, "rb") as f:
             checkpoint = pkl.load(f)
         return checkpoint
 

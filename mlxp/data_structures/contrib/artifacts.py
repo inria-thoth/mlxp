@@ -1,6 +1,7 @@
 """Implementation of some Artifact objects."""
 
 from dataclasses import dataclass
+
 from mlxp.logging.artifacts import Artifact
 
 

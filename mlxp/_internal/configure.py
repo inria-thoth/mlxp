@@ -1,14 +1,14 @@
+import os
+
 import omegaconf
+import yaml
 from omegaconf import OmegaConf
 
-from mlxp.scheduler import Scheduler
-from mlxp.enumerations import DefaultSchedulers
-
-from mlxp.data_structures.schemas import Metadata
-from mlxp.data_structures.config_dict import convert_dict, ConfigDict
 from mlxp._internal._interactive_mode import _bcolors, _printc
-import yaml
-import os
+from mlxp.data_structures.config_dict import ConfigDict, convert_dict
+from mlxp.data_structures.schemas import Metadata
+from mlxp.enumerations import DefaultSchedulers
+from mlxp.scheduler import Scheduler
 
 
 def _configure_scheduler(mlxp_config):
@@ -69,7 +69,8 @@ def _ask_configure_scheduler(mlxp_config, mlxp_file):
         )
 
         choice = input(
-            f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
+            f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}"
+        )
 
         if choice == "y":
             _configure_scheduler(mlxp_config)
@@ -88,19 +89,13 @@ def _ask_configure_scheduler(mlxp_config, mlxp_file):
 
 def _build_config(overrides, config_path, config_name):
 
-
-
-
-
     os.makedirs(config_path, exist_ok=True)
     custom_config_file = os.path.join(config_path, config_name + ".yaml")
     if not os.path.exists(custom_config_file):
         with open(custom_config_file, "w") as f:
             pass
 
-
     overrides_mlxp, overrides_config = _process_overrides(overrides)
-
 
     cfg = _get_default_config(config_path, overrides_mlxp)
 
@@ -117,7 +112,7 @@ def _add_config_overrides(cfg, overrides):
     overrides_mlxp, overrides_config = _process_overrides(overrides)
     cfg = convert_dict(
         cfg, src_class=ConfigDict, dst_class=omegaconf.dictconfig.DictConfig
-    )   
+    )
     cfg = OmegaConf.merge(cfg, overrides_config)
 
     cfg = convert_dict(
@@ -129,7 +124,7 @@ def _add_config_overrides(cfg, overrides):
 def _process_overrides(overrides):
     if "mlxp" in overrides:
         overrides_mlxp = OmegaConf.create({"mlxp": overrides["mlxp"]})
-#        cfg = OmegaConf.merge(cfg, overrides_mlxp)
+    #        cfg = OmegaConf.merge(cfg, overrides_mlxp)
     else:
         overrides_mlxp = None
 
@@ -215,10 +210,11 @@ def _get_default_config(config_path, overrides):
         default_config = OmegaConf.merge(default_config, overrides)
     return default_config
 
+
 def _process_config_path(config_path, file_name):
     if os.path.isabs(config_path):
         return config_path
     else:
         abs_path = os.path.abspath(config_path)
         rel_path = os.path.relpath(config_path, os.getcwd())
-        return os.path.join(os.path.dirname(file_name),rel_path)
+        return os.path.join(os.path.dirname(file_name), rel_path)

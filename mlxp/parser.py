@@ -1,16 +1,16 @@
 """Parser object for querying results stored by the reader."""
 
-import ply.lex as lex
-import ply.yacc as yacc
+import abc
 import ast
 from operator import eq, ge, gt, le, lt, ne
-from tinydb import where, Query
-from tinydb.queries import QueryInstance
-import abc
-from mlxp.errors import InvalidKeyError
 
+import ply.lex as lex
+import ply.yacc as yacc
+from tinydb import Query, where
+from tinydb.queries import QueryInstance
 
 from mlxp.enumerations import SearchableKeys
+from mlxp.errors import InvalidKeyError
 
 
 class Parser(abc.ABC):

@@ -1,20 +1,16 @@
 """Data structures returned by Reader object."""
 
 from __future__ import annotations
-import os
+
 import json
+import os
+from collections.abc import ItemsView, KeysView, Mapping, MutableMapping
 from functools import reduce
+from typing import Any, Dict, List, Tuple
+
 import pandas as pd
-from collections.abc import (
-    Mapping,
-    MutableMapping,
-    KeysView,
-    ItemsView,
-)
 
-from typing import List, Dict, Tuple, Any
-
-from mlxp.errors import InvalidKeyError, InvalidAggregationMapError
+from mlxp.errors import InvalidAggregationMapError, InvalidKeyError
 
 LAZYDATA = "LAZYDATA"
 
@@ -167,8 +163,7 @@ class _LazyData(object):
             all_keys = set(self._data.keys())
             unused_keys = all_keys.difference(self.used_keys)
             for key in unused_keys:
-                    del self._data[key]
-
+                del self._data[key]
 
 
 class _MyListProxy:
@@ -179,7 +174,7 @@ class _MyListProxy:
         return [d[key] for d in self.list_of_dicts]
 
 
-class DataDictList(list):  
+class DataDictList(list):
     """A list of elements of type DataDict.
 
     This list can be viewed as a dataframe
@@ -228,7 +223,8 @@ class DataDictList(list):
         if lazy:
             if self.pandas_lazy is None:
                 self.pandas_lazy = pd.DataFrame(
-                    [config._flattened() for config in self])
+                    [config._flattened() for config in self]
+                )
             return self.pandas_lazy
         else:
             if self.pandas is None:
@@ -414,8 +410,6 @@ class GroupedDataDicts:
             _assert_valid_map(agg_map)
 
         return _aggregate(self, aggregation_maps)
-
-        
 
 
 def _group_by(config_dicts, list_group_keys):

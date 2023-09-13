@@ -1,7 +1,8 @@
 """A dictionary-like structure for storing the configurations."""
 
+from typing import Any, Dict, Type
+
 import omegaconf
-from typing import Dict, Any, Type
 import yaml
 
 
