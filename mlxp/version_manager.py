@@ -1,4 +1,5 @@
-"""The version manager allows to keep track of changes to the code and to automatically generate a deployment version of the code based on the latest git commit."""
+"""The version manager allows to keep track of changes to the code and to automatically
+generate a deployment version of the code based on the latest git commit."""
 
 import abc
 import os
@@ -11,7 +12,8 @@ from mlxp._internal._interactive_mode import _bcolors, _printc
 
 
 class VersionManager(abc.ABC):
-    """An abstract class whose children allow custumizing the working directory of the run."""
+    """An abstract class whose children allow custumizing the working directory of the
+    run."""
 
     def __init__(self):
 
@@ -20,9 +22,7 @@ class VersionManager(abc.ABC):
         self._existing_choices = False
         self.vm_choices = {}
 
-    def _handle_interactive_mode(
-        self, mode: bool, vm_choices_file: str = "./vm_choices.yaml"
-    ) -> None:
+    def _handle_interactive_mode(self, mode: bool, vm_choices_file: str = "./vm_choices.yaml") -> None:
         self._interactive_mode = mode
         self._vm_choices_file = vm_choices_file
         if os.path.isfile(self._vm_choices_file):
@@ -38,17 +38,18 @@ class VersionManager(abc.ABC):
 
     @abc.abstractmethod
     def get_info(self) -> Dict[str, Any]:
-        """Return a dictionary containing information about the version used for the run.
+        """Return a dictionary containing information about the version used for the
+        run.
 
-        :return: Dictionary containing
-        information about the version used for the run.
+        :return: Dictionary containing information about the version used for the run.
         :rtype: Dict[str, Any]
         """
         pass
 
     @abc.abstractmethod
     def make_working_directory(self) -> str:
-        """Return a path to the target working directory from which jobs submitted to a cluster in batch mode will be executed.
+        """Return a path to the target working directory from which jobs submitted to a
+        cluster in batch mode will be executed.
 
         :rtype: str
         :return: A path to the target working directory
@@ -57,9 +58,11 @@ class VersionManager(abc.ABC):
 
 
 class GitVM(VersionManager):
-    """GitVM allows separting development code from code deployed in a cluster and allows to recover exactly the code used for a given run.
+    """GitVM allows separting development code from code deployed in a cluster and
+    allows to recover exactly the code used for a given run.
 
-    GitVM creates a copy of the current directory based on the latest commit, if it doesn't exist already, then sets the working directory to this copy.
+    GitVM creates a copy of the current directory based on the latest commit,
+    if it doesn't exist already, then sets the working directory to this copy.
 
     .. py:attribute:: parent_work_dir
         :type: str
@@ -71,7 +74,6 @@ class GitVM(VersionManager):
         :type: bool
 
         When set to true, the version manager stores a list of requirements and their version.
-
     """
 
     def __init__(self, parent_work_dir: str, compute_requirements: bool):
@@ -86,7 +88,8 @@ class GitVM(VersionManager):
         self.requirements = ["UNKNOWN"]
 
     def get_info(self) -> Dict[str, Any]:
-        """Return a dictionary containing information about the version used for the run.
+        """Return a dictionary containing information about the version used for the
+        run.
 
         The following information is returned:
         - requirements: the dependencies of the code and their versions. Empty if no requirements file was found.
@@ -139,8 +142,7 @@ class GitVM(VersionManager):
         else:
             if not self._existing_choices:
                 _printc(
-                    _bcolors.OKBLUE,
-                    f"Found a copy of the repository with commit-hash: {self.commit_hash}",
+                    _bcolors.OKBLUE, f"Found a copy of the repository with commit-hash: {self.commit_hash}",
                 )
                 _printc(_bcolors.OKBLUE, f"Run will be executed from {self.dst}")
 
@@ -151,8 +153,7 @@ class GitVM(VersionManager):
                     choice = self.vm_choices["cloning"]
                 else:
                     _printc(
-                        _bcolors.OKGREEN,
-                        "Where would you like to run your code from? (a/b):",
+                        _bcolors.OKGREEN, "Where would you like to run your code from? (a/b):",
                     )
                     if os.path.isdir(self.dst):
                         print(
@@ -164,12 +165,8 @@ class GitVM(VersionManager):
                             f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Create a copy of the repository based on the latest commit and execute code from there."
                         )
                         print(f"The copy will be created in: {self.dst}")
-                    print(
-                        f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: Execute code from the main repository"
-                    )
-                    choice = input(
-                        f"{_bcolors.OKGREEN}Please enter you answer (a/b):{_bcolors.ENDC}"
-                    )
+                    print(f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: Execute code from the main repository")
+                    choice = input(f"{_bcolors.OKGREEN}Please enter you answer (a/b):{_bcolors.ENDC}")
                     self.vm_choices["cloning"] = choice
 
                 if choice == "a":
@@ -180,8 +177,7 @@ class GitVM(VersionManager):
                 elif choice == "b":
                     if not self._existing_choices:
                         _printc(
-                            _bcolors.OKBLUE,
-                            f"Run will be executed from the current repository {self.dst}",
+                            _bcolors.OKBLUE, f"Run will be executed from the current repository {self.dst}",
                         )
                     break
                 else:
@@ -201,10 +197,7 @@ class GitVM(VersionManager):
             + "Uncommitted changes will not be taken into account during execution of the jobs!\n"
         )
         ignore_msg += (
-            _bcolors.FAIL
-            + "Warning:"
-            + _bcolors.ENDC
-            + "Jobs will be executed from the latest commit"
+            _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "Jobs will be executed from the latest commit"
         )
 
         while True:
@@ -213,13 +206,11 @@ class GitVM(VersionManager):
                     break
                 if repo.is_dirty():
                     _printc(
-                        _bcolors.OKBLUE,
-                        "There are uncommitted changes in the repository:",
+                        _bcolors.OKBLUE, "There are uncommitted changes in the repository:",
                     )
                     _disp_uncommited_files(repo)
                     _printc(
-                        _bcolors.OKGREEN,
-                        "How would you like to handle uncommitted changes? (a/b/c)",
+                        _bcolors.OKGREEN, "How would you like to handle uncommitted changes? (a/b/c)",
                     )
                     print(
                         f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Create a new automatic commit before launching jobs."
@@ -227,40 +218,30 @@ class GitVM(VersionManager):
                     print(
                         f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: Check again for uncommitted changes (assuming you manually committed them). "
                     )
-                    print(
-                        f"{_bcolors.OKGREEN}c{_bcolors.ENDC}: Ignore uncommitted changes."
-                    )
+                    print(f"{_bcolors.OKGREEN}c{_bcolors.ENDC}: Ignore uncommitted changes.")
                     choice = input(
                         f"{_bcolors.OKGREEN}[Uncommitted changes]: Please enter your choice (a/b/c): {_bcolors.ENDC}"
                     )
                     if choice == "a":
                         _printc(_bcolors.OKBLUE, "Commiting changes....")
-                        output_msg = repo.git.commit(
-                            "-a", "-m", "mlxp: Automatically committing all changes"
-                        )
+                        output_msg = repo.git.commit("-a", "-m", "mlxp: Automatically committing all changes")
                         _printc(_bcolors.OKBLUE, output_msg)
 
                         if not repo.is_dirty():
                             _printc(_bcolors.OKBLUE, "No more uncommitted changes!")
                             break
                     elif choice == "b":
-                        _printc(
-                            _bcolors.OKBLUE, "Checking again for uncommitted changes..."
-                        )
+                        _printc(_bcolors.OKBLUE, "Checking again for uncommitted changes...")
                         pass
                     elif choice == "c":
                         if repo.is_dirty():
                             print(ignore_msg)
                         else:
-                            _printc(
-                                _bcolors.OKBLUE, "No more uncommitted changes found!"
-                            )
+                            _printc(_bcolors.OKBLUE, "No more uncommitted changes found!")
                         break
 
                     else:
-                        _printc(
-                            _bcolors.OKBLUE, "Invalid choice. Please try again. (a/b/c)"
-                        )
+                        _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (a/b/c)")
                 else:
                     _printc(_bcolors.OKBLUE, "No uncommitted changes!")
                     break
@@ -269,9 +250,7 @@ class GitVM(VersionManager):
                 break
 
     def _handle_untracked_files(self, repo):
-        ignore_msg = (
-            _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
-        )
+        ignore_msg = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
         ignore_msg += (
             _bcolors.FAIL
             + "Warning:"
@@ -286,23 +265,16 @@ class GitVM(VersionManager):
                 status = repo.git.status()
                 print(status)
                 if repo.untracked_files:
-                    _printc(
-                        _bcolors.OKBLUE, "There are untracked files in the repository:"
-                    )
+                    _printc(_bcolors.OKBLUE, "There are untracked files in the repository:")
                     _disp_untracked_files(repo)
                     _printc(
-                        _bcolors.OKGREEN,
-                        "How would you like to handle untracked files? (a/b/c)",
+                        _bcolors.OKGREEN, "How would you like to handle untracked files? (a/b/c)",
                     )
-                    print(
-                        f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Add untracked files directly from here?"
-                    )
+                    print(f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Add untracked files directly from here?")
                     print(
                         f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: Check again for untrakced files (assuming you manually added them)."
                     )
-                    print(
-                        f"{_bcolors.OKGREEN}c{_bcolors.ENDC}: Ignore untracked files."
-                    )
+                    print(f"{_bcolors.OKGREEN}c{_bcolors.ENDC}: Ignore untracked files.")
                     choice = input(
                         f"{_bcolors.OKGREEN}[Untracked files]: Please enter your choice (a/b/c):{_bcolors.ENDC}"
                     )
@@ -333,9 +305,7 @@ class GitVM(VersionManager):
                             print(ignore_msg)
                             break
                     elif choice == "b":
-                        _printc(
-                            _bcolors.OKBLUE, "Checking again for untracked files..."
-                        )
+                        _printc(_bcolors.OKBLUE, "Checking again for untracked files...")
                         pass
                     elif choice == "c":
                         if repo.untracked_files:
@@ -345,9 +315,7 @@ class GitVM(VersionManager):
                             _printc(_bcolors.OKBLUE, "Continuing checks ...")
                         break
                     else:
-                        _printc(
-                            _bcolors.OKBLUE, "Invalid choice. Please try again. (a/b/c)"
-                        )
+                        _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (a/b/c)")
 
                 else:
                     _printc(_bcolors.OKBLUE, "No untracked files!")
@@ -394,10 +362,7 @@ class GitVM(VersionManager):
         try:
             repo = git.Repo(search_parent_directories=True)
         except git.exc.InvalidGitRepositoryError:
-            msg = (
-                os.getcwd()
-                + ". To use the GitVM, the code must belong to a git repository!"
-            )
+            msg = os.getcwd() + ". To use the GitVM, the code must belong to a git repository!"
             raise git.exc.InvalidGitRepositoryError(msg)
 
         self._handle_untracked_files(repo)
@@ -430,12 +395,7 @@ def _disp_untracked_files(repo):
         if filename[0] == filename[-1] == '"':
             filename = filename[1:-1]
             # WHATEVER ... it's a mess, but works for me
-            filename = (
-                filename.encode("ascii")
-                .decode("unicode_escape")
-                .encode("latin1")
-                .decode(defenc)
-            )
+            filename = filename.encode("ascii").decode("unicode_escape").encode("latin1").decode(defenc)
         untracked_files.append(filename)
 
     for name in untracked_files:

@@ -70,9 +70,7 @@ def _compute_mean_and_std(data_list, log_scale=False):
     index = None  # mean and std does not result an index unlike min and max.
     if len(data_list) == 1:
         out = {key + "_avg": value for key, value in data_list[0].items()}
-        out.update(
-            {key + "_std": np.zeros(len(value)) for key, value in data_list[0].items()}
-        )
+        out.update({key + "_std": np.zeros(len(value)) for key, value in data_list[0].items()})
         return out, index
     keys = list(data_list[0].keys())
     out = {}

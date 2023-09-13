@@ -19,11 +19,7 @@ from hydra.types import TaskFunction
 from omegaconf import DictConfig
 
 import mlxp
-from mlxp._internal.configure import (
-    _add_config_overrides,
-    _build_config,
-    _process_config_path,
-)
+from mlxp._internal.configure import _build_config, _process_config_path
 from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.enumerations import Status
 from mlxp.errors import MissingFieldError
@@ -43,9 +39,7 @@ hydra_defaults_dict = {
 }
 
 
-vm_choices_file = os.path.join(
-    hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml"
-)
+vm_choices_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml")
 
 
 def _clean_dir():
@@ -58,8 +52,7 @@ def _clean_dir():
 
 
 def launch(
-    config_path: str = "./configs",
-    seeding_function: Union[Callable[[Any], None], None] = None,
+    config_path: str = "./configs", seeding_function: Union[Callable[[Any], None], None] = None,
 ) -> Callable[[TaskFunction], Any]:
     """Create a decorator of the main function to be executed.
 
@@ -131,9 +124,7 @@ def launch(
         # task_function = launch(task_function)
         @functools.wraps(task_function)
         def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
-            processed_config_path = _process_config_path(
-                config_path, task_function.__code__.co_filename
-            )
+            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
@@ -141,9 +132,7 @@ def launch(
                 args = args_parser.parse_args()
 
                 # Setting hydra defaults
-                hydra_defaults = [
-                    key + "=" + value for key, value in hydra_defaults_dict.items()
-                ]
+                hydra_defaults = [key + "=" + value for key, value in hydra_defaults_dict.items()]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
 
@@ -164,9 +153,7 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(overrides):
-            processed_config_path = _process_config_path(
-                config_path, task_function.__code__.co_filename
-            )
+            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
 
             cfg = _build_config(overrides, processed_config_path, config_name)
 
@@ -185,9 +172,7 @@ def launch(
 
             if cfg.mlxp.use_version_manager:
                 version_manager = _instance_from_config(cfg.mlxp.version_manager)
-                version_manager._handle_interactive_mode(
-                    cfg.mlxp.interactive_mode, vm_choices_file
-                )
+                version_manager._handle_interactive_mode(cfg.mlxp.interactive_mode, vm_choices_file)
                 work_dir = version_manager.make_working_directory()
                 cfg.update({"info": {"version_manager": version_manager.get_info()}})
             else:
@@ -213,18 +198,13 @@ def launch(
                 parent_log_dir = logger.parent_log_dir
                 cfg.update({"info": {"logger": logger.get_info()}})
                 cfg.update({"config": _get_configs(log_dir)})
-                # cfg = _add_config_overrides(cfg,overrides)
             else:
                 logger = None
 
             if cfg.mlxp.use_scheduler:
 
                 main_cmd = _main_job_command(
-                    cfg.info.executable,
-                    cfg.info.current_file_path,
-                    work_dir,
-                    parent_log_dir,
-                    log_id,
+                    cfg.info.executable, cfg.info.current_file_path, work_dir, parent_log_dir, log_id,
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
@@ -253,9 +233,7 @@ def launch(
                             raise MissingFieldError(msg)
                         seeding_function(cfg.config.seed)
 
-                    ctx = Context(
-                        config=cfg.config, mlxp=cfg.mlxp, info=cfg.info, logger=logger
-                    )
+                    ctx = Context(config=cfg.config, mlxp=cfg.mlxp, info=cfg.info, logger=logger)
                     task_function(ctx)
                     now = datetime.now()
                     info = {
@@ -302,8 +280,8 @@ def launch(
 
 @dataclass
 class Context:
-    """
-    The contex object passed to the decorated function when using decorator mlxp.launch.
+    """The contex object passed to the decorated function when using decorator
+    mlxp.launch.
 
     .. py:attribute:: config
         :type: ConfigDict
@@ -328,7 +306,6 @@ class Context:
 
         A logger object that can be used for logging variables (metrics, checkpoints, artifacts).
         When logging is enabled, these variables are all stored in a uniquely defined directory.
-
     """
 
     config: ConfigDict = None
@@ -347,7 +324,8 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
     :param arguments: A dictionary of arguments to the class constructor
     :type class_name: str
     :type arguments: Dict[str,Any]
-    :return: An instance of a class 'class_name' constructed using the arguments in 'arguments'.
+    :return: An instance of a class 'class_name' constructed using the arguments in
+        'arguments'.
     :rtype: T
     """
     attr = _import_module(class_name)

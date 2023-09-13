@@ -52,11 +52,10 @@ class ConfigDict(dict):
 
 
 def convert_dict(
-    src_dict: Any,
-    src_class: Type = omegaconf.dictconfig.DictConfig,
-    dst_class: Type = ConfigDict,
+    src_dict: Any, src_class: Type = omegaconf.dictconfig.DictConfig, dst_class: Type = ConfigDict,
 ) -> Any:
-    """Convert a dictionary-like object from a source class to a destination dictionary-like object of a destination class.
+    """Convert a dictionary-like object from a source class to a destination dictionary-
+    like object of a destination class.
 
     :param src_dict: The source dictionary to be converted
     :param src_class: The type of the src dictionary
@@ -64,15 +63,14 @@ def convert_dict(
     :type src_dict: Any
     :type src_class: Type
     :type dst_class: Type
-    :return: A dictionary-like instance of the dst_class copying the data from the src_dict.
+    :return: A dictionary-like instance of the dst_class copying the data from the
+        src_dict.
     :rtype: Any
     """
     dst_dict = {}
     for key, value in src_dict.items():
         if isinstance(value, src_class):
-            dst_dict[key] = convert_dict(
-                value, src_class=src_class, dst_class=dst_class
-            )
+            dst_dict[key] = convert_dict(value, src_class=src_class, dst_class=dst_class)
         else:
             if isinstance(value, omegaconf.listconfig.ListConfig):
                 value = list(value)

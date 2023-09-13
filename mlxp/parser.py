@@ -14,7 +14,10 @@ from mlxp.errors import InvalidKeyError
 
 
 class Parser(abc.ABC):
-    """An abstract class for parsing queries. Any parser used by the class Reader must inherit from this abstract class."""
+    """An abstract class for parsing queries.
+
+    Any parser used by the class Reader must inherit from this abstract class.
+    """
 
     @abc.abstractmethod
     def parse(self, query: str) -> QueryInstance:
@@ -92,9 +95,7 @@ def _Lexer():
     def t_LIST(t):
         r"\[[^\]]*\]"
         t.type = "LIST"  # Update the token type to 'LIST'
-        t.value = ast.literal_eval(
-            t.value
-        )  # Evaluate the list literal to create a list object
+        t.value = ast.literal_eval(t.value)  # Evaluate the list literal to create a list object
         return t
 
     def t_BOOL(t):

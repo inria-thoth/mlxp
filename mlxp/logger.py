@@ -19,7 +19,8 @@ from mlxp.errors import InvalidArtifactError, InvalidKeyError
 
 
 class Logger(abc.ABC):
-    """A logger that allows saving outputs of the run in a uniquely assigned directory for the specific run.
+    """A logger that allows saving outputs of the run in a uniquely assigned directory
+    for the specific run.
 
     The logger creates a directory with a default file structure:
 
@@ -48,9 +49,13 @@ class Logger(abc.ABC):
     def __init__(self, parent_log_dir, forced_log_id=-1, log_streams_to_file=False):
         """Create a logger object.
 
-        :param parent_log_dir: The parent directory where the directory of the run is created.
-        :param forced_log_id:  A forced log_id for the run. When forced_log_id is positive, the log_id of the run is set forced_log_id. If forced_log_id is negative, then the logger assigns a new unique log_id for the run.
-        :param log_streams_to_file: When true, the stdout and stderr files are saved in files 'log_dir/log.stdout' and 'log_dir/log.stderr'.
+        :param parent_log_dir: The parent directory where the directory of the run is
+            created.
+        :param forced_log_id: A forced log_id for the run. When forced_log_id is
+            positive, the log_id of the run is set forced_log_id. If forced_log_id is
+            negative, then the logger assigns a new unique log_id for the run.
+        :param log_streams_to_file: When true, the stdout and stderr files are saved in
+            files 'log_dir/log.stdout' and 'log_dir/log.stderr'.
         :type parent_log_dir: str
         :type forced_log_id: int
         :type log_streams_to_file: bool
@@ -68,13 +73,9 @@ class Logger(abc.ABC):
         os.makedirs(self.metadata_dir, exist_ok=True)
 
         if log_streams_to_file:
-            log_stdout = open(
-                os.path.join(self._log_dir, "log.stdout"), "w", buffering=1
-            )
+            log_stdout = open(os.path.join(self._log_dir, "log.stdout"), "w", buffering=1)
             sys.stdout = log_stdout
-            log_stderr = open(
-                os.path.join(self._log_dir, "log.stderr"), "w", buffering=1
-            )
+            log_stderr = open(os.path.join(self._log_dir, "log.stderr"), "w", buffering=1)
             sys.stderr = log_stderr
 
     def _log_configs(self, config: ConfigDict) -> None:
@@ -89,9 +90,11 @@ class Logger(abc.ABC):
             yaml.dump(config.mlxp.to_dict(), f)
 
     def get_info(self) -> None:
-        """Return a dictionary containing information about the logger settings used for the run.
+        """Return a dictionary containing information about the logger settings used for
+        the run.
 
-        :return: Dictionary containing information about the logger settings used for the run.
+        :return: Dictionary containing information about the logger settings used for
+            the run.
         :rtype: Dict[str, Any]
         """
         return {
@@ -103,11 +106,13 @@ class Logger(abc.ABC):
         }
 
     def log_metrics(self, metrics_dict, log_name):
-        """Save a dictionary of scalars to a json file named log_name+'.json' in the directory log_dir/metrics.
+        """Save a dictionary of scalars to a json file named log_name+'.json' in the
+        directory log_dir/metrics.
 
         If the file exists already, the dictionary is appended at the end of the file.
 
-        :param metrics_dict:  Dictonary of scalar values to be saved, the values can be either int, float of string.
+        :param metrics_dict: Dictonary of scalar values to be saved, the values can be
+            either int, float of string.
         :param log_name: Name of the json file where to save the metric_dict.
         :type metrics_dict: Dict[str, Union[int, float, str]]
         :type log_name: str
@@ -125,9 +130,7 @@ class Logger(abc.ABC):
         file_name = os.path.join(self.metrics_dir, log_name)
         return self._log_metrics(metrics_dict, file_name)
 
-    def _log_metrics(
-        self, metrics_dict: Dict[str, Union[int, float, str]], file_name: str
-    ) -> None:
+    def _log_metrics(self, metrics_dict: Dict[str, Union[int, float, str]], file_name: str) -> None:
         with open(file_name + ".json", "a") as f:
             json.dump(metrics_dict, f)
             f.write(os.linesep)
@@ -179,9 +182,7 @@ class Logger(abc.ABC):
         """
         return self._log_dir
 
-    def _log_metrics_key(
-        self, metrics_dict: Dict[str, Union[int, float, str]], log_name: str
-    ):
+    def _log_metrics_key(self, metrics_dict: Dict[str, Union[int, float, str]], log_name: str):
         # Logging new keys appearing in a metrics dict
 
         if log_name not in self._metric_dict_keys.keys():
@@ -211,18 +212,17 @@ class DefaultLogger(Logger):
     """A logger that provides methods for logging checkpoints and loading them."""
 
     def __init__(self, parent_log_dir, forced_log_id, log_streams_to_file=False):
-        super().__init__(
-            parent_log_dir, forced_log_id, log_streams_to_file=log_streams_to_file
-        )
+        super().__init__(parent_log_dir, forced_log_id, log_streams_to_file=log_streams_to_file)
 
     def log_checkpoint(self, checkpoint: Any, log_name: str = "checkpoint") -> None:
         """Save a checkpoint for later use, this can be any serializable object.
 
-        This method is intended for saving the latest state of the run, thus, by default,
-        the checkpoint name is set to 'last.pkl'.
-        For custom checkpointing please use the method log_artifacts
+        This method is intended for saving the latest state of the run, thus, by
+        default, the checkpoint name is set to 'last.pkl'. For custom checkpointing
+        please use the method log_artifacts
 
-        :param checkpoint: Any serializable object to be stored in 'run_dir/Artifacts/Checkpoint/last.pkl'.
+        :param checkpoint: Any serializable object to be stored in
+            'run_dir/Artifacts/Checkpoint/last.pkl'.
         :type checkpoint: Any
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
@@ -230,14 +230,14 @@ class DefaultLogger(Logger):
         self.log_artifact(Checkpoint(checkpoint, ".pkl"), log_name=log_name)
 
     def load_checkpoint(self, log_name, root=None) -> Any:
-        """Restore a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl' 
-        or a user defined directory root. 
+        """Restore a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl' or a
+        user defined directory root.
 
         Raises an error if it fails to do so.
 
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
-        :param root: Absolute path to the checkpoint. 
+        :param root: Absolute path to the checkpoint.
         If set to None, the logger looks for the checkpoint in 'run_dir/Artifacts/Checkpoint'.
         :type root: Union[str,None] (default 'None')
         return: Any serializable object stored in 'run_dir/Artifacts/Checkpoint/last.pkl'.
@@ -247,9 +247,7 @@ class DefaultLogger(Logger):
         if root:
             checkpoint_name = os.path.join(root, log_name + ".pkl")
         else:
-            checkpoint_name = os.path.join(
-                self.artifacts_dir, "Checkpoint", log_name + ".pkl"
-            )
+            checkpoint_name = os.path.join(self.artifacts_dir, "Checkpoint", log_name + ".pkl")
         with open(checkpoint_name, "rb") as f:
             checkpoint = pkl.load(f)
         return checkpoint
@@ -281,11 +279,7 @@ def _make_log_dir(forced_log_id, root):
 
 
 def _maximum_existing_log_id(root):
-    dir_nrs = [
-        int(d)
-        for d in os.listdir(root)
-        if os.path.isdir(os.path.join(root, d)) and d.isdigit()
-    ]
+    dir_nrs = [int(d) for d in os.listdir(root) if os.path.isdir(os.path.join(root, d)) and d.isdigit()]
     if dir_nrs:
         return max(dir_nrs)
     else:

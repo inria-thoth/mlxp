@@ -1,4 +1,5 @@
-"""The reader allows queryring the logs of several experiments and performing operations on the content of these logs (e.g. grouping and aggregation)."""
+"""The reader allows queryring the logs of several experiments and performing operations
+on the content of these logs (e.g. grouping and aggregation)."""
 
 import os
 from collections.abc import MutableMapping
@@ -16,7 +17,8 @@ from mlxp.parser import DefaultParser, Parser, _is_searchable
 
 
 class Reader(object):
-    """A class for exploiting the results stored in several runs contained in a same parent directory 'src_dir'.
+    """A class for exploiting the results stored in several runs contained in a same
+    parent directory 'src_dir'.
 
     Once, created, it is possible to query the database using the method 'filter'
     to get the results matching a specific configuration setting.
@@ -53,7 +55,8 @@ class Reader(object):
     ):
         """Create a reader object.
 
-        :param src_dir: The path to the parent directory containing logs of several runs.
+        :param src_dir: The path to the parent directory containing logs of several
+            runs.
         :param dst_dir: The destination directory where the database will be created.
         :param parser: A parser for querying the database.
         :param reload: Re-create the database even if it already exists.
@@ -94,15 +97,13 @@ class Reader(object):
         return len(self.runs)
 
     def filter(
-        self,
-        query_string: str = "",
-        result_format: str = DataFrameType.DataDictList.value,
+        self, query_string: str = "", result_format: str = DataFrameType.DataDictList.value,
     ) -> Union[DataDictList, pd.DataFrame]:
         """Search a query in a database of runs.
 
         :param query_string: a string defining the query constaints.
-        :param result_format: format of the result (either a pandas dataframe or an object of type DataDictList).
-        By default returns a DataDictList object.
+        :param result_format: format of the result (either a pandas dataframe or an
+            object of type DataDictList). By default returns a DataDictList object.
         :type query_string: str (default "")
         :type result_format: str (default False)
         :return: The result of a query either as a DataDictList or a pandas dataframe.
@@ -134,17 +135,13 @@ class Reader(object):
 
     @property
     def fields(self) -> pd.DataFrame:
-        """Return all fields of the database except those specific to MLXP, excluding the fields contained in the file 'mlxp.yaml'.
+        """Return all fields of the database except those specific to MLXP, excluding
+        the fields contained in the file 'mlxp.yaml'.
 
         return: a dataframe of all fields contained in the database
         rtype: pd.DataFrame
         """
-        fields_dict = {
-            k: v
-            for d in self._fields.all()
-            for k, v in d.items()
-            if not k.startswith("mlxp")
-        }
+        fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if not k.startswith("mlxp")}
         df = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
         df.set_index("Fields", inplace=True)
         df = df.sort_index()
@@ -153,14 +150,13 @@ class Reader(object):
 
     @property
     def searchable(self) -> pd.DataFrame:
-        """Return all fields of the database that are searchable, excluding the fields contained in the file 'mlxp.yaml'.
+        """Return all fields of the database that are searchable, excluding the fields
+        contained in the file 'mlxp.yaml'.
 
         return: a dataframe of all fields contained in the database that can be searched using the method filter
         rtype: pd.DataFrame
         """
-        fields_dict = {
-            k: v for d in self._fields.all() for k, v in d.items() if _is_searchable(k)
-        }
+        fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if _is_searchable(k)}
         df = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
         df.set_index("Fields", inplace=True)
         df = df.sort_index()
@@ -224,9 +220,7 @@ def _get_data(path, metadata_file):
                 with open(full_file_name, "r") as f:
                     keys_dict = yaml.safe_load(f)
                 if keys_dict:
-                    lazydata_dict.update(
-                        {prefix + "." + key: LAZYDATA for key in keys_dict.keys()}
-                    )
+                    lazydata_dict.update({prefix + "." + key: LAZYDATA for key in keys_dict.keys()})
     except FileNotFoundError:
         pass
 
