@@ -1,6 +1,12 @@
+import os 
+
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')) as version_file:
+    version = version_file.read().strip()
 
 
-VERSION = (0, 1, 0)
+
+
+VERSION = tuple([int(s) for s in version.split('.')])
 PROJECT = "MLXP"
 AUTHOR = "Michael Arbel"
 AUTHOR_EMAIL = "michael.n.arbel@gmail.com"
