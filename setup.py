@@ -4,7 +4,7 @@ import os
 ver_dic = {}
 exec(
     compile(
-        open("mlxp/__init__.py").read(), "mlxp/__init__.py", "exec"
+        open("mlxp/version.py").read(), "mlxp/version.py", "exec"
     ),
     ver_dic,
 )
