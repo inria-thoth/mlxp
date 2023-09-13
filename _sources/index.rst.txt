@@ -75,7 +75,7 @@ it in their research as follows:
 .. code-block:: bibtex 
 
    @Misc{Arbel2023MLXP,
-     author = {Michae Arbel},
+     author = {Michael Arbel},
      title = {MLXP: A framework for conducting machine learning experiments in python},
      howpublished = {Github},
      year = {2023},
@@ -102,7 +102,7 @@ Tables of content
    :maxdepth: 2
    :caption: Content:
 
-   
+
    guide
    mlxp
 
