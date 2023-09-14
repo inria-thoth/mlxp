@@ -18,3 +18,9 @@ __all__ = [
     "SLURMScheduler",
     "GitVM",
 ]
+
+with open('../VERSION') as version_file:
+    version = version_file.read().strip()
+
+
+__version__ = version
