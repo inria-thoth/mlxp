@@ -8,6 +8,7 @@ with urlopen(_conf_url) as _inf:
     exec(compile(_inf.read(), _conf_url, "exec"), globals())
 
 
+
 ver_dic = {}
 exec(
     compile(
@@ -15,7 +16,15 @@ exec(
     ),
     ver_dic,
 )
-version = ver_dic["VERSION_TEXT"]
+
+with open('../VERSION') as version_file:
+    version = version_file.read().strip()
+
+
+VERSION = tuple([int(s) for s in version.split('.')])
+RELEASE = version
+
+
 release = ver_dic["RELEASE"]
 project = ver_dic["PROJECT"]
 author = ver_dic["AUTHOR"]

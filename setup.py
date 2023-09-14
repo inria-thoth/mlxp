@@ -1,29 +1,30 @@
 from setuptools import setup, find_packages
 import os
 
-ver_dic = {}
+project_info = {}
 exec(
     compile(
         open("project_info.py").read(), "project_info.py", "exec"
     ),
-    ver_dic,
+    project_info,
 )
 
 
-
+with open('VERSION') as version_file:
+    version = version_file.read().strip()
 
 setup(
-    name=ver_dic["PROJECT"],
-    version=ver_dic["VERSION_TEXT"],
+    name=project_info["PROJECT"],
+    version=version,
     description="A framework for conducting machine learning experiments in python",
     long_description=open(
         os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.rst")
     ).read(),
     long_description_content_type="text/x-rst",
-    url=ver_dic["URL"],
-    author=ver_dic["AUTHOR"],
-    author_email=ver_dic["AUTHOR_EMAIL"],
-    license=ver_dic["LICENSE"],
+    url=project_info["URL"],
+    author=project_info["AUTHOR"],
+    author_email=project_info["AUTHOR_EMAIL"],
+    license=project_info["LICENSE"],
     packages=find_packages(".", exclude=["*tests*", "*.develop"]),
     install_requires=["hydra-core>=1.3.2", 
                       "omegaconf>=2.2.3", 
