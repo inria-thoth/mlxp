@@ -5,105 +5,85 @@ on:
     branches:
       - develop
 
-# jobs:
-#   lint_code:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - name: Set up Python 3.9
-#         uses: actions/setup-python@v3
-#         with:
-#           python-version: 3.9
-#       - name: Install dependencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install flake8
-#           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-#       - name: Lint with flake8
-#         run: |
-#           flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
-#           flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
+jobs:
+  lint_code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install isort
+          pip install black
+          pip install flake8
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with flake8
+        run: |
+          flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
+  build_wheels:
+    needs: [lint_code]
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        #os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
 
-#   build_wheels:
-#     needs: [lint_code]
-#     name: Build wheels on ${{ matrix.os }}
-#     runs-on: ${{ matrix.os }}
-#     strategy:
-#       matrix:
-#         os: [macos-latest, windows-latest, ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
 
-#     steps:
-#       - uses: actions/checkout@v3
-
-#       - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v3
           
-#       - name: Install cibuildwheel
-#         run: python -m pip install cibuildwheel==2.11.4
+      - name: Install pypa/build
+        run: python -m pip install build --user
+      - name: Build a binary wheel and a source tarball
+        run: python -m build --sdist --wheel --outdir wheelhouse/
+      # - name: Build wheels
+      #   run: python -m pip wheel --wheel-dir=wheelhouse mlxp 
 
-#       - name: Build wheels
-#         run: python -m cibuildwheel --output-dir wheelhouse
-
-#       - uses: actions/upload-artifact@v3
-#         with:
-#           path: ./wheelhouse/*.whl
-
-#   test_imports:
-#     needs: [build_wheels]
-#     name: Smoke test for c++ depenencies on raw ${{ matrix.os }}
-#     runs-on: ${{ matrix.os }}
-#     strategy:
-#       matrix:
-#         os: [ubuntu-latest, macos-latest, windows-latest]
-#         python-version: ['3.7', '3.8', '3.9', '3.10']
-
-#     steps:
-#     - uses: actions/download-artifact@v3
-#       with:
-#         name: artifact
-#         path: dist
-
-#     - name: Set up Python
-#       uses: actions/setup-python@v3
-#       with:
-#         python-version: ${{ matrix.python-version }}
-
-#     - name: Try to import mlxp
-#       run: pip install --no-index --find-links dist MLXP &&  python -c "import mlxp;"
-
-#   run_tests:
-#     needs: [build_wheels]
-#     name: Run the tests on ${{ matrix.os }}
-#     runs-on: ${{ matrix.os }}
-#     strategy:
-#       matrix:
-#         os: [macos-latest, ubuntu-latest, windows-latest]
-#         python-version: ['3.7', '3.8', '3.9', '3.10']
-
-#     steps:
-#     - uses: actions/download-artifact@v3
-#       with:
-#         name: artifact
-#         path: dist
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./wheelhouse/*.whl
+  run_tests:
+    needs: [build_wheels]
+    name: Run the tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        #os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
+        #python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ['3.9']
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: artifact
+        path: dist
     
-#     - name: Set up Python
-#       uses: actions/setup-python@v3
-#       with:
-#         python-version: ${{ matrix.python-version }}
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
       
-#     - name: Try to import mlxp
-#       run: python -m pip install --find-links dist MLXP
+    - name: Try to import mlxp
+      run: python -m pip install --find-links dist MLXP &&  python -c "import mlxp;"
     
-#     - name: Checkout
-#       uses: actions/checkout@v3
-#       with:
-#         fetch-depth: 0
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
           
-#     - name: Switch to Current Branch
-#       run: git checkout ${{ env.BRANCH }}
+    - name: Switch to Current Branch
+      run: git checkout ${{ env.BRANCH }}
 
-#     - name: Run tests without the lib
-#       uses: knicknic/os-specific-run@v1.0.3
-#       with:
-#         macos: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
-#         linux: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
-#         windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pytest test/
+    - name: Run tests without the lib
+      uses: knicknic/os-specific-run@v1.0.3
+      with:
+        #macos: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
+        linux: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
+        #windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pytest test/

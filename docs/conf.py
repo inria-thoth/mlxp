@@ -25,7 +25,7 @@ VERSION = tuple([int(s) for s in version.split('.')])
 RELEASE = version
 
 
-release = ver_dic["RELEASE"]
+release = RELEASE
 project = ver_dic["PROJECT"]
 author = ver_dic["AUTHOR"]
 copyright = ver_dic["COPYRIGHT"]

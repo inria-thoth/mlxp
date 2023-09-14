@@ -21,13 +21,10 @@ jobs:
           pip install black
           pip install flake8
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-  #     - name: Lint with flake8
-  #       run: |
-  #         isort mlxp
-  #         black --check mlxp
-  #         flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
-  #         flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
-  #         find mlxp -type f -name "*.py" | xargs pylint
+      - name: Lint with flake8
+        run: |
+          flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
   build_wheels:
     needs: [lint_code]
     name: Build wheels on ${{ matrix.os }}
@@ -164,7 +161,6 @@ jobs:
           name: artifact
           path: dist
       - name: Publish distribution 📦 to PyPI
-        if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
