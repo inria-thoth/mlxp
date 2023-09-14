@@ -115,39 +115,6 @@ jobs:
           asset_name: MLXP-${{ env.PACKAGE_VERSION }}.tar.gz
           asset_content_type: application/gzip
 
-  test_imports:
-    needs: [build_wheels]
-    name: Smoke test for on raw ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        #os: [ubuntu-latest, macos-latest, windows-latest]
-        #python-version: ['3.7', '3.8', '3.9', '3.10']
-        os: [ubuntu-latest]
-        python-version: ['3.9']
-
-    steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: artifact
-        path: dist
-
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install isort
-        pip install black
-        pip install flake8
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-    - name: Try to import MLXP 
-      run: pip install --no-index --find-links dist MLXP &&  python -c "import mlxp;"
-
   run_tests:
     needs: [build_wheels]
     name: Run the tests on ${{ matrix.os }}
@@ -170,7 +137,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
       
     - name: Try to import mlxp
-      run: python -m pip install --find-links dist MLXP
+      run: python -m pip install --find-links dist MLXP &&  python -c "import mlxp;"
     
     - name: Checkout
       uses: actions/checkout@v3
@@ -189,7 +156,7 @@ jobs:
 
   upload_pypi:
     if: github.ref == 'refs/heads/master'
-    needs: [build_wheels, build_sdist, test_imports, run_tests]
+    needs: [build_wheels, build_sdist, run_tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
