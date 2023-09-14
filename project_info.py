@@ -9,11 +9,3 @@ COPYRIGHT = "Copyright (C) 2023 " + AUTHOR
 
 
 
-__author__ = AUTHOR
-__copyright__ = COPYRIGHT
-__credits__ = [
-    "Romain Ménégaux",
-    "Alexandre Zouaoui",
-    "Juliette Marrie",
-    "Pierre Wolinski",
-]
