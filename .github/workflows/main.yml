@@ -145,7 +145,7 @@ jobs:
         pip install flake8
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Try to import mlxp
+    - name: Try to import MLXP 
       run: pip install --no-index --find-links dist MLXP &&  python -c "import mlxp;"
 
   run_tests:
