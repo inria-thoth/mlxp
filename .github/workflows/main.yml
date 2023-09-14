@@ -1,9 +1,6 @@
-name: Build and upload to PyPI
+name: Test and release
 
-on:
-  push:
-    branches:
-      - master
+on: push
 
 jobs:
   lint_code:
@@ -48,6 +45,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_sdist:
+    if: github.ref == 'refs/heads/master'
     needs: [lint_code]
     name: Build source distribution
     runs-on: ubuntu-latest
