@@ -135,7 +135,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Try to import mlxp
-      run: pip install "numpy>=1.3.4" && pip install --no-index --find-links dist MLXP &&  python -c "import mlxp;"
+      run: pip install "pandas>=1.3.4" && pip install --no-index --find-links dist MLXP &&  python -c "import mlxp;"
 
   run_tests:
     needs: [build_wheels]
