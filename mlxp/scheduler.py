@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 
 from omegaconf.errors import OmegaConfBaseException
 
-from mlxp.errors import JobSubmissionError
+from mlxp.errors import JobSubmissionError, InvalidShellPathError
 
 
 class Scheduler(abc.ABC):
@@ -63,7 +63,7 @@ class Scheduler(abc.ABC):
         self,
         directive: str,
         submission_cmd: str,
-        shell_path: str = "/bin/bash",
+        shell_path: str = '',
         shell_config_cmd: str = "",
         env_cmd: str = "",
         cleanup_cmd: str = "",
@@ -159,6 +159,8 @@ class Scheduler(abc.ABC):
         job_command = [main_cmd]
 
         # Setting shell
+        if not self.shell_path:
+            raise InvalidShellPathError()
         shell_cmd = [f"#!{self.shell_path}\n"]
 
         # Setting scheduler options

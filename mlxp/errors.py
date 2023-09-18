@@ -30,3 +30,7 @@ class InvalidAggregationMapError(Exception):
     """Raised when an aggregation map is not an instance of AggregationMap."""
 
     pass
+
+class InvalidShellPathError(Exception):
+    """Raised when no shell path is specified"""
+    pass

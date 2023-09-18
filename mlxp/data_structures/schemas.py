@@ -5,7 +5,16 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from omegaconf import MISSING
+import subprocess
 
+def get_defautl_shell_path():
+    try:
+        command = "echo $SHELL"
+        shell_path = subprocess.check_output(command, shell=True, stderr=subprocess.PIPE, text=True).strip()
+        return shell_path
+    except subprocess.CalledProcessError:
+        print("Error running the command {command}")
+        return ''
 
 @dataclass
 class ConfigScheduler:
@@ -45,7 +54,7 @@ class ConfigScheduler:
     """
 
     name: str = "NoScheduler"
-    shell_path: str = os.environ["SHELL"]
+    shell_path: str = get_defautl_shell_path()
     shell_config_cmd: str = ""
     env_cmd: str = ""
     cleanup_cmd: str = ""
