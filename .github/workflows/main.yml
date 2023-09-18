@@ -143,7 +143,7 @@ jobs:
       uses: knicknic/os-specific-run@v1.0.3
       with:
         #macos: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
-        linux: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
+        linux: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest 
         #windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pytest test/
 
   upload_pypi:
