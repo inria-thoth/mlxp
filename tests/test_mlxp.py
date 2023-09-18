@@ -9,7 +9,8 @@ import sys
 import pytest
 
 
-scripts = pathlib.Path('test_examples').resolve().glob('main.py')
+scripts = pathlib.Path('test_examples').resolve().glob('launch.py')
+
 @pytest.mark.parametrize('script', scripts)
 def test_launching(script):
 
@@ -18,7 +19,7 @@ def test_launching(script):
     runpy.run_path(str(script),run_name='__main__')
 
 
-scripts = pathlib.Path('test_examples').resolve().glob('results.py')
+scripts = pathlib.Path('test_examples').resolve().glob('read.py')
 
 
 @pytest.mark.parametrize('script', scripts)
