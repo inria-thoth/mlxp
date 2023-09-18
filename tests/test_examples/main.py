@@ -2,8 +2,7 @@ import mlxp
 import numpy as np
 
 def set_seeds(seed):
-    import torch
-    torch.manual_seed(seed)
+    np.random.seed(seed)
 
 
 
