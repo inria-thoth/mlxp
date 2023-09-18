@@ -99,15 +99,13 @@ def _Lexer():
         return t
 
     def t_BOOL(t):
-        r"(?i)(true|false)"
-        # Update the token type to 'LIST' and convert scalar value to a list object
+        r"(?i:true)|(?i:false)"
         t.type = "SCALAR"
         t.value = ast.literal_eval(t.value)
         return t
 
     def t_STRING(t):
         r"\'(.*?)\'"
-        # Update the token type to 'LIST' and convert scalar value to a list object
         t.type = "SCALAR"
         t.value = ast.literal_eval(t.value)
         return t
@@ -115,8 +113,6 @@ def _Lexer():
     # Define a rule for scalar values (including integers, floats, and strings)
     def t_SCALAR(t):
         r"([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))|\'[^\']*\'|\"[^\"]*\""
-        # r'[0-9]+(\.[0-9]+)?|\'[^\']*\'|\"[^\"]*\"'
-        # Update the token type to 'LIST' and convert scalar value to a list object
         # t.type = 'LIST'
         t.value = ast.literal_eval(t.value)
         return t
@@ -131,7 +127,7 @@ def _Lexer():
     def t_error(t):
         raise SyntaxError(f'Illegal character "{t.value[0]}"')
 
-    return lex.lex(debug=False)
+    return lex.lex(debug=True)
 
 
 def _YaccParser():

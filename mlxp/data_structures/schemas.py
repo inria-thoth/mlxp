@@ -289,9 +289,9 @@ class MLXPConfig:
                     - A copy of the code is made based on the latest commit (if not already existing) and code is executed from there.
     """
 
-    logger: ConfigLogger = ConfigLogger()
-    scheduler: ConfigScheduler = ConfigScheduler()
-    version_manager: ConfigVersionManager = ConfigGitVM()
+    logger: ConfigLogger = field(default_factory=lambda: ConfigLogger())
+    scheduler: ConfigScheduler = field(default_factory=lambda: ConfigScheduler())
+    version_manager: ConfigVersionManager = field(default_factory=lambda: ConfigGitVM())
     use_version_manager: bool = False
     use_scheduler: bool = False
     use_logger: bool = True
@@ -322,6 +322,6 @@ class Metadata:
         Contains the user's defined configs that are specific to the run.
     """
 
-    info: Info = Info()
-    mlxp: MLXPConfig = MLXPConfig()
+    info: Info = field(default_factory=lambda: Info())
+    mlxp: MLXPConfig = field(default_factory=lambda: MLXPConfig())
     config: Any = None
