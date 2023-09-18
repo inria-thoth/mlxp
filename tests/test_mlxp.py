@@ -9,13 +9,14 @@ import sys
 import pytest
 
 
-scripts = pathlib.Path('..', 'tutorial').resolve().glob('main.py')
+scripts = pathlib.Path('test_examples').resolve().glob('*.py')
 
 
 @pytest.mark.parametrize('script', scripts)
-def test_script_execution(script):
+def test_usage(script):
 
     parent_path = str(script.parent)
     sys.path.insert(0,parent_path)
     runpy.run_path(str(script),run_name='__main__')
+
 

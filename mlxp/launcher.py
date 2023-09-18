@@ -264,8 +264,8 @@ def launch(
 
                     _reset_work_dir(cur_dir)
                     raise
-
-        _set_co_filename(decorated_task, task_function.__code__.co_filename)
+        
+        decorated_task.__code__ = decorated_task.__code__.replace(co_filename=task_function.__code__.co_filename)
 
         return decorated_task
 
@@ -369,28 +369,6 @@ def _set_work_dir(work_dir):
 def _reset_work_dir(cur_dir):
     os.chdir(cur_dir)
     sys.path = sys.path[1:]
-
-
-def _set_co_filename(func, co_filename):
-    fn_code = func.__code__
-    func.__code__ = CodeType(
-        fn_code.co_argcount,
-        fn_code.co_posonlyargcount,
-        fn_code.co_kwonlyargcount,
-        fn_code.co_nlocals,
-        fn_code.co_stacksize,
-        fn_code.co_flags,
-        fn_code.co_code,
-        fn_code.co_consts,
-        fn_code.co_names,
-        fn_code.co_varnames,
-        co_filename,
-        fn_code.co_name,
-        fn_code.co_firstlineno,
-        fn_code.co_lnotab,
-        fn_code.co_freevars,
-        fn_code.co_cellvars,
-    )
 
 
 def _get_mlxp_configs(log_dir):

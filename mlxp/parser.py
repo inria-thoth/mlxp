@@ -127,7 +127,7 @@ def _Lexer():
     def t_error(t):
         raise SyntaxError(f'Illegal character "{t.value[0]}"')
 
-    return lex.lex(debug=True)
+    return lex.lex(debug=False)
 
 
 def _YaccParser():
