@@ -79,7 +79,8 @@ def _ask_configure_scheduler(mlxp_config, mlxp_file):
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
 
 
-def _build_config(overrides, config_path, config_name):
+def _build_config(config_path, config_name, co_filename, overrides):
+    config_path = _process_config_path(config_path, co_filename)
 
     os.makedirs(config_path, exist_ok=True)
     custom_config_file = os.path.join(config_path, config_name + ".yaml")
@@ -94,6 +95,8 @@ def _build_config(overrides, config_path, config_name):
     cfg = OmegaConf.merge(cfg, overrides_config)
 
     cfg = convert_dict(cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+
+    _update_default_directories(cfg.mlxp, co_filename)
 
     return cfg
 
@@ -199,6 +202,14 @@ def _get_default_config(config_path, overrides):
     if overrides:
         default_config = OmegaConf.merge(default_config, overrides)
     return default_config
+
+def _update_default_directories(mlxp_configs, run_file_name):
+
+    parent_log_dir = _process_config_path(mlxp_configs.logger.parent_log_dir, run_file_name)
+    mlxp_configs.logger.parent_log_dir = parent_log_dir
+
+    parent_log_dir = _process_config_path(mlxp_configs.version_manager.parent_work_dir, run_file_name)
+    mlxp_configs.version_manager.parent_work_dir = parent_log_dir
 
 
 def _process_config_path(config_path, file_name):

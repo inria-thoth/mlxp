@@ -153,10 +153,8 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(overrides):
-            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
-
-            cfg = _build_config(overrides, processed_config_path, config_name)
-
+            co_filename = task_function.__code__.co_filename
+            cfg = _build_config(config_path, config_name, co_filename, overrides)
             now = datetime.now()
             info = {
                 "hostname": socket.gethostname(),

@@ -1,0 +1,9 @@
+seed: 0
+num_epoch: 10
+model:
+ num_units: 100
+data:
+ d_int: 10
+ device: 'cpu'
+optimizer:
+ lr: 10.
