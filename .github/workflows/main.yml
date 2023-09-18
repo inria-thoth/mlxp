@@ -113,8 +113,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        #os: [ubuntu-latest]
         #python-version: ['3.8', '3.9', '3.10', '3.11']
         python-version: ['3.9']
     steps:
@@ -142,9 +142,9 @@ jobs:
     - name: Run tests without the lib
       uses: knicknic/os-specific-run@v1.0.3
       with:
-        #macos: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
+        macos: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest
         linux: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest 
-        #windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pytest test/
+        windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
 
   upload_pypi:
     if: github.ref == 'refs/heads/master'
