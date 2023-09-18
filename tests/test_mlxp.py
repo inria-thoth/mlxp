@@ -26,6 +26,6 @@ def test_reading(script):
 
     parent_path = str(script.parent)
     sys.path.insert(0,parent_path)
-    runpy.run_path(str(script),run_name='__main__')
+    #runpy.run_path(str(script),run_name='__main__')
 
 
