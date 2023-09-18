@@ -2,12 +2,13 @@
 
 import abc
 import os
+import platform
 import subprocess
 from typing import Any, Dict, List
 
 from omegaconf.errors import OmegaConfBaseException
 
-from mlxp.errors import JobSubmissionError, InvalidShellPathError
+from mlxp.errors import JobSubmissionError, InvalidShellPathError, UnknownSystemError
 
 
 class Scheduler(abc.ABC):
@@ -139,12 +140,12 @@ class Scheduler(abc.ABC):
         cmd = self._make_job(main_cmd, log_dir)
         print(cmd)
 
-        job_path = job_path = os.path.join(log_dir, "script.sh")
+        job_path = job_path = os.path.join(log_dir, self._get_script_name())
         with open(job_path, "w") as f:
             f.write(cmd)
 
         try:
-            chmod_cmd = f"chmod +x {job_path!r}"
+            chmod_cmd = self._cmd_make_executable(job_path)
             subprocess.check_call(chmod_cmd, shell=True)
             launch_cmd = f"{self.submission_cmd}  {job_path!r}"
             process_output = subprocess.check_output(launch_cmd, shell=True).decode("utf-8")
@@ -154,6 +155,33 @@ class Scheduler(abc.ABC):
             print(e.output)
             raise JobSubmissionError(e)
         self.process_output = process_output
+    
+    def _get_script_name(self):
+        system = platform.system()
+        if system in ['Linux','Darwin']: 
+            return "script.sh"
+        elif system== 'Windows':
+            return "script.bat" 
+        else:
+            raise UnknownSystemError()
+
+    def _cmd_make_executable(self, script):
+        system = platform.system()
+        if system in ['Linux','Darwin']: 
+            return f"chmod +x {script!r}"
+        elif system== 'Windows':
+            return "" 
+        else:
+            raise UnknownSystemError()
+            
+    def _cmd_shell_path(self):
+        system = platform.system()
+        if system in ['Linux','Darwin']: 
+            return f"#!{self.shell_path}\n"
+        elif system== 'Windows':
+            return "" 
+        else:
+            raise UnknownSystemError() 
 
     def _make_job(self, main_cmd, log_dir):
         job_command = [main_cmd]
@@ -161,7 +189,7 @@ class Scheduler(abc.ABC):
         # Setting shell
         if not self.shell_path:
             raise InvalidShellPathError()
-        shell_cmd = [f"#!{self.shell_path}\n"]
+        shell_cmd = [self._cmd_shell_path()]
 
         # Setting scheduler options
 

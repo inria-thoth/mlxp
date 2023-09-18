@@ -34,3 +34,8 @@ class InvalidAggregationMapError(Exception):
 class InvalidShellPathError(Exception):
     """Raised when no shell path is specified"""
     pass
+
+class UnknownSystemError(Exception):
+    """Raised when system is different from Linux, Darwin or Windows"""
+    pass 
+
