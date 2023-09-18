@@ -1,5 +1,5 @@
 import mlxp
-
+import shutil
 
 
 def read_outputs():
@@ -48,7 +48,13 @@ def read_outputs():
 	agg_results = grouped_results.aggregate(agg_maps)
 
 	print(agg_results)
-
+	try:
+		shutil.rmtree(parent_log_dir)
+	except:
+		pass
 if __name__ == "__main__":
     
     read_outputs()
+
+
+
