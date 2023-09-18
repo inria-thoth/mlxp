@@ -34,7 +34,7 @@ setup(
                       "ply>=3.11",
                       "PyYAML>=6.0",
                       "tinydb>=4.7.1"],
-    python_requires='>=3.8',
+    python_requires='>=3.8', 
     zip_safe=False,
     classifiers=[
     'Programming Language :: Python :: 3.8',
