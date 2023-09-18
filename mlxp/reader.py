@@ -97,7 +97,9 @@ class Reader(object):
         return len(self.runs)
 
     def filter(
-        self, query_string: str = "", result_format: str = DataFrameType.DataDictList.value,
+        self,
+        query_string: str = "",
+        result_format: str = DataFrameType.DataDictList.value,
     ) -> Union[DataDictList, pd.DataFrame]:
         """Search a query in a database of runs.
 

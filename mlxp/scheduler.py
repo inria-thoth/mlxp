@@ -183,7 +183,12 @@ class OARScheduler(Scheduler):
     """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
     def __init__(
-        self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=[],
+        self,
+        shell_path="/bin/bash",
+        shell_config_cmd="",
+        env_cmd="",
+        cleanup_cmd="",
+        option_cmd=[],
     ):
         super().__init__(
             directive="#OAR",

@@ -60,7 +60,6 @@ class AvgStd(AggregationMap):
         super().__init__([key], map_name="avgstd")
 
     def _apply(self, data):
-
         data = [{key: d[key] for key in self.keys} for d in data]
         out, _ = _compute_mean_and_std(data)
         return out, None
@@ -87,7 +86,7 @@ def _compute_mean_and_std(data_list, log_scale=False):
             if log_scale:
                 new_array = np.log(new_array)
             out[key + "_avg"] = out[key + "_avg"][:len_data] + new_array
-            out[key + "_std"] = out[key + "_std"][:len_data] + new_array ** 2
+            out[key + "_std"] = out[key + "_std"][:len_data] + new_array**2
 
     for key in keys:
         out[key + "_avg"] = out[key + "_avg"] / (i + 1)

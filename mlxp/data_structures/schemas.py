@@ -45,7 +45,7 @@ class ConfigScheduler:
     """
 
     name: str = "NoScheduler"
-    shell_path: str = os.environ['SHELL']
+    shell_path: str = os.environ["SHELL"]
     shell_config_cmd: str = ""
     env_cmd: str = ""
     cleanup_cmd: str = ""
@@ -89,7 +89,7 @@ class ConfigGitVM(ConfigVersionManager):
     """
 
     name: str = "GitVM"
-    parent_work_dir: str = os.path.join(".",".work_dir")
+    parent_work_dir: str = os.path.join(".", ".work_dir")
     compute_requirements: bool = False
 
 
@@ -129,7 +129,7 @@ class ConfigLogger:
     """
 
     name: str = "DefaultLogger"
-    parent_log_dir: str = os.path.join(".","logs")
+    parent_log_dir: str = os.path.join(".", "logs")
     forced_log_id: int = -1
     log_streams_to_file: bool = False
 

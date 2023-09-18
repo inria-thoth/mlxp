@@ -16,7 +16,6 @@ class VersionManager(abc.ABC):
     run."""
 
     def __init__(self):
-
         self._interactive_mode = False
         self._vm_choices_file = ""
         self._existing_choices = False
@@ -142,7 +141,8 @@ class GitVM(VersionManager):
         else:
             if not self._existing_choices:
                 _printc(
-                    _bcolors.OKBLUE, f"Found a copy of the repository with commit-hash: {self.commit_hash}",
+                    _bcolors.OKBLUE,
+                    f"Found a copy of the repository with commit-hash: {self.commit_hash}",
                 )
                 _printc(_bcolors.OKBLUE, f"Run will be executed from {self.dst}")
 
@@ -153,7 +153,8 @@ class GitVM(VersionManager):
                     choice = self.vm_choices["cloning"]
                 else:
                     _printc(
-                        _bcolors.OKGREEN, "Where would you like to run your code from? (a/b):",
+                        _bcolors.OKGREEN,
+                        "Where would you like to run your code from? (a/b):",
                     )
                     if os.path.isdir(self.dst):
                         print(
@@ -177,7 +178,8 @@ class GitVM(VersionManager):
                 elif choice == "b":
                     if not self._existing_choices:
                         _printc(
-                            _bcolors.OKBLUE, f"Run will be executed from the current repository {self.dst}",
+                            _bcolors.OKBLUE,
+                            f"Run will be executed from the current repository {self.dst}",
                         )
                     break
                 else:
@@ -206,11 +208,13 @@ class GitVM(VersionManager):
                     break
                 if repo.is_dirty():
                     _printc(
-                        _bcolors.OKBLUE, "There are uncommitted changes in the repository:",
+                        _bcolors.OKBLUE,
+                        "There are uncommitted changes in the repository:",
                     )
                     _disp_uncommited_files(repo)
                     _printc(
-                        _bcolors.OKGREEN, "How would you like to handle uncommitted changes? (a/b/c)",
+                        _bcolors.OKGREEN,
+                        "How would you like to handle uncommitted changes? (a/b/c)",
                     )
                     print(
                         f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Create a new automatic commit before launching jobs."
@@ -268,7 +272,8 @@ class GitVM(VersionManager):
                     _printc(_bcolors.OKBLUE, "There are untracked files in the repository:")
                     _disp_untracked_files(repo)
                     _printc(
-                        _bcolors.OKGREEN, "How would you like to handle untracked files? (a/b/c)",
+                        _bcolors.OKGREEN,
+                        "How would you like to handle untracked files? (a/b/c)",
                     )
                     print(f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Add untracked files directly from here?")
                     print(
@@ -326,7 +331,6 @@ class GitVM(VersionManager):
                 break
 
     def _make_requirements_file(self):
-
         _printc(_bcolors.OKBLUE, "No requirements file found")
         _printc(_bcolors.OKBLUE, "Generating it using pipreqs")
         # Create a new updated requirement file.
@@ -356,7 +360,6 @@ class GitVM(VersionManager):
             self.requirements = package_list
 
     def _getGitRepo(self):
-
         import git
 
         try:
