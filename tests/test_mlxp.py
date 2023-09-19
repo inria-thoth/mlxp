@@ -30,5 +30,6 @@ def test_reading(script):
     #runpy.run_path(str(script),run_name='__main__')
 
 def test_path_windows():
-    
+    file_name = os.path.join('.','test_examples','launch.py')
+    assert os.path.exists(file_name)
 
