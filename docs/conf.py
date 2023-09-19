@@ -1,7 +1,7 @@
 
 
 from urllib.request import urlopen
-
+import os 
 _conf_url = \
         "https://raw.githubusercontent.com/inducer/sphinxconfig/main/sphinxconfig.py"
 with urlopen(_conf_url) as _inf:
@@ -10,14 +10,18 @@ with urlopen(_conf_url) as _inf:
 
 
 ver_dic = {}
+parent_dir = os.path.dirname(os.getcwd())
+path_project_info_file = os.path.join(parent_dir,"project_info.py")
+path_version_file = os.path.join(parent_dir,"VERSION")
+
 exec(
     compile(
-        open("../project_info.py").read(), "../project_info.py", "exec"
+        open(path_project_info_file).read(), path_project_info_file, "exec"
     ),
     ver_dic,
 )
 
-with open('../VERSION') as version_file:
+with open(path_version_file) as version_file:
     version = version_file.read().strip()
 
 

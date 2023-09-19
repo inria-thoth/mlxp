@@ -52,7 +52,7 @@ def _clean_dir():
 
 
 def launch(
-    config_path: str = "./configs",
+    config_path: str = "configs",
     seeding_function: Union[Callable[[Any], None], None] = None,
 ) -> Callable[[TaskFunction], Any]:
     """Create a decorator of the main function to be executed.
@@ -63,7 +63,7 @@ def launch(
 
         import mlxp
 
-        @mlxp.launch(config_path='./configs',
+        @mlxp.launch(config_path='configs',
                      seeding_function=set_seeds)
         def my_func(ctx: mlxp.Context)->None:
 

@@ -29,4 +29,6 @@ def test_reading(script):
     sys.path.insert(0,parent_path)
     #runpy.run_path(str(script),run_name='__main__')
 
+def test_path_windows():
+    
 
