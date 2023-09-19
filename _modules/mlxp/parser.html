@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.parser - MLXP 0.1.1 documentation</title>
+        <title>mlxp.parser - MLXP 0.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.1.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.1 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -299,7 +299,6 @@
 
 
 <span class="k">def</span> <span class="nf">_Lexer</span><span class="p">():</span>
-
     <span class="n">reserved</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;in&quot;</span><span class="p">:</span> <span class="s2">&quot;IN&quot;</span><span class="p">}</span>
 
     <span class="c1"># Define regular expressions for each token</span>
@@ -325,24 +324,20 @@
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">t_BOOL</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-        <span class="sa">r</span><span class="s2">&quot;(?i)(true|false)&quot;</span>
-        <span class="c1"># Update the token type to &#39;LIST&#39; and convert scalar value to a list object</span>
+        <span class="sa">r</span><span class="s2">&quot;(?i:true)|(?i:false)&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;SCALAR&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">t_STRING</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
         <span class="sa">r</span><span class="s2">&quot;\&#39;(.*?)\&#39;&quot;</span>
-        <span class="c1"># Update the token type to &#39;LIST&#39; and convert scalar value to a list object</span>
         <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;SCALAR&quot;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="c1"># Define a rule for scalar values (including integers, floats, and strings)</span>
     <span class="k">def</span> <span class="nf">t_SCALAR</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-        <span class="sa">r</span><span class="s2">&quot;([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))|\&#39;[^\&#39;]*\&#39;|</span><span class="se">\&quot;</span><span class="s2">[^</span><span class="se">\&quot;</span><span class="s2">]*</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
-        <span class="c1"># r&#39;[0-9]+(\.[0-9]+)?|\&#39;[^\&#39;]*\&#39;|\&quot;[^\&quot;]*\&quot;&#39;</span>
-        <span class="c1"># Update the token type to &#39;LIST&#39; and convert scalar value to a list object</span>
+        <span class="sa">r</span><span class="s2">&quot;([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))|\&#39;[^\&#39;]*\&#39;|</span><span class="se">\&quot;</span><span class="s2">[^</span><span class="se">\&quot;</span><span class="s2">]*</span><span class="se">\&quot;</span><span class="s2"> &quot;</span>
         <span class="c1"># t.type = &#39;LIST&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
@@ -361,7 +356,6 @@
 
 
 <span class="k">def</span> <span class="nf">_YaccParser</span><span class="p">():</span>
-
     <span class="n">precedence</span> <span class="o">=</span> <span class="p">(</span>
         <span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;OR&quot;</span><span class="p">),</span>
         <span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;AND&quot;</span><span class="p">),</span>
@@ -380,11 +374,11 @@
 
     <span class="k">def</span> <span class="nf">p_expression__binOp</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Expr : ID EQUAL SCALAR</span>
-<span class="sd">                  | ID NOT_EQUAL SCALAR</span>
-<span class="sd">                  | ID LESS_THAN SCALAR</span>
-<span class="sd">                  | ID GREATER_THAN SCALAR</span>
-<span class="sd">                  | ID LESS_THAN_OR_EQUAL SCALAR</span>
-<span class="sd">                  | ID GREATER_THAN_OR_EQUAL SCALAR</span>
+<span class="sd">        | ID NOT_EQUAL SCALAR</span>
+<span class="sd">        | ID LESS_THAN SCALAR</span>
+<span class="sd">        | ID GREATER_THAN SCALAR</span>
+<span class="sd">        | ID LESS_THAN_OR_EQUAL SCALAR</span>
+<span class="sd">        | ID GREATER_THAN_OR_EQUAL SCALAR</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_binOp</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
@@ -496,7 +490,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a58bc63e"></script>
+</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

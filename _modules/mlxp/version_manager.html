@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.version_manager - MLXP 0.1.1 documentation</title>
+        <title>mlxp.version_manager - MLXP 0.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.1.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.1 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -232,7 +232,6 @@
 <span class="sd">    run.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span> <span class="o">=</span> <span class="kc">False</span>
@@ -373,7 +372,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
                 <span class="n">_printc</span><span class="p">(</span>
-                    <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Found a copy of the repository with commit-hash: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;Found a copy of the repository with commit-hash: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Run will be executed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -384,7 +384,8 @@
                     <span class="n">choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vm_choices</span><span class="p">[</span><span class="s2">&quot;cloning&quot;</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;Where would you like to run your code from? (a/b):&quot;</span><span class="p">,</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
+                        <span class="s2">&quot;Where would you like to run your code from? (a/b):&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">):</span>
                         <span class="nb">print</span><span class="p">(</span>
@@ -408,7 +409,8 @@
                 <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
                         <span class="n">_printc</span><span class="p">(</span>
-                            <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Run will be executed from the current repository </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;Run will be executed from the current repository </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -437,11 +439,13 @@
                     <span class="k">break</span>
                 <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
                     <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;There are uncommitted changes in the repository:&quot;</span><span class="p">,</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
+                        <span class="s2">&quot;There are uncommitted changes in the repository:&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="n">_disp_uncommited_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
                     <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;How would you like to handle uncommitted changes? (a/b/c)&quot;</span><span class="p">,</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
+                        <span class="s2">&quot;How would you like to handle uncommitted changes? (a/b/c)&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">a</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Create a new automatic commit before launching jobs.&quot;</span>
@@ -499,7 +503,8 @@
                     <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;There are untracked files in the repository:&quot;</span><span class="p">)</span>
                     <span class="n">_disp_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
                     <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;How would you like to handle untracked files? (a/b/c)&quot;</span><span class="p">,</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
+                        <span class="s2">&quot;How would you like to handle untracked files? (a/b/c)&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">a</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Add untracked files directly from here?&quot;</span><span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span>
@@ -557,7 +562,6 @@
                 <span class="k">break</span>
 
     <span class="k">def</span> <span class="nf">_make_requirements_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No requirements file found&quot;</span><span class="p">)</span>
         <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Generating it using pipreqs&quot;</span><span class="p">)</span>
         <span class="c1"># Create a new updated requirement file.</span>
@@ -587,7 +591,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">requirements</span> <span class="o">=</span> <span class="n">package_list</span>
 
     <span class="k">def</span> <span class="nf">_getGitRepo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="kn">import</span> <span class="nn">git</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -664,7 +667,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a58bc63e"></script>
+</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

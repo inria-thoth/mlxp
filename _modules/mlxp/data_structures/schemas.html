@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.data_structures.schemas - MLXP 0.1.1 documentation</title>
+        <title>mlxp.data_structures.schemas - MLXP 0.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">MLXP 0.1.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">MLXP 0.1.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.1 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -219,7 +219,16 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">MISSING</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 
+<span class="k">def</span> <span class="nf">get_defautl_shell_path</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;echo $SHELL&quot;</span>
+        <span class="n">shell_path</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">shell_path</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error running the command </span><span class="si">{command}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
 
 <div class="viewcode-block" id="ConfigScheduler">
 <a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.schemas.ConfigScheduler">[docs]</a>
@@ -261,7 +270,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NoScheduler&quot;</span>
-    <span class="n">shell_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/bin/bash&quot;</span>
+    <span class="n">shell_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">get_defautl_shell_path</span><span class="p">()</span>
     <span class="n">shell_config_cmd</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">env_cmd</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">cleanup_cmd</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -311,7 +320,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GitVM&quot;</span>
-    <span class="n">parent_work_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./.workdir&quot;</span>
+    <span class="n">parent_work_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;.work_dir&quot;</span><span class="p">)</span>
     <span class="n">compute_requirements</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
@@ -354,7 +363,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;DefaultLogger&quot;</span>
-    <span class="n">parent_log_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./logs&quot;</span>
+    <span class="n">parent_log_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;logs&quot;</span><span class="p">)</span>
     <span class="n">forced_log_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">log_streams_to_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
 
@@ -520,9 +529,9 @@
 <span class="sd">                    - A copy of the code is made based on the latest commit (if not already existing) and code is executed from there.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">logger</span><span class="p">:</span> <span class="n">ConfigLogger</span> <span class="o">=</span> <span class="n">ConfigLogger</span><span class="p">()</span>
-    <span class="n">scheduler</span><span class="p">:</span> <span class="n">ConfigScheduler</span> <span class="o">=</span> <span class="n">ConfigScheduler</span><span class="p">()</span>
-    <span class="n">version_manager</span><span class="p">:</span> <span class="n">ConfigVersionManager</span> <span class="o">=</span> <span class="n">ConfigGitVM</span><span class="p">()</span>
+    <span class="n">logger</span><span class="p">:</span> <span class="n">ConfigLogger</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ConfigLogger</span><span class="p">())</span>
+    <span class="n">scheduler</span><span class="p">:</span> <span class="n">ConfigScheduler</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ConfigScheduler</span><span class="p">())</span>
+    <span class="n">version_manager</span><span class="p">:</span> <span class="n">ConfigVersionManager</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ConfigGitVM</span><span class="p">())</span>
     <span class="n">use_version_manager</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">use_scheduler</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">use_logger</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -556,8 +565,8 @@
 <span class="sd">        Contains the user&#39;s defined configs that are specific to the run.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">info</span><span class="p">:</span> <span class="n">Info</span> <span class="o">=</span> <span class="n">Info</span><span class="p">()</span>
-    <span class="n">mlxp</span><span class="p">:</span> <span class="n">MLXPConfig</span> <span class="o">=</span> <span class="n">MLXPConfig</span><span class="p">()</span>
+    <span class="n">info</span><span class="p">:</span> <span class="n">Info</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Info</span><span class="p">())</span>
+    <span class="n">mlxp</span><span class="p">:</span> <span class="n">MLXPConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">MLXPConfig</span><span class="p">())</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 </pre></div>
@@ -592,7 +601,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=a58bc63e"></script>
+</div><script src="../../../_static/documentation_options.js?v=92734c54"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.launcher - MLXP 0.1.1 documentation</title>
+        <title>mlxp.launcher - MLXP 0.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.1.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.1 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -268,7 +268,8 @@
 <div class="viewcode-block" id="launch">
 <a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.launch">[docs]</a>
 <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span>
-    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./configs&quot;</span><span class="p">,</span> <span class="n">seeding_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;configs&quot;</span><span class="p">,</span>
+    <span class="n">seeding_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">TaskFunction</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a decorator of the main function to be executed.</span>
 
@@ -278,7 +279,7 @@
 
 <span class="sd">        import mlxp</span>
 
-<span class="sd">        @mlxp.launch(config_path=&#39;./configs&#39;,</span>
+<span class="sd">        @mlxp.launch(config_path=&#39;configs&#39;,</span>
 <span class="sd">                     seeding_function=set_seeds)</span>
 <span class="sd">        def my_func(ctx: mlxp.Context)-&gt;None:</span>
 
@@ -369,10 +370,8 @@
     <span class="k">def</span> <span class="nf">launcher_decorator</span><span class="p">(</span><span class="n">task_function</span><span class="p">):</span>
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">task_function</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">decorated_task</span><span class="p">(</span><span class="n">overrides</span><span class="p">):</span>
-            <span class="n">processed_config_path</span> <span class="o">=</span> <span class="n">_process_config_path</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">)</span>
-
-            <span class="n">cfg</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span><span class="n">overrides</span><span class="p">,</span> <span class="n">processed_config_path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">)</span>
-
+            <span class="n">co_filename</span> <span class="o">=</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span>
+            <span class="n">cfg</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">co_filename</span><span class="p">,</span> <span class="n">overrides</span><span class="p">)</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">(),</span>
@@ -397,7 +396,6 @@
             <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;work_dir&quot;</span><span class="p">:</span> <span class="n">work_dir</span><span class="p">}})</span>
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
-
                 <span class="n">scheduler</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Logger is currently disabled.&quot;</span><span class="p">)</span>
@@ -418,9 +416,12 @@
                 <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
-
                 <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span>
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">log_id</span><span class="p">,</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                    <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span>
+                    <span class="n">work_dir</span><span class="p">,</span>
+                    <span class="n">parent_log_dir</span><span class="p">,</span>
+                    <span class="n">log_id</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="n">scheduler</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">)</span>
@@ -428,7 +429,6 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-
                 <span class="c1"># ## Setting up the working directory</span>
                 <span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
                 <span class="n">_set_work_dir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">)</span>
@@ -436,7 +436,6 @@
                 <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
                     <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
                 <span class="k">try</span><span class="p">:</span>
-
                     <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="o">.</span><span class="n">value</span><span class="p">}})</span>
                     <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
@@ -481,7 +480,9 @@
                     <span class="n">_reset_work_dir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">)</span>
                     <span class="k">raise</span>
 
-        <span class="n">_set_co_filename</span><span class="p">(</span><span class="n">decorated_task</span><span class="p">,</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">)</span>
+        <span class="n">decorated_task</span><span class="o">.</span><span class="vm">__code__</span> <span class="o">=</span> <span class="n">decorated_task</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">co_filename</span><span class="o">=</span><span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">decorated_task</span>
 
@@ -594,28 +595,6 @@
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
 
-<span class="k">def</span> <span class="nf">_set_co_filename</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">co_filename</span><span class="p">):</span>
-    <span class="n">fn_code</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__code__</span>
-    <span class="n">func</span><span class="o">.</span><span class="vm">__code__</span> <span class="o">=</span> <span class="n">CodeType</span><span class="p">(</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_argcount</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_posonlyargcount</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_kwonlyargcount</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_nlocals</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_stacksize</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_flags</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_code</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_consts</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_names</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">,</span>
-        <span class="n">co_filename</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_firstlineno</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_lnotab</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_freevars</span><span class="p">,</span>
-        <span class="n">fn_code</span><span class="o">.</span><span class="n">co_cellvars</span><span class="p">,</span>
-    <span class="p">)</span>
-
-
 <span class="k">def</span> <span class="nf">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
 
@@ -712,7 +691,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=a58bc63e"></script>
+</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
