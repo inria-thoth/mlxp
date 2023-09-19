@@ -10,7 +10,7 @@ def set_seeds(seed):
 
 
 
-@mlxp.launch(config_path='./configs',
+@mlxp.launch(config_path='configs',
              seeding_function=set_seeds)
 
 def train(ctx: mlxp.Context)->None:

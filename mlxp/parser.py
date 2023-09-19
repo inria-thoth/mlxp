@@ -73,7 +73,6 @@ tokens = (
 
 
 def _Lexer():
-
     reserved = {"in": "IN"}
 
     # Define regular expressions for each token
@@ -99,24 +98,20 @@ def _Lexer():
         return t
 
     def t_BOOL(t):
-        r"(?i)(true|false)"
-        # Update the token type to 'LIST' and convert scalar value to a list object
+        r"(?i:true)|(?i:false)"
         t.type = "SCALAR"
         t.value = ast.literal_eval(t.value)
         return t
 
     def t_STRING(t):
         r"\'(.*?)\'"
-        # Update the token type to 'LIST' and convert scalar value to a list object
         t.type = "SCALAR"
         t.value = ast.literal_eval(t.value)
         return t
 
     # Define a rule for scalar values (including integers, floats, and strings)
     def t_SCALAR(t):
-        r"([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))|\'[^\']*\'|\"[^\"]*\""
-        # r'[0-9]+(\.[0-9]+)?|\'[^\']*\'|\"[^\"]*\"'
-        # Update the token type to 'LIST' and convert scalar value to a list object
+        r"([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+))|\'[^\']*\'|\"[^\"]*\" "
         # t.type = 'LIST'
         t.value = ast.literal_eval(t.value)
         return t
@@ -135,7 +130,6 @@ def _Lexer():
 
 
 def _YaccParser():
-
     precedence = (
         ("left", "OR"),
         ("left", "AND"),
@@ -154,11 +148,11 @@ def _YaccParser():
 
     def p_expression__binOp(p):
         """Expr : ID EQUAL SCALAR
-                  | ID NOT_EQUAL SCALAR
-                  | ID LESS_THAN SCALAR
-                  | ID GREATER_THAN SCALAR
-                  | ID LESS_THAN_OR_EQUAL SCALAR
-                  | ID GREATER_THAN_OR_EQUAL SCALAR
+        | ID NOT_EQUAL SCALAR
+        | ID LESS_THAN SCALAR
+        | ID GREATER_THAN SCALAR
+        | ID LESS_THAN_OR_EQUAL SCALAR
+        | ID GREATER_THAN_OR_EQUAL SCALAR
         """
         p[0] = _binOp(p[1], p[2], p[3])
 

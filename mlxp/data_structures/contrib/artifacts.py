@@ -12,7 +12,6 @@ class NumpyArray(Artifact):
     ext = ".npz"
 
     def _save(self, fname):
-
         import numpy as np
 
         np.savez(fname, **self.obj)

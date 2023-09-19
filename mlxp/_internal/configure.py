@@ -20,7 +20,8 @@ def _configure_scheduler(mlxp_config):
         )
 
         _printc(
-            _bcolors.OKBLUE, "For a default scheduler, you can choose one from this list:",
+            _bcolors.OKBLUE,
+            "For a default scheduler, you can choose one from this list:",
         )
         _printc(_bcolors.FAIL, f"{[member.value for member in DefaultSchedulers]}")
         _printc(
@@ -46,7 +47,8 @@ def _configure_scheduler(mlxp_config):
                 break
             else:
                 _printc(
-                    _bcolors.OKBLUE, f" {files_input} is not a valid class identifier. Please try again  ",
+                    _bcolors.OKBLUE,
+                    f" {files_input} is not a valid class identifier. Please try again  ",
                 )
         else:
             break
@@ -54,9 +56,9 @@ def _configure_scheduler(mlxp_config):
 
 def _ask_configure_scheduler(mlxp_config, mlxp_file):
     while True:
-
         _printc(
-            _bcolors.OKGREEN, " Would you like to select a default job scheduler now ?  (y/n):",
+            _bcolors.OKGREEN,
+            " Would you like to select a default job scheduler now ?  (y/n):",
         )
         print(
             f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: The job scheduler configs will be stored in the file {mlxp_file}"
@@ -69,17 +71,18 @@ def _ask_configure_scheduler(mlxp_config, mlxp_file):
             _configure_scheduler(mlxp_config)
             break
         elif choice == "n":
-
             _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
             _printc(
-                _bcolors.OKBLUE, "To use a scheduler, you will need to select one later.",
+                _bcolors.OKBLUE,
+                "To use a scheduler, you will need to select one later.",
             )
             break
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
 
 
-def _build_config(overrides, config_path, config_name):
+def _build_config(config_path, config_name, co_filename, overrides):
+    config_path = _process_config_path(config_path, co_filename)
 
     os.makedirs(config_path, exist_ok=True)
     custom_config_file = os.path.join(config_path, config_name + ".yaml")
@@ -94,6 +97,8 @@ def _build_config(overrides, config_path, config_name):
     cfg = OmegaConf.merge(cfg, overrides_config)
 
     cfg = convert_dict(cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+
+    _update_default_directories(cfg.mlxp, co_filename)
 
     return cfg
 
@@ -116,7 +121,6 @@ def _process_overrides(overrides):
 
 
 def _get_mlxp_configs(mlxp_file, default_config):
-
     with open(mlxp_file, "r") as file:
         mlxp_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
     valid_keys = list(default_config["mlxp"].keys())
@@ -133,7 +137,6 @@ def _get_mlxp_configs(mlxp_file, default_config):
 
 
 def _set_scheduler(default_config, overrides, mlxp_file):
-
     scheduler_settings = _get_scheduler_settings(default_config, overrides, mlxp_file)
     scheduler_name, scheduler_name_default, using_scheduler, interactive_mode = scheduler_settings
     update_default_conifg = False
@@ -159,7 +162,6 @@ def _set_scheduler(default_config, overrides, mlxp_file):
 
 
 def _get_scheduler_settings(default_config, overrides, mlxp_file):
-
     using_scheduler = default_config.mlxp.use_scheduler
     scheduler_name_default = default_config.mlxp.scheduler.name
     scheduler_name = scheduler_name_default
@@ -192,13 +194,22 @@ def _get_default_config(config_path, overrides):
 
     if not os.path.exists(mlxp_file) or update_default_conifg:
         _printc(
-            _bcolors.OKBLUE, f"Default settings for mlxp will be created in {mlxp_file} ",
+            _bcolors.OKBLUE,
+            f"Default settings for mlxp will be created in {mlxp_file} ",
         )
         mlxp = OmegaConf.create(default_config["mlxp"])
         omegaconf.OmegaConf.save(config=mlxp, f=mlxp_file)
     if overrides:
         default_config = OmegaConf.merge(default_config, overrides)
     return default_config
+
+
+def _update_default_directories(mlxp_configs, run_file_name):
+    parent_log_dir = _process_config_path(mlxp_configs.logger.parent_log_dir, run_file_name)
+    mlxp_configs.logger.parent_log_dir = parent_log_dir
+
+    parent_log_dir = _process_config_path(mlxp_configs.version_manager.parent_work_dir, run_file_name)
+    mlxp_configs.version_manager.parent_work_dir = parent_log_dir
 
 
 def _process_config_path(config_path, file_name):

@@ -406,12 +406,10 @@ class GroupedDataDicts:
 
 
 def _group_by(config_dicts, list_group_keys):
-
     collection_dict = {}
     group_vals = set()
     group_keys = tuple(list_group_keys)
     for config_dict in config_dicts:
-
         pkey_list = [config_dict._flattened()[group_key] for group_key in list_group_keys]
         pkey_val = [str(pkey) for pkey in pkey_list if pkey is not None]
         group_vals.add(tuple(pkey_val))
@@ -444,7 +442,6 @@ def _aggregate(groupedconfigs, aggregation_maps):
 
     agg_config_list = []
     for keys, config_list in groupedconfigs.items():
-
         agg_config = _aggregate_collection(config_list, aggregation_maps)
         for key_name, key in zip(groupedconfigs.group_keys, list(keys)):
             agg_config.update({key_name: key})

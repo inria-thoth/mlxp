@@ -25,8 +25,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [macos-latest, windows-latest, ubuntu-latest]
-        os: [ubuntu-latest]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        #os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -113,10 +113,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest]
-        #python-version: ['3.7', '3.8', '3.9', '3.10']
-        python-version: ['3.9']
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        #os: [ubuntu-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        #python-version: ['3.9']
     steps:
     - uses: actions/download-artifact@v3
       with:
@@ -142,9 +142,9 @@ jobs:
     - name: Run tests without the lib
       uses: knicknic/os-specific-run@v1.0.3
       with:
-        #macos: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
-        linux: rm -rf MLXP && python -m pip install pytest && python -m pytest tests/
-        #windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pytest test/
+        macos: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest
+        linux: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest 
+        windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
 
   upload_pypi:
     if: github.ref == 'refs/heads/master'

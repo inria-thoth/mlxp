@@ -52,7 +52,8 @@ def _clean_dir():
 
 
 def launch(
-    config_path: str = "./configs", seeding_function: Union[Callable[[Any], None], None] = None,
+    config_path: str = "configs",
+    seeding_function: Union[Callable[[Any], None], None] = None,
 ) -> Callable[[TaskFunction], Any]:
     """Create a decorator of the main function to be executed.
 
@@ -62,7 +63,7 @@ def launch(
 
         import mlxp
 
-        @mlxp.launch(config_path='./configs',
+        @mlxp.launch(config_path='configs',
                      seeding_function=set_seeds)
         def my_func(ctx: mlxp.Context)->None:
 
@@ -153,10 +154,8 @@ def launch(
     def launcher_decorator(task_function):
         @functools.wraps(task_function)
         def decorated_task(overrides):
-            processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
-
-            cfg = _build_config(overrides, processed_config_path, config_name)
-
+            co_filename = task_function.__code__.co_filename
+            cfg = _build_config(config_path, config_name, co_filename, overrides)
             now = datetime.now()
             info = {
                 "hostname": socket.gethostname(),
@@ -181,7 +180,6 @@ def launch(
             cfg.update({"info": {"work_dir": work_dir}})
 
             if cfg.mlxp.use_scheduler:
-
                 scheduler = _instance_from_config(cfg.mlxp.scheduler)
                 if not cfg.mlxp.use_logger:
                     print("Logger is currently disabled.")
@@ -202,9 +200,12 @@ def launch(
                 logger = None
 
             if cfg.mlxp.use_scheduler:
-
                 main_cmd = _main_job_command(
-                    cfg.info.executable, cfg.info.current_file_path, work_dir, parent_log_dir, log_id,
+                    cfg.info.executable,
+                    cfg.info.current_file_path,
+                    work_dir,
+                    parent_log_dir,
+                    log_id,
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
@@ -212,7 +213,6 @@ def launch(
                 logger._log_configs(cfg)
 
             else:
-
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
                 _set_work_dir(work_dir)
@@ -220,7 +220,6 @@ def launch(
                 if logger:
                     cfg.update({"info": _get_mlxp_configs(log_dir)})
                 try:
-
                     cfg.update({"info": {"status": Status.RUNNING.value}})
                     if logger:
                         logger._log_configs(cfg)
@@ -265,7 +264,9 @@ def launch(
                     _reset_work_dir(cur_dir)
                     raise
 
-        _set_co_filename(decorated_task, task_function.__code__.co_filename)
+        decorated_task.__code__ = decorated_task.__code__.replace(
+            co_filename=task_function.__code__.co_filename
+        )
 
         return decorated_task
 
@@ -369,28 +370,6 @@ def _set_work_dir(work_dir):
 def _reset_work_dir(cur_dir):
     os.chdir(cur_dir)
     sys.path = sys.path[1:]
-
-
-def _set_co_filename(func, co_filename):
-    fn_code = func.__code__
-    func.__code__ = CodeType(
-        fn_code.co_argcount,
-        fn_code.co_posonlyargcount,
-        fn_code.co_kwonlyargcount,
-        fn_code.co_nlocals,
-        fn_code.co_stacksize,
-        fn_code.co_flags,
-        fn_code.co_code,
-        fn_code.co_consts,
-        fn_code.co_names,
-        fn_code.co_varnames,
-        co_filename,
-        fn_code.co_name,
-        fn_code.co_firstlineno,
-        fn_code.co_lnotab,
-        fn_code.co_freevars,
-        fn_code.co_cellvars,
-    )
 
 
 def _get_mlxp_configs(log_dir):

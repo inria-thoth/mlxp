@@ -52,7 +52,9 @@ class ConfigDict(dict):
 
 
 def convert_dict(
-    src_dict: Any, src_class: Type = omegaconf.dictconfig.DictConfig, dst_class: Type = ConfigDict,
+    src_dict: Any,
+    src_class: Type = omegaconf.dictconfig.DictConfig,
+    dst_class: Type = ConfigDict,
 ) -> Any:
     """Convert a dictionary-like object from a source class to a destination dictionary-
     like object of a destination class.

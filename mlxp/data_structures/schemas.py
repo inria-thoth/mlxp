@@ -5,7 +5,16 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from omegaconf import MISSING
+import subprocess
 
+def get_defautl_shell_path():
+    try:
+        command = "echo $SHELL"
+        shell_path = subprocess.check_output(command, shell=True, stderr=subprocess.PIPE, text=True).strip()
+        return shell_path
+    except subprocess.CalledProcessError:
+        print("Error running the command {command}")
+        return ''
 
 @dataclass
 class ConfigScheduler:
@@ -45,7 +54,7 @@ class ConfigScheduler:
     """
 
     name: str = "NoScheduler"
-    shell_path: str = "/bin/bash"
+    shell_path: str = get_defautl_shell_path()
     shell_config_cmd: str = ""
     env_cmd: str = ""
     cleanup_cmd: str = ""
@@ -89,7 +98,7 @@ class ConfigGitVM(ConfigVersionManager):
     """
 
     name: str = "GitVM"
-    parent_work_dir: str = "./.workdir"
+    parent_work_dir: str = os.path.join(".", ".work_dir")
     compute_requirements: bool = False
 
 
@@ -129,7 +138,7 @@ class ConfigLogger:
     """
 
     name: str = "DefaultLogger"
-    parent_log_dir: str = "./logs"
+    parent_log_dir: str = os.path.join(".", "logs")
     forced_log_id: int = -1
     log_streams_to_file: bool = False
 
@@ -289,9 +298,9 @@ class MLXPConfig:
                     - A copy of the code is made based on the latest commit (if not already existing) and code is executed from there.
     """
 
-    logger: ConfigLogger = ConfigLogger()
-    scheduler: ConfigScheduler = ConfigScheduler()
-    version_manager: ConfigVersionManager = ConfigGitVM()
+    logger: ConfigLogger = field(default_factory=lambda: ConfigLogger())
+    scheduler: ConfigScheduler = field(default_factory=lambda: ConfigScheduler())
+    version_manager: ConfigVersionManager = field(default_factory=lambda: ConfigGitVM())
     use_version_manager: bool = False
     use_scheduler: bool = False
     use_logger: bool = True
@@ -322,6 +331,6 @@ class Metadata:
         Contains the user's defined configs that are specific to the run.
     """
 
-    info: Info = Info()
-    mlxp: MLXPConfig = MLXPConfig()
+    info: Info = field(default_factory=lambda: Info())
+    mlxp: MLXPConfig = field(default_factory=lambda: MLXPConfig())
     config: Any = None
