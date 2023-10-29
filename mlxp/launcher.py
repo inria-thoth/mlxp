@@ -414,7 +414,8 @@ def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, j
             +mlxp.logger.forced_log_id={job_id}\
             +mlxp.logger.parent_log_dir={parent_log_dir} \
             +mlxp.use_scheduler={False}\
-            +mlxp.use_version_manager={False}",
+            +mlxp.use_version_manager={False}\
+            +mlxp.interactive_mode={False}",
     ]
 
     values = [f"{val}\n" for val in values]
@@ -431,6 +432,7 @@ def _get_overrides():
             and ("scheduler" not in x)
             and ("logger.parent_log_dir" not in x)
             and ("logger.forced_log_id" not in x)
+            and ("interactive_mode" not in x)
         )
 
     filtered_args = list(filter(filter_fn, overrides))
