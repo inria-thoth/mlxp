@@ -180,12 +180,20 @@ def launch(
             cfg.update({"info": {"work_dir": work_dir}})
 
             if cfg.mlxp.use_scheduler:
-                scheduler = _instance_from_config(cfg.mlxp.scheduler)
-                if not cfg.mlxp.use_logger:
-                    print("Logger is currently disabled.")
-                    print("To use the scheduler, the logger must be enabled")
-                    print("Enabling the logger...")
-                    cfg.mlxp.use_logger = True
+                try:
+                    scheduler = _instance_from_config(cfg.mlxp.scheduler)
+                    if not cfg.mlxp.use_logger:
+                        print("Logger is currently disabled.")
+                        print("To use the scheduler, the logger must be enabled")
+                        print("Enabling the logger...")
+                        cfg.mlxp.use_logger = True
+                except AttributeError:
+                    print("{} is not a valid scheduler",cfg.mlxp.scheduler.name)
+                    print("Jobs will be executed locally")
+                    print("Please refer to the documentation for configuring a valid scheduler")
+                    print("or use the interactive mode to set up a scheduler")
+                    scheduler = None
+                    cfg.mlxp.use_scheduler = False
             else:
                 scheduler = None
 
