@@ -22,7 +22,7 @@ import mlxp
 from mlxp._internal.configure import _build_config, _process_config_path
 from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.enumerations import Status
-from mlxp.errors import MissingFieldError
+from mlxp.errors import MissingFieldError, InvalidSchedulerError
 from mlxp.logger import Logger
 
 _UNSPECIFIED_: Any = object()
@@ -39,14 +39,14 @@ hydra_defaults_dict = {
 }
 
 
-vm_choices_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml")
+interactive_mode_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml")
 
 
 def _clean_dir():
     sweep_dir = hydra_defaults_dict["hydra.sweep.dir"]
     try:
         os.remove(os.path.join(sweep_dir, "multirun.yaml"))
-        os.remove(vm_choices_file)
+        os.remove(interactive_mode_file)
     except FileNotFoundError:
         pass
 
@@ -155,7 +155,9 @@ def launch(
         @functools.wraps(task_function)
         def decorated_task(overrides):
             co_filename = task_function.__code__.co_filename
-            cfg = _build_config(config_path, config_name, co_filename, overrides)
+
+
+            cfg, im_handler = _build_config(config_path, config_name, co_filename, overrides, interactive_mode_file)
             now = datetime.now()
             info = {
                 "hostname": socket.gethostname(),
@@ -171,7 +173,7 @@ def launch(
 
             if cfg.mlxp.use_version_manager:
                 version_manager = _instance_from_config(cfg.mlxp.version_manager)
-                version_manager._handle_interactive_mode(cfg.mlxp.interactive_mode, vm_choices_file)
+                version_manager._set_im_handler(im_handler)
                 work_dir = version_manager.make_working_directory()
                 cfg.update({"info": {"version_manager": version_manager.get_info()}})
             else:
@@ -188,12 +190,14 @@ def launch(
                         print("Enabling the logger...")
                         cfg.mlxp.use_logger = True
                 except AttributeError:
-                    print("{} is not a valid scheduler",cfg.mlxp.scheduler.name)
-                    print("Jobs will be executed locally")
-                    print("Please refer to the documentation for configuring a valid scheduler")
-                    print("or use the interactive mode to set up a scheduler")
-                    scheduler = None
-                    cfg.mlxp.use_scheduler = False
+                    error_msg = cfg.mlxp.scheduler.name + " is not a valid scheduler\n"
+                    error_msg += "There are two options to prevent this error:\n"
+                    error_msg += " 1) Disable the scheduler by setting mlxp.use_scheduler=False\n"
+                    error_msg += " 2) Configure a valid scheduler: for instance, you can use the interactive mode to select one of the default schedulers\n"
+                    error_msg += "For more information about scheduler configuration, please refer to the documentation"
+                    raise InvalidSchedulerError(error_msg) from None
+                    #scheduler = None
+                    #cfg.mlxp.use_scheduler = False
             else:
                 scheduler = None
 

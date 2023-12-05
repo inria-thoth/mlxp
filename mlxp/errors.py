@@ -39,3 +39,10 @@ class UnknownSystemError(Exception):
     """Raised when system is different from Linux, Darwin or Windows"""
     pass 
 
+class InvalidSchedulerError(Exception):
+    """Raised when system is different from Linux, Darwin or Windows"""
+    pass 
+
+class InvalidConfigFileError(Exception):
+    """Raised when the mlxp config file contains an invalid field """
+    pass
