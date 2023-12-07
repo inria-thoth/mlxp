@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.version_manager - MLXP 0.1.2 documentation</title>
+        <title>mlxp.version_manager - MLXP 0.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -220,9 +220,26 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
-<span class="kn">import</span> <span class="nn">yaml</span>
-
 <span class="kn">from</span> <span class="nn">mlxp._internal._interactive_mode</span> <span class="kn">import</span> <span class="n">_bcolors</span><span class="p">,</span> <span class="n">_printc</span>
+
+<span class="n">Ignore_untracked_msg</span> <span class="o">=</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span> <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span> <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span> <span class="o">+</span> <span class="s2">&quot;There are untracked files! </span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">Ignore_untracked_msg</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span>
+    <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span>
+    <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span>
+    <span class="o">+</span> <span class="s2">&quot;Untracked files will not be accessible during execution of the run!&quot;</span>
+<span class="p">)</span>
+
+<span class="n">Ignore_uncommited_msg</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span> <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span> <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span> <span class="o">+</span> <span class="s2">&quot;Run will be executed from the latest commit</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+
+<span class="n">Ignore_uncommited_msg</span> <span class="o">+=</span> <span class="p">(</span>
+    <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span>
+    <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span>
+    <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span>
+    <span class="o">+</span> <span class="s2">&quot;Uncommitted changes will not be taken into account during execution of the run!</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="VersionManager">
@@ -232,24 +249,15 @@
 <span class="sd">    run.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vm_choices</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_handle_interactive_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">vm_choices_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./vm_choices.yaml&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span> <span class="o">=</span> <span class="n">mode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span> <span class="o">=</span> <span class="n">vm_choices_file</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">vm_choices</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">_save_vm_choice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span><span class="p">):</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vm_choices_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                    <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vm_choices</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_set_im_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im_handler</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span> <span class="o">=</span> <span class="n">im_handler</span>
+        <span class="n">im_handler_choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">get_im_choice</span><span class="p">(</span><span class="s2">&quot;vm&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span> <span class="o">=</span> <span class="n">im_handler_choice</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">set_im_choice</span><span class="p">(</span><span class="s2">&quot;vm&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VersionManager.get_info">
 <a class="viewcode-back" href="../../mlxp.version_managment.html#mlxp.version_manager.VersionManager.get_info">[docs]</a>
@@ -268,7 +276,7 @@
 <a class="viewcode-back" href="../../mlxp.version_managment.html#mlxp.version_manager.VersionManager.make_working_directory">[docs]</a>
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">make_working_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a path to the target working directory from which jobs submitted to a</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a path to the target working directory from which runs submitted to a</span>
 <span class="sd">        cluster in batch mode will be executed.</span>
 
 <span class="sd">        :rtype: str</span>
@@ -347,218 +355,115 @@
 <span class="sd">        :rtype: str</span>
 <span class="sd">        :return: A path to the target working directory</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">repo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getGitRepo</span><span class="p">()</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">_get_git_repo</span><span class="p">()</span>
         <span class="n">repo_root</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">rev_parse</span><span class="p">(</span><span class="s2">&quot;--show-toplevel&quot;</span><span class="p">)</span>
         <span class="n">relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">repo_root</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">working_tree_dir</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_cloning</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">save_im_choice</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_clone_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
         <span class="n">repo_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">hexsha</span>
         <span class="n">target_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repo_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span><span class="p">)</span>
         <span class="n">parent_work_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_work_dir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent_work_dir</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_cloning</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_save_vm_choice</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span></div>
-
-
-    <span class="k">def</span> <span class="nf">_clone_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">):</span>
-            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Creating a copy of the repository at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Creating a backup of the code at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">repo</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_requirements</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_make_requirements_file</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
                 <span class="n">_printc</span><span class="p">(</span>
-                    <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;Found a copy of the repository with commit-hash: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Found a backup of the code with commit-hash: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commit_hash</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Run will be executed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_handle_cloning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">relpath</span><span class="p">):</span>
+        <span class="n">choice</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
-                    <span class="n">choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vm_choices</span><span class="p">[</span><span class="s2">&quot;cloning&quot;</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
+            <span class="n">valid_choice</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+                <span class="n">choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">get_im_choice</span><span class="p">(</span><span class="s2">&quot;cloning&quot;</span><span class="p">)</span>
+                <span class="n">valid_choice</span> <span class="o">=</span> <span class="n">choice</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_choice</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">:</span>
+                    <span class="n">choice</span> <span class="o">=</span> <span class="n">_get_cloning_choice</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">set_im_choice</span><span class="p">(</span><span class="s2">&quot;cloning&quot;</span><span class="p">,</span> <span class="n">choice</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
                     <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
-                        <span class="s2">&quot;Where would you like to run your code from? (a/b):&quot;</span><span class="p">,</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
+                        <span class="s2">&quot;Run will be executed from a backup directory based on the latest commit &quot;</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">):</span>
-                        <span class="nb">print</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2"> a </span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Execute code from an existing copy of the repository based on the latest commit.&quot;</span>
-                        <span class="p">)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The copy is located in: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">a</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Create a copy of the repository based on the latest commit and execute code from there.&quot;</span>
-                        <span class="p">)</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The copy will be created in: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Execute code from the main repository&quot;</span><span class="p">)</span>
-                    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">Please enter you answer (a/b):</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">vm_choices</span><span class="p">[</span><span class="s2">&quot;cloning&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">choice</span>
 
-                <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_requirements</span><span class="p">()</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
-                    <span class="k">break</span>
-                <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
-                        <span class="n">_printc</span><span class="p">(</span>
-                            <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
-                            <span class="sa">f</span><span class="s2">&quot;Run will be executed from the current repository </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="k">break</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (a/b)&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_handle_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_handle_commit_state</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_set_requirements</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+                    <span class="n">_printc</span><span class="p">(</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Run will be executed from the main directory&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">_printc</span><span class="p">(</span>
+                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Warning: [Reproduciblity] Run is not linked to any git commit&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (y/n)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
                 <span class="k">break</span>
 
+        <span class="k">return</span> <span class="n">choice</span>
+
     <span class="k">def</span> <span class="nf">_handle_commit_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
-        <span class="n">ignore_msg</span> <span class="o">=</span> <span class="s2">&quot;Ingoring uncommitted changes!</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">ignore_msg</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span>
-            <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span>
-            <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span>
-            <span class="o">+</span> <span class="s2">&quot;Uncommitted changes will not be taken into account during execution of the jobs!</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="n">ignore_msg</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span> <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span> <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span> <span class="o">+</span> <span class="s2">&quot;Jobs will be executed from the latest commit&quot;</span>
-        <span class="p">)</span>
-
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
-                    <span class="k">break</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
-                    <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
-                        <span class="s2">&quot;There are uncommitted changes in the repository:&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
+                    <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;There are uncommitted changes in the repository:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">_disp_uncommited_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                    <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
-                        <span class="s2">&quot;How would you like to handle uncommitted changes? (a/b/c)&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">a</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Create a new automatic commit before launching jobs.&quot;</span>
-                    <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Check again for uncommitted changes (assuming you manually committed them). &quot;</span>
-                    <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">c</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Ignore uncommitted changes.&quot;</span><span class="p">)</span>
-                    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">[Uncommitted changes]: Please enter your choice (a/b/c): </span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span>
-                        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Commiting changes....&quot;</span><span class="p">)</span>
-                        <span class="n">output_msg</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;mlxp: Automatically committing all changes&quot;</span><span class="p">)</span>
-                        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="n">output_msg</span><span class="p">)</span>
-
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
-                            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No more uncommitted changes!&quot;</span><span class="p">)</span>
-                            <span class="k">break</span>
-                    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
-                        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Checking again for uncommitted changes...&quot;</span><span class="p">)</span>
-                        <span class="k">pass</span>
-                    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="n">ignore_msg</span><span class="p">)</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No more uncommitted changes found!&quot;</span><span class="p">)</span>
-                        <span class="k">break</span>
-
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (a/b/c)&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">:</span>
+                        <span class="n">done</span> <span class="o">=</span> <span class="n">_is_done_uncommited_changes</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No uncommitted changes!&quot;</span><span class="p">)</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">ignore_msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">Ignore_uncommited_msg</span><span class="p">)</span>
                 <span class="k">break</span>
 
     <span class="k">def</span> <span class="nf">_handle_untracked_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
-        <span class="n">ignore_msg</span> <span class="o">=</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span> <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span> <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span> <span class="o">+</span> <span class="s2">&quot;There are untracked files! </span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">ignore_msg</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span>
-            <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span>
-            <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span>
-            <span class="o">+</span> <span class="s2">&quot;Untracked files will not be accessible during execution of the jobs!&quot;</span>
-        <span class="p">)</span>
-
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interactive_mode</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
-                    <span class="k">break</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">status</span><span class="p">()</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span><span class="p">:</span>
-                    <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;There are untracked files in the repository:&quot;</span><span class="p">)</span>
+                    <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;There are untracked files in the repository:&quot;</span><span class="p">)</span>
                     <span class="n">_disp_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                    <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
-                        <span class="s2">&quot;How would you like to handle untracked files? (a/b/c)&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">a</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Add untracked files directly from here?&quot;</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Check again for untrakced files (assuming you manually added them).&quot;</span>
-                    <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">c</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Ignore untracked files.&quot;</span><span class="p">)</span>
-                    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">[Untracked files]: Please enter your choice (a/b/c):</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Untracked files:&quot;</span><span class="p">)</span>
-                        <span class="n">_disp_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                        <span class="n">_printc</span><span class="p">(</span>
-                            <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
-                            <span class="s2">&quot;Please select files to be tracked (comma-separated, hit Enter to skip):&quot;</span><span class="p">,</span>
-                        <span class="p">)</span>
-
-                        <span class="n">files_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
-
-                        <span class="c1"># If user input is not empty</span>
-                        <span class="k">if</span> <span class="n">files_input</span><span class="p">:</span>
-                            <span class="c1"># Split user input by commas</span>
-                            <span class="n">files_to_add</span> <span class="o">=</span> <span class="n">files_input</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-
-                            <span class="c1"># Add selected files</span>
-                            <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files_to_add</span><span class="p">:</span>
-                                <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-                            <span class="c1"># Commit the changes</span>
-                            <span class="c1"># repo.index.commit(&quot;mlxp: Committing selected files &quot;)</span>
-                            <span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span><span class="p">:</span>
-                                <span class="k">break</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No files added. Skipping...&quot;</span><span class="p">)</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="n">ignore_msg</span><span class="p">)</span>
-                            <span class="k">break</span>
-                    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
-                        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Checking again for untracked files...&quot;</span><span class="p">)</span>
-                        <span class="k">pass</span>
-                    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span><span class="p">:</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="n">ignore_msg</span><span class="p">)</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No more untracked files!&quot;</span><span class="p">)</span>
-                            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Continuing checks ...&quot;</span><span class="p">)</span>
-                        <span class="k">break</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (a/b/c)&quot;</span><span class="p">)</span>
-
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">:</span>
+                        <span class="n">done</span> <span class="o">=</span> <span class="n">_is_done_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No untracked files!&quot;</span><span class="p">)</span>
                     <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Continuing checks ...&quot;</span><span class="p">)</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">ignore_msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">Ignore_untracked_msg</span><span class="p">)</span>
                 <span class="k">break</span>
 
     <span class="k">def</span> <span class="nf">_make_requirements_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -588,20 +493,7 @@
                 <span class="c1"># list</span>
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
                     <span class="n">package_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">requirements</span> <span class="o">=</span> <span class="n">package_list</span>
-
-    <span class="k">def</span> <span class="nf">_getGitRepo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">git</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">search_parent_directories</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">git</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">InvalidGitRepositoryError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;. To use the GitVM, the code must belong to a git repository!&quot;</span>
-            <span class="k">raise</span> <span class="n">git</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">InvalidGitRepositoryError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_commit_state</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">repo</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">requirements</span> <span class="o">=</span> <span class="n">package_list</span></div>
 
 
 
@@ -626,15 +518,127 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
             <span class="k">continue</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1"># Special characters are escaped</span>
         <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="c1"># WHATEVER ... it&#39;s a mess, but works for me</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;unicode_escape&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">defenc</span><span class="p">)</span>
         <span class="n">untracked_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">untracked_files</span><span class="p">:</span>
-        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_git_repo</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">git</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">search_parent_directories</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">git</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">InvalidGitRepositoryError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;. To use the GitVM version manager, the code must belong to a git repository!&quot;</span>
+        <span class="k">raise</span> <span class="n">git</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">InvalidGitRepositoryError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">repo</span>
+
+
+<span class="k">def</span> <span class="nf">_get_cloning_choice</span><span class="p">():</span>
+    <span class="n">_printc</span><span class="p">(</span>
+        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span>
+        <span class="s2">&quot;Would you like to execute code from a backup copy based on the latest commit? (y/n):&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">y</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Yes (Recommended option)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">n</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: No. (Code will be executed from the main repository)&quot;</span><span class="p">)</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">Please enter you answer (y/n):</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">choice</span>
+
+
+<span class="k">def</span> <span class="nf">_is_done_uncommited_changes</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="n">_get_choice_uncommited_changes</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">repo</span><span class="o">.</span><span class="n">is_dirty</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Commiting changes....&quot;</span><span class="p">)</span>
+            <span class="n">output_msg</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;[mlxp]: Automatically committing all changes&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">output_msg</span><span class="p">)</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (y/n)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;No more uncommitted changes were found!&quot;</span><span class="p">)</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">done</span>
+
+
+<span class="k">def</span> <span class="nf">_is_done_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="n">_get_choice_untracked_files</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
+        <span class="n">file_to_track</span> <span class="o">=</span> <span class="n">_get_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+        <span class="c1"># If user input is not empty</span>
+        <span class="n">_add_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">file_to_track</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (y/n)&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">done</span>
+
+
+<span class="k">def</span> <span class="nf">_get_choice_uncommited_changes</span><span class="p">():</span>
+
+    <span class="n">_printc</span><span class="p">(</span>
+        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;Would you like to create an automatic commit for all uncommitted changes? (y/n)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">y</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Yes. &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">n</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.) &quot;</span>
+    <span class="p">)</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">[Automatic commit]: Please enter your choice (y/n): </span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">choice</span>
+
+
+<span class="k">def</span> <span class="nf">_get_choice_untracked_files</span><span class="p">():</span>
+    <span class="n">_printc</span><span class="p">(</span>
+        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;Would you like to add untracked files? (y/n)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">y</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: Yes.&quot;</span><span class="p">)</span>
+    <span class="c1"># print(</span>
+    <span class="c1">#     f&quot;{_bcolors.OKGREEN}b{_bcolors.ENDC}: Check again for untrakced files (assuming you manually added them).&quot;</span>
+    <span class="c1"># )</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">n</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">: No. Untracked files will be ignored. (Before selecting this option, please make sure to manually add untracked files) &quot;</span>
+    <span class="p">)</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">[Adding untracked files]: Please enter your choice (y/n):</span><span class="si">{</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">choice</span>
+
+
+<span class="k">def</span> <span class="nf">_get_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Untracked files:&quot;</span><span class="p">)</span>
+    <span class="n">_disp_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+    <span class="n">_printc</span><span class="p">(</span>
+        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;Please select files to be tracked (comma-separated) and hit Enter to skip:&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">files_input</span> <span class="o">=</span> <span class="nb">input</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">files_input</span>
+
+
+<span class="k">def</span> <span class="nf">_add_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">files_to_track</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">files_to_track</span><span class="p">:</span>
+        <span class="c1"># Split user input by commas</span>
+        <span class="n">files_to_add</span> <span class="o">=</span> <span class="n">files_to_track</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add selected files</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files_to_add</span><span class="p">:</span>
+            <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; is added to the repository&quot;</span><span class="p">)</span>
+        <span class="c1"># Commit the changes</span>
+        <span class="c1"># repo.index.commit(&quot;mlxp: Committing selected files &quot;)</span>
 </pre></div>
         </article>
       </div>
@@ -667,7 +671,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=360bc84d"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
