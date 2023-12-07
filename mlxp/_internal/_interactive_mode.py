@@ -30,9 +30,9 @@ class InteractiveModeHandler:
 
 
     def _save_im_choice(self):
-        if self._interactive_mode:
-            with open(self._im_choices_file, "w") as f:
-                yaml.dump(self.im_choices, f)
+        #if self._interactive_mode:
+        with open(self._im_choices_file, "w") as f:
+            yaml.dump(self.im_choices, f)
 
     def get_im_choice(self,choice_key):
         if  choice_key in self.im_choices:

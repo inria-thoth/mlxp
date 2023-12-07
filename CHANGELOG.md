@@ -1,3 +1,4 @@
 # Changes
 
-- Fix compatibility issue with Windows and Python 3.11
+- Bug fix when using version manager and scheduler in interactive mode.
+- Simplifying the interactive mode. 

@@ -39,7 +39,7 @@ def _configure_scheduler(mlxp_config):
             else:
                 _printc(
                     _bcolors.OKBLUE,
-                    f" {files_input} is not a valid class identifier. Please try again  ",
+                    f" {files_input} is not a valid class identifier. Please try again",
                 )
         else:
             break
@@ -64,28 +64,30 @@ def _ask_configure_scheduler_override(mlxp_config,scheduler_name):
     while True:
         _printc(
             _bcolors.OKGREEN,
-            "The current job(s) will be launched using "+scheduler_name+" as a scheduler. Would you like to set it as a default ?  (y/n):",
+            "Would you like to set "+scheduler_name+" as a default scheduler?  (y/n):",
         )
         print(
-            f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: The job scheduler configs will be stored in the mlxp config file"
+            f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. The job scheduler settings will be stored in the mlxp config file."
         )
+        print(
+            f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No."
+        )
+
         choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
 
         if choice == "y":
             is_valid = _update_scheduler_name(mlxp_config,scheduler_name)
-            if not is_valid:
+            if is_valid:
+                break
+            else:
                 _printc(
                     _bcolors.OKBLUE,
-                    f" {scheduler_name} is not a valid class identifier.",
+                    f" {scheduler_name} is not a valid class identifier, please try again.",
                 )
-                _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
-            break
+                #_printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
+            
         elif choice == "n":
             _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
-            _printc(
-                _bcolors.OKBLUE,
-                "To use a scheduler, you will need to select one later.",
-            )
             break
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
@@ -95,12 +97,16 @@ def _ask_configure_scheduler_override(mlxp_config,scheduler_name):
 def _ask_configure_scheduler(mlxp_config):
     while True:
         _printc(
-            _bcolors.OKGREEN,
+            _bcolors.OKGREEN, 
             " Would you like to select a default job scheduler now ?  (y/n):",
         )
         print(
-            f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: The job scheduler configs will be stored in the mlxp config file"
+            f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. Default scheduler settings will be stored in the mlxp config file"
         )
+        print(
+            f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No."
+        )
+
 
         choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
 
@@ -198,19 +204,22 @@ def _set_scheduler(default_config, overrides,im_handler):
     scheduler_name, scheduler_name_default, using_scheduler, interactive_mode = scheduler_settings
     update_default_config = False
     
-
     if scheduler_name_default == "NoScheduler" and using_scheduler:
-        _printc(_bcolors.OKBLUE, "No default scheduler is configured")
-        if im_handler._interactive_mode:
-            is_scheduler_selected = im_handler.get_im_choice("scheduler_config")
-            if not is_scheduler_selected:
+
+        is_scheduler_selected = im_handler.get_im_choice("scheduler_config")
+        existing_choices = is_scheduler_selected is not None
+
+        if not existing_choices:
+            _printc(_bcolors.OKBLUE, "No default scheduler is configured")
+            if im_handler._interactive_mode:
                 if scheduler_name == "NoScheduler":
                     _ask_configure_scheduler(default_config)
                 else:
                     _ask_configure_scheduler_override(default_config,scheduler_name)
-                im_handler.set_im_choice("scheduler_config",True)
-                im_handler._save_im_choice()
                 update_default_config = True
+            im_handler.set_im_choice("scheduler_config",True)
+            im_handler._save_im_choice()            
+
     return update_default_config
 
 

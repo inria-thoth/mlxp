@@ -172,19 +172,20 @@ class GitVM(VersionManager):
     def _handle_cloning(self,repo,relpath):
         choice = "y"
         while True:
-            if self.im_handler._interactive_mode:
-                valid_choice = True
-                if self._existing_choices:
-                    choice = self.im_handler.get_im_choice("cloning")
-                    valid_choice = choice in ["y", "n"]
+            #if self.im_handler._interactive_mode:
+            valid_choice = False
+            if self._existing_choices:
+                choice = self.im_handler.get_im_choice("cloning")
+                valid_choice = choice in ["y", "n"]
 
-                inexisting_choice = (not self._existing_choices) or not valid_choice  
-                if inexisting_choice:
+            #inexisting_choice = (not self._existing_choices) or not valid_choice  
+            if not valid_choice:
+                if self.im_handler._interactive_mode:
                     choice = _get_cloning_choice()
-                    self.im_handler.set_im_choice("cloning",choice)
-                    if choice=="y":
-                        _printc(_bcolors.OKBLUE,
-                            f"Run will be executed from a backup directory based on the latest commit ")
+                self.im_handler.set_im_choice("cloning",choice)
+                if choice=="y":
+                    _printc(_bcolors.OKBLUE,
+                        f"Run will be executed from a backup directory based on the latest commit ")
 
                 
             if choice == "y":
@@ -216,43 +217,39 @@ class GitVM(VersionManager):
 
     def _handle_commit_state(self, repo):
         while True:
-            if repo.is_dirty():
-                _printc(_bcolors.OKBLUE, "There are uncommitted changes!\n")
-                if self.im_handler._interactive_mode:
-                    if self._existing_choices:
-                        break
-                    else:
+            done = True
+
+            if not self._existing_choices:
+                if repo.is_dirty():
+                    _printc(_bcolors.OKBLUE, "There are uncommitted changes in the repository:\n")
+                    _disp_uncommited_files(repo)
+                    if self.im_handler._interactive_mode:
                         done = _is_done_uncommited_changes(repo)
-                        if done:
-                            break
                 else:
-
-
-                    print(ignore_uncommited_msg)          
-            else:
-                _printc(_bcolors.OKBLUE, "No uncommitted changes!")
+                    _printc(_bcolors.OKBLUE, "No uncommitted changes!")
+            
+            if done:
+                if repo.is_dirty() and not self._existing_choices:
+                    print(ignore_uncommited_msg)
                 break
-
+        
 
     def _handle_untracked_files(self, repo):
-
         while True:
-            if repo.untracked_files:
-                if self.im_handler._interactive_mode:
-                    if self._existing_choices:
-                        break
-                    status = repo.git.status()
-                    print(status)
-                    done = _is_done_untracked_files(repo)
-                    if done:
-                        break
+            done = True
+            if not self._existing_choices:
+                if repo.untracked_files:
+                    _printc(_bcolors.OKGREEN, "There are untracked files in the repository:")
+                    _disp_untracked_files(repo)
+                    if self.im_handler._interactive_mode:
+                        done = _is_done_untracked_files(repo)
                 else:
+                    _printc(_bcolors.OKBLUE, "No untracked files!")
+                    _printc(_bcolors.OKBLUE, "Continuing checks ...")
 
+            if done:
+                if repo.untracked_files and not self._existing_choices:
                     print(ignore_untracked_msg)
-
-            else:
-                _printc(_bcolors.OKBLUE, "No untracked files!")
-                _printc(_bcolors.OKBLUE, "Continuing checks ...")    
                 break
 
     def _make_requirements_file(self):
@@ -326,7 +323,7 @@ def _disp_untracked_files(repo):
         untracked_files.append(filename)
 
     for name in untracked_files:
-        _printc(_bcolors.FAIL, name)
+        print( name)
 
 
 def _get_cloning_choice():
@@ -335,24 +332,23 @@ def _get_cloning_choice():
         "Would you like to execute code from a backup copy based on the latest commit? (y/n):",
     )
     print(
-            f"{_bcolors.OKGREEN}a{_bcolors.ENDC}: Yes (Recommended option)"
+            f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes (Recommended option)"
         )
-    print(f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: No. (Code will be executed from the main repository)")
+    print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. (Code will be executed from the main repository)")
     choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
     return choice
 
 
 def _is_done_uncommited_changes(repo):
     done = False
-    choice = _get_choice_uncommited_changes(repo)
+    choice = _get_choice_uncommited_changes()
     if repo.is_dirty():
         if choice =="y":
             _printc(_bcolors.OKBLUE, "Commiting changes....")
-            output_msg = repo.git.commit("-a", "-m", "mlxp: Automatically committing all changes")
-            _printc(_bcolors.OKBLUE, output_msg)
+            output_msg = repo.git.commit("-a", "-m", "[mlxp]: Automatically committing all changes")
+            print(output_msg)
             done = True
         elif choice=="n":
-            print(ignore_uncommited_msg)
             done = True
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
@@ -364,29 +360,22 @@ def _is_done_uncommited_changes(repo):
 
 def _is_done_untracked_files(repo):
     done = False
-    choice = _get_choice_untracked_files(repo)
+    choice = _get_choice_untracked_files()
     if choice == "y":
         file_to_track = _get_files_to_track(repo)
         # If user input is not empty
         _add_files_to_track(repo, file_to_track)
-        if repo.untracked_files:
-            pass
-        else:
+        if not repo.untracked_files:
             done = True
     elif choice == "n":
-        print(ignore_untracked_msg)
         done = True
     else:
         _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
 
     return done
 
-def _get_choice_uncommited_changes(repo):
-    _printc(
-        _bcolors.OKBLUE,
-        "There are uncommitted changes in the repository:",
-    )
-    _disp_uncommited_files(repo)
+def _get_choice_uncommited_changes():
+    
     
     _printc(
         _bcolors.OKGREEN,
@@ -395,16 +384,14 @@ def _get_choice_uncommited_changes(repo):
     print(
         f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. "
     )
-    print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. Uncommitted changes will be ignored. (Before selecting this option, please make sure to manually handle uncommitted changes) ")
+    print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.) ")
     choice = input(
         f"{_bcolors.OKGREEN}[Automatic commit]: Please enter your choice (y/n): {_bcolors.ENDC}"
     )
 
     return choice
 
-def _get_choice_untracked_files(repo):
-    _printc(_bcolors.OKBLUE, "There are untracked files in the repository:")
-    _disp_untracked_files(repo)
+def _get_choice_untracked_files():
     _printc(
         _bcolors.OKGREEN,
         "Would you like to add untracked files? (y/n)",

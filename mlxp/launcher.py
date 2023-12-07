@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from types import CodeType
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
+import atexit
+import signal
 
 import yaml
 from hydra import version
@@ -39,7 +41,7 @@ hydra_defaults_dict = {
 }
 
 
-interactive_mode_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"], "vm_choices.yaml")
+interactive_mode_file = os.path.join(hydra_defaults_dict["hydra.sweep.dir"], "user_choices.yaml")
 
 
 def _clean_dir():
@@ -50,6 +52,9 @@ def _clean_dir():
     except FileNotFoundError:
         pass
 
+atexit.register(_clean_dir)
+signal.signal(signal.SIGTERM, _clean_dir)
+signal.signal(signal.SIGINT, _clean_dir)
 
 def launch(
     config_path: str = "configs",
