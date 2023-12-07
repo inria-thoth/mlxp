@@ -5,7 +5,7 @@ import shutil
 def read_outputs():
 
 	# Create a reader object to access the results stored by the logger.
-	parent_log_dir = './logs'
+	parent_log_dir = 'logs'
 	reader = mlxp.Reader(parent_log_dir)
 
 	# Displaying all fields accessible in the database.

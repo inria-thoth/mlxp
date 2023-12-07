@@ -14,5 +14,3 @@ python launch.py  \
 
 
 python read.py
-
-rm -r logs
