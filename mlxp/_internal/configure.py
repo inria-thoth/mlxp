@@ -1,15 +1,16 @@
 import os
+from copy import deepcopy
 
 import omegaconf
 import yaml
 from omegaconf import OmegaConf
 
-from mlxp._internal._interactive_mode import _bcolors, _printc, InteractiveModeHandler
+from mlxp._internal._interactive_mode import InteractiveModeHandler, _bcolors, _printc
 from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.data_structures.schemas import Metadata
 from mlxp.enumerations import DefaultSchedulers
 from mlxp.scheduler import Scheduler
-from copy import deepcopy
+
 
 def _configure_scheduler(mlxp_config):
     while True:
@@ -20,8 +21,7 @@ def _configure_scheduler(mlxp_config):
         )
 
         _printc(
-            _bcolors.OKBLUE,
-            "For setting a default scheduler, you can choose from this list:",
+            _bcolors.OKBLUE, "For setting a default scheduler, you can choose from this list:",
         )
         _printc(_bcolors.FAIL, f"{[member.value for member in DefaultSchedulers]}")
         _printc(
@@ -33,19 +33,18 @@ def _configure_scheduler(mlxp_config):
             f"{_bcolors.OKGREEN} Please enter your choice (or hit Enter to skip) :{_bcolors.ENDC}"
         )
         if files_input:
-            is_valid = _update_scheduler_name(mlxp_config,files_input)
+            is_valid = _update_scheduler_name(mlxp_config, files_input)
             if is_valid:
                 break
             else:
                 _printc(
-                    _bcolors.OKBLUE,
-                    f" {files_input} is not a valid class identifier. Please try again",
+                    _bcolors.OKBLUE, f" {files_input} is not a valid class identifier. Please try again",
                 )
         else:
             break
 
 
-def _update_scheduler_name(mlxp_config,scheduler_name):
+def _update_scheduler_name(mlxp_config, scheduler_name):
     names = scheduler_name.strip().rsplit(".", 1)
     is_valid = True
     for name in names:
@@ -60,32 +59,28 @@ def _update_scheduler_name(mlxp_config,scheduler_name):
     return is_valid
 
 
-def _ask_configure_scheduler_override(mlxp_config,scheduler_name):
+def _ask_configure_scheduler_override(mlxp_config, scheduler_name):
     while True:
         _printc(
-            _bcolors.OKGREEN,
-            "Would you like to set "+scheduler_name+" as a default scheduler?  (y/n):",
+            _bcolors.OKGREEN, "Would you like to set " + scheduler_name + " as a default scheduler?  (y/n):",
         )
         print(
             f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. The job scheduler settings will be stored in the mlxp config file."
         )
-        print(
-            f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No."
-        )
+        print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No.")
 
         choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
 
         if choice == "y":
-            is_valid = _update_scheduler_name(mlxp_config,scheduler_name)
+            is_valid = _update_scheduler_name(mlxp_config, scheduler_name)
             if is_valid:
                 break
             else:
                 _printc(
-                    _bcolors.OKBLUE,
-                    f" {scheduler_name} is not a valid class identifier, please try again.",
+                    _bcolors.OKBLUE, f" {scheduler_name} is not a valid class identifier, please try again.",
                 )
-                #_printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
-            
+                # _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
+
         elif choice == "n":
             _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
             break
@@ -93,20 +88,15 @@ def _ask_configure_scheduler_override(mlxp_config,scheduler_name):
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
 
 
-
 def _ask_configure_scheduler(mlxp_config):
     while True:
         _printc(
-            _bcolors.OKGREEN, 
-            " Would you like to select a default job scheduler now ?  (y/n):",
+            _bcolors.OKGREEN, " Would you like to select a default job scheduler now ?  (y/n):",
         )
         print(
             f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. Default scheduler settings will be stored in the mlxp config file"
         )
-        print(
-            f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No."
-        )
-
+        print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No.")
 
         choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
 
@@ -116,12 +106,12 @@ def _ask_configure_scheduler(mlxp_config):
         elif choice == "n":
             _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
             _printc(
-                _bcolors.OKBLUE,
-                "To use a scheduler, you will need to select one later.",
+                _bcolors.OKBLUE, "To use a scheduler, you will need to select one later.",
             )
             break
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
+
 
 def _update_config(default_cfg, overrides_config, overrides_mlxp):
 
@@ -130,7 +120,7 @@ def _update_config(default_cfg, overrides_config, overrides_mlxp):
     else:
         cfg = deepcopy(default_cfg)
 
-    cfg = OmegaConf.merge(cfg, overrides_config) 
+    cfg = OmegaConf.merge(cfg, overrides_config)
 
     return cfg
 
@@ -152,12 +142,11 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
 
     im_handler = InteractiveModeHandler(cfg["mlxp"]["interactive_mode"], interactive_mode_file)
 
-
-    update_default_config = _set_scheduler(default_cfg, overrides_mlxp["mlxp"],im_handler)
+    update_default_config = _set_scheduler(default_cfg, overrides_mlxp["mlxp"], im_handler)
 
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
     if not os.path.exists(mlxp_file) or update_default_config:
-        _save_mlxp_file(default_cfg,mlxp_file)
+        _save_mlxp_file(default_cfg, mlxp_file)
 
     cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
     cfg = convert_dict(cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
@@ -199,11 +188,11 @@ def _get_mlxp_configs(mlxp_file, default_config_mlxp):
     return mlxp_config
 
 
-def _set_scheduler(default_config, overrides,im_handler):
+def _set_scheduler(default_config, overrides, im_handler):
     scheduler_settings = _get_scheduler_settings(default_config, overrides)
     scheduler_name, scheduler_name_default, using_scheduler, interactive_mode = scheduler_settings
     update_default_config = False
-    
+
     if scheduler_name_default == "NoScheduler" and using_scheduler:
 
         is_scheduler_selected = im_handler.get_im_choice("scheduler_config")
@@ -215,10 +204,10 @@ def _set_scheduler(default_config, overrides,im_handler):
                 if scheduler_name == "NoScheduler":
                     _ask_configure_scheduler(default_config)
                 else:
-                    _ask_configure_scheduler_override(default_config,scheduler_name)
+                    _ask_configure_scheduler_override(default_config, scheduler_name)
                 update_default_config = True
-            im_handler.set_im_choice("scheduler_config",True)
-            im_handler._save_im_choice()            
+            im_handler.set_im_choice("scheduler_config", True)
+            im_handler._save_im_choice()
 
     return update_default_config
 
@@ -251,21 +240,20 @@ def _get_default_config(config_path, overrides_mlxp):
         mlxp_config = _get_mlxp_configs(mlxp_file, default_config["mlxp"])
         default_config = OmegaConf.merge(default_config, mlxp_config)
     else:
-        # if no mlxp file, set the overrides as default 
+        # if no mlxp file, set the overrides as default
         default_config = OmegaConf.merge(default_config, overrides_mlxp)
 
-    # default_config are either loaded from the default config file 
+    # default_config are either loaded from the default config file
     # or from the internal defaults of mlxp
     return default_config
 
 
-def _save_mlxp_file(default_config,mlxp_file):
-    
+def _save_mlxp_file(default_config, mlxp_file):
+
     mlxp_conf = OmegaConf.create(default_config["mlxp"])
     omegaconf.OmegaConf.save(config=mlxp_conf, f=mlxp_file)
     _printc(
-        _bcolors.OKBLUE,
-        f"Default settings for mlxp are saved in {mlxp_file} ",
+        _bcolors.OKBLUE, f"Default settings for mlxp are saved in {mlxp_file} ",
     )
 
 

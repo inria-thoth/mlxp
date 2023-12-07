@@ -86,7 +86,7 @@ def _compute_mean_and_std(data_list, log_scale=False):
             if log_scale:
                 new_array = np.log(new_array)
             out[key + "_avg"] = out[key + "_avg"][:len_data] + new_array
-            out[key + "_std"] = out[key + "_std"][:len_data] + new_array**2
+            out[key + "_std"] = out[key + "_std"][:len_data] + new_array ** 2
 
     for key in keys:
         out[key + "_avg"] = out[key + "_avg"] / (i + 1)

@@ -10,7 +10,6 @@ import yaml
 
 from mlxp._internal._interactive_mode import _bcolors, _printc
 
-
 ignore_untracked_msg = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
 ignore_untracked_msg += (
     _bcolors.FAIL
@@ -19,15 +18,16 @@ ignore_untracked_msg += (
     + "Untracked files will not be accessible during execution of the run!"
 )
 
-ignore_uncommited_msg = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "Run will be executed from the latest commit\n"
+ignore_uncommited_msg = (
+    _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "Run will be executed from the latest commit\n"
+)
 
 ignore_uncommited_msg += (
     _bcolors.FAIL
     + "Warning:"
     + _bcolors.ENDC
     + "Uncommitted changes will not be taken into account during execution of the run!\n"
-    )
-
+)
 
 
 class VersionManager(abc.ABC):
@@ -42,8 +42,7 @@ class VersionManager(abc.ABC):
         im_handler_choice = self.im_handler.get_im_choice("vm")
         self._existing_choices = im_handler_choice is not None
         if not self._existing_choices:
-            self.im_handler.set_im_choice("vm",True)
-
+            self.im_handler.set_im_choice("vm", True)
 
     @abc.abstractmethod
     def get_info(self) -> Dict[str, Any]:
@@ -96,9 +95,6 @@ class GitVM(VersionManager):
         self.work_dir = os.getcwd()
         self.requirements = ["UNKNOWN"]
 
-
-
-
     def get_info(self) -> Dict[str, Any]:
         """Return a dictionary containing information about the version used for the
         run.
@@ -130,23 +126,17 @@ class GitVM(VersionManager):
         :rtype: str
         :return: A path to the target working directory
         """
-
-
-
         repo = self._getGitRepo()
         repo_root = repo.git.rev_parse("--show-toplevel")
         relpath = os.path.relpath(os.getcwd(), repo_root)
         self.repo_path = repo.working_tree_dir
-        
 
-        self._handle_cloning(repo,relpath)
-
+        self._handle_cloning(repo, relpath)
 
         if not self._existing_choices:
             self.im_handler._save_im_choice()
 
         return self.work_dir
-
 
     def _clone_repo(self, repo):
         repo_name = self.repo_path.split("/")[-1]
@@ -163,31 +153,30 @@ class GitVM(VersionManager):
         else:
             if not self._existing_choices:
                 _printc(
-                    _bcolors.OKBLUE,
-                    f"Found a backup of the code with commit-hash: {self.commit_hash}",
+                    _bcolors.OKBLUE, f"Found a backup of the code with commit-hash: {self.commit_hash}",
                 )
                 _printc(_bcolors.OKBLUE, f"Run will be executed from {self.dst}")
 
-
-    def _handle_cloning(self,repo,relpath):
+    def _handle_cloning(self, repo, relpath):
         choice = "y"
         while True:
-            #if self.im_handler._interactive_mode:
+            # if self.im_handler._interactive_mode:
             valid_choice = False
             if self._existing_choices:
                 choice = self.im_handler.get_im_choice("cloning")
                 valid_choice = choice in ["y", "n"]
 
-            #inexisting_choice = (not self._existing_choices) or not valid_choice  
+            # inexisting_choice = (not self._existing_choices) or not valid_choice
             if not valid_choice:
                 if self.im_handler._interactive_mode:
                     choice = _get_cloning_choice()
-                self.im_handler.set_im_choice("cloning",choice)
-                if choice=="y":
-                    _printc(_bcolors.OKBLUE,
-                        f"Run will be executed from a backup directory based on the latest commit ")
+                self.im_handler.set_im_choice("cloning", choice)
+                if choice == "y":
+                    _printc(
+                        _bcolors.OKBLUE,
+                        f"Run will be executed from a backup directory based on the latest commit ",
+                    )
 
-                
             if choice == "y":
                 self._handle_untracked_files(repo)
                 self._handle_commit_state(repo)
@@ -198,22 +187,16 @@ class GitVM(VersionManager):
             elif choice == "n":
                 if not self._existing_choices:
                     _printc(
-                        _bcolors.OKBLUE,
-                        f"Run will be executed from the main directory",
+                        _bcolors.OKBLUE, f"Run will be executed from the main directory",
                     )
                     _printc(
-                        _bcolors.OKBLUE,
-                        f"Warning: [Reproduciblity] Run is not linked to any git commit",
+                        _bcolors.OKBLUE, f"Warning: [Reproduciblity] Run is not linked to any git commit",
                     )
-
 
                 break
             else:
                 _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
         return choice
-
-
-
 
     def _handle_commit_state(self, repo):
         while True:
@@ -227,12 +210,11 @@ class GitVM(VersionManager):
                         done = _is_done_uncommited_changes(repo)
                 else:
                     _printc(_bcolors.OKBLUE, "No uncommitted changes!")
-            
+
             if done:
                 if repo.is_dirty() and not self._existing_choices:
                     print(ignore_uncommited_msg)
                 break
-        
 
     def _handle_untracked_files(self, repo):
         while True:
@@ -287,9 +269,10 @@ class GitVM(VersionManager):
         try:
             repo = git.Repo(search_parent_directories=True)
         except git.exc.InvalidGitRepositoryError:
-            msg = os.getcwd() + ". To use the GitVM version manager, the code must belong to a git repository!"
+            msg = (
+                os.getcwd() + ". To use the GitVM version manager, the code must belong to a git repository!"
+            )
             raise git.exc.InvalidGitRepositoryError(msg)
-
 
         return repo
 
@@ -323,7 +306,7 @@ def _disp_untracked_files(repo):
         untracked_files.append(filename)
 
     for name in untracked_files:
-        print( name)
+        print(name)
 
 
 def _get_cloning_choice():
@@ -331,9 +314,7 @@ def _get_cloning_choice():
         _bcolors.OKGREEN,
         "Would you like to execute code from a backup copy based on the latest commit? (y/n):",
     )
-    print(
-            f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes (Recommended option)"
-        )
+    print(f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes (Recommended option)")
     print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. (Code will be executed from the main repository)")
     choice = input(f"{_bcolors.OKGREEN}Please enter you answer (y/n):{_bcolors.ENDC}")
     return choice
@@ -343,18 +324,18 @@ def _is_done_uncommited_changes(repo):
     done = False
     choice = _get_choice_uncommited_changes()
     if repo.is_dirty():
-        if choice =="y":
+        if choice == "y":
             _printc(_bcolors.OKBLUE, "Commiting changes....")
             output_msg = repo.git.commit("-a", "-m", "[mlxp]: Automatically committing all changes")
             print(output_msg)
             done = True
-        elif choice=="n":
+        elif choice == "n":
             done = True
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
     else:
         _printc(_bcolors.OKBLUE, "No more uncommitted changes were found!")
-        done = True        
+        done = True
     return done
 
 
@@ -374,50 +355,50 @@ def _is_done_untracked_files(repo):
 
     return done
 
+
 def _get_choice_uncommited_changes():
-    
-    
+
     _printc(
-        _bcolors.OKGREEN,
-        "Would you like to create an automatic commit for all uncommitted changes? (y/n)",
+        _bcolors.OKGREEN, "Would you like to create an automatic commit for all uncommitted changes? (y/n)",
     )
+    print(f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. ")
     print(
-        f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes. "
+        f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.) "
     )
-    print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.) ")
-    choice = input(
-        f"{_bcolors.OKGREEN}[Automatic commit]: Please enter your choice (y/n): {_bcolors.ENDC}"
-    )
+    choice = input(f"{_bcolors.OKGREEN}[Automatic commit]: Please enter your choice (y/n): {_bcolors.ENDC}")
 
     return choice
 
+
 def _get_choice_untracked_files():
     _printc(
-        _bcolors.OKGREEN,
-        "Would you like to add untracked files? (y/n)",
+        _bcolors.OKGREEN, "Would you like to add untracked files? (y/n)",
     )
     print(f"{_bcolors.OKGREEN}y{_bcolors.ENDC}: Yes.")
     # print(
     #     f"{_bcolors.OKGREEN}b{_bcolors.ENDC}: Check again for untrakced files (assuming you manually added them)."
     # )
-    print(f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. Untracked files will be ignored. (Before selecting this option, please make sure to manually add untracked files) ")
+    print(
+        f"{_bcolors.OKGREEN}n{_bcolors.ENDC}: No. Untracked files will be ignored. (Before selecting this option, please make sure to manually add untracked files) "
+    )
     choice = input(
         f"{_bcolors.OKGREEN}[Adding untracked files]: Please enter your choice (y/n):{_bcolors.ENDC}"
     )
     return choice
 
+
 def _get_files_to_track(repo):
     print("Untracked files:")
     _disp_untracked_files(repo)
     _printc(
-        _bcolors.OKGREEN,
-        "Please select files to be tracked (comma-separated) and hit Enter to skip:",
+        _bcolors.OKGREEN, "Please select files to be tracked (comma-separated) and hit Enter to skip:",
     )
 
     files_input = input()
     return files_input
 
-def _add_files_to_track(repo,files_to_track):
+
+def _add_files_to_track(repo, files_to_track):
     if files_to_track:
         # Split user input by commas
         files_to_add = files_to_track.split(",")
@@ -425,7 +406,6 @@ def _add_files_to_track(repo,files_to_track):
         # Add selected files
         for file in files_to_add:
             repo.git.add(file.strip())
-            _printc(_bcolors.OKGREEN,  file + " is added to the repository")
+            _printc(_bcolors.OKGREEN, file + " is added to the repository")
         # Commit the changes
         # repo.index.commit("mlxp: Committing selected files ")
-

@@ -1,11 +1,12 @@
 """Structures for validating the configurations."""
 
 import os
+import subprocess
 from dataclasses import dataclass, field
 from typing import Any
 
 from omegaconf import MISSING
-import subprocess
+
 
 def get_defautl_shell_path():
     try:
@@ -14,7 +15,8 @@ def get_defautl_shell_path():
         return shell_path
     except subprocess.CalledProcessError:
         print("Error running the command {command}")
-        return ''
+        return ""
+
 
 @dataclass
 class ConfigScheduler:
