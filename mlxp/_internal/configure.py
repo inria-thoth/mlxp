@@ -153,8 +153,8 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
     cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
 
     im_handler = InteractiveModeHandler(cfg["mlxp"]["interactive_mode"], interactive_mode_file)
-
-    update_default_config = _set_scheduler(default_cfg, overrides_mlxp["mlxp"], im_handler)
+    scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
+    update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
 
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
     if not os.path.exists(mlxp_file) or update_default_config:
@@ -200,8 +200,7 @@ def _get_mlxp_configs(mlxp_file, default_config_mlxp):
     return mlxp_config
 
 
-def _set_scheduler(default_config, overrides, im_handler):
-    scheduler_settings = _get_scheduler_settings(default_config, overrides)
+def _set_scheduler(default_config, scheduler_settings, im_handler):
     scheduler_name, scheduler_name_default, using_scheduler, interactive_mode = scheduler_settings
     update_default_config = False
 
@@ -230,6 +229,7 @@ def _get_scheduler_settings(default_config, overrides):
     scheduler_name = scheduler_name_default
     interactive_mode = default_config.mlxp.interactive_mode
     if overrides:
+        overrides = overrides["mlxp"]
         if "use_scheduler" in overrides:
             using_scheduler = overrides["use_scheduler"]
         if "scheduler" in overrides:

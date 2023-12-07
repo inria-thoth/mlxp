@@ -131,6 +131,8 @@ def launch(
         @functools.wraps(task_function)
         def decorated_main(cfg_passthrough: Optional[DictConfig] = None) -> Any:
             processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
+            os.makedirs(processed_config_path, exist_ok=True)
+
             if cfg_passthrough is not None:
                 return task_function(cfg_passthrough)
             else:
