@@ -31,18 +31,26 @@ class InvalidAggregationMapError(Exception):
 
     pass
 
+
 class InvalidShellPathError(Exception):
-    """Raised when no shell path is specified"""
+    """Raised when no shell path is specified."""
+
     pass
 
+
 class UnknownSystemError(Exception):
-    """Raised when system is different from Linux, Darwin or Windows"""
-    pass 
+    """Raised when system is different from Linux, Darwin or Windows."""
+
+    pass
+
 
 class InvalidSchedulerError(Exception):
-    """Raised when system is different from Linux, Darwin or Windows"""
-    pass 
+    """Raised when system is different from Linux, Darwin or Windows."""
+
+    pass
+
 
 class InvalidConfigFileError(Exception):
-    """Raised when the mlxp config file contains an invalid field """
+    """Raised when the mlxp config file contains an invalid field."""
+
     pass

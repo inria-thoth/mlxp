@@ -1,17 +1,17 @@
 """The launcher allows launching multiple experiments on a cluster using hydra."""
 
+import atexit
 import copy
 import functools
 import importlib
 import os
+import signal
 import socket
 import sys
 from dataclasses import dataclass
 from datetime import datetime
 from types import CodeType
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
-import atexit
-import signal
 
 import yaml
 from hydra import version
@@ -24,7 +24,7 @@ import mlxp
 from mlxp._internal.configure import _build_config, _process_config_path
 from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.enumerations import Status
-from mlxp.errors import MissingFieldError, InvalidSchedulerError
+from mlxp.errors import InvalidSchedulerError, MissingFieldError
 from mlxp.logger import Logger
 
 _UNSPECIFIED_: Any = object()
@@ -52,13 +52,14 @@ def _clean_dir():
     except FileNotFoundError:
         pass
 
+
 atexit.register(_clean_dir)
 signal.signal(signal.SIGTERM, _clean_dir)
 signal.signal(signal.SIGINT, _clean_dir)
 
+
 def launch(
-    config_path: str = "configs",
-    seeding_function: Union[Callable[[Any], None], None] = None,
+    config_path: str = "configs", seeding_function: Union[Callable[[Any], None], None] = None,
 ) -> Callable[[TaskFunction], Any]:
     """Create a decorator of the main function to be executed.
 
@@ -161,8 +162,9 @@ def launch(
         def decorated_task(overrides):
             co_filename = task_function.__code__.co_filename
 
-
-            cfg, im_handler = _build_config(config_path, config_name, co_filename, overrides, interactive_mode_file)
+            cfg, im_handler = _build_config(
+                config_path, config_name, co_filename, overrides, interactive_mode_file
+            )
             now = datetime.now()
             info = {
                 "hostname": socket.gethostname(),
@@ -201,8 +203,8 @@ def launch(
                     error_msg += " 2) Configure a valid scheduler: for instance, you can use the interactive mode to select one of the default schedulers\n"
                     error_msg += "For more information about scheduler configuration, please refer to the documentation"
                     raise InvalidSchedulerError(error_msg) from None
-                    #scheduler = None
-                    #cfg.mlxp.use_scheduler = False
+                    # scheduler = None
+                    # cfg.mlxp.use_scheduler = False
             else:
                 scheduler = None
 
@@ -218,11 +220,7 @@ def launch(
 
             if cfg.mlxp.use_scheduler:
                 main_cmd = _main_job_command(
-                    cfg.info.executable,
-                    cfg.info.current_file_path,
-                    work_dir,
-                    parent_log_dir,
-                    log_id,
+                    cfg.info.executable, cfg.info.current_file_path, work_dir, parent_log_dir, log_id,
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)

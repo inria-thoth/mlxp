@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 
 from omegaconf.errors import OmegaConfBaseException
 
-from mlxp.errors import JobSubmissionError, InvalidShellPathError, UnknownSystemError
+from mlxp.errors import InvalidShellPathError, JobSubmissionError, UnknownSystemError
 
 
 class Scheduler(abc.ABC):
@@ -64,7 +64,7 @@ class Scheduler(abc.ABC):
         self,
         directive: str,
         submission_cmd: str,
-        shell_path: str = '',
+        shell_path: str = "",
         shell_config_cmd: str = "",
         env_cmd: str = "",
         cleanup_cmd: str = "",
@@ -155,33 +155,33 @@ class Scheduler(abc.ABC):
             print(e.output)
             raise JobSubmissionError(e)
         self.process_output = process_output
-    
+
     def _get_script_name(self):
         system = platform.system()
-        if system in ['Linux','Darwin']: 
+        if system in ["Linux", "Darwin"]:
             return "script.sh"
-        elif system== 'Windows':
-            return "script.bat" 
+        elif system == "Windows":
+            return "script.bat"
         else:
             raise UnknownSystemError()
 
     def _cmd_make_executable(self, script):
         system = platform.system()
-        if system in ['Linux','Darwin']: 
+        if system in ["Linux", "Darwin"]:
             return f"chmod +x {script!r}"
-        elif system== 'Windows':
-            return "" 
+        elif system == "Windows":
+            return ""
         else:
             raise UnknownSystemError()
-            
+
     def _cmd_shell_path(self):
         system = platform.system()
-        if system in ['Linux','Darwin']: 
+        if system in ["Linux", "Darwin"]:
             return f"#!{self.shell_path}\n"
-        elif system== 'Windows':
-            return "" 
+        elif system == "Windows":
+            return ""
         else:
-            raise UnknownSystemError() 
+            raise UnknownSystemError()
 
     def _make_job(self, main_cmd, log_dir):
         job_command = [main_cmd]
@@ -213,12 +213,7 @@ class OARScheduler(Scheduler):
     """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
     def __init__(
-        self,
-        shell_path="/bin/bash",
-        shell_config_cmd="",
-        env_cmd="",
-        cleanup_cmd="",
-        option_cmd=[],
+        self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=[],
     ):
         super().__init__(
             directive="#OAR",

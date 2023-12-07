@@ -1,5 +1,7 @@
 import os
+
 import yaml
+
 
 class _bcolors:
     HEADER = "\033[95m"
@@ -17,10 +19,8 @@ def _printc(color, text):
     print(color + text + _bcolors.ENDC)
 
 
-
 class InteractiveModeHandler:
-
-    def __init__(self,mode:bool,im_choices_file: str = "./vm_choices.yaml"):
+    def __init__(self, mode: bool, im_choices_file: str = "./vm_choices.yaml"):
         self._interactive_mode = mode
         self._im_choices_file = im_choices_file
         self.im_choices = {}
@@ -28,21 +28,16 @@ class InteractiveModeHandler:
             with open(self._im_choices_file, "r") as file:
                 self.im_choices = yaml.safe_load(file)
 
-
     def _save_im_choice(self):
-        #if self._interactive_mode:
+        # if self._interactive_mode:
         with open(self._im_choices_file, "w") as f:
             yaml.dump(self.im_choices, f)
 
-    def get_im_choice(self,choice_key):
-        if  choice_key in self.im_choices:
+    def get_im_choice(self, choice_key):
+        if choice_key in self.im_choices:
             return self.im_choices[choice_key]
         else:
             return None
 
-
-
-    def set_im_choice(self,choice_key, choice_value):
+    def set_im_choice(self, choice_key, choice_value):
         self.im_choices[choice_key] = choice_value
-    
-
