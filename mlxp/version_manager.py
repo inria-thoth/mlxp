@@ -5,9 +5,6 @@ import abc
 import os
 import subprocess
 from typing import Any, Dict
-
-import yaml
-
 from mlxp._internal._interactive_mode import _bcolors, _printc
 
 
@@ -36,6 +33,7 @@ class VersionManager(abc.ABC):
 
     def __init__(self):
         self.im_handler = None
+        self._existing_choices = False
 
     def _set_im_handler(self, im_handler: Any) -> None:
         self.im_handler = im_handler
@@ -172,13 +170,10 @@ class GitVM(VersionManager):
     def _handle_cloning(self,repo,relpath):
         choice = "y"
         while True:
-            #if self.im_handler._interactive_mode:
             valid_choice = False
             if self._existing_choices:
                 choice = self.im_handler.get_im_choice("cloning")
                 valid_choice = choice in ["y", "n"]
-
-            #inexisting_choice = (not self._existing_choices) or not valid_choice  
             if not valid_choice:
                 if self.im_handler._interactive_mode:
                     choice = _get_cloning_choice()
