@@ -10,7 +10,6 @@ import socket
 import sys
 from dataclasses import dataclass
 from datetime import datetime
-from types import CodeType
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 import yaml
@@ -198,7 +197,7 @@ def launch(
                         cfg.mlxp.use_logger = True
                 except AttributeError:
                     error_msg = cfg.mlxp.scheduler.name + " is not a valid scheduler\n"
-                    error_msg += "There are two options to prevent this error:\n"
+                    error_msg += "There are two options to prevent this error from happening:\n"
                     error_msg += " 1) Disable the scheduler by setting mlxp.use_scheduler=False\n"
                     error_msg += " 2) Configure a valid scheduler: for instance, you can use the interactive mode to select one of the default schedulers\n"
                     error_msg += "For more information about scheduler configuration, please refer to the documentation"

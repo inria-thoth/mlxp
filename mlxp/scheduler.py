@@ -4,7 +4,7 @@ import abc
 import os
 import platform
 import subprocess
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from omegaconf.errors import OmegaConfBaseException
 
@@ -68,7 +68,7 @@ class Scheduler(abc.ABC):
         shell_config_cmd: str = "",
         env_cmd: str = "",
         cleanup_cmd: str = "",
-        option_cmd: List[str] = [],
+        option_cmd: Union[List[str], None] = None,
     ):
         """Create a scheduler object.
 
@@ -194,7 +194,8 @@ class Scheduler(abc.ABC):
         # Setting scheduler options
 
         option_cmd = self.make_job_details(log_dir)
-        option_cmd += self.option_cmd
+        if self.option_cmd:
+            option_cmd += self.option_cmd
         option_cmd = [f"{self.directive} {val}\n" for val in option_cmd]
         option_cmd = ["".join(option_cmd)]
 
@@ -213,7 +214,7 @@ class OARScheduler(Scheduler):
     """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
     def __init__(
-        self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=[],
+        self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=None,
     ):
         super().__init__(
             directive="#OAR",
@@ -273,7 +274,7 @@ class SLURMScheduler(Scheduler):
         shell_config_cmd="",
         env_cmd="",
         cleanup_cmd="module purge",
-        option_cmd=[],
+        option_cmd=None,
     ):
         super().__init__(
             directive="#SBATCH",

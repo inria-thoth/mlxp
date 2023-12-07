@@ -5,21 +5,22 @@ import abc
 import os
 import subprocess
 from typing import Any, Dict
+
 from mlxp._internal._interactive_mode import _bcolors, _printc
 
-ignore_untracked_msg = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
-ignore_untracked_msg += (
+Ignore_untracked_msg = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
+Ignore_untracked_msg += (
     _bcolors.FAIL
     + "Warning:"
     + _bcolors.ENDC
     + "Untracked files will not be accessible during execution of the run!"
 )
 
-ignore_uncommited_msg = (
+Ignore_uncommited_msg = (
     _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "Run will be executed from the latest commit\n"
 )
 
-ignore_uncommited_msg += (
+Ignore_uncommited_msg += (
     _bcolors.FAIL
     + "Warning:"
     + _bcolors.ENDC
@@ -124,7 +125,7 @@ class GitVM(VersionManager):
         :rtype: str
         :return: A path to the target working directory
         """
-        repo = self._getGitRepo()
+        repo = _get_git_repo()
         repo_root = repo.git.rev_parse("--show-toplevel")
         relpath = os.path.relpath(os.getcwd(), repo_root)
         self.repo_path = repo.working_tree_dir
@@ -132,7 +133,7 @@ class GitVM(VersionManager):
         self._handle_cloning(repo, relpath)
 
         if not self._existing_choices:
-            self.im_handler._save_im_choice()
+            self.im_handler.save_im_choice()
 
         return self.work_dir
 
@@ -157,19 +158,20 @@ class GitVM(VersionManager):
 
     def _handle_cloning(self, repo, relpath):
         choice = "y"
+        done = False
         while True:
             valid_choice = False
             if self._existing_choices:
                 choice = self.im_handler.get_im_choice("cloning")
                 valid_choice = choice in ["y", "n"]
             if not valid_choice:
-                if self.im_handler._interactive_mode:
+                if self.im_handler.interactive_mode:
                     choice = _get_cloning_choice()
                 self.im_handler.set_im_choice("cloning", choice)
                 if choice == "y":
                     _printc(
                         _bcolors.OKBLUE,
-                        f"Run will be executed from a backup directory based on the latest commit ",
+                        "Run will be executed from a backup directory based on the latest commit ",
                     )
 
             if choice == "y":
@@ -178,19 +180,23 @@ class GitVM(VersionManager):
                 self._clone_repo(repo)
                 self._set_requirements()
                 self.work_dir = os.path.join(self.dst, relpath)
-                break
+                done = True
             elif choice == "n":
                 if not self._existing_choices:
                     _printc(
-                        _bcolors.OKBLUE, f"Run will be executed from the main directory",
+                        _bcolors.OKBLUE, "Run will be executed from the main directory",
                     )
                     _printc(
-                        _bcolors.OKBLUE, f"Warning: [Reproduciblity] Run is not linked to any git commit",
+                        _bcolors.OKBLUE, "Warning: [Reproduciblity] Run is not linked to any git commit",
                     )
 
-                break
+                done = True
             else:
                 _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
+
+            if done:
+                break
+
         return choice
 
     def _handle_commit_state(self, repo):
@@ -201,14 +207,14 @@ class GitVM(VersionManager):
                 if repo.is_dirty():
                     _printc(_bcolors.OKBLUE, "There are uncommitted changes in the repository:\n")
                     _disp_uncommited_files(repo)
-                    if self.im_handler._interactive_mode:
+                    if self.im_handler.interactive_mode:
                         done = _is_done_uncommited_changes(repo)
                 else:
                     _printc(_bcolors.OKBLUE, "No uncommitted changes!")
 
             if done:
                 if repo.is_dirty() and not self._existing_choices:
-                    print(ignore_uncommited_msg)
+                    print(Ignore_uncommited_msg)
                 break
 
     def _handle_untracked_files(self, repo):
@@ -218,7 +224,7 @@ class GitVM(VersionManager):
                 if repo.untracked_files:
                     _printc(_bcolors.OKGREEN, "There are untracked files in the repository:")
                     _disp_untracked_files(repo)
-                    if self.im_handler._interactive_mode:
+                    if self.im_handler.interactive_mode:
                         done = _is_done_untracked_files(repo)
                 else:
                     _printc(_bcolors.OKBLUE, "No untracked files!")
@@ -226,7 +232,7 @@ class GitVM(VersionManager):
 
             if done:
                 if repo.untracked_files and not self._existing_choices:
-                    print(ignore_untracked_msg)
+                    print(Ignore_untracked_msg)
                 break
 
     def _make_requirements_file(self):
@@ -258,19 +264,6 @@ class GitVM(VersionManager):
                     package_list.append(line)
             self.requirements = package_list
 
-    def _getGitRepo(self):
-        import git
-
-        try:
-            repo = git.Repo(search_parent_directories=True)
-        except git.exc.InvalidGitRepositoryError:
-            msg = (
-                os.getcwd() + ". To use the GitVM version manager, the code must belong to a git repository!"
-            )
-            raise git.exc.InvalidGitRepositoryError(msg)
-
-        return repo
-
 
 def _disp_uncommited_files(repo):
     unstaged_files = repo.index.diff(None)
@@ -293,15 +286,25 @@ def _disp_untracked_files(repo):
         if not line.startswith(prefix):
             continue
         filename = line[len(prefix) :].rstrip("\n")
-        # Special characters are escaped
         if filename[0] == filename[-1] == '"':
             filename = filename[1:-1]
-            # WHATEVER ... it's a mess, but works for me
             filename = filename.encode("ascii").decode("unicode_escape").encode("latin1").decode(defenc)
         untracked_files.append(filename)
 
     for name in untracked_files:
         print(name)
+
+
+def _get_git_repo():
+    import git
+
+    try:
+        repo = git.Repo(search_parent_directories=True)
+    except git.exc.InvalidGitRepositoryError:
+        msg = os.getcwd() + ". To use the GitVM version manager, the code must belong to a git repository!"
+        raise git.exc.InvalidGitRepositoryError(msg)
+
+    return repo
 
 
 def _get_cloning_choice():

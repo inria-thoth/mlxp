@@ -28,7 +28,11 @@ class InteractiveModeHandler:
             with open(self._im_choices_file, "r") as file:
                 self.im_choices = yaml.safe_load(file)
 
-    def _save_im_choice(self):
+    @property
+    def interactive_mode(self):
+        return self._interactive_mode
+
+    def save_im_choice(self):
         # if self._interactive_mode:
         with open(self._im_choices_file, "w") as f:
             yaml.dump(self.im_choices, f)

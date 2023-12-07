@@ -9,6 +9,7 @@ from mlxp._internal._interactive_mode import InteractiveModeHandler, _bcolors, _
 from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.data_structures.schemas import Metadata
 from mlxp.enumerations import DefaultSchedulers
+from mlxp.errors import InvalidConfigFileError
 from mlxp.scheduler import Scheduler
 
 
@@ -32,15 +33,19 @@ def _configure_scheduler(mlxp_config):
         files_input = input(
             f"{_bcolors.OKGREEN} Please enter your choice (or hit Enter to skip) :{_bcolors.ENDC}"
         )
+        done = False
         if files_input:
             is_valid = _update_scheduler_name(mlxp_config, files_input)
             if is_valid:
-                break
+                done = True
             else:
                 _printc(
                     _bcolors.OKBLUE, f" {files_input} is not a valid class identifier. Please try again",
                 )
         else:
+            done = True
+
+        if done:
             break
 
 
@@ -61,6 +66,7 @@ def _update_scheduler_name(mlxp_config, scheduler_name):
 
 def _ask_configure_scheduler_override(mlxp_config, scheduler_name):
     while True:
+        done = False
         _printc(
             _bcolors.OKGREEN, "Would you like to set " + scheduler_name + " as a default scheduler?  (y/n):",
         )
@@ -74,7 +80,7 @@ def _ask_configure_scheduler_override(mlxp_config, scheduler_name):
         if choice == "y":
             is_valid = _update_scheduler_name(mlxp_config, scheduler_name)
             if is_valid:
-                break
+                done = True
             else:
                 _printc(
                     _bcolors.OKBLUE, f" {scheduler_name} is not a valid class identifier, please try again.",
@@ -83,13 +89,17 @@ def _ask_configure_scheduler_override(mlxp_config, scheduler_name):
 
         elif choice == "n":
             _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
-            break
+            done = True
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
+
+        if done:
+            break
 
 
 def _ask_configure_scheduler(mlxp_config):
     while True:
+        done = False
         _printc(
             _bcolors.OKGREEN, " Would you like to select a default job scheduler now ?  (y/n):",
         )
@@ -102,15 +112,17 @@ def _ask_configure_scheduler(mlxp_config):
 
         if choice == "y":
             _configure_scheduler(mlxp_config)
-            break
+            done = True
         elif choice == "n":
             _printc(_bcolors.OKBLUE, "No scheduler will be selected by default.")
             _printc(
                 _bcolors.OKBLUE, "To use a scheduler, you will need to select one later.",
             )
-            break
+            done = True
         else:
             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
+        if done:
+            break
 
 
 def _update_config(default_cfg, overrides_config, overrides_mlxp):
@@ -200,14 +212,14 @@ def _set_scheduler(default_config, overrides, im_handler):
 
         if not existing_choices:
             _printc(_bcolors.OKBLUE, "No default scheduler is configured")
-            if im_handler._interactive_mode:
+            if im_handler.interactive_mode:
                 if scheduler_name == "NoScheduler":
                     _ask_configure_scheduler(default_config)
                 else:
                     _ask_configure_scheduler_override(default_config, scheduler_name)
                 update_default_config = True
             im_handler.set_im_choice("scheduler_config", True)
-            im_handler._save_im_choice()
+            im_handler.save_im_choice()
 
     return update_default_config
 
