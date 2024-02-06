@@ -339,17 +339,17 @@ def _is_done_uncommited_changes(repo):
 
 def _is_done_untracked_files(repo):
     done = False
-    choice = _get_choice_untracked_files()
-    if choice == "y":
-        file_to_track = _get_files_to_track(repo)
+    #choice = _get_choice_untracked_files()
+    #if choice == "y":
+    file_to_track = _get_files_to_track(repo)
         # If user input is not empty
-        _add_files_to_track(repo, file_to_track)
-        if not repo.untracked_files:
-            done = True
-    elif choice == "n":
+    _add_files_to_track(repo, file_to_track)
+    if not repo.untracked_files:
         done = True
     else:
-        _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
+        if not file_to_track:
+            done = True
+            _printc(_bcolors.OKBLUE, "Skipping untracked files!")
 
     return done
 
@@ -386,8 +386,6 @@ def _get_choice_untracked_files():
 
 
 def _get_files_to_track(repo):
-    print("Untracked files:")
-    _disp_untracked_files(repo)
     _printc(
         _bcolors.OKGREEN, "Please select files to be tracked (comma-separated) and hit Enter to skip:",
     )

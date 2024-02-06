@@ -10,13 +10,64 @@ MLXP's version manager
 
 MLXP proposes a simple way to avoid these issues by introducing two features:
 
+- Requiring the code to be in a git repository
 - Systematically checking for uncommitted change/ untracked files.
 - Systematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.
 
 Using MLXP's version manager
-"""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""
 
-Let's see how this works! We simply need to set the option 'use_version_manager' to true. If the interactive mode is active (interactive_mode=True), an interactive session is created where the user can tell the version manager what to do.
+Let's see how this works! We simply need to set the option 'use_version_manager' to true and make sure the code belong to a git repository. Depending on whether the interactive mode is active (mlxp.interactive_mode=True) or not, an interactive session is created where the user can tell the version manager what to do or the job is executed from on a copy of the code based on the latest commit. 
+
+Without the interactive mode
+----------------------------
+
+If the version manager is used without the interative mode, a copy of the code based on the latest commit is created, if it does not already exists. It is located in a directory of the form parent_work_dir/repo_name/commit_hash, where 'parent_work_dir' is provided by the user in the mlxp config file, 'repo_name' is the name of the git repository and 'commit_hash' is the latest commit's hash. 
+ 
+MLXP then proceeds to execute the code from that copy:
+
+
+.. code-block:: console
+
+   $ python main.py +mlxp.use_version_manager=True
+
+    Creating a copy of the repository at absolute_path_to/.workdir/mlxp/commit_hash
+    Starting from epoch: 0
+    Completed training with a learning rate of 10.0
+
+
+We can double check where the code was executed from by inspecting the 'info.yaml' file (Note that this is the 4th run, so the file should be located in ./logs/4/)
+
+
+.. code-block:: yaml
+   :caption: ./logs/4/metadata/info.yaml
+
+    ...
+    work_dir: absolute_path_to/.workdir/mlxp/commit_hash/tutorial
+    version_manager:
+        commit_hash: f02c8e5aa1a4c71d348141543a20543a2e4671b4
+        repo_path: absolute_path_to_repo 
+        requirements:
+        - dill==0.3.6
+        - GitPython==3.1.31
+        - hydra-core==1.3.2
+        - omegaconf==2.2.3
+        - pandas==1.2.4
+        - ply==3.11
+        - PyYAML==6.0
+        - setuptools==52.0.0.post20210125
+        - tinydb==4.7.1
+
+If other jobs are submitted later, and if the code did not change meanwhile, these jobs will also be executed from this same working directory. This avoids copying the same content multiple times. 
+
+Finally, a copy of the dependencies used by the code along with their versions is also made in the field 'requirements' if the option 'mlxp.version_manager.compute_requirements' is set to 'True'.
+
+
+
+With the interactive mode
+-------------------------
+
+When the interactive mode is active, the version manager checks for untracked files and uncommited changes and asks if how to handle those before executing the code. 
 
 First, the version manager asks if we want to create a 'safe' copy (if it does not already exist) based on the latest commit and from which code will be executed. If not, the code is executed from the current directory.
 
@@ -76,60 +127,22 @@ The next step is to check for uncommitted changes.
     n: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.)
     [Automatic commit]: Please enter your choice (y/n):
 
-We see that there is one uncommitted change. The user can either ignore this, commit the changes from a different interface and check again or commit the changes from the version manager interface. Here, we just choose the option ‘a’ which creates an automatic commit of the changes.
+We see that there is one uncommitted change. The user can either ignore it or create an automatic commit from the version manager interface. Here, we just choose the option ‘y’ which creates an automatic commit of the changes.
 
 
 .. code-block:: console
 
-    Committing changes....
-    
-    [master e22179c] MLXP: Automatically committing all changes
+    Commiting changes....
 
-     1 files changed, 2 insertions(+), 1 deletions(-)
-    
-    No more uncommitted changes!
-    
+     13 files changed, 403 insertions(+), 36 deletions(-)
+     create mode 100644 docs/easy_scheduling.rst
+     create mode 100644 docs/easy_versioning.rst
 
 
 
 
 
 
-The copy is created in a directory named after the latest commit hash during execution time (here, the last commit was the one created by the version manager). MLXP then proceeds to execute the code from that copy:
-
-
-.. code-block:: console
-
-    Creating a copy of the repository at absolute_path_to/.workdir/mlxp/commit_hash
-    Starting from epoch: 0
-    Completed training with a learning rate of 10.0
-
-
-We can double check where the code was executed from by inspecting the 'info.yaml' file (Note that this is the 4th run, so the file should be located in ./logs/4/)
-
-
-.. code-block:: yaml
-   :caption: ./logs/4/metadata/info.yaml
-
-    ...
-    work_dir: absolute_path_to/.workdir/mlxp/commit_hash/tutorial
-    version_manager:
-        commit_hash: f02c8e5aa1a4c71d348141543a20543a2e4671b4
-        repo_path: absolute_path_to_repo 
-        requirements:
-        - dill==0.3.6
-        - GitPython==3.1.31
-        - hydra-core==1.3.2
-        - omegaconf==2.2.3
-        - pandas==1.2.4
-        - ply==3.11
-        - PyYAML==6.0
-        - setuptools==52.0.0.post20210125
-        - tinydb==4.7.1
-
-If other jobs are submitted later, and if the code did not change meanwhile, then these jobs will also be executed from this same working directory. This avoids copying the same content multiple times. 
-
-Finally, a copy of the dependencies used by the code along with their versions is also made in the field 'requirements' if the option 'mlxp.version_manager.compute_requirements' is set to 'True'.
 
 
 Using the version manager with a job scheduler 
@@ -139,7 +152,7 @@ You can combine both features to run several reproducible jobs with a controlled
 
 .. code-block:: console
    
-   $ python main.py +optimizer.lr=1e-3,1e-2,1e-1 +seed=1,2,3,4  +mlxp.use_scheduler=True +mlxp.use_version_manager=True
+   $ python main.py optimizer.lr=1e-3,1e-2,1e-1 seed=1,2,3,4  +mlxp.use_scheduler=True +mlxp.use_version_manager=True
 
 In this case, MLXP will go through the following step:
 

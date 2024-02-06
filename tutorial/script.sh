@@ -13,5 +13,5 @@ conda activate base
 
 
 
-python main.py  optimizer.lr=10.,1.,0.1 seed=1,2,3,4\
+HYDRA_FULL_ERROR=1 python -m ipdb main.py  optimizer.lr=10.,1. seed=1,2,3\
                 +mlxp.use_version_manager=True
