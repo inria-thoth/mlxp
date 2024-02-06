@@ -3,8 +3,8 @@
 
 
 
-Launching jobs using a scheduler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Submitting jobs to a job scheduler
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs. 

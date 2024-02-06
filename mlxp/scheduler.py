@@ -11,9 +11,12 @@ from omegaconf.errors import OmegaConfBaseException
 from mlxp.errors import InvalidShellPathError, JobSubmissionError, UnknownSystemError
 
 
+
+
+
 class Scheduler(abc.ABC):
     """An abstract class whose children allow to submit jobs using a particular job
-    scheduler such as OAR or SLURM.
+    scheduler such as OAR or SLURM. Can be used as a parent class of a custom scheduler.
 
     .. py:attribute:: directive
         :type: str
@@ -66,7 +69,7 @@ class Scheduler(abc.ABC):
         submission_cmd: str,
         shell_path: str = "",
         shell_config_cmd: str = "",
-        env_cmd: str = "",
+        env_cmd: Union[List[str],str] = "",
         cleanup_cmd: str = "",
         option_cmd: Union[List[str], None] = None,
     ):
@@ -200,11 +203,14 @@ class Scheduler(abc.ABC):
         option_cmd = ["".join(option_cmd)]
 
         # Setting environment
-        env_cmds = [f"{self.shell_config_cmd}\n", f"{self.cleanup_cmd}\n"]
-        try:
-            env_cmds += [f"{self.env_cmd}\n"]
-        except OmegaConfBaseException:
-            pass
+        if isinstance(self.env_cmd,list):
+            env_cmds = [f"{cmd}\n" for cmd in self.env_cmd]#[f"{self.shell_config_cmd}\n", f"{self.cleanup_cmd}\n"]
+        else:
+            env_cmds = [f"{self.env_cmd}\n"]
+        #try:
+        #    env_cmds += [f"{self.env_cmd}\n"]
+        #except OmegaConfBaseException:
+        #    pass
 
         cmd = "".join(shell_cmd + option_cmd + env_cmds + job_command)
         return cmd
@@ -214,7 +220,12 @@ class OARScheduler(Scheduler):
     """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
     def __init__(
-        self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=None,
+        self, 
+        shell_path="/bin/bash", 
+        shell_config_cmd="", 
+        env_cmd="", 
+        cleanup_cmd="", 
+        option_cmd=None,
     ):
         super().__init__(
             directive="#OAR",

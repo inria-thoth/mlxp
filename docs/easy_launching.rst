@@ -99,7 +99,7 @@ More precisely, it contains 4 fields:
 - ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
 
 
-
+.. _launching_multiruns:
 Launching using MLXP 
 ^^^^^^^^^^^^^^^^^^^^^
 

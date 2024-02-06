@@ -11,7 +11,19 @@ from mlxp.data_structures.schemas import Metadata
 from mlxp.enumerations import DefaultSchedulers
 from mlxp.errors import InvalidConfigFileError
 from mlxp.scheduler import Scheduler
+from mlxp.mlxpsub import scheduler_env_var
 
+
+
+
+def _update_scheduler_config(mlxp_config):
+    if scheduler_env_var in os.environ:
+        variable_value = os.environ[scheduler_env_var]
+        with open(variable_value, "r") as file:
+            scheduler_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
+        mlxp_config = OmegaConf.merge(mlxp_config, scheduler_config)
+
+    return mlxp_config
 
 def _configure_scheduler(mlxp_config):
     while True:
@@ -148,19 +160,20 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
 
     overrides_mlxp, overrides_config = _process_overrides(overrides)
 
-    default_cfg = _get_default_config(config_path, overrides_mlxp)
-    # Override default configs
+    default_cfg = _get_default_config(config_path)
+    # Override default configsq
     cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
 
     im_handler = InteractiveModeHandler(cfg["mlxp"]["interactive_mode"], interactive_mode_file)
-    scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
-    update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
+    #scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
+    #update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
 
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
-    if not os.path.exists(mlxp_file) or update_default_config:
+    if not os.path.exists(mlxp_file):
         _save_mlxp_file(default_cfg, mlxp_file)
 
     cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
+    cfg = _update_scheduler_config(cfg)
     cfg = convert_dict(cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
     _update_default_directories(cfg.mlxp, co_filename)
 
@@ -240,7 +253,7 @@ def _get_scheduler_settings(default_config, overrides):
     return scheduler_name, scheduler_name_default, using_scheduler, interactive_mode
 
 
-def _get_default_config(config_path, overrides_mlxp):
+def _get_default_config(config_path):
     default_config = OmegaConf.structured(Metadata)
     conf_dict = OmegaConf.to_container(default_config, resolve=True)
     default_config = OmegaConf.create(conf_dict)
@@ -251,9 +264,6 @@ def _get_default_config(config_path, overrides_mlxp):
     if os.path.exists(mlxp_file):
         mlxp_config = _get_mlxp_configs(mlxp_file, default_config["mlxp"])
         default_config = OmegaConf.merge(default_config, mlxp_config)
-    else:
-        # if no mlxp file, set the overrides as default
-        default_config = OmegaConf.merge(default_config, overrides_mlxp)
 
     # default_config are either loaded from the default config file
     # or from the internal defaults of mlxp

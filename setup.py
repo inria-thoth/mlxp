@@ -27,6 +27,11 @@ setup(
     author_email=project_info["AUTHOR_EMAIL"],
     license=project_info["LICENSE"],
     packages=find_packages(".", exclude=["*tests*", "*.develop"]),
+    entry_points={
+        'console_scripts': [
+            'mlxpsub=mlxp.mlxpsub:__main__',
+        ],
+    },
     install_requires=["hydra-core>=1.3.2", 
                       "omegaconf>=2.2.3", 
                       "dill>=0.3.6",

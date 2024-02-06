@@ -1,3 +1,5 @@
+.. _logging:
+
 2- Logging 
 ----------
 
@@ -16,7 +18,7 @@ The logger provides four methods for logging objects:
 File structure of the logs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When the logger is activated, it stores the results of a run in a sub-directory of the parent directory './logs'. This parent directory is created automatically if it does not exists already. By default it is set to './logs', but this behavior can be modified (see :ref: `Customizing the parent log directory'<custom_log_dir>`).
+When the logger is activated, it stores the results of a run in a sub-directory of the parent directory './logs'. This parent directory is created automatically if it does not exists already. By default it is set to './logs', but this behavior can be modified (see :ref: `Customizing the parent log directory <custom_log_dir>`).
 
 First, the logger assigns a 'log_id' to the run. Every time 'main.py' is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of './logs' is created and named after the assigned log_id. 
 Since we executed the code three times in total, we should expect three sub-directories under './logs' called '1', '2', and '3', all having the same structure:
@@ -214,7 +216,7 @@ Of course, if you execute 'main.py' without further options, the logger will cre
 .. _custom_log_dir:
 
 Customizing the parent log directory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can change the parent directory by overriding the option '+mlxp.logger.parent_log_dir' from the command-line:
 
