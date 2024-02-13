@@ -166,8 +166,8 @@ class GitVM(VersionManager):
                 choice = self.im_handler.get_im_choice("cloning")
                 valid_choice = choice in ["y", "n"]
             if not valid_choice:
-                if self.im_handler.interactive_mode:
-                    choice = _get_cloning_choice()
+                #if self.im_handler.interactive_mode: # no need to ask for this anymore
+                #    choice = _get_cloning_choice()
                 self.im_handler.set_im_choice("cloning", choice)
                 if choice == "y":
                     _printc(

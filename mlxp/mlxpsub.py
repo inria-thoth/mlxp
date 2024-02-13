@@ -5,17 +5,45 @@ import sys
 import yaml
 import atexit
 import signal
+import tempfile
 
 from mlxp.scheduler import Scheduler, Schedulers_dict
-
 
 scheduler_env_var = 'MLXP_SCHEDULER'   
 
 
+# def _get_git_repo():
+#     import git
+
+#     try:
+#         return  git.Repo(search_parent_directories=True)
+#     except git.exc.InvalidGitRepositoryError:
+#         return None
+
+
+# def check_mlxpsub_dir(mlxpsub_dir):
+
+
+#     if not os.path.exists(mlxpsub_dir):
+#         os.makedirs(mlxpsub_dir)
+#         repo = _get_git_repo()
+#         if repo:
+
+
+
+#     if is_git_repository(directory_path):
+#         # Add the directory to .gitignore
+#         add_directory_to_gitignore(directory_path)
+
+
+#     raise NotImplementedError
+
 
 def make_file_name(root,script_pid):
     file_name = "scheduler_config_"+str(script_pid)
-    file_name = os.path.join(root,file_name + ".yaml")
+    mlxpsub_dir = os.path.join(root,".mlxpsub")
+    file_name = os.path.join(mlxpsub_dir,file_name + ".yaml")
+    check_mlxpsub_dir(mlxpsub_dir)
     return file_name
 
 def clear():
@@ -25,7 +53,8 @@ def clear():
 
     #file_name = make_file_name(root,script_pid)
     file_name = "scheduler_config_"+str(script_pid)
-    file_name = os.path.join(root,file_name + ".yaml")
+    mlxpsub_dir = os.path.join(root,".mlxpsub")
+    file_name = os.path.join(mlxpsub_dir,file_name + ".yaml")
     
 
     try:
@@ -224,13 +253,15 @@ def mlxpsub():
     script_path = os.path.join(root,bash_script_name)
 
     scheduler, shebang = process_bash_script(script_path)
-    scheduler_file_name = save_scheduler_config(scheduler,script_pid,root)
+    with tempfile.NamedTemporaryFile() as temporary_file:
+        yaml.dump(scheduler, temporary_file, encoding=('utf-8'))
+        #scheduler_file_name = save_scheduler_config(scheduler,script_pid,root)
+        scheduler_file_name = temporary_file.name
+        run_python_script(shebang,
+                          bash_script_name, 
+                          scheduler_file_name)
 
-    run_python_script(shebang,
-                      bash_script_name, 
-                      scheduler_file_name)
-
-    clear()
+    #clear()
 
 
 def main():
