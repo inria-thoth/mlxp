@@ -13,5 +13,5 @@
 
 
 
-python main.py  optimizer.lr=10.,1. seed=1,2,3\
+python -m ipdb main.py  optimizer.lr=10.,1. seed=1,2,3\
                 +mlxp.use_version_manager=True +mlxp.interactive_mode=True

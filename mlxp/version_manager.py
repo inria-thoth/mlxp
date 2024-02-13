@@ -196,13 +196,15 @@ class GitVM(VersionManager):
     #             break
 
     def _handle_cloning(self, repo, relpath):
+
         self._clone_repo(repo)
         self._set_requirements()
         self.work_dir = os.path.join(self.dst, relpath)
-        _printc(
-            _bcolors.OKBLUE,
-            "Run will be executed from a backup directory based on the latest commit ",
-        )
+        if not self._existing_choices:
+            _printc(
+                _bcolors.OKBLUE,
+                "Run will be executed from a backup directory based on the latest commit ",
+            )
 
     def _handle_commit_state(self, repo):
         while True:
