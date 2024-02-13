@@ -1,28 +1,28 @@
-Version management
-------------------
+3- Versioning
+-------------
 
 Sometimes, there can be a delay between the time when a job is submitted and when it gets executed. This typically happens when submitting jobs to a cluster queue. 
 Meanwhile, the development code might have already changed, with some potential bugs introduced! 
 Without careful version management, it is hard to know for sure what code was used to produce the results.
 
-MLXP's version manager
-^^^^^^^^^^^^^^^^^^^^^^
 
 MLXP proposes a simple way to avoid these issues by introducing two features:
-
 - Requiring the code to be in a git repository
 - Systematically checking for uncommitted change/ untracked files.
 - Systematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.
 
-Using MLXP's version manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Let's see how this works! We simply need to set the option 'use_version_manager' to true and make sure the code belong to a git repository. Depending on whether the interactive mode is active (mlxp.interactive_mode=True) or not, an interactive session is created where the user can tell the version manager what to do or the job is executed from on a copy of the code based on the latest commit. 
+1- Using MLXP's version manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Let's see how this works! We simply need to set the option 
+:samp:`use_version_manager` to true and make sure the code belong to a git repository. Depending on whether the interactive mode is active (:samp:`mlxp.interactive_mode=True`) or not, an interactive session is created where the user can tell the version manager what to do or the job is executed from on a copy of the code based on the latest commit. 
 
 Without the interactive mode
 """"""""""""""""""""""""""""
 
-If the version manager is used without the interative mode, a copy of the code based on the latest commit is created, if it does not already exists. It is located in a directory of the form parent_work_dir/repo_name/commit_hash, where 'parent_work_dir' is provided by the user in the mlxp config file, 'repo_name' is the name of the git repository and 'commit_hash' is the latest commit's hash. 
+If the version manager is used without the interative mode (:samp:`mlxp.interactive_mode=False`), a copy of the code based on the latest commit is created, if it does not already exists. It is located in a directory of the form 
+:samp:`parent_work_dir/repo_name/commit_hash`, where :samp:`parent_work_dir` is provided by the user in the mlxp config file, :samp:`repo_name` is the name of the git repository and :samp:`commit_hash` is the latest commit's hash. 
  
 MLXP then proceeds to execute the code from that copy:
 
@@ -36,7 +36,7 @@ MLXP then proceeds to execute the code from that copy:
     Completed training with a learning rate of 10.0
 
 
-We can double check where the code was executed from by inspecting the 'info.yaml' file (Note that this is the 4th run, so the file should be located in ./logs/4/)
+We can double check where the code was executed from by inspecting the :samp:`info.yaml` file (Note that this is the 4th run, so the file should be located in  :samp:`./logs/4/` )
 
 
 .. code-block:: yaml
@@ -60,16 +60,15 @@ We can double check where the code was executed from by inspecting the 'info.yam
 
 If other jobs are submitted later, and if the code did not change meanwhile, these jobs will also be executed from this same working directory. This avoids copying the same content multiple times. 
 
-Finally, a copy of the dependencies used by the code along with their versions is also made in the field 'requirements' if the option 'mlxp.version_manager.compute_requirements' is set to 'True'.
+Finally, a copy of the dependencies used by the code along with their versions is also made in the field :samp:`requirements` if the option 
+:samp:`mlxp.version_manager.compute_requirements` is set to :samp:`True`.
 
 
 
 With the interactive mode
 """""""""""""""""""""""""
 
-When the interactive mode is active, the version manager checks for untracked files and uncommited changes and asks if how to handle those before executing the code. 
-
-
+When the interactive mode is active (:samp:`mlxp.interactive_mode=False`), the version manager checks for untracked files and uncommited changes and asks if how to handle those before executing the code. 
 
 
 First, the version manager checks for untracked files and asks the user whether untracked files should be added to the git repository. 
@@ -93,7 +92,7 @@ Here, we just hit Enter to skip. The next step is to check for uncommitted chang
     n: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.)
     [Automatic commit]: Please enter your choice (y/n):
 
-We see that there is one uncommitted change. The user can either ignore it or create an automatic commit from the version manager interface. Here, we just choose the option ‘y’ which creates an automatic commit of the changes.
+We see that there is one uncommitted change. The user can either ignore it or create an automatic commit from the version manager interface. Here, we just choose the option :samp:`y` which creates an automatic commit of the changes.
 
 
 .. code-block:: console
@@ -104,33 +103,13 @@ We see that there is one uncommitted change. The user can either ignore it or cr
      create mode 100644 tutorial/script.sh
 
 
-
-Then, the version manager asks if we want to create a backup copy (if it does not already exist) based on the latest commit and from which code will be executed. If not, the code is executed from the current directory.
-
-.. code-block:: console
-
-   $ python main.py +mlxp.use_version_manager=True
-    
-    Would you like to execute code from a backup copy based on the latest commit? (y/n):
-    y: Yes (Recommended option)
-    n: No. (Code will be executed from the main repository)
-    Please enter you answer (y/n): y
-
-We choose the safe copy!
-
-
-.. code-block:: console
-
-    Run will be executed from a backup directory based on the latest commit
-
-
 Finally, the version manager creates the backup copy of the code based on the latest commit and runs it from there, just like in the non-interactive mode. 
 
 
-Using the version manager with a job scheduler 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2- Using the version manager with a job scheduler 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can combine both features to run several reproducible jobs with a controlled version of the code they use. For this, you can create a script (here 'script.sh') containing all the jobs you need to run as well as the options to your scheduler. You'll need to activate the version manager when executing each command.
+You can combine both features to run several reproducible jobs with a controlled version of the code they use. For this, you can create a script (here :samp:`script.sh`) containing all the jobs you need to run as well as the options to your scheduler. You'll need to activate the version manager when executing each command.
 
     .. code-block:: console
 
@@ -143,7 +122,7 @@ You can combine both features to run several reproducible jobs with a controlled
       python main.py  optimizer.lr=10.,1. seed=1,2 + mlxp.use_version_manager=True
       python main.py  model.num_units=100,200 seed=1,2 + mlxp.use_version_manager=True
 
-Now you simply need to submit your jobs using mlxpsub:
+Now you simply need to submit your jobs using :samp:`mlxpsub` command:
 
 
     .. code-block:: console

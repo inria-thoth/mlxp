@@ -30,8 +30,7 @@ class ConfigScheduler:
     .. py:attribute:: env_cmd
         :type: str
 
-        Command for activating the working environment.
-        (e.g. 'conda activate my_env')
+        Command for activating the working environment. (e.g. 'conda activate my_env')
 
     .. py:attribute:: shell_path
         :type: Any
@@ -46,8 +45,7 @@ class ConfigScheduler:
     .. py:attribute:: cleanup_cmd
         :type: str
 
-        A command for clearning the environment
-        when executing a job submitted by the scheduler. (e.g.: 'module purge' for SLURM)
+        A command for clearning the environment when executing a job submitted by the scheduler. (e.g.: 'module purge' for SLURM)
 
     .. py:attribute:: option_cmd
         :type: List[str]
@@ -116,7 +114,6 @@ class ConfigLogger:
 
         Class name of the logger to use
         (default "DefaultLogger")
-
 
     .. py:attribute:: parent_log_dir
         :type: str
@@ -203,7 +200,6 @@ class Info:
         :type: Any
 
         Time at which job ended.
-
 
     .. py:attribute:: logger
         :type: Any
@@ -325,7 +321,6 @@ class Metadata:
 
         Default settings of MLXP.
         (default MLXPConfig)
-
 
     .. py:attribute:: config
         :type: Any

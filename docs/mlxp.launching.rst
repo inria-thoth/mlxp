@@ -2,7 +2,7 @@ Launcher
 ========
 
 
-The :class:`~mlxp.launcher.launch` Function
+The :class:`~mlxp.launcher.launch` Decorator
 --------------------------------------------
 
 .. automodule:: mlxp.launcher
@@ -13,7 +13,7 @@ The :class:`~mlxp.launcher.launch` Function
 
 
 The :class:`~mlxp.mlxpsub.mlxpsub` Command
---------------------------------------------
+------------------------------------------
 
 .. automodule:: mlxp.mlxpsub
    :members:

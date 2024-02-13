@@ -157,45 +157,52 @@ class GitVM(VersionManager):
                 )
                 _printc(_bcolors.OKBLUE, f"Run will be executed from {self.dst}")
 
+    # def _handle_cloning(self, repo, relpath):
+    #     choice = "y"
+    #     done = False
+    #     while True:
+    #         valid_choice = False
+    #         if self._existing_choices:
+    #             choice = self.im_handler.get_im_choice("cloning")
+    #             valid_choice = choice in ["y", "n"]
+    #         if not valid_choice:
+    #             #if self.im_handler.interactive_mode: # no need to ask for this anymore
+    #             #    choice = _get_cloning_choice()
+    #             self.im_handler.set_im_choice("cloning", choice)
+    #             if choice == "y":
+    #                 _printc(
+    #                     _bcolors.OKBLUE,
+    #                     "Run will be executed from a backup directory based on the latest commit ",
+    #                 )
+    #         if choice == "y":
+    #             self._clone_repo(repo)
+    #             self._set_requirements()
+    #             self.work_dir = os.path.join(self.dst, relpath)
+    #             done = True
+    #         elif choice == "n":
+    #             if not self._existing_choices:
+    #                 _printc(
+    #                     _bcolors.OKBLUE, "Run will be executed from the main directory",
+    #                 )
+    #                 _printc(
+    #                     _bcolors.OKBLUE, "Warning: [Reproduciblity] Run is not linked to any git commit",
+    #                 )
+
+    #             done = True
+    #         else:
+    #             _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
+
+    #         if done:
+    #             break
+
     def _handle_cloning(self, repo, relpath):
-        choice = "y"
-        done = False
-        while True:
-            valid_choice = False
-            if self._existing_choices:
-                choice = self.im_handler.get_im_choice("cloning")
-                valid_choice = choice in ["y", "n"]
-            if not valid_choice:
-                #if self.im_handler.interactive_mode: # no need to ask for this anymore
-                #    choice = _get_cloning_choice()
-                self.im_handler.set_im_choice("cloning", choice)
-                if choice == "y":
-                    _printc(
-                        _bcolors.OKBLUE,
-                        "Run will be executed from a backup directory based on the latest commit ",
-                    )
-            if choice == "y":
-                self._clone_repo(repo)
-                self._set_requirements()
-                self.work_dir = os.path.join(self.dst, relpath)
-                done = True
-            elif choice == "n":
-                if not self._existing_choices:
-                    _printc(
-                        _bcolors.OKBLUE, "Run will be executed from the main directory",
-                    )
-                    _printc(
-                        _bcolors.OKBLUE, "Warning: [Reproduciblity] Run is not linked to any git commit",
-                    )
-
-                done = True
-            else:
-                _printc(_bcolors.OKBLUE, "Invalid choice. Please try again. (y/n)")
-
-            if done:
-                break
-
-        return choice
+        self._clone_repo(repo)
+        self._set_requirements()
+        self.work_dir = os.path.join(self.dst, relpath)
+        _printc(
+            _bcolors.OKBLUE,
+            "Run will be executed from a backup directory based on the latest commit ",
+        )
 
     def _handle_commit_state(self, repo):
         while True:

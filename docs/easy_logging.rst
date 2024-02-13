@@ -9,19 +9,19 @@ Logging metrics and artifacts
 
 The logger provides four methods for logging objects:
     
-    - 'log_metrics': For logging dictionaries of scalars in a json file. This method can be used to log the loss and other scalar quantities that can evolve during the run. These dictionaries are stored in a json file.
-    - 'log_artifacts': For logging more complex objects such as the weights of a network, etc. This method requires passing objects inheriting from the abstract class Artifacts.
-    - 'log_checkpoint': A simpler method for logging serializable objects as a pickle file.
-    - 'load_checkpoint': A method for loading a saved checkpoint.
+    - :samp:`log_metrics`: For logging dictionaries of scalars in a json file. This method can be used to log the loss and other scalar quantities that can evolve during the run. These dictionaries are stored in a json file.
+    - :samp:`log_artifacts`: For logging more complex objects such as the weights of a network, etc. This method requires passing objects inheriting from the abstract class :samp:`Artifacts`.
+    - :samp:`log_checkpoint`: A simpler method for logging serializable objects as a pickle file.
+    - :samp:`load_checkpoint`: A method for loading a saved checkpoint.
 
 
 File structure of the logs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When the logger is activated, it stores the results of a run in a sub-directory of the parent directory './logs'. This parent directory is created automatically if it does not exists already. By default it is set to './logs', but this behavior can be modified (see :ref: `Customizing the parent log directory <custom_log_dir>`).
+When the logger is activated, it stores the results of a run in a sub-directory of the parent directory :samp:`./logs`. This parent directory is created automatically if it does not exists already. By default it is set to :samp:`./logs`, but this behavior can be modified (see :ref:`Customizing the parent log directory <custom_log_dir>`).
 
-First, the logger assigns a 'log_id' to the run. Every time 'main.py' is executed with an active logger, the log_id of the new run is incremented by 1 starting from 1. Then a new sub-directory of './logs' is created and named after the assigned log_id. 
-Since we executed the code three times in total, we should expect three sub-directories under './logs' called '1', '2', and '3', all having the same structure:
+First, the logger assigns a :samp:`log_id` to the run. Every time :samp:`main.py` is executed with an active logger, the :samp:`log_id` of the new run is incremented by 1 starting from 1. Then a new sub-directory of :samp:`./logs` is created and named after the assigned :samp:`log_id`. 
+Since we executed the code three times in total, we should expect three sub-directories under :samp:`./logs` called :samp:`1`, :samp:`2` and :samp:`3`, all having the same structure:
 
 .. code-block:: text
    :caption: ./logs/
@@ -32,7 +32,7 @@ Since we executed the code three times in total, we should expect three sub-dire
    └── 3/...
 
 
-Each log directory contains three sub-directories: 'metadata', 'metrics' and 'artifacts':
+Each log directory contains three sub-directories: :samp:`metadata`, :samp:`metrics` and :samp:`artifacts`:
 
 .. code-block:: text
    :caption: ./logs/
@@ -56,10 +56,12 @@ Each log directory contains three sub-directories: 'metadata', 'metrics' and 'ar
 
 Let's go through these three directories.
 
-The 'metrics' directory
-"""""""""""""""""""""""
+The :samp:`metrics` directory
+"""""""""""""""""""""""""""""
 
-This directory contains JSON files created when calling the logger's method 'log_metrics(dict, log_name)'. Each file is named after the variable 'log_name' and stores the dictionaries provided as input to the 'log_metrics' method. 
+This directory contains JSON files created when calling the logger's method 
+:samp:`log_metrics(dict, log_name)`. 
+Each file is named after the variable :samp:`log_name` and stores the dictionaries provided as input to the :samp:`log_metrics` method.
 
 
 .. code-block:: json
@@ -76,15 +78,14 @@ This directory contains JSON files created when calling the logger's method 'log
     {"loss": 0.005932427477091551, "epoch": 8}
     {"loss": 0.003738593542948365, "epoch": 9}
 
-The hidden directory '.keys' is used by the reader module of MLXP and is not something to worry about here. Instead, we inspect the remaining directories below. 
+The hidden directory :samp:`.keys` is used by the reader module of MLXP and is not something to worry about here. Instead, we inspect the remaining directories below. 
 
 
-The 'metadata' directory
-""""""""""""""""""""""""
+The :samp:`metadata` directory
+""""""""""""""""""""""""""""""
 
-The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxp', each storing the content of the corresponding fields of the context object 'ctx'. 
-'config' stores the user config of the run, 'info' stores general information about the run such as the assigned 'log_id' and the absolute path to the logs of the run 'log_dir'. Finally, 'mlxp' stores the MLXP's settings used for the run (e.g. the logger settings). 
-
+The :samp:`metadata`  directory contains three yaml files: :samp:`config`, :samp:`info`, and :samp:`mlxp`, each storing the content of the corresponding fields of the context object :samp:`ctx`. 
+:samp:`config` stores the user config of the run, :samp:`info` stores general information about the run such as the assigned :samp:`log_id` and the absolute path to the logs of the run :samp:`log_dir`. Finally, :samp:`mlxp` stores the MLXP's settings used for the run (e.g. the logger settings). 
 
 .. code-block:: yaml
     :caption: ./logs/1/metadata/config.yaml
@@ -141,10 +142,12 @@ The 'metadata' directory contains three yaml files: 'config', 'info', and 'mlxp'
     interactive_mode: true
 
 
-The 'artifacts' directory 
-"""""""""""""""""""""""""
+The :samp:`artifacts` directory 
+"""""""""""""""""""""""""""""""
 
-The directory 'artifacts' is where all data passed to the logger's methods 'log_artifact' and 'log_checkpoint' are stored. These are stored in different directories depending on the artifact type. In this example, since we used the reserved method 'log_checkpoint', the logged data are considered as checkpoint objects, hence the sub-directory 'Checkpoint'. You can see that it contains the pickle file 'last_ckpt.pkl' which is the name we provided when calling the method 'log_checkpoint' in the 'main.py' file. 
+The directory :samp:`artifacts` is where all data passed to the logger's methods :samp:`log_artifacts` and :samp:`log_checkpoint` are stored. 
+These are stored in different directories depending on the artifact type. In this example, since we used the reserved method :samp:`log_checkpoint`, the logged data are considered as checkpoint objects, hence the sub-directory :samp:`Checkpoint`. 
+You can see that it contains the pickle file :samp:`last_ckpt.pkl` which is the name we provided when calling the method :samp:`log_checkpoint` in the :samp:`main.py` file. 
 
 
 
@@ -152,7 +155,7 @@ The directory 'artifacts' is where all data passed to the logger's methods 'log_
 Checkpointing
 ^^^^^^^^^^^^^
 
-Checkpointing can be particularly useful if you need to restart a job from its latest state without having to re-run it from scratch. To do this, you only need to slightly modify the function 'train' to load the latest checkpoint by default:
+Checkpointing can be particularly useful if you need to restart a job from its latest state without having to re-run it from scratch. To do this, you only need to slightly modify the function :samp:`train` to load the latest checkpoint by default:
 
 .. code-block:: python
     :caption: main.py
@@ -205,7 +208,7 @@ Checkpointing can be particularly useful if you need to restart a job from its l
     if __name__ == "__main__":
         train()
 
-Of course, if you execute 'main.py' without further options, the logger will create a new 'log_id' where there is no checkpoint yet, so it cannot resume a previous job. Instead, you need to force the 'log_id' using the option 'logger.forced_log_id':
+Of course, if you execute :samp:`main.py` without further options, the logger will create a new :samp:`log_id` where there is no checkpoint yet, so it cannot resume a previous job. Instead, you need to force the :samp:`log_id` using the option :samp:`logger.forced_log_id`:
 
 .. code-block:: console
 
@@ -218,14 +221,14 @@ Of course, if you execute 'main.py' without further options, the logger will cre
 Customizing the parent log directory
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can change the parent directory by overriding the option '+mlxp.logger.parent_log_dir' from the command-line:
+You can change the parent directory by overriding the option :samp:`+mlxp.logger.parent_log_dir` from the command-line:
 
 .. code-block:: console
 
    $ python main.py +mlxp.logger.parent_log_dir='./new_logs'
 
 
-Alternatively, the parent directory can be modified directly in the MLXP default settings file 'configs/mlxp.yaml'. This file is created automatically if it doesn't exist already and contains all the defaults options for using MLXP in the current project:
+Alternatively, the parent directory can be modified directly in the MLXP default settings file :samp:`configs/mlxp.yaml`. This file is created automatically if it doesn't exist already and contains all the defaults options for using MLXP in the current project:
 
 .. code-block:: yaml
    :caption: ./configs/mlxp.yaml

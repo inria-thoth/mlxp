@@ -243,7 +243,7 @@ def launch(
                         try:
                             assert "seed" in cfg.config.keys()
                         except AssertionError:
-                            msg = "Missing field: The 'config' must contain a field 'seed'\n"
+                            msg = "Missing field: The 'config' must contain a field named 'seed'\n"
                             msg += "provided as argument to the function 'seeding_function' "
                             raise MissingFieldError(msg)
                         seeding_function(cfg.config.seed)

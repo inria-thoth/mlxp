@@ -23,13 +23,14 @@ The first step is to create a directory 'tutorial' containing the code needed fo
    ├── main.py
    └── results.py
 
-The directory contains three files: 'core.py', 'main.py' and 'results.py'. It also contains a directory 'configs' that will be used later by MLXP. For now, we will only have a look at the 'core.py' and 'main.py' files.
+The directory contains three files: :samp:`core.py`, :samp:`main.py` :samp:`results.py`. It also contains a directory :samp:`configs` that will be used later by MLXP. For now, we will only have a look at the :samp:`core.py` and :samp:`main.py` files.
 
 
-The 'core.py' file
-""""""""""""""""""
+The :samp:`core.py` file
+""""""""""""""""""""""""
 
-The file 'core.py' contains a PyTorch implementation of a one hidden layer network 'OneHiddenLayer' as well as a simple data loader 'DataLoader' that we will use during training. In the rest of the tutorial, we will not need to worry about the content of 'core.py', but let's just have a quick look at this file:
+The file :samp:`core.py` contains a PyTorch implementation of a one hidden layer network :samp:`OneHiddenLayer` as well as a simple data loader :samp:`DataLoader` that we will use during training. 
+In the rest of the tutorial, we will not need to worry about the content of :samp:`core.py`, but let's just have a quick look at this file:
 
 
 .. code-block:: python
@@ -87,10 +88,10 @@ The file 'core.py' contains a PyTorch implementation of a one hidden layer netwo
 
 .. _old_main_file:
 
-The 'main.py' file
-""""""""""""""""""
+The :samp:`main.py` file
+""""""""""""""""""""""""
 
-The file 'main.py' contains code for training the model 'OneHiddenLayer' on data provided by the 'DataLoader'. Training is performed using the function 'train': 
+The file :samp:`main.py` contains code for training the model :samp:`OneHiddenLayer` on data provided by the :samp:`DataLoader`. Training is performed using the function :samp:`train`: 
 
 .. code-block:: python
     :caption: main.py
@@ -129,7 +130,7 @@ The file 'main.py' contains code for training the model 'OneHiddenLayer' on data
 Training the model
 """"""""""""""""""
 
-If we execute the function 'main.py', we can see that the training performs 10 'epochs' and then prints a message confirming that the training is complete. 
+If we execute the function :samp:`main.py`, we can see that the training performs 10 :samp:`epochs` and then prints a message confirming that the training is complete. 
 
 .. code-block:: console
 
@@ -147,6 +148,5 @@ If we execute the function 'main.py', we can see that the training performs 10 '
     Completed training with learing rate: 10.0
 
 
-In this basic example, we have not used any specific tool for launching or logging. 
-Next, we will see how you can use MLXP to keep track of all options, results, and code versions seamlessly! 
+In this basic example, we have not used any specific tool for launching or logging. Next, we will see how you can use MLXP to keep track of all options, results, and code versions seamlessly! 
 

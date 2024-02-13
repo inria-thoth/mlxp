@@ -24,21 +24,20 @@ class Logger(abc.ABC):
 
     The logger creates a directory with a default file structure:
 
-        .. code-block:: console
+    .. code-block:: console
 
-
-            parent_log_dir/log_id:
-            ├── metadata/
-            │   └── metadata.yaml : Contains the configs of the run
-            ├── metrics/
-            │   ├── 'file_name'.json : Contains a the outputs stored
-            │   │                   when running the method log_metrics(metrics_dict, file_name)
-            │   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics.
-            │            Each file 'file_name'.yaml corresponds to a json file 'file_name'.json containing the dictionaries.
-            ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.
-            ├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
-            ├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
-            └── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)
+        parent_log_dir/log_id:
+        ├── metadata/
+        │   └── metadata.yaml : Contains the configs of the run
+        ├── metrics/
+        │   ├── 'file_name'.json : Contains a the outputs stored
+        │   │                   when running the method log_metrics(metrics_dict, file_name)
+        │   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics.
+        │            Each file 'file_name'.yaml corresponds to a json file 'file_name'.json containing the dictionaries.
+        ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.
+        ├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)
+        ├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)
+        └── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)
 
     .. py:attribute:: parent_log_dir
         :type: str

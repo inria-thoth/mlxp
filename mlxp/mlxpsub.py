@@ -11,34 +11,6 @@ from mlxp.scheduler import Scheduler, Schedulers_dict
 
 scheduler_env_var = 'MLXP_SCHEDULER'   
 
-
-# def _get_git_repo():
-#     import git
-
-#     try:
-#         return  git.Repo(search_parent_directories=True)
-#     except git.exc.InvalidGitRepositoryError:
-#         return None
-
-
-# def check_mlxpsub_dir(mlxpsub_dir):
-
-
-#     if not os.path.exists(mlxpsub_dir):
-#         os.makedirs(mlxpsub_dir)
-#         repo = _get_git_repo()
-#         if repo:
-
-
-
-#     if is_git_repository(directory_path):
-#         # Add the directory to .gitignore
-#         add_directory_to_gitignore(directory_path)
-
-
-#     raise NotImplementedError
-
-
 def make_file_name(root,script_pid):
     file_name = "scheduler_config_"+str(script_pid)
     mlxpsub_dir = os.path.join(root,".mlxpsub")
@@ -69,9 +41,6 @@ signal.signal(signal.SIGINT, clear)
 
 
 def process_bash_script(bash_script_name):
-    # Your logic to parse the bash script and extract information
-    bash_commands = []
-
     shebang = ""
     scheduler = {"option_cmd":[],
                 "env_cmd": [],
@@ -198,7 +167,7 @@ def mlxpsub():
         python main.py  model.num_units=100,200 seed=1,2,3,4
 
     The command assumes the script contains at least a python command of the form:
-        python <python_file_name.py> options_1=A,B,C option_2=X,Y
+    python <python_file_name.py> options_1=A,B,C option_2=X,Y
     where <python_file_name.py> is a python file that uses MLXP for launching. 
     
     MLXP creates a script for each job corresponding to an option setting.
@@ -227,19 +196,16 @@ def mlxpsub():
     the job's name, stdout and stderr file paths, 
     so there is no need to specify those in the original script 'script.sh'.
     These scripts contain the same scheduler's options 
-    as in 'script.sh' and a single python command using one specific option setting:
-        optimizer.lr=10. seed=1
+    as in 'script.sh' and a single python command using one specific option setting: optimizer.lr=10. seed=1
     Additionally, MLXP pre-processes the python command to extract its working directory 
     and set it explicitly in the newly created script before the python command. 
 
-    
-
-    .. note:: It is also possible to have other commands in the 'script.sh', 
-    for instance to activate an environment: (conda activate my_env). 
-    These commands will be copied from  'script.sh' to  the new created script 
-    and placed before the python command. Variable assignments and directory changes
-    will be systematically ignored.
-
+    .. note:: 
+        It is also possible to have other commands in the 'script.sh', 
+        for instance to activate an environment: (conda activate my_env). 
+        These commands will be copied from  'script.sh' to  the new created script 
+        and placed before the python command. Variable assignments and directory changes
+        will be systematically ignored.
     """
 
     if len(sys.argv) !=2:
@@ -261,7 +227,6 @@ def mlxpsub():
                           bash_script_name, 
                           scheduler_file_name)
 
-    #clear()
 
 
 def main():
