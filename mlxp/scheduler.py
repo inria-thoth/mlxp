@@ -7,20 +7,17 @@ import subprocess
 from copy import deepcopy
 from typing import Any, Dict, List, Union
 
-from omegaconf.errors import OmegaConfBaseException
-
 from mlxp.errors import InvalidShellPathError, JobSubmissionError, UnknownSystemError
 
 
-def get_info_null(process_output)-> Dict[str, Any]:
+def get_info_null(process_output) -> Dict[str, Any]:
     return {}
 
-def get_info_OAR(process_output) -> Dict[str, Any]:
-    """Return a dictionary containing the job_id assigned to the run by the
-    scheduler.
 
-    :return: A dictionary containing the job_id assigned to the run by the
-        scheduler.
+def get_info_OAR(process_output) -> Dict[str, Any]:
+    """Return a dictionary containing the job_id assigned to the run by the scheduler.
+
+    :return: A dictionary containing the job_id assigned to the run by the scheduler.
     :rtype: Dict[str,Any]
     """
     if process_output:
@@ -30,65 +27,71 @@ def get_info_OAR(process_output) -> Dict[str, Any]:
         return {}
 
 
+SLURM = {
+    "name": "SLURMScheduler",
+    "directive": "#SBATCH",
+    "submission_cmd": "sbatch",
+    "job_name_cmd": "--job-name=",
+    "output_file_cmd": "--output=",
+    "error_file_cmd": "--error=",
+    "get_info": get_info_null,
+}
 
-SLURM = {"name":"SLURMScheduler", 
-         "directive":"#SBATCH",
-         "submission_cmd":"sbatch",
-         "job_name_cmd":"--job-name=",
-         "output_file_cmd": "--output=",
-         "error_file_cmd":"--error=",
-         "get_info": get_info_null} 
-
-OAR = {  "name":"OARScheduler",
-         "directive":"#OAR",
-         "submission_cmd":"oarsub -S",
-         "job_name_cmd":"-n ",
-         "output_file_cmd": "-O ",
-         "error_file_cmd":"-E ",
-         "get_info": get_info_OAR}
-
-
-PBS = {  "name":"PBSScheduler",
-         "directive":"#PBS",
-         "submission_cmd":"qsub",
-         "job_name_cmd":"-N ",
-         "output_file_cmd": "-o ",
-         "error_file_cmd":"-e ",
-         "get_info": get_info_null}
+OAR = {
+    "name": "OARScheduler",
+    "directive": "#OAR",
+    "submission_cmd": "oarsub -S",
+    "job_name_cmd": "-n ",
+    "output_file_cmd": "-O ",
+    "error_file_cmd": "-E ",
+    "get_info": get_info_OAR,
+}
 
 
-SGE = {  "name":"SGEScheduler",
-         "directive":"#$",
-         "submission_cmd":"qsub",
-         "job_name_cmd":"-N ",
-         "output_file_cmd": "-o ",
-         "error_file_cmd":"-e ",
-         "get_info": get_info_null}
-
-MWM = {  "name":"MWMScheduler",
-         "directive":"#MSUB",
-         "submission_cmd":"msub",
-         "job_name_cmd":"-N ",
-         "output_file_cmd": "-o ",
-         "error_file_cmd":"-e ",
-         "get_info": get_info_null}
+PBS = {
+    "name": "PBSScheduler",
+    "directive": "#PBS",
+    "submission_cmd": "qsub",
+    "job_name_cmd": "-N ",
+    "output_file_cmd": "-o ",
+    "error_file_cmd": "-e ",
+    "get_info": get_info_null,
+}
 
 
-LSF = {  "name":"LSFScheduler",
-         "directive":"#BSUB",
-         "submission_cmd":"bsub",
-         "job_name_cmd":"-J ",
-         "output_file_cmd": "-o ",
-         "error_file_cmd":"-e ",
-         "get_info": get_info_null}
+SGE = {
+    "name": "SGEScheduler",
+    "directive": "#$",
+    "submission_cmd": "qsub",
+    "job_name_cmd": "-N ",
+    "output_file_cmd": "-o ",
+    "error_file_cmd": "-e ",
+    "get_info": get_info_null,
+}
+
+MWM = {
+    "name": "MWMScheduler",
+    "directive": "#MSUB",
+    "submission_cmd": "msub",
+    "job_name_cmd": "-N ",
+    "output_file_cmd": "-o ",
+    "error_file_cmd": "-e ",
+    "get_info": get_info_null,
+}
 
 
-Schedulers_dict = {"#OAR": OAR,
-                     "#SBATCH": SLURM,
-                     "#BSUB": LSF,
-                     "#MSUB": MWM,
-                     "#$":SGE,
-                     "#PBS":PBS}
+LSF = {
+    "name": "LSFScheduler",
+    "directive": "#BSUB",
+    "submission_cmd": "bsub",
+    "job_name_cmd": "-J ",
+    "output_file_cmd": "-o ",
+    "error_file_cmd": "-e ",
+    "get_info": get_info_null,
+}
+
+
+Schedulers_dict = {"#OAR": OAR, "#SBATCH": SLURM, "#BSUB": LSF, "#MSUB": MWM, "#$": SGE, "#PBS": PBS}
 
 
 class Scheduler(abc.ABC):
@@ -144,14 +147,14 @@ class Scheduler(abc.ABC):
         self,
         directive: str,
         submission_cmd: str,
-        job_name_cmd:str,
-        output_file_cmd:str,
-        error_file_cmd:str,
+        job_name_cmd: str,
+        output_file_cmd: str,
+        error_file_cmd: str,
         shell_path: str = "",
         shell_config_cmd: str = "",
-        env_cmd: Union[List[str],str] = "",
+        env_cmd: Union[List[str], str] = "",
         cleanup_cmd: str = "",
-        option_cmd: Union[List[str], None] = None, 
+        option_cmd: Union[List[str], None] = None,
     ):
         """Create a scheduler object.
 
@@ -179,15 +182,14 @@ class Scheduler(abc.ABC):
         self.directive = directive
         self.cleanup_cmd = cleanup_cmd
         self.job_name_cmd = job_name_cmd
-        self.output_file_cmd=output_file_cmd
-        self.error_file_cmd=error_file_cmd
+        self.output_file_cmd = output_file_cmd
+        self.error_file_cmd = error_file_cmd
         self.submission_cmd = submission_cmd
         self.option_cmd = option_cmd
         self.shell_config_cmd = shell_config_cmd
         self.shell_path = shell_path
         self.env_cmd = env_cmd
         self.process_output = None
-
 
     @abc.abstractmethod
     def get_info(self) -> Dict[str, Any]:
@@ -197,7 +199,6 @@ class Scheduler(abc.ABC):
         :rtype: int
         """
         pass
-
 
     def make_job_details(self, log_dir: str) -> List[str]:
         """Return a list of three strings specifying the job name, the paths to the
@@ -216,13 +217,12 @@ class Scheduler(abc.ABC):
         err_path = os.path.join(log_dir, "log.stderr")
         out_path = os.path.join(log_dir, "log.stdout")
 
-        values = [self.job_name_cmd+ job_name,
-                 self.error_file_cmd+ err_path,
-                 self.output_file_cmd+ err_path,
+        values = [
+            self.job_name_cmd + job_name,
+            self.error_file_cmd + err_path,
+            self.output_file_cmd + out_path,
         ]
         return values
-
-
 
     def submit_job(self, main_cmd, log_dir) -> None:
         """Submit the job to the scheduler and returns a string containing the output of
@@ -299,13 +299,15 @@ class Scheduler(abc.ABC):
         option_cmd = ["".join(option_cmd)]
 
         # Setting environment
-        if isinstance(self.env_cmd,list):
-            env_cmds = [f"{cmd}\n" for cmd in self.env_cmd]#[f"{self.shell_config_cmd}\n", f"{self.cleanup_cmd}\n"]
+        if isinstance(self.env_cmd, list):
+            env_cmds = [
+                f"{cmd}\n" for cmd in self.env_cmd
+            ]  # [f"{self.shell_config_cmd}\n", f"{self.cleanup_cmd}\n"]
         else:
             env_cmds = [f"{self.env_cmd}\n"]
-        #try:
+        # try:
         #    env_cmds += [f"{self.env_cmd}\n"]
-        #except OmegaConfBaseException:
+        # except OmegaConfBaseException:
         #    pass
 
         cmd = "".join(shell_cmd + option_cmd + env_cmds + job_command)
@@ -314,29 +316,31 @@ class Scheduler(abc.ABC):
 
 def create_scheduler(scheduler_spec):
     specs = deepcopy(scheduler_spec)
-    class_name = specs.pop("name")  
+    class_name = specs.pop("name")
     info_method = specs.pop("get_info")
+
     class ChildScheduler(Scheduler):
-        def __init__(self,
-            shell_path="/bin/bash",
-            shell_config_cmd="",
-            env_cmd ="",
-            cleanup_cmd="",
-            option_cmd=None):
-            specs.update({"shell_path":shell_path,
-                       "shell_config_cmd":shell_config_cmd,
-                       "env_cmd":env_cmd,
-                       "cleanup_cmd":cleanup_cmd,
-                       "option_cmd":option_cmd})
+        def __init__(
+            self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=None
+        ):
+            specs.update(
+                {
+                    "shell_path": shell_path,
+                    "shell_config_cmd": shell_config_cmd,
+                    "env_cmd": env_cmd,
+                    "cleanup_cmd": cleanup_cmd,
+                    "option_cmd": option_cmd,
+                }
+            )
 
             super().__init__(**specs)
+
         def get_info(self):
             return info_method(self.process_output)
-    
+
     ChildScheduler.__name__ = class_name
     globals()[class_name] = ChildScheduler  # Add the subclass to the global namespace
-    #return globals()[subclass_name]
-
+    # return globals()[subclass_name]
 
 
 for key, value in Schedulers_dict.items():
@@ -347,11 +351,11 @@ for key, value in Schedulers_dict.items():
 #     """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
 #     def __init__(
-#         self, 
-#         shell_path="/bin/bash", 
-#         shell_config_cmd="", 
-#         env_cmd="", 
-#         cleanup_cmd="", 
+#         self,
+#         shell_path="/bin/bash",
+#         shell_config_cmd="",
+#         env_cmd="",
+#         cleanup_cmd="",
 #         option_cmd=None,
 #     ):
 #         super().__init__(
@@ -380,9 +384,6 @@ for key, value in Schedulers_dict.items():
 #             return {"scheduler_job_id": scheduler_job_id}
 #         else:
 #             return {}
-
-
-
 
 
 # class SLURMScheduler(Scheduler):
@@ -425,11 +426,11 @@ for key, value in Schedulers_dict.items():
 #     """TORQUE/PBS job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
 
 #     def __init__(
-#         self, 
-#         shell_path="/bin/bash", 
-#         shell_config_cmd="", 
-#         env_cmd="", 
-#         cleanup_cmd="", 
+#         self,
+#         shell_path="/bin/bash",
+#         shell_config_cmd="",
+#         env_cmd="",
+#         cleanup_cmd="",
 #         option_cmd=None,
 #     ):
 #         super().__init__(
@@ -453,9 +454,3 @@ for key, value in Schedulers_dict.items():
 #         """
 
 #         return {}
-
-
-
-
-
-

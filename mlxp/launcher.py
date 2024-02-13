@@ -191,7 +191,7 @@ def launch(
 
             if cfg.mlxp.use_scheduler:
                 try:
-                    scheduler = _instance_from_config(cfg.mlxp.scheduler,module=mlxp.scheduler)
+                    scheduler = _instance_from_config(cfg.mlxp.scheduler, module=mlxp.scheduler)
                     if not cfg.mlxp.use_logger:
                         print("Logger is currently disabled.")
                         print("To use the scheduler, the logger must be enabled")
@@ -334,7 +334,7 @@ class Context:
 T = TypeVar("T")
 
 
-def instance_from_dict(class_name: str, arguments: Dict[str, Any],module:Any = mlxp) -> T:
+def instance_from_dict(class_name: str, arguments: Dict[str, Any], module: Any = mlxp) -> T:
     """Create an instance of a class based on a dictionary of arguments.
 
     :param class_name: The name of the class
@@ -345,7 +345,7 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any],module:Any = m
         'arguments'.
     :rtype: T
     """
-    attr = _import_module(class_name,module)
+    attr = _import_module(class_name, module)
     if arguments:
         attr = attr(**arguments)
     else:
@@ -354,7 +354,7 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any],module:Any = m
     return attr
 
 
-def _import_module(module_name,main_module):
+def _import_module(module_name, main_module):
     module, attr = os.path.splitext(module_name)
     if not attr:
         return getattr(main_module, module)

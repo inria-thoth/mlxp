@@ -67,7 +67,9 @@ class Logger(abc.ABC):
         self.metrics_dir = os.path.join(self._log_dir, Directories.Metrics.value)
         self.artifacts_dir = os.path.join(self._log_dir, Directories.Artifacts.value)
         self.metadata_dir = os.path.join(self._log_dir, Directories.Metadata.value)
-        self.session_dir = os.path.join(self._log_dir,  Directories.Artifacts.value, Directories.Sessions.value)
+        self.session_dir = os.path.join(
+            self._log_dir, Directories.Artifacts.value, Directories.Sessions.value
+        )
         os.makedirs(self.metrics_dir, exist_ok=True)
         os.makedirs(self.artifacts_dir, exist_ok=True)
         os.makedirs(self.metadata_dir, exist_ok=True)
@@ -185,13 +187,12 @@ class Logger(abc.ABC):
     def log_session(self):
 
         os.makedirs(self.session_dir, exist_ok=True)
-        filename = os.path.join(self.session_dir,'last_session.pkl')
+        filename = os.path.join(self.session_dir, "last_session.pkl")
         pkl.dump_session(filename)
 
     def load_session(self):
-        filename = os.path.join(self.session_dir,'last_session.pkl')
+        filename = os.path.join(self.session_dir, "last_session.pkl")
         pkl.load_session(filename)
-
 
     def _log_metrics_key(self, metrics_dict: Dict[str, Union[int, float, str]], log_name: str):
         # Logging new keys appearing in a metrics dict

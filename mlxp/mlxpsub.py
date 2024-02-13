@@ -1,70 +1,37 @@
-
-
-import os
-import sys
-import yaml
 import atexit
+import os
 import signal
+import sys
 import tempfile
 
-from mlxp.scheduler import Scheduler, Schedulers_dict
+import yaml
 
-scheduler_env_var = 'MLXP_SCHEDULER'   
+from mlxp.scheduler import Schedulers_dict
 
-def make_file_name(root,script_pid):
-    file_name = "scheduler_config_"+str(script_pid)
-    mlxpsub_dir = os.path.join(root,".mlxpsub")
-    file_name = os.path.join(mlxpsub_dir,file_name + ".yaml")
-    check_mlxpsub_dir(mlxpsub_dir)
-    return file_name
-
-def clear():
-    import os
-    script_pid = os.getpid()
-    root = os.getcwd()
-
-    #file_name = make_file_name(root,script_pid)
-    file_name = "scheduler_config_"+str(script_pid)
-    mlxpsub_dir = os.path.join(root,".mlxpsub")
-    file_name = os.path.join(mlxpsub_dir,file_name + ".yaml")
-    
-
-    try:
-        os.remove(file_name)
-    except FileNotFoundError:
-        pass
-
-atexit.register(clear)
-signal.signal(signal.SIGTERM, clear)
-signal.signal(signal.SIGINT, clear)
-
+scheduler_env_var = "MLXP_SCHEDULER"
 
 
 def process_bash_script(bash_script_name):
     shebang = ""
-    scheduler = {"option_cmd":[],
-                "env_cmd": [],
-                "name": "NoScheduler",
-                "shell_path": ""}
+    scheduler = {"option_cmd": [], "env_cmd": [], "name": "NoScheduler", "shell_path": ""}
 
-
-    with open(bash_script_name, 'r') as script_file:
+    with open(bash_script_name, "r") as script_file:
         for line in script_file:
             line = line.strip()
 
             if not line:
                 continue
 
-            if line.startswith('#!'):
+            if line.startswith("#!"):
                 shebang = line[2:]
-                scheduler["shell_path"] = shebang 
+                scheduler["shell_path"] = shebang
                 continue  # Skip shebang line
 
-            elif line.startswith('#'):
+            elif line.startswith("#"):
                 # Assuming scheduler instructions are comments starting with '#'
                 splitted_line = line.split(" ")
-                
-                if len(splitted_line)>1:
+
+                if len(splitted_line) > 1:
                     directive = splitted_line[0]
                     option_cmd = " ".join(splitted_line[1:])
                     if directive in Schedulers_dict:
@@ -74,44 +41,35 @@ def process_bash_script(bash_script_name):
             elif not skip_cmd(line):
                 scheduler["env_cmd"].append(line)
                 continue
-    
-    if scheduler["name"]=="NoScheduler":
+
+    if scheduler["name"] == "NoScheduler":
         print("Warning: No valid scheduler syntax were found")
         print("Valid scheduler")
 
-    configs = {'scheduler': scheduler,'use_scheduler':True}
+    configs = {"scheduler": scheduler, "use_scheduler": True}
     return configs, shebang
+
 
 def skip_cmd(line):
     lower_line = line.lower()
-    if lower_line.startswith('python ') or lower_line.startswith('python3 '):
+    if lower_line.startswith("python ") or lower_line.startswith("python3 "):
         return True
-    else: 
-        if (' python ' in lower_line) or (' python3 ' in lower_line):
-          return True
-    
+    else:
+        if (" python " in lower_line) or (" python3 " in lower_line):
+            return True
+
     # Skip assignment
     split_eq = line.split("=")
-    if len(split_eq)>1:
+    if len(split_eq) > 1:
         return True
-    if line.startswith('cd') or line.startswith('#'):
+    if line.startswith("cd") or line.startswith("#"):
         return True
 
-    return False  
+    return False
 
 
-
-def save_scheduler_config(scheduler,script_pid,root):
-    file_name = make_file_name(root,script_pid)
-    with open(file_name , "w") as f:
-        yaml.dump(scheduler, f)
-
-    return file_name
-
-
-
-def handle_launch_cmd(bash_cmd,bash_script_name):
-    if sys.platform.startswith('win'):
+def handle_launch_cmd(bash_cmd, bash_script_name):
+    if sys.platform.startswith("win"):
         # Windows
         if bash_script_name.endswith(".sh"):
             command = f"{bash_cmd}  {bash_script_name}"
@@ -124,25 +82,19 @@ def handle_launch_cmd(bash_cmd,bash_script_name):
         command = f"{bash_cmd}  {bash_script_name}"
     return command
 
- 
 
-
-
-def run_python_script(bash_cmd,
-                      bash_script_name, 
-                      scheduler_file_name):
-    cmd = handle_launch_cmd(bash_cmd,bash_script_name)
-    launch_cmd = f"{scheduler_env_var}='{scheduler_file_name}' {cmd}"
-    
+def run_python_script(bash_cmd, bash_script_name, scheduler_file_name):
+    cmd = handle_launch_cmd(bash_cmd, bash_script_name)
     envs = os.environ
     envs[scheduler_env_var] = f"{scheduler_file_name}"
     code = os.spawnvpe(os.P_WAIT, bash_cmd, cmd.split(), envs)
     if code == 127:
-        sys.stderr.write('{0}: command not found\n'.format(bash_cmd))
+        sys.stderr.write("{0}: command not found\n".format(bash_cmd))
     else:
         print(code)
 
-    #print(process_output)
+    # print(process_output)
+
 
 def mlxpsub():
     """A function for submitting a script to a job scheduler. 
@@ -208,31 +160,24 @@ def mlxpsub():
         will be systematically ignored.
     """
 
-    if len(sys.argv) !=2:
+    if len(sys.argv) != 2:
         print("Usage: mlxpsub <script.sh>")
         sys.exit(1)
 
-
-    script_pid = os.getpid()
     root = os.getcwd()
     bash_script_name = sys.argv[1]
-    script_path = os.path.join(root,bash_script_name)
+    script_path = os.path.join(root, bash_script_name)
 
     scheduler, shebang = process_bash_script(script_path)
     with tempfile.NamedTemporaryFile() as temporary_file:
-        yaml.dump(scheduler, temporary_file, encoding=('utf-8'))
-        #scheduler_file_name = save_scheduler_config(scheduler,script_pid,root)
+        yaml.dump(scheduler, temporary_file, encoding=("utf-8"))
         scheduler_file_name = temporary_file.name
-        run_python_script(shebang,
-                          bash_script_name, 
-                          scheduler_file_name)
-
+        run_python_script(shebang, bash_script_name, scheduler_file_name)
 
 
 def main():
     mlxpsub()
 
+
 if __name__ == "__main__":
     main()
-
-

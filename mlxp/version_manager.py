@@ -202,8 +202,7 @@ class GitVM(VersionManager):
         self.work_dir = os.path.join(self.dst, relpath)
         if not self._existing_choices:
             _printc(
-                _bcolors.OKBLUE,
-                "Run will be executed from a backup directory based on the latest commit ",
+                _bcolors.OKBLUE, "Run will be executed from a backup directory based on the latest commit ",
             )
 
     def _handle_commit_state(self, repo):
@@ -346,10 +345,10 @@ def _is_done_uncommited_changes(repo):
 
 def _is_done_untracked_files(repo):
     done = False
-    #choice = _get_choice_untracked_files()
-    #if choice == "y":
+    # choice = _get_choice_untracked_files()
+    # if choice == "y":
     file_to_track = _get_files_to_track(repo)
-        # If user input is not empty
+    # If user input is not empty
     _add_files_to_track(repo, file_to_track)
     if not repo.untracked_files:
         done = True

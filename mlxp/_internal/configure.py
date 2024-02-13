@@ -10,10 +10,8 @@ from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.data_structures.schemas import Metadata
 from mlxp.enumerations import DefaultSchedulers
 from mlxp.errors import InvalidConfigFileError
-from mlxp.scheduler import Scheduler
 from mlxp.mlxpsub import scheduler_env_var
-
-
+from mlxp.scheduler import Scheduler
 
 
 def _update_scheduler_config(mlxp_config):
@@ -24,6 +22,7 @@ def _update_scheduler_config(mlxp_config):
         mlxp_config = OmegaConf.merge(mlxp_config, scheduler_config)
 
     return mlxp_config
+
 
 def _configure_scheduler(mlxp_config):
     while True:
@@ -165,8 +164,8 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
     cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
 
     im_handler = InteractiveModeHandler(cfg["mlxp"]["interactive_mode"], interactive_mode_file)
-    #scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
-    #update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
+    # scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
+    # update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
 
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
     if not os.path.exists(mlxp_file):
