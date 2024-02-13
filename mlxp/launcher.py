@@ -191,7 +191,7 @@ def launch(
 
             if cfg.mlxp.use_scheduler:
                 try:
-                    scheduler = _instance_from_config(cfg.mlxp.scheduler)
+                    scheduler = _instance_from_config(cfg.mlxp.scheduler,module=mlxp.scheduler)
                     if not cfg.mlxp.use_logger:
                         print("Logger is currently disabled.")
                         print("To use the scheduler, the logger must be enabled")
@@ -334,7 +334,7 @@ class Context:
 T = TypeVar("T")
 
 
-def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
+def instance_from_dict(class_name: str, arguments: Dict[str, Any],module:Any = mlxp) -> T:
     """Create an instance of a class based on a dictionary of arguments.
 
     :param class_name: The name of the class
@@ -345,7 +345,7 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
         'arguments'.
     :rtype: T
     """
-    attr = _import_module(class_name)
+    attr = _import_module(class_name,module)
     if arguments:
         attr = attr(**arguments)
     else:
@@ -354,10 +354,10 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
     return attr
 
 
-def _import_module(module_name):
+def _import_module(module_name,main_module):
     module, attr = os.path.splitext(module_name)
     if not attr:
-        return getattr(mlxp, module)
+        return getattr(main_module, module)
     else:
         try:
             module = importlib.import_module(module)
@@ -370,12 +370,12 @@ def _import_module(module_name):
                 return eval(module + attr[1:])
 
 
-def _instance_from_config(config):
+def _instance_from_config(config, module=mlxp):
     config_module_name = "name"
     config = copy.deepcopy(config)
     module_name = config.pop(config_module_name)
 
-    return instance_from_dict(module_name, config)
+    return instance_from_dict(module_name, config, module=module)
 
 
 def _set_work_dir(work_dir):

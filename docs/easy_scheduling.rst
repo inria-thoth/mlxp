@@ -3,7 +3,10 @@
 
 If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs. 
 MLXP allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster. 
-Currently, MLXP supports two job schedulers `SLURM <https://slurm.schedmd.com/documentation.html>`_ and `OAR <https://oar.imag.fr/>`_.
+Currently, MLXP supports the following job schedulers: 
+`SLURM <https://slurm.schedmd.com/documentation.html>`_,  `OAR <https://oar.imag.fr/>`_, `TORQUE <https://hpc-wiki.info/hpc/Torque>`_, `SGE <https://gridscheduler.sourceforge.net/>`_, `MWM <https://docs.oracle.com/cd/E58073_01/index.htm>`_ and 
+`LSF <https://www.ibm.com/docs/en/spectrum-lsf/10.1.0>`_.
+
 
 
 Submitting jobs to a job scheduler
@@ -13,8 +16,8 @@ Let's say, you'd like to submit multiple jobs into a job scheduler. You can do t
 mlxpsub command! 
 
 
-The first step is to create a script ex: 'script.sh' in your working directory (here under my_project/). 
-In this script you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for exectuting your main python script. You can then pass different option values to your python script 'main.py' as discussed earlier in :ref: `the launching tutorial'<launching_multiruns>`:
+The first step is to create a script ex.: 'script.sh' in your working directory (here under my_project/). 
+In this script, you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for exectuting your main python script. You can then pass different option values to your python script 'main.py' as discussed earlier in :ref: `the launching tutorial'<launching_multiruns>`:
 
 
     .. code-block:: console

@@ -35,6 +35,7 @@ class Directories(Enum):
     Metrics = "metrics"
     Metadata = "metadata"
     Artifacts = "artifacts"
+    Sessions = "sessions"
 
 
 class Status(Enum):

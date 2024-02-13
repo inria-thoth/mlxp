@@ -6,14 +6,10 @@ import yaml
 import atexit
 import signal
 
-from mlxp.scheduler import OARScheduler, SLURMScheduler
+from mlxp.scheduler import Scheduler, Schedulers_dict
 
-
-scheduler_directive = {"#OAR": 'OARScheduler',
-                     "#SBATCH": 'SLURMScheduler'}
 
 scheduler_env_var = 'MLXP_SCHEDULER'   
-
 
 
 
@@ -46,11 +42,13 @@ signal.signal(signal.SIGINT, clear)
 def process_bash_script(bash_script_name):
     # Your logic to parse the bash script and extract information
     bash_commands = []
+
     shebang = ""
     scheduler = {"option_cmd":[],
                 "env_cmd": [],
                 "name": "NoScheduler",
                 "shell_path": ""}
+
 
     with open(bash_script_name, 'r') as script_file:
         for line in script_file:
@@ -71,8 +69,8 @@ def process_bash_script(bash_script_name):
                 if len(splitted_line)>1:
                     directive = splitted_line[0]
                     option_cmd = " ".join(splitted_line[1:])
-                    if directive in scheduler_directive:
-                        scheduler["name"] = scheduler_directive[directive]
+                    if directive in Schedulers_dict:
+                        scheduler["name"] = Schedulers_dict[directive]["name"]
                         scheduler["option_cmd"].append(option_cmd)
 
             elif not skip_cmd(line):
@@ -215,7 +213,7 @@ def mlxpsub():
 
     """
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) !=2:
         print("Usage: mlxpsub <script.sh>")
         sys.exit(1)
 
@@ -224,6 +222,7 @@ def mlxpsub():
     root = os.getcwd()
     bash_script_name = sys.argv[1]
     script_path = os.path.join(root,bash_script_name)
+
     scheduler, shebang = process_bash_script(script_path)
     scheduler_file_name = save_scheduler_config(scheduler,script_pid,root)
 

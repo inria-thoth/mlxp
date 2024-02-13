@@ -69,7 +69,43 @@ With the interactive mode
 
 When the interactive mode is active, the version manager checks for untracked files and uncommited changes and asks if how to handle those before executing the code. 
 
-First, the version manager asks if we want to create a 'safe' copy (if it does not already exist) based on the latest commit and from which code will be executed. If not, the code is executed from the current directory.
+
+
+
+First, the version manager checks for untracked files and asks the user whether untracked files should be added to the git repository. 
+
+
+.. code-block:: console
+
+    There are untracked files in the repository:
+    tutorial/script.sh
+    Please select files to be tracked (comma-separated) and hit Enter to skip: 
+
+Here, we just hit Enter to skip. The next step is to check for uncommitted changes. 
+
+.. code-block:: console
+    
+    There are uncommitted changes in the repository:
+
+    tutorial/main.py
+    Would you like to create an automatic commit for all uncommitted changes? (y/n)
+    y: Yes.
+    n: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.)
+    [Automatic commit]: Please enter your choice (y/n):
+
+We see that there is one uncommitted change. The user can either ignore it or create an automatic commit from the version manager interface. Here, we just choose the option ‘y’ which creates an automatic commit of the changes.
+
+
+.. code-block:: console
+
+    Commiting changes....
+
+     1 files changed, 4 insertions(+), 3 deletions(-)
+     create mode 100644 tutorial/script.sh
+
+
+
+Then, the version manager asks if we want to create a backup copy (if it does not already exist) based on the latest commit and from which code will be executed. If not, the code is executed from the current directory.
 
 .. code-block:: console
 
@@ -88,74 +124,35 @@ We choose the safe copy!
     Run will be executed from a backup directory based on the latest commit
 
 
-
-Then, the version manager checks for untracked files and asks the user whether untracked files should be added to the git repository. 
-
-
-.. code-block:: console
-
-    There are untracked files in the repository:
-    docs/easy_scheduling.rst
-    docs/easy_versioning.rst
-    Would you like to add untracked files? (y/n)
-    y: Yes.
-    n: No. Untracked files will be ignored. (Before selecting this option, please make sure to manually add untracked files)
-    [Adding untracked files]: Please enter your choice (y/n): y
-
-Here, we just choose option 'y'. As a result, the user is invited to enter the files to be tracked. 
-
-.. code-block:: console
-
-    Untracked files:
-    docs/easy_scheduling.rst
-    docs/easy_versioning.rst
-    Please select files to be tracked (comma-separated) and hit Enter to skip:  
-
-
-
-
-The next step is to check for uncommitted changes. 
-
-
-.. code-block:: console
-    
-    There are uncommitted changes in the repository:
-
-    tutorial/script.sh
-    Would you like to create an automatic commit for all uncommitted changes? (y/n)
-    y: Yes.
-    n: No. Uncommitted changes will be ignored. (Before selecting this option, it is recommanded to manually handle uncommitted changes.)
-    [Automatic commit]: Please enter your choice (y/n):
-
-We see that there is one uncommitted change. The user can either ignore it or create an automatic commit from the version manager interface. Here, we just choose the option ‘y’ which creates an automatic commit of the changes.
-
-
-.. code-block:: console
-
-    Commiting changes....
-
-     13 files changed, 403 insertions(+), 36 deletions(-)
-     create mode 100644 docs/easy_scheduling.rst
-     create mode 100644 docs/easy_versioning.rst
-
-
-
-
-
-
+Finally, the version manager creates the backup copy of the code based on the latest commit and runs it from there, just like in the non-interactive mode. 
 
 
 Using the version manager with a job scheduler 
 """"""""""""""""""""""""""""""""""""""""""""""
 
-You can combine both features to run several reproducible jobs with a controlled version of the code they use.  
+You can combine both features to run several reproducible jobs with a controlled version of the code they use. For this, you can create a script (here 'script.sh') containing all the jobs you need to run as well as the options to your scheduler. You'll need to activate the version manager when executing each command.
 
-.. code-block:: console
-   
-   $ python main.py optimizer.lr=1e-3,1e-2,1e-1 seed=1,2,3,4  +mlxp.use_scheduler=True +mlxp.use_version_manager=True
+    .. code-block:: console
+
+      #!/bin/bash
+
+      #OAR -l core=1, walltime=6:00:00
+      #OAR -t besteffort
+      #OAR -t idempotent
+
+      python main.py  optimizer.lr=10.,1. seed=1,2 + mlxp.use_version_manager=True
+      python main.py  model.num_units=100,200 seed=1,2 + mlxp.use_version_manager=True
+
+Now you simply need to submit your jobs using mlxpsub:
+
+
+    .. code-block:: console
+
+      mlxpsub script.sh
+
 
 In this case, MLXP will go through the following step:
 
-1. MLXP first asks the user to set up a scheduler, if not already configured. 
-2. The version manager asks the user to decide how to handle untracked/uncommitted files and whether or not to create a 'safe' directory from which the code will be run. 
-3. Once the user's choices are entered, the jobs are submitted to the scheduler, and you only need to wait for the results to come!
+
+1. The version manager asks the user to decide how to handle untracked/uncommitted files and whether or not to create a 'safe' directory from which the code will be run. 
+2. Once the user's choices are entered, the jobs are created and submitted to the scheduler, and you only need to wait for the results to come!

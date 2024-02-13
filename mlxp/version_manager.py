@@ -129,7 +129,8 @@ class GitVM(VersionManager):
         repo_root = repo.git.rev_parse("--show-toplevel")
         relpath = os.path.relpath(os.getcwd(), repo_root)
         self.repo_path = repo.working_tree_dir
-
+        self._handle_untracked_files(repo)
+        self._handle_commit_state(repo)
         self._handle_cloning(repo, relpath)
 
         if not self._existing_choices:
@@ -173,10 +174,7 @@ class GitVM(VersionManager):
                         _bcolors.OKBLUE,
                         "Run will be executed from a backup directory based on the latest commit ",
                     )
-
             if choice == "y":
-                self._handle_untracked_files(repo)
-                self._handle_commit_state(repo)
                 self._clone_repo(repo)
                 self._set_requirements()
                 self.work_dir = os.path.join(self.dst, relpath)

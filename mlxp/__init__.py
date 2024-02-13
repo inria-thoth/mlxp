@@ -1,9 +1,9 @@
 from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.data_structures.data_dict import DataDictList
-from mlxp.launcher import Context, launch
+from mlxp.launcher import Context, launch, instance_from_dict
 from mlxp.logger import DefaultLogger
 from mlxp.reader import Reader
-from mlxp.scheduler import OARScheduler, Scheduler, SLURMScheduler
+from mlxp.scheduler import Scheduler
 from mlxp.version_manager import GitVM
 
 __all__ = [
@@ -14,7 +14,5 @@ __all__ = [
     "ConfigDict",
     "Context",
     "DataDictList",
-    "OARScheduler",
-    "SLURMScheduler",
     "GitVM",
 ]
