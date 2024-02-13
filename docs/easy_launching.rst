@@ -5,6 +5,9 @@ We will see how to modify the file 'main.py' to use MLXP using the decorator 'ml
 But first, let's introduce the 'mlxp.Context' class which allows using MLXP's logging and configuring functionalities. 
 
 
+General setup
+"""""""""""""
+
 Defining a default config file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -86,43 +89,8 @@ Here is how the code would look like:
     if __name__ == "__main__":
         train()
 
-
-The Context object
-""""""""""""""""""
-
-MLXP uses an object 'ctx' of the class 'mlxp.Context' that is created on the fly during the execution of the program to store information about the run. 
-More precisely, it contains 4 fields: 
-
-- ctx.config: Stores project-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
-- ctx.mlxp: Stores MLXP's default settings for the project. Its content is loaded from a yaml file 'mlxp.yaml' located in the same directory 'config_path'.  
-- ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
-- ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
-
-
-.. _launching_multiruns:
-Launching using MLXP 
-^^^^^^^^^^^^^^^^^^^^^
-
-During execution, the default configurations will be read from the file 'config.yaml' located in the directory './configs' and passed to the object 'ctx.config'. The code will be executed using these option:
-
-.. code-block:: console
-
-   $ python main.py
-   Completed training with learning rate: 10.0
-
-Just like with `hydra <https://hydra.cc/>`_, we can run the code again with different options by overriding the default ones from the command line. For instance, we can use different learning rates and even select multiple values for it (say: 1e-2 and 1e-1). we can do this from the command line by providing multiple values (0.01,0.1) to the option 'optimizer.lr': 
-
-.. code-block:: console
-
-   $ python main.py optimizer.lr=0.01,0.1
-   Completed training with learning rate: 0.01
-   Completed training with learning rate: 0.1
-
-In the above instruction, we added an option 'optimizer.lr=0.01,0.1' which execute the code twice: once using a learning rate of 0.01 and a second time using 0.1. 
-
-
 Seeding code using MLXP
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 In our example, the initialization of the model uses random initial parameters which might change from one run to another. To avoid this, the user can provide a function 'set_seed' to the mlxp.launch decorator to set the global seeds of whatever random number generator is used. 
 
@@ -155,10 +123,160 @@ Note that the field 'seed' passed to the 'set_seeds' can be an integer or a dict
 Of course, it is also possible to perform seeding inside the function 'train', but 'seeding_function'  allows you to do it systematically. 
 
 
+
+The Context object
+^^^^^^^^^^^^^^^^^^
+
+MLXP uses an object 'ctx' of the class 'mlxp.Context' that is created on the fly during the execution of the program to store information about the run. 
+More precisely, it contains 4 fields: 
+
+- ctx.config: Stores project-specific options provided by the user. These options are loaded from a yaml file 'config.yaml' located in the directory 'config_path' provided as input to the decorator (here config_path='./configs').  
+- ctx.mlxp: Stores MLXP's default settings for the project. Its content is loaded from a yaml file 'mlxp.yaml' located in the same directory 'config_path'.  
+- ctx.info: Contains information about the current run: ex. status, start time, hostname, etc. 
+- ctx.logger: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory. 
+
+
+
+
+ 
+
+
+.. _launching_multiruns:
+Launching locally using MLXP 
+""""""""""""""""""""""""""""
+
+During execution, the default configurations will be read from the file 'config.yaml' located in the directory './configs' and passed to the object 'ctx.config'. The code will be executed using these option:
+
 .. code-block:: console
 
-   $ python main.py seed=1
+   $ python main.py
+   Completed training with learning rate: 10.0
 
-   Completed training with learning rate: 1e-3
+Just like with `hydra <https://hydra.cc/>`_, we can run the code again with different options by overriding the default ones from the command line. For instance, we can use different learning rates and even select multiple values for it (say: 1e-2 and 1e-1). we can do this from the command line by providing multiple values (0.01,0.1) to the option 'optimizer.lr': 
 
-That's it, launching a job using MLXP is as easy as this! 
+.. code-block:: console
+
+   $ python main.py optimizer.lr=0.01,0.1
+   Completed training with learning rate: 0.01
+   Completed training with learning rate: 0.1
+
+In the above instruction, we added an option 'optimizer.lr=0.01,0.1' which execute the code twice: once using a learning rate of 0.01 and a second time using 0.1. 
+
+Launching jobs to a scheduler
+"""""""""""""""""""""""""""""
+
+If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs. 
+MLXP allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster. 
+Currently, MLXP supports the following job schedulers: 
+`SLURM <https://slurm.schedmd.com/documentation.html>`_,  `OAR <https://oar.imag.fr/>`_, `TORQUE <https://hpc-wiki.info/hpc/Torque>`_, `SGE <https://gridscheduler.sourceforge.net/>`_, `MWM <https://docs.oracle.com/cd/E58073_01/index.htm>`_ and 
+`LSF <https://www.ibm.com/docs/en/spectrum-lsf/10.1.0>`_.
+
+
+
+Submitting jobs to a job scheduler
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Let's say, you'd like to submit multiple jobs into a job scheduler. You can do this easily using the 
+mlxpsub command! 
+
+
+The first step is to create a script ex.: 'script.sh' in your working directory (here under my_project/). 
+In this script, you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for exectuting your main python script. You can then pass different option values to your python script 'main.py' as discussed earlier in :ref: `the launching tutorial'<launching_multiruns>`:
+
+
+    .. code-block:: console
+
+      #!/bin/bash
+
+      #OAR -l core=1, walltime=6:00:00
+      #OAR -t besteffort
+      #OAR -t idempotent
+
+      python main.py  optimizer.lr=10.,1. seed=1,2
+      python main.py  model.num_units=100,200 seed=1,2
+
+The above script is meant to create and exectute 8 jobs in total that will be submitted to an OAR job scheduler. The first 4 jobs correspond to the first python command using all possible combinations of option values for 'optimizer.lr' and 'seed': (10.,1), (10,2), (1.,1), (1.,2).
+The 4 next jobs are for the second command wich varies the options 'model.num_units' and 'seed'.
+
+You only need to run the following command in the terminal:
+
+
+    .. code-block:: console
+      mlxpsub script.sh
+
+
+What happens under the woods?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Here is what happens:
+
+1. mlxpsub command parses the script to extract the scheduler's instructions and figures out what scheduler is used, then provides those information as a context prior to executing the script. 
+2. `hydra <https://hydra.cc/>`_ performs a cross-product of the options provided and creates as many jobs are needed.
+3. The MLXP creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id and contains a script to be submitted. 
+4. All generated scripts are submitted to the job scheduler.
+
+
+What you should expect?
+^^^^^^^^^^^^^^^^^^^^^^^
+
+MLXP creates a script for each job corresponding to an option setting. Each script is located in a directory of the form 'parent_log/log_id', where log_id is automatically assigned by MLXP for each job. Here is an example of the first created script in 'logs/1/script.sh' where the user sets 'parent_log' to 'logs'. 
+   
+.. code-block:: console
+    #!/bin/bash
+    #OAR -n logs/1
+    #OAR -E /root/logs/1/log.stderr
+    #OAR -O /root/logs/1/log.stdout
+    #OAR -l core=1, walltime=6:00:00
+    #OAR -t besteffort
+    #OAR -t idempotent
+   
+    cd /root/workdir/
+    python main.py  optimizer.lr=10. seed=1
+   
+As you can see, MLXP automatically assigns values for the job's name, stdout and stderr file paths, 
+so there is no need to specify those in the originscript'script.sh'.
+These scripts contain the same scheduler's options 
+as in 'script.sh' and a single python command usionespecific option setting:
+    optimizer.lr=10. seed=1
+Additionally, MLXP pre-processes the python command to extract the working directory and sets it explicitly in the newly created script before the python command. 
+
+
+We can check that the job is assigned to a cluster queue using the command 'oarstat':
+
+.. code-block:: console
+
+   $ oarstat
+
+   Job id    S User     Duration   System message
+   --------- - -------- ---------- ----------------------------------------
+
+   684627    R username 1:15:42 R=1,W=192:0:0,J=B (Karma=0.064,quota_ok)
+
+
+Once, the job finishes execution, we can double-check that everything went well by inspecting the directory './logs/1' which should contain the usual logs and two additional files 'log.stdout' and 'log.stderr':
+
+
+.. code-block:: text
+   :caption: ./logs/
+   
+   logs/
+   ├── 1/
+   │   ├── metadata/
+   │   │   ├── config.yaml
+   │   │   ├── info.yaml
+   │   │   └── mlxp.yaml
+   │   ├── metrics/
+   │   │   ├── train.json
+   │   │   └── .keys/
+   │   │        └── metrics.yaml
+   │   ├── artifacts/
+   │   │   └── Checkpoint/
+   │   │       └── last_ckpt.pkl
+   │   ├── log.stderr
+   │   ├── log.stdout
+   │   └── script.sh
+   │
+   ├──...
+
+

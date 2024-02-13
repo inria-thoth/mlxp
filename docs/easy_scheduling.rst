@@ -41,6 +41,21 @@ You only need to run the following command in the terminal:
       mlxpsub script.sh
 
 
+What happens under the woods?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Here is what happens:
+
+1. mlxpsub command parses the script to extract the scheduler's instructions and figures out what scheduler is used, then provides those information as a context prior to executing the script. 
+2. `hydra <https://hydra.cc/>`_ performs a cross-product of the options provided and creates as many jobs are needed.
+3. The MLXP creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id and contains a script to be submitted. 
+4. All generated scripts are submitted to the job scheduler.
+
+
+What you should expect?
+^^^^^^^^^^^^^^^^^^^^^^^
+
 MLXP creates a script for each job corresponding to an option setting. Each script is located in a directory of the form 'parent_log/log_id', where log_id is automatically assigned by MLXP for each job. Here is an example of the first created script in 'logs/1/script.sh' where the user sets 'parent_log' to 'logs'. 
    
 .. code-block:: console
@@ -55,8 +70,7 @@ MLXP creates a script for each job corresponding to an option setting. Each scri
     cd /root/workdir/
     python main.py  optimizer.lr=10. seed=1
    
-As you can see, MLXP automatically assigns values for 
-the job's name, stdout and stderr file paths, 
+As you can see, MLXP automatically assigns values for the job's name, stdout and stderr file paths, 
 so there is no need to specify those in the originscript'script.sh'.
 These scripts contain the same scheduler's options 
 as in 'script.sh' and a single python command usionespecific option setting:
@@ -101,17 +115,4 @@ Once, the job finishes execution, we can double-check that everything went well 
    │   └── script.sh
    │
    ├──...
-
-
-How does it work?
-"""""""""""""""""
-
-
-Here is what happens:
-
-1. mlxpsub command parses the script to extract the scheduler's instructions and figures out what scheduler is used, then provides those information as a context prior to executing the script. 
-2. `hydra <https://hydra.cc/>`_ performs a cross-product of the options provided and creates as many jobs are needed (3x4).
-3. The MLXP creates a separate directory for each one of these jobs. Each directory is assigned a unique log_id and contains a script to be submitted. 
-4. All generated scripts are submitted to the job scheduler.
-
 

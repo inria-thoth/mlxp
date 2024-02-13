@@ -1,12 +1,12 @@
 Version management
-^^^^^^^^^^^^^^^^^^
+------------------
 
 Sometimes, there can be a delay between the time when a job is submitted and when it gets executed. This typically happens when submitting jobs to a cluster queue. 
 Meanwhile, the development code might have already changed, with some potential bugs introduced! 
 Without careful version management, it is hard to know for sure what code was used to produce the results.
 
 MLXP's version manager
-"""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^
 
 MLXP proposes a simple way to avoid these issues by introducing two features:
 
@@ -15,12 +15,12 @@ MLXP proposes a simple way to avoid these issues by introducing two features:
 - Systematically copying the code from the git repository containing the executable to another 'safe' location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.
 
 Using MLXP's version manager
-""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's see how this works! We simply need to set the option 'use_version_manager' to true and make sure the code belong to a git repository. Depending on whether the interactive mode is active (mlxp.interactive_mode=True) or not, an interactive session is created where the user can tell the version manager what to do or the job is executed from on a copy of the code based on the latest commit. 
 
 Without the interactive mode
-----------------------------
+""""""""""""""""""""""""""""
 
 If the version manager is used without the interative mode, a copy of the code based on the latest commit is created, if it does not already exists. It is located in a directory of the form parent_work_dir/repo_name/commit_hash, where 'parent_work_dir' is provided by the user in the mlxp config file, 'repo_name' is the name of the git repository and 'commit_hash' is the latest commit's hash. 
  
@@ -65,7 +65,7 @@ Finally, a copy of the dependencies used by the code along with their versions i
 
 
 With the interactive mode
--------------------------
+"""""""""""""""""""""""""
 
 When the interactive mode is active, the version manager checks for untracked files and uncommited changes and asks if how to handle those before executing the code. 
 
@@ -128,7 +128,7 @@ Finally, the version manager creates the backup copy of the code based on the la
 
 
 Using the version manager with a job scheduler 
-""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can combine both features to run several reproducible jobs with a controlled version of the code they use. For this, you can create a script (here 'script.sh') containing all the jobs you need to run as well as the options to your scheduler. You'll need to activate the version manager when executing each command.
 

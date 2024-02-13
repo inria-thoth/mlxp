@@ -10,9 +10,8 @@ In this tutorial, we will see how to use MLXP to run machine learning experiment
 
    tutorial_introduction
    easy_launching 
-   easy_scheduling
-   easy_versioning
    easy_logging
+   easy_versioning
    easy_reading
    tutorial_conclusion
 
