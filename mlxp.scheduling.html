@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Version manager" href="mlxp.version_managment.html" /><link rel="prev" title="Reader" href="mlxp.reading.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Scheduler - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Scheduler - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -159,12 +159,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -218,12 +219,26 @@
 <section id="module-mlxp.scheduler">
 <span id="the-scheduler-class"></span><h2>The <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a> Class<a class="headerlink" href="#module-mlxp.scheduler" title="Link to this heading">#</a></h2>
 <p>The scheduler allows submitting several jobs to a cluster queue using hydra.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mlxp.scheduler.get_info_OAR">
+<span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">get_info_OAR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_output</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#get_info_OAR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.get_info_OAR" title="Link to this definition">#</a></dt>
+<dd><p>Return a dictionary containing the job_id assigned to the run by the scheduler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the scheduler.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>,Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">Scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">submission_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">Scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">submission_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_name_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_file_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>An abstract class whose children allow to submit jobs using a particular job
-scheduler such as OAR or SLURM.</p>
+scheduler such as OAR or SLURM. Can be used as a parent class of a custom scheduler.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.directive">
 <span class="sig-name descname"><span class="pre">directive</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.scheduler.Scheduler.directive" title="Link to this definition">#</a></dt>
@@ -275,8 +290,22 @@ By default no environment is activated.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.get_info">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.make_job_details">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler.make_job_details" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.12)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler.make_job_details" title="Link to this definition">#</a></dt>
 <dd><p>Return a list of three strings specifying the job name, the paths to the
 log.stdout and log.stderr files.</p>
 <dl class="field-list simple">
@@ -290,20 +319,6 @@ the job: job name, path towards log.stdout and log.stderr.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mlxp.scheduler.Scheduler.get_info">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#Scheduler.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.Scheduler.get_info" title="Link to this definition">#</a></dt>
-<dd><p>Return the scheduler’s job id of the submited job.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -333,42 +348,99 @@ the submission command.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">OARScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#OARScheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.OARScheduler" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="mlxp.scheduler.LSFScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">LSFScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.LSFScheduler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
-<p>OAR job scheduler, see documentation in: <a class="reference external" href="http://oar.imag.fr/docs/2.5/#ref-user-docs">http://oar.imag.fr/docs/2.5/#ref-user-docs</a>.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler.get_info">
-<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#OARScheduler.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.OARScheduler.get_info" title="Link to this definition">#</a></dt>
-<dd><p>Return a dictionary containing the job_id assigned to the run by the
-scheduler.</p>
+<dt class="sig sig-object py" id="mlxp.scheduler.LSFScheduler.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.LSFScheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the
-scheduler.</p>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>,Any]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mlxp.scheduler.MWMScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">MWMScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.MWMScheduler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler.make_job_details">
-<span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#OARScheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.OARScheduler.make_job_details" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of three strings specifying the job name, the paths to the
-log.stdout and log.stderr files.</p>
+<dt class="sig sig-object py" id="mlxp.scheduler.MWMScheduler.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.MWMScheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The directory where the logs (e.g.: std.out,
-std.err) are saved.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of three strings specifying information about
-the job: job name, path towards log.stdout and log.stderr.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>]</p>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">OARScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.OARScheduler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlxp.scheduler.OARScheduler.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.OARScheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mlxp.scheduler.PBSScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">PBSScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.PBSScheduler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlxp.scheduler.PBSScheduler.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.PBSScheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mlxp.scheduler.SGEScheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">SGEScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.SGEScheduler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlxp.scheduler.SGEScheduler.get_info">
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.SGEScheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -377,41 +449,18 @@ the job: job name, path towards log.stdout and log.stderr.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.scheduler.SLURMScheduler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">SLURMScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'module</span> <span class="pre">purge'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#SLURMScheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.scheduler.</span></span><span class="sig-name descname"><span class="pre">SLURMScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shell_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/bin/bash'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell_config_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cleanup_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_cmd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mlxp.scheduler.Scheduler" title="mlxp.scheduler.Scheduler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code></a></p>
-<p>SLURM job scheduler, see documentation in: <a class="reference external" href="https://slurm.schedmd.com/documentation.html">https://slurm.schedmd.com/documentation.html</a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.scheduler.SLURMScheduler.get_info">
-<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/scheduler.html#SLURMScheduler.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler.get_info" title="Link to this definition">#</a></dt>
-<dd><p>Return a dictionary containing the job_id assigned to the run by the
-scheduler.</p>
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler.get_info" title="Link to this definition">#</a></dt>
+<dd><p>Return the scheduler’s job id of the submited job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary containing the job_id assigned to the run by the
-scheduler.</p>
+<dd class="field-odd"><p>The job id assigned by the scheduler to the submited job.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>,Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="mlxp.scheduler.SLURMScheduler.make_job_details">
-<span class="sig-name descname"><span class="pre">make_job_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/scheduler.html#SLURMScheduler.make_job_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.scheduler.SLURMScheduler.make_job_details" title="Link to this definition">#</a></dt>
-<dd><p>Return a list of three strings specifying the job name, the paths to the
-log.stdout and log.stderr files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>log_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The directory where the logs (e.g.: std.out,
-std.err) are saved.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a list of three strings specifying information about
-the job: job name, path towards log.stdout and log.stderr.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -478,6 +527,7 @@ the job: job name, path towards log.stdout and log.stderr.</p>
             <ul>
 <li><a class="reference internal" href="#">Scheduler</a><ul>
 <li><a class="reference internal" href="#module-mlxp.scheduler">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Scheduler</span></code> Class</a><ul>
+<li><a class="reference internal" href="#mlxp.scheduler.get_info_OAR"><code class="docutils literal notranslate"><span class="pre">get_info_OAR()</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler"><code class="docutils literal notranslate"><span class="pre">Scheduler</span></code></a><ul>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.directive"><code class="docutils literal notranslate"><span class="pre">Scheduler.directive</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.submission_cmd"><code class="docutils literal notranslate"><span class="pre">Scheduler.submission_cmd</span></code></a></li>
@@ -486,19 +536,33 @@ the job: job name, path towards log.stdout and log.stderr.</p>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.env_cmd"><code class="docutils literal notranslate"><span class="pre">Scheduler.env_cmd</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.shell_path"><code class="docutils literal notranslate"><span class="pre">Scheduler.shell_path</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.shell_config_cmd"><code class="docutils literal notranslate"><span class="pre">Scheduler.shell_config_cmd</span></code></a></li>
-<li><a class="reference internal" href="#mlxp.scheduler.Scheduler.make_job_details"><code class="docutils literal notranslate"><span class="pre">Scheduler.make_job_details()</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.get_info"><code class="docutils literal notranslate"><span class="pre">Scheduler.get_info()</span></code></a></li>
+<li><a class="reference internal" href="#mlxp.scheduler.Scheduler.make_job_details"><code class="docutils literal notranslate"><span class="pre">Scheduler.make_job_details()</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.scheduler.Scheduler.submit_job"><code class="docutils literal notranslate"><span class="pre">Scheduler.submit_job()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mlxp.scheduler.LSFScheduler"><code class="docutils literal notranslate"><span class="pre">LSFScheduler</span></code></a><ul>
+<li><a class="reference internal" href="#mlxp.scheduler.LSFScheduler.get_info"><code class="docutils literal notranslate"><span class="pre">LSFScheduler.get_info()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mlxp.scheduler.MWMScheduler"><code class="docutils literal notranslate"><span class="pre">MWMScheduler</span></code></a><ul>
+<li><a class="reference internal" href="#mlxp.scheduler.MWMScheduler.get_info"><code class="docutils literal notranslate"><span class="pre">MWMScheduler.get_info()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#mlxp.scheduler.OARScheduler"><code class="docutils literal notranslate"><span class="pre">OARScheduler</span></code></a><ul>
 <li><a class="reference internal" href="#mlxp.scheduler.OARScheduler.get_info"><code class="docutils literal notranslate"><span class="pre">OARScheduler.get_info()</span></code></a></li>
-<li><a class="reference internal" href="#mlxp.scheduler.OARScheduler.make_job_details"><code class="docutils literal notranslate"><span class="pre">OARScheduler.make_job_details()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mlxp.scheduler.PBSScheduler"><code class="docutils literal notranslate"><span class="pre">PBSScheduler</span></code></a><ul>
+<li><a class="reference internal" href="#mlxp.scheduler.PBSScheduler.get_info"><code class="docutils literal notranslate"><span class="pre">PBSScheduler.get_info()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mlxp.scheduler.SGEScheduler"><code class="docutils literal notranslate"><span class="pre">SGEScheduler</span></code></a><ul>
+<li><a class="reference internal" href="#mlxp.scheduler.SGEScheduler.get_info"><code class="docutils literal notranslate"><span class="pre">SGEScheduler.get_info()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#mlxp.scheduler.SLURMScheduler"><code class="docutils literal notranslate"><span class="pre">SLURMScheduler</span></code></a><ul>
 <li><a class="reference internal" href="#mlxp.scheduler.SLURMScheduler.get_info"><code class="docutils literal notranslate"><span class="pre">SLURMScheduler.get_info()</span></code></a></li>
-<li><a class="reference internal" href="#mlxp.scheduler.SLURMScheduler.make_job_details"><code class="docutils literal notranslate"><span class="pre">SLURMScheduler.make_job_details()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -514,7 +578,7 @@ the job: job name, path towards log.stdout and log.stderr.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

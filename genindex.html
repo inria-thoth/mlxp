@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 --><title>Index - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 --><title>Index - MLXP 0.2.0 documentation</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -121,7 +121,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -144,7 +144,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -157,12 +157,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -348,9 +349,17 @@
         <li><a href="mlxp.logging.html#mlxp.logger.Logger.get_info">get_info() (mlxp.logger.Logger method)</a>
 
         <ul>
+          <li><a href="mlxp.scheduling.html#mlxp.scheduler.LSFScheduler.get_info">(mlxp.scheduler.LSFScheduler method)</a>
+</li>
+          <li><a href="mlxp.scheduling.html#mlxp.scheduler.MWMScheduler.get_info">(mlxp.scheduler.MWMScheduler method)</a>
+</li>
           <li><a href="mlxp.scheduling.html#mlxp.scheduler.OARScheduler.get_info">(mlxp.scheduler.OARScheduler method)</a>
 </li>
+          <li><a href="mlxp.scheduling.html#mlxp.scheduler.PBSScheduler.get_info">(mlxp.scheduler.PBSScheduler method)</a>
+</li>
           <li><a href="mlxp.scheduling.html#mlxp.scheduler.Scheduler.get_info">(mlxp.scheduler.Scheduler method)</a>
+</li>
+          <li><a href="mlxp.scheduling.html#mlxp.scheduler.SGEScheduler.get_info">(mlxp.scheduler.SGEScheduler method)</a>
 </li>
           <li><a href="mlxp.scheduling.html#mlxp.scheduler.SLURMScheduler.get_info">(mlxp.scheduler.SLURMScheduler method)</a>
 </li>
@@ -361,6 +370,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="mlxp.scheduling.html#mlxp.scheduler.get_info_OAR">get_info_OAR() (in module mlxp.scheduler)</a>
+</li>
         <li><a href="mlxp.version_managment.html#mlxp.version_manager.GitVM">GitVM (class in mlxp.version_manager)</a>
 </li>
         <li><a href="mlxp.data_structures.html#mlxp.data_structures.data_dict.GroupedDataDicts.group_keys">group_keys (mlxp.data_structures.data_dict.GroupedDataDicts attribute)</a>
@@ -459,6 +470,8 @@
           <li><a href="mlxp.launching.html#mlxp.launcher.Context.logger">(mlxp.launcher.Context attribute)</a>
 </li>
         </ul></li>
+        <li><a href="mlxp.scheduling.html#mlxp.scheduler.LSFScheduler">LSFScheduler (class in mlxp.scheduler)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -467,14 +480,8 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="mlxp.scheduling.html#mlxp.scheduler.OARScheduler.make_job_details">make_job_details() (mlxp.scheduler.OARScheduler method)</a>
-
-        <ul>
-          <li><a href="mlxp.scheduling.html#mlxp.scheduler.Scheduler.make_job_details">(mlxp.scheduler.Scheduler method)</a>
+        <li><a href="mlxp.scheduling.html#mlxp.scheduler.Scheduler.make_job_details">make_job_details() (mlxp.scheduler.Scheduler method)</a>
 </li>
-          <li><a href="mlxp.scheduling.html#mlxp.scheduler.SLURMScheduler.make_job_details">(mlxp.scheduler.SLURMScheduler method)</a>
-</li>
-        </ul></li>
         <li><a href="mlxp.version_managment.html#mlxp.version_manager.GitVM.make_working_directory">make_working_directory() (mlxp.version_manager.GitVM method)</a>
 
         <ul>
@@ -531,8 +538,13 @@
           <li><a href="mlxp.logging.html#module-mlxp.logger">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    mlxp.mlxpsub
+
+        <ul>
+          <li><a href="mlxp.launching.html#module-mlxp.mlxpsub">module</a>
+</li>
+        </ul></li>
         <li>
     mlxp.parser
 
@@ -540,6 +552,8 @@
           <li><a href="mlxp.reading.html#module-mlxp.parser">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     mlxp.reader
 
@@ -563,6 +577,8 @@
         </ul></li>
         <li><a href="mlxp.data_structures.html#mlxp.data_structures.schemas.MLXPConfig">MLXPConfig (class in mlxp.data_structures.schemas)</a>
 </li>
+        <li><a href="mlxp.launching.html#mlxp.mlxpsub.mlxpsub">mlxpsub() (in module mlxp.mlxpsub)</a>
+</li>
         <li>
     module
 
@@ -579,6 +595,8 @@
 </li>
           <li><a href="mlxp.logging.html#module-mlxp.logger">mlxp.logger</a>
 </li>
+          <li><a href="mlxp.launching.html#module-mlxp.mlxpsub">mlxp.mlxpsub</a>
+</li>
           <li><a href="mlxp.reading.html#module-mlxp.parser">mlxp.parser</a>
 </li>
           <li><a href="mlxp.reading.html#module-mlxp.reader">mlxp.reader</a>
@@ -588,6 +606,8 @@
           <li><a href="mlxp.version_managment.html#module-mlxp.version_manager">mlxp.version_manager</a>
 </li>
         </ul></li>
+        <li><a href="mlxp.scheduling.html#mlxp.scheduler.MWMScheduler">MWMScheduler (class in mlxp.scheduler)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -656,6 +676,8 @@
         </ul></li>
         <li><a href="mlxp.reading.html#mlxp.parser.Parser">Parser (class in mlxp.parser)</a>
 </li>
+        <li><a href="mlxp.scheduling.html#mlxp.scheduler.PBSScheduler">PBSScheduler (class in mlxp.scheduler)</a>
+</li>
         <li><a href="mlxp.data_structures.html#mlxp.data_structures.schemas.Info.process_id">process_id (mlxp.data_structures.schemas.Info attribute)</a>
 </li>
     </ul></td>
@@ -685,6 +707,8 @@
 </li>
         </ul></li>
         <li><a href="mlxp.reading.html#mlxp.reader.Reader.searchable">searchable (mlxp.reader.Reader property)</a>
+</li>
+        <li><a href="mlxp.scheduling.html#mlxp.scheduler.SGEScheduler">SGEScheduler (class in mlxp.scheduler)</a>
 </li>
         <li><a href="mlxp.data_structures.html#mlxp.data_structures.schemas.ConfigScheduler.shell_config_cmd">shell_config_cmd (mlxp.data_structures.schemas.ConfigScheduler attribute)</a>
 
@@ -808,7 +832,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

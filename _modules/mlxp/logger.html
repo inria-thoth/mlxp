@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.logger - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>mlxp.logger - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -158,12 +158,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -240,21 +241,20 @@
 
 <span class="sd">    The logger creates a directory with a default file structure:</span>
 
-<span class="sd">        .. code-block:: console</span>
+<span class="sd">    .. code-block:: console</span>
 
-
-<span class="sd">            parent_log_dir/log_id:</span>
-<span class="sd">            ├── metadata/</span>
-<span class="sd">            │   └── metadata.yaml : Contains the configs of the run</span>
-<span class="sd">            ├── metrics/</span>
-<span class="sd">            │   ├── &#39;file_name&#39;.json : Contains a the outputs stored</span>
-<span class="sd">            │   │                   when running the method log_metrics(metrics_dict, file_name)</span>
-<span class="sd">            │   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics.</span>
-<span class="sd">            │            Each file &#39;file_name&#39;.yaml corresponds to a json file &#39;file_name&#39;.json containing the dictionaries.</span>
-<span class="sd">            ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.</span>
-<span class="sd">            ├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)</span>
-<span class="sd">            ├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)</span>
-<span class="sd">            └── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)</span>
+<span class="sd">        parent_log_dir/log_id:</span>
+<span class="sd">        ├── metadata/</span>
+<span class="sd">        │   └── metadata.yaml : Contains the configs of the run</span>
+<span class="sd">        ├── metrics/</span>
+<span class="sd">        │   ├── &#39;file_name&#39;.json : Contains a the outputs stored</span>
+<span class="sd">        │   │                   when running the method log_metrics(metrics_dict, file_name)</span>
+<span class="sd">        │   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics.</span>
+<span class="sd">        │            Each file &#39;file_name&#39;.yaml corresponds to a json file &#39;file_name&#39;.json containing the dictionaries.</span>
+<span class="sd">        ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.</span>
+<span class="sd">        ├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)</span>
+<span class="sd">        ├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)</span>
+<span class="sd">        └── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)</span>
 
 <span class="sd">    .. py:attribute:: parent_log_dir</span>
 <span class="sd">        :type: str</span>
@@ -284,6 +284,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Artifacts</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Artifacts</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Sessions</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -406,6 +409,16 @@
 <span class="sd">        :return: The path to the output directory of the run.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span>
+
+    <span class="k">def</span> <span class="nf">log_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span><span class="p">,</span> <span class="s2">&quot;last_session.pkl&quot;</span><span class="p">)</span>
+        <span class="n">pkl</span><span class="o">.</span><span class="n">dump_session</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span><span class="p">,</span> <span class="s2">&quot;last_session.pkl&quot;</span><span class="p">)</span>
+        <span class="n">pkl</span><span class="o">.</span><span class="n">load_session</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_log_metrics_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">log_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="c1"># Logging new keys appearing in a metrics dict</span>
@@ -551,7 +564,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

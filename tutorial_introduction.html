@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="1- Launching" href="easy_launching.html" /><link rel="prev" title="Tutorial" href="tutorial.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Introduction - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Introduction - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -159,12 +159,13 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="guide.html">Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -233,10 +234,11 @@ Then we will see how to enhance reproducibility of experiments using the git-bas
 </pre></div>
 </div>
 </div>
-<p>The directory contains three files: ‘core.py’, ‘main.py’ and ‘results.py’. It also contains a directory ‘configs’ that will be used later by MLXP. For now, we will only have a look at the ‘core.py’ and ‘main.py’ files.</p>
+<p>The directory contains three files: <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code>, <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> <code class="samp docutils literal notranslate"><span class="pre">results.py</span></code>. It also contains a directory <code class="samp docutils literal notranslate"><span class="pre">configs</span></code> that will be used later by MLXP. For now, we will only have a look at the <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> and <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> files.</p>
 <section id="the-core-py-file">
-<h3>The ‘core.py’ file<a class="headerlink" href="#the-core-py-file" title="Link to this heading">#</a></h3>
-<p>The file ‘core.py’ contains a PyTorch implementation of a one hidden layer network ‘OneHiddenLayer’ as well as a simple data loader ‘DataLoader’ that we will use during training. In the rest of the tutorial, we will not need to worry about the content of ‘core.py’, but let’s just have a quick look at this file:</p>
+<h3>The <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> file<a class="headerlink" href="#the-core-py-file" title="Link to this heading">#</a></h3>
+<p>The file <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> contains a PyTorch implementation of a one hidden layer network <code class="samp docutils literal notranslate"><span class="pre">OneHiddenLayer</span></code> as well as a simple data loader <code class="samp docutils literal notranslate"><span class="pre">DataLoader</span></code> that we will use during training.
+In the rest of the tutorial, we will not need to worry about the content of <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code>, but let’s just have a quick look at this file:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
@@ -292,8 +294,8 @@ Then we will see how to enhance reproducibility of experiments using the git-bas
 </div>
 </section>
 <section id="the-main-py-file">
-<span id="old-main-file"></span><h3>The ‘main.py’ file<a class="headerlink" href="#the-main-py-file" title="Link to this heading">#</a></h3>
-<p>The file ‘main.py’ contains code for training the model ‘OneHiddenLayer’ on data provided by the ‘DataLoader’. Training is performed using the function ‘train’:</p>
+<span id="old-main-file"></span><h3>The <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file<a class="headerlink" href="#the-main-py-file" title="Link to this heading">#</a></h3>
+<p>The file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> contains code for training the model <code class="samp docutils literal notranslate"><span class="pre">OneHiddenLayer</span></code> on data provided by the <code class="samp docutils literal notranslate"><span class="pre">DataLoader</span></code>. Training is performed using the function <code class="samp docutils literal notranslate"><span class="pre">train</span></code>:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
@@ -331,7 +333,7 @@ Then we will see how to enhance reproducibility of experiments using the git-bas
 </section>
 <section id="training-the-model">
 <h3>Training the model<a class="headerlink" href="#training-the-model" title="Link to this heading">#</a></h3>
-<p>If we execute the function ‘main.py’, we can see that the training performs 10 ‘epochs’ and then prints a message confirming that the training is complete.</p>
+<p>If we execute the function <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code>, we can see that the training performs 10 <code class="samp docutils literal notranslate"><span class="pre">epochs</span></code> and then prints a message confirming that the training is complete.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py
 <span class="go">{&#39;loss&#39;: 0.030253788456320763, &#39;epoch&#39;: 0}</span>
 <span class="go">{&#39;loss&#39;: 0.02899891696870327, &#39;epoch&#39;: 1}</span>
@@ -346,8 +348,7 @@ Then we will see how to enhance reproducibility of experiments using the git-bas
 <span class="go">Completed training with learing rate: 10.0</span>
 </pre></div>
 </div>
-<p>In this basic example, we have not used any specific tool for launching or logging.
-Next, we will see how you can use MLXP to keep track of all options, results, and code versions seamlessly!</p>
+<p>In this basic example, we have not used any specific tool for launching or logging. Next, we will see how you can use MLXP to keep track of all options, results, and code versions seamlessly!</p>
 </section>
 </section>
 </section>
@@ -409,8 +410,8 @@ Next, we will see how you can use MLXP to keep track of all options, results, an
             <ul>
 <li><a class="reference internal" href="#">Introduction</a><ul>
 <li><a class="reference internal" href="#the-working-example">The working example</a><ul>
-<li><a class="reference internal" href="#the-core-py-file">The ‘core.py’ file</a></li>
-<li><a class="reference internal" href="#the-main-py-file">The ‘main.py’ file</a></li>
+<li><a class="reference internal" href="#the-core-py-file">The <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> file</a></li>
+<li><a class="reference internal" href="#the-main-py-file">The <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file</a></li>
 <li><a class="reference internal" href="#training-the-model">Training the model</a></li>
 </ul>
 </li>
@@ -425,7 +426,7 @@ Next, we will see how you can use MLXP to keep track of all options, results, an
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

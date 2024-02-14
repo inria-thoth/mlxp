@@ -3,7 +3,7 @@ Reader
 
 
 The :class:`~mlxp.reader.Reader` Class
----------------------------------------
+--------------------------------------
 
 .. automodule:: mlxp.reader
    :members:
@@ -12,7 +12,7 @@ The :class:`~mlxp.reader.Reader` Class
 
 
 The :class:`~mlxp.parser.Parser` Module
-----------------------------------------
+---------------------------------------
 
 .. automodule:: mlxp.parser
    :members:

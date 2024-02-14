@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Tutorial" href="tutorial.html" /><link rel="prev" title="Installing MLXP" href="installing.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Configuring MLXP" href="configuring_mlxp.html" /><link rel="prev" title="Installing MLXP" href="installing.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Quick start guide - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Quick start guide - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -134,7 +134,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -159,12 +159,13 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="guide.html">Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -207,7 +208,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -216,56 +217,50 @@
           <section id="quick-start-guide">
 <h1>Quick start guide<a class="headerlink" href="#quick-start-guide" title="Link to this heading">#</a></h1>
 <p>This quick-start guide is meant to give you a overview of how MLXP works.
-To get a more in-depth understanding of MLXP’s capabilities, please follow the <span class="xref std std-doc">main tutorial</span>.</p>
-<p>Let’s say you are given a directory ‘my_project’ containing a python file ‘main.py’ and a sub-directory ‘configs’ containing a configuration file ‘config.yaml’ for the project:</p>
+To get a more in-depth understanding of MLXP’s capabilities, please follow the  <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
+<section id="using-mlxp">
+<h2>1- Using MLXP<a class="headerlink" href="#using-mlxp" title="Link to this heading">#</a></h2>
+<p>Let’s say you are given a directory <code class="samp docutils literal notranslate"><span class="pre">my_project</span></code> containing a python file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> and a sub-directory <code class="samp docutils literal notranslate"><span class="pre">configs</span></code> containing a file ‘config.yaml’ with option configurations for the project:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>my_project/
 ├── configs/
 │   └── config.yaml
 └── main.py
 </pre></div>
 </div>
-<p>In this example, the file ‘main.py’ contains a function ‘my_task’ that performs some task when called. To use MLXP for launching a job, you can use the decorator ‘mlxp.launch’ above the function ‘my_task’.</p>
+<p>In this example, the file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> contains a function <code class="samp docutils literal notranslate"><span class="pre">my_task</span></code> that performs some task when called. To use MLXP for launching a job, you can use the decorator <code class="samp docutils literal notranslate"><span class="pre">mlxp.launch</span></code> above the function <code class="samp docutils literal notranslate"><span class="pre">my_task</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mlxp</span>
 
 <span class="nd">@mlxp</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">my_task</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
 
+  <span class="c1"># Displaying user-defined options from &#39;./configs/config.yaml</span>
   <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ctx.config&quot;</span><span class="p">)</span>
 
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The logger object is an instance of:&quot;</span><span class="p">)</span>
-  <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">logger</span><span class="p">))</span>
+  <span class="c1"># Logging information in log directory created by MLXP: (here &quot;./logs/1&quot; )</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">num_epoch</span><span class="p">)</span>
+     <span class="n">ctx</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">({</span><span class="s2">&quot;epoch&quot;</span><span class="p">:</span><span class="n">i</span><span class="p">})</span>
+
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
   <span class="n">my_task</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The decorated function ‘my_func’ must take a  variable ‘ctx’ of type ‘mlxp.Context’ as an argument. Note that ‘my_task’ is later called without providing the context variable just like in  <a class="reference external" href="https://hydra.cc/">hydra</a>.
-The ‘ctx’ variable is automatically created on the fly during execution and stores information about the run. It contains four fields: ‘config’, ‘mlxp’, ‘info’, and ‘logger’:</p>
-<ul class="simple">
-<li><p><strong>ctx.config</strong>: Stores task-specific options provided by the user. These options are loaded from a yaml file ‘config.yaml’ located in the directory ‘config_path’ provided as input to the decorator (here config_path=’./configs’).</p></li>
-<li><p><strong>ctx.mlxp</strong>: Stores MLXP’s settings used for the run.</p></li>
-<li><p><strong>ctx.info</strong>: Contains information about the current run: ex. status, start time, hostname, etc.</p></li>
-<li><p><strong>ctx.logger</strong>: A logger object that can be used in the code for logging variables (metrics, checkpoints, artifacts). When logging is enabled, these variables are all stored in a uniquely defined directory.</p></li>
+<p>The decorated function <code class="samp docutils literal notranslate"><span class="pre">my_task</span></code> must take a  variable <code class="samp docutils literal notranslate"><span class="pre">ctx</span></code> of type <code class="samp docutils literal notranslate"><span class="pre">mlxp.Context</span></code> as an argument. Note that <code class="samp docutils literal notranslate"><span class="pre">my_task</span></code> is later called without providing the context variable just like in  <a class="reference external" href="https://hydra.cc/">hydra</a>.
+The <code class="samp docutils literal notranslate"><span class="pre">ctx</span></code> variable is automatically created on the fly during execution and stores information about the run.
+Importantly, it contains:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="samp docutils literal notranslate"><span class="pre">ctx.config</span></code>:  a dictionary-like object storing user-defined configurations, usually loaded from a yaml file located in a configuration directory (here the directory <code class="samp docutils literal notranslate"><span class="pre">./configs</span></code>)</p></li>
+<li><p><code class="samp docutils literal notranslate"><span class="pre">ctx.logger</span></code>: A logger object that can be used in the code for saving variables (metrics, checkpoints, artifacts).</p></li>
 </ul>
-<p>When executing the Python file ‘main.py’ from the command line, we get the following output:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py
-
-<span class="go">seed: 0</span>
-<span class="go">num_epoch: 10</span>
-<span class="go">model:</span>
-<span class="go"> num_units: 100</span>
-<span class="go">data:</span>
-<span class="go"> d_int: 10</span>
-<span class="go"> device: &#39;cpu&#39;</span>
-<span class="go">optimizer:</span>
-<span class="go"> lr: 10.</span>
-
-<span class="go">The logger object is an instance of:</span>
-<span class="go">&lt;class &#39;mlxp.logger.DefaultLogger&#39;&gt;</span>
-</pre></div>
-</div>
-<p>One can check that these outputs match the content of the yaml file ‘./configs/config.yaml’:</p>
+</div></blockquote>
+</section>
+<section id="configuring">
+<h2>2- Configuring<a class="headerlink" href="#configuring" title="Link to this heading">#</a></h2>
+<p>Just like when using <a class="reference external" href="https://hydra.cc/">hydra</a>, you can provide all default options needed for the code in a separate Yaml file named <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> and contained in the <code class="samp docutils literal notranslate"><span class="pre">./configs</span></code> directory. These will be passed to the object <code class="samp docutils literal notranslate"><span class="pre">ctx.config</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">./configs/config.yaml</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="nt">num_epoch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="nt">model</span><span class="p">:</span>
@@ -277,8 +272,58 @@ The ‘ctx’ variable is automatically created on the fly during execution and 
 <span class="w"> </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.</span>
 </pre></div>
 </div>
-<p>Just like in <a class="reference external" href="https://hydra.cc/">hydra</a>, you can also override the options contained in the ‘config.yaml’ file from the command line:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+optimizer.lr<span class="o">=</span><span class="m">0</span>.1<span class="w"> </span>+model.num_layers<span class="o">=</span><span class="m">6</span>
+</div>
+</section>
+<section id="logging">
+<h2>3- Logging<a class="headerlink" href="#logging" title="Link to this heading">#</a></h2>
+<p>Logging is activated by default and as soon as the run is launched, the logger creates a directory <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir/log_id</span></code>  where <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> is provided by the user (default to <code class="samp docutils literal notranslate"><span class="pre">./logs</span></code>) while <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code> is unique id that MLXP assigns to the run.</p>
+<ul class="simple">
+<li><p><strong>Logging metadata:</strong> Once the job is executed, the configuration options used for the run are automatically stored in a file <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir/log_id/metadata/config.yaml</span></code>.</p></li>
+<li><p><strong>Logging metrics and artifacts:</strong> Additionally, the user can log additional informations using the methods <code class="samp docutils literal notranslate"><span class="pre">log_metrics</span></code>, <code class="samp docutils literal notranslate"><span class="pre">log_checkpoint</span></code> (see <a class="reference internal" href="easy_logging.html#logging"><span class="std std-ref">Logging tutorial</span></a>) which are stored in the directories <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> and <code class="samp docutils literal notranslate"><span class="pre">artifacts</span></code>.</p></li>
+</ul>
+<p><strong>Log directory structure:</strong> Each log directory contains three sub-directories: samp:<cite>metadata</cite>, <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> and samp:<cite>artifacts</cite>:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
+├── 1/
+│   ├── metadata/
+│   │   ├── config.yaml
+│   │   ├── info.yaml
+│   │   └── mlxp.yaml
+│   ├── metrics/
+│   │   ├── train.json
+│   │   └──.keys/
+│   │       └── metrics.yaml
+│   └── artifacts/
+│       └── Checkpoint/
+│           └── last_ckpt.pkl
+│
+├── 2/...
+└── 3/...
+</pre></div>
+</div>
+</div>
+</section>
+<section id="launching-locally">
+<h2>4- Launching locally<a class="headerlink" href="#launching-locally" title="Link to this heading">#</a></h2>
+<p>When executing the Python file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> from the command line, we get the following output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py
+
+<span class="go">seed: 0</span>
+<span class="go">num_epoch: 10</span>
+<span class="go">model:</span>
+<span class="go"> num_units: 100</span>
+<span class="go">data:</span>
+<span class="go"> d_int: 10</span>
+<span class="go"> device: &#39;cpu&#39;</span>
+<span class="go">optimizer:</span>
+<span class="go"> lr: 10.</span>
+</pre></div>
+</div>
+<section id="overriding-options-from-the-command-line-interface">
+<h3>Overriding options from the command-line interface<a class="headerlink" href="#overriding-options-from-the-command-line-interface" title="Link to this heading">#</a></h3>
+<p>Just like in <a class="reference external" href="https://hydra.cc/">hydra</a>, you can also override the options contained in the <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> file from the command line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>optimizer.lr<span class="o">=</span><span class="m">0</span>.1<span class="w"> </span>model.num_layers<span class="o">=</span><span class="m">6</span>
 
 <span class="go">seed: 0</span>
 <span class="go">num_epoch: 10</span>
@@ -289,15 +334,69 @@ The ‘ctx’ variable is automatically created on the fly during execution and 
 <span class="go"> device: &#39;cpu&#39;</span>
 <span class="go">optimizer:</span>
 <span class="go"> lr: 0.1</span>
+</pre></div>
+</div>
+<p>If the file <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> or its parent directory <code class="samp docutils literal notranslate"><span class="pre">config_path</span></code> do not exist, they will be created automatically. When created automatically,  <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> is empty and needs to be filled with default values of the user defined options.</p>
+</section>
+</section>
+<section id="submitting-multiple-jobs-to-a-job-scheduler">
+<h2>5- Submitting multiple jobs to a job scheduler<a class="headerlink" href="#submitting-multiple-jobs-to-a-job-scheduler" title="Link to this heading">#</a></h2>
+<p>Let’s say, you’d like to submit multiple jobs into a job scheduler. You can do this easily using the mlxpsub command!</p>
+<section id="i-creating-a-job-script">
+<h3>i) Creating a job script<a class="headerlink" href="#i-creating-a-job-script" title="Link to this heading">#</a></h3>
+<p>The first step is to create a script ‘script.sh’ in your working directory (here under <code class="samp docutils literal notranslate"><span class="pre">my_project</span></code>). In this script you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for exectuting the python script <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> with different option values. Thanks to Hydra, you don’t need any for loops and your job as be as concise as what follows:</p>
+<blockquote>
+<div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
 
-<span class="go">The logger object is an instance of:</span>
-<span class="go">&lt;class &#39;mlxp.logger.DefaultLogger&#39;&gt;</span>
+<span class="gp">#</span>OAR<span class="w"> </span>-l<span class="w"> </span><span class="nv">core</span><span class="o">=</span><span class="m">1</span>,<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">6</span>:00:00
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>besteffort
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>idempotent
+
+<span class="go">python main.py  optimizer.lr=10.,1. seed=1,2</span>
+<span class="go">python main.py  model.num_units=100,200 seed=1,2</span>
 </pre></div>
 </div>
-<p>If the file ‘config.yaml’ or its parent directory ‘config_path’ do not exist, they will be created automatically. When created automatically,  ‘config.yaml’ contains a single field ‘seed’ (‘null’ by default) which is intended for seeding random number generators.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+</div></blockquote>
+<p>The above script is maint to create and exectute 8 jobs in total that will be submitted to an OAR job scheduler:</p>
+<ul class="simple">
+<li><p>The first 4 jobs correspond to the first python command using all possible combinations of option values for <code class="samp docutils literal notranslate"><span class="pre">optimizer.lr</span></code>  and <code class="samp docutils literal notranslate"><span class="pre">seed</span></code> : <code class="samp docutils literal notranslate"><span class="pre">(10.,1),</span> <span class="pre">(10,2),</span> <span class="pre">(1.,1),</span> <span class="pre">(1.,2)</span></code>.</p></li>
+<li><p>The 4 next jobs are for the second command wich varies the options <code class="samp docutils literal notranslate"><span class="pre">model.num_units</span></code> and <code class="samp docutils literal notranslate"><span class="pre">seed</span></code>.</p></li>
+</ul>
+<p>MLXP supports multiple job schedulers, including
+<a class="reference external" href="https://slurm.schedmd.com/documentation.html">SLURM</a>,  <a class="reference external" href="https://oar.imag.fr/">OAR</a>, <a class="reference external" href="https://hpc-wiki.info/hpc/Torque">TORQUE</a>, <a class="reference external" href="https://gridscheduler.sourceforge.net/">SGE</a>, <a class="reference external" href="https://docs.oracle.com/cd/E58073_01/index.htm">MWM</a> and
+<a class="reference external" href="https://www.ibm.com/docs/en/spectrum-lsf/10.1.0">LSF</a>.
+All what you have to do is to use the native syntax for specifying resources for the job as commants in the script.</p>
+</section>
+<section id="ii-submitting-using-mlxpsub">
+<h3>ii) Submitting using mlxpsub<a class="headerlink" href="#ii-submitting-using-mlxpsub" title="Link to this heading">#</a></h3>
+<p>You only need to run the following command in the terminal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mlxpsub script.sh</span>
 </pre></div>
 </div>
+</section>
+<section id="how-it-works">
+<h3>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h3>
+<p>MLXP creates a script for each job corresponding to optionsetting. Each script is located in a directory of the form <code class="samp docutils literal notranslate"><span class="pre">parent_log/log_id</span></code>  , where log_id is automatically assigned by MLXP for each job.</p>
+<p>Here is an example of the first created script in <code class="samp docutils literal notranslate"><span class="pre">logs/1/script.sh</span></code>  where the user sets <code class="samp docutils literal notranslate"><span class="pre">parent_log</span></code>  to <code class="samp docutils literal notranslate"><span class="pre">logs</span></code>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
+<span class="gp">#</span>OAR<span class="w"> </span>-n<span class="w"> </span>logs/1
+<span class="gp">#</span>OAR<span class="w"> </span>-E<span class="w"> </span>/root/logs/1/log.stderr
+<span class="gp">#</span>OAR<span class="w"> </span>-O<span class="w"> </span>/root/logs/1/log.stdout
+<span class="gp">#</span>OAR<span class="w"> </span>-l<span class="w"> </span><span class="nv">core</span><span class="o">=</span><span class="m">1</span>,<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">6</span>:00:00
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>besteffort
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>idempotent
+
+<span class="go">cd /root/workdir/</span>
+<span class="go">python main.py  optimizer.lr=10. seed=1</span>
+</pre></div>
+</div>
+<p>As you can see, MLXP automatically assigns values for
+the job’s name, stdout and stderr file paths, so there is no need to specify those in the original script <code class="samp docutils literal notranslate"><span class="pre">script.sh</span></code>.</p>
+<p>These scripts contain the same scheduler’s options
+as in <code class="samp docutils literal notranslate"><span class="pre">script.sh</span></code> and a single python command specific option setting: <code class="samp docutils literal notranslate"><span class="pre">optimizer.lr=10.</span> <span class="pre">seed=1</span></code>.</p>
+<p>Additionally, MLXP pre-processes the python command to extract the working directory and sets it explicitly in the newly created script before the python command.</p>
+</section>
+</section>
 </section>
 
         </article>
@@ -305,12 +404,12 @@ The ‘ctx’ variable is automatically created on the fly during execution and 
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="tutorial.html">
+          <a class="next-page" href="configuring_mlxp.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Tutorial</div>
+                <div class="title">Configuring MLXP</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -343,13 +442,44 @@ The ‘ctx’ variable is automatically created on the fly during execution and 
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Quick start guide</a><ul>
+<li><a class="reference internal" href="#using-mlxp">1- Using MLXP</a></li>
+<li><a class="reference internal" href="#configuring">2- Configuring</a></li>
+<li><a class="reference internal" href="#logging">3- Logging</a></li>
+<li><a class="reference internal" href="#launching-locally">4- Launching locally</a><ul>
+<li><a class="reference internal" href="#overriding-options-from-the-command-line-interface">Overriding options from the command-line interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#submitting-multiple-jobs-to-a-job-scheduler">5- Submitting multiple jobs to a job scheduler</a><ul>
+<li><a class="reference internal" href="#i-creating-a-job-script">i) Creating a job script</a></li>
+<li><a class="reference internal" href="#ii-submitting-using-mlxpsub">ii) Submitting using mlxpsub</a></li>
+<li><a class="reference internal" href="#how-it-works">How it works</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

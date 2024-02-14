@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.launcher - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>mlxp.launcher - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -158,12 +158,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -407,7 +408,7 @@
 
             <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
+                    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Logger is currently disabled.&quot;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;To use the scheduler, the logger must be enabled&quot;</span><span class="p">)</span>
@@ -459,7 +460,7 @@
                         <span class="k">try</span><span class="p">:</span>
                             <span class="k">assert</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Missing field: The &#39;config&#39; must contain a field &#39;seed&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Missing field: The &#39;config&#39; must contain a field named &#39;seed&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
                             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;provided as argument to the function &#39;seeding_function&#39; &quot;</span>
                             <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                         <span class="n">seeding_function</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
@@ -556,7 +557,7 @@
 
 <div class="viewcode-block" id="instance_from_dict">
 <a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.instance_from_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">instance_from_dict</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">instance_from_dict</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">module</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">mlxp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an instance of a class based on a dictionary of arguments.</span>
 
 <span class="sd">    :param class_name: The name of the class</span>
@@ -567,7 +568,7 @@
 <span class="sd">        &#39;arguments&#39;.</span>
 <span class="sd">    :rtype: T</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">attr</span> <span class="o">=</span> <span class="n">_import_module</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
+    <span class="n">attr</span> <span class="o">=</span> <span class="n">_import_module</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">arguments</span><span class="p">:</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -577,10 +578,10 @@
 
 
 
-<span class="k">def</span> <span class="nf">_import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">main_module</span><span class="p">):</span>
     <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mlxp</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">main_module</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
@@ -593,12 +594,12 @@
                 <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">module</span> <span class="o">+</span> <span class="n">attr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 
 
-<span class="k">def</span> <span class="nf">_instance_from_config</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_instance_from_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">mlxp</span><span class="p">):</span>
     <span class="n">config_module_name</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
     <span class="n">module_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">config_module_name</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">instance_from_dict</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">instance_from_dict</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_set_work_dir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">):</span>
@@ -709,7 +710,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>

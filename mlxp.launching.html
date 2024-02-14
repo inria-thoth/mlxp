@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Logger" href="mlxp.logging.html" /><link rel="prev" title="MLXP package" href="mlxp.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Launcher - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>Launcher - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -159,12 +159,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -216,7 +217,7 @@
           <section id="launcher">
 <h1>Launcher<a class="headerlink" href="#launcher" title="Link to this heading">#</a></h1>
 <section id="module-mlxp.launcher">
-<span id="the-launch-function"></span><h2>The <a class="reference internal" href="#mlxp.launcher.launch" title="mlxp.launcher.launch"><code class="xref py py-class docutils literal notranslate"><span class="pre">launch</span></code></a> Function<a class="headerlink" href="#module-mlxp.launcher" title="Link to this heading">#</a></h2>
+<span id="the-launch-decorator"></span><h2>The <a class="reference internal" href="#mlxp.launcher.launch" title="mlxp.launcher.launch"><code class="xref py py-class docutils literal notranslate"><span class="pre">launch</span></code></a> Decorator<a class="headerlink" href="#module-mlxp.launcher" title="Link to this heading">#</a></h2>
 <p>The launcher allows launching multiple experiments on a cluster using hydra.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.launcher.launch">
@@ -329,7 +330,7 @@ When logging is enabled, these variables are all stored in a uniquely defined di
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.launcher.instance_from_dict">
-<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instance_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instance_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instance_from_dict" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instance_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">class_name:</span> <span class="pre">str,</span> <span class="pre">arguments:</span> <span class="pre">~typing.Dict[str,</span> <span class="pre">~typing.Any],</span> <span class="pre">module:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">&lt;module</span> <span class="pre">'mlxp'</span> <span class="pre">from</span> <span class="pre">'/opt/hostedtoolcache/Python/3.9.18/x64/lib/python3.9/site-packages/mlxp/__init__.py'&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instance_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instance_from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create an instance of a class based on a dictionary of arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -346,6 +347,73 @@ When logging is enabled, these variables are all stored in a uniquely defined di
 <dd class="field-odd"><p>T</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-mlxp.mlxpsub">
+<span id="the-mlxpsub-command"></span><h2>The <a class="reference internal" href="#mlxp.mlxpsub.mlxpsub" title="mlxp.mlxpsub.mlxpsub"><code class="xref py py-class docutils literal notranslate"><span class="pre">mlxpsub</span></code></a> Command<a class="headerlink" href="#module-mlxp.mlxpsub" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="mlxp.mlxpsub.mlxpsub">
+<span class="sig-prename descclassname"><span class="pre">mlxp.mlxpsub.</span></span><span class="sig-name descname"><span class="pre">mlxpsub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/mlxpsub.html#mlxpsub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.mlxpsub.mlxpsub" title="Link to this definition">#</a></dt>
+<dd><p>A function for submitting a script to a job scheduler. 
+Usage: mlxpsub &lt;script.sh&gt;</p>
+<p>The ‘script.sh’ must contain the scheduler’s options defining 
+the resource allocation for each individual job.
+Below is an example of ‘script.sh’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
+
+<span class="gp">#</span>OAR<span class="w"> </span>-l<span class="w"> </span><span class="nv">core</span><span class="o">=</span><span class="m">1</span>,<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">6</span>:00:00
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>besteffort
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>idempotent
+<span class="gp">#</span>OAR<span class="w"> </span>-p<span class="w"> </span>gpumem&gt;<span class="s1">&#39;16000&#39;</span>
+
+<span class="go">python main.py  optimizer.lr=10.,1.,0.1 seed=1,2,3,4</span>
+<span class="go">python main.py  model.num_units=100,200 seed=1,2,3,4</span>
+</pre></div>
+</div>
+<p>The command assumes the script contains at least a python command of the form:
+python &lt;python_file_name.py&gt; options_1=A,B,C option_2=X,Y
+where &lt;python_file_name.py&gt; is a python file that uses MLXP for launching.</p>
+<p>MLXP creates a script for each job corresponding to an option setting.
+Each script is located in a directory of the form parent_log_dir/log_id, 
+where log_id is automatically assigned by MLXP for each job.</p>
+<p>Here is an example of the first created script in ‘logs/1/script.sh’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Example<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
+<span class="gp">#</span>OAR<span class="w"> </span>-n<span class="w"> </span>logs/1
+<span class="gp">#</span>OAR<span class="w"> </span>-E<span class="w"> </span>/root/logs/1/log.stderr
+<span class="gp">#</span>OAR<span class="w"> </span>-O<span class="w"> </span>/root/logs/1/log.stdout
+<span class="gp">#</span>OAR<span class="w"> </span>-l<span class="w"> </span><span class="nv">core</span><span class="o">=</span><span class="m">1</span>,<span class="w"> </span><span class="nv">walltime</span><span class="o">=</span><span class="m">6</span>:00:00
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>besteffort
+<span class="gp">#</span>OAR<span class="w"> </span>-t<span class="w"> </span>idempotent
+<span class="gp">#</span>OAR<span class="w"> </span>-p<span class="w"> </span>gpumem&gt;<span class="s1">&#39;16000&#39;</span>
+
+<span class="go">cd /root/workdir/</span>
+<span class="go">python main.py  optimizer.lr=10. seed=1</span>
+</pre></div>
+</div>
+<p>As you can see, MLXP automatically assigns values for 
+the job’s name, stdout and stderr file paths, 
+so there is no need to specify those in the original script ‘script.sh’.
+These scripts contain the same scheduler’s options 
+as in ‘script.sh’ and a single python command using one specific option setting: optimizer.lr=10. seed=1
+Additionally, MLXP pre-processes the python command to extract its working directory 
+and set it explicitly in the newly created script before the python command.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is also possible to have other commands in the ‘script.sh’, 
+for instance to activate an environment: (conda activate my_env). 
+These commands will be copied from  ‘script.sh’ to  the new created script 
+and placed before the python command. Variable assignments and directory changes
+will be systematically ignored.</p>
+</div>
 </dd></dl>
 
 </section>
@@ -407,7 +475,7 @@ When logging is enabled, these variables are all stored in a uniquely defined di
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Launcher</a><ul>
-<li><a class="reference internal" href="#module-mlxp.launcher">The <code class="xref py py-class docutils literal notranslate"><span class="pre">launch</span></code> Function</a><ul>
+<li><a class="reference internal" href="#module-mlxp.launcher">The <code class="xref py py-class docutils literal notranslate"><span class="pre">launch</span></code> Decorator</a><ul>
 <li><a class="reference internal" href="#mlxp.launcher.launch"><code class="docutils literal notranslate"><span class="pre">launch()</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.launcher.Context"><code class="docutils literal notranslate"><span class="pre">Context</span></code></a><ul>
 <li><a class="reference internal" href="#mlxp.launcher.Context.config"><code class="docutils literal notranslate"><span class="pre">Context.config</span></code></a></li>
@@ -417,6 +485,10 @@ When logging is enabled, these variables are all stored in a uniquely defined di
 </ul>
 </li>
 <li><a class="reference internal" href="#mlxp.launcher.instance_from_dict"><code class="docutils literal notranslate"><span class="pre">instance_from_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-mlxp.mlxpsub">The <code class="xref py py-class docutils literal notranslate"><span class="pre">mlxpsub</span></code> Command</a><ul>
+<li><a class="reference internal" href="#mlxp.mlxpsub.mlxpsub"><code class="docutils literal notranslate"><span class="pre">mlxpsub()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -430,7 +502,7 @@ When logging is enabled, these variables are all stored in a uniquely defined di
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

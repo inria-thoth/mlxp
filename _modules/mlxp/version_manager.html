@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>mlxp.version_manager - MLXP 0.1.3 documentation</title>
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>mlxp.version_manager - MLXP 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.1.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.1.3 documentation</span>
+  <span class="sidebar-brand-text">MLXP 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -158,12 +158,13 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../installing.html">Installing MLXP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuring_mlxp.html">Configuring MLXP</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_introduction.html">Introduction</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_launching.html">1- Launching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../easy_versioning.html">3- Versioning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../easy_reading.html">3- Reading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../advanced_features.html">4- Advanced features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../tutorial_conclusion.html">Conclusion</a></li>
 </ul>
 </li>
@@ -359,7 +360,8 @@
         <span class="n">repo_root</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">rev_parse</span><span class="p">(</span><span class="s2">&quot;--show-toplevel&quot;</span><span class="p">)</span>
         <span class="n">relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">repo_root</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">working_tree_dir</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_commit_state</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle_cloning</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
@@ -387,48 +389,53 @@
                 <span class="p">)</span>
                 <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Run will be executed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="c1"># def _handle_cloning(self, repo, relpath):</span>
+    <span class="c1">#     choice = &quot;y&quot;</span>
+    <span class="c1">#     done = False</span>
+    <span class="c1">#     while True:</span>
+    <span class="c1">#         valid_choice = False</span>
+    <span class="c1">#         if self._existing_choices:</span>
+    <span class="c1">#             choice = self.im_handler.get_im_choice(&quot;cloning&quot;)</span>
+    <span class="c1">#             valid_choice = choice in [&quot;y&quot;, &quot;n&quot;]</span>
+    <span class="c1">#         if not valid_choice:</span>
+    <span class="c1">#             #if self.im_handler.interactive_mode: # no need to ask for this anymore</span>
+    <span class="c1">#             #    choice = _get_cloning_choice()</span>
+    <span class="c1">#             self.im_handler.set_im_choice(&quot;cloning&quot;, choice)</span>
+    <span class="c1">#             if choice == &quot;y&quot;:</span>
+    <span class="c1">#                 _printc(</span>
+    <span class="c1">#                     _bcolors.OKBLUE,</span>
+    <span class="c1">#                     &quot;Run will be executed from a backup directory based on the latest commit &quot;,</span>
+    <span class="c1">#                 )</span>
+    <span class="c1">#         if choice == &quot;y&quot;:</span>
+    <span class="c1">#             self._clone_repo(repo)</span>
+    <span class="c1">#             self._set_requirements()</span>
+    <span class="c1">#             self.work_dir = os.path.join(self.dst, relpath)</span>
+    <span class="c1">#             done = True</span>
+    <span class="c1">#         elif choice == &quot;n&quot;:</span>
+    <span class="c1">#             if not self._existing_choices:</span>
+    <span class="c1">#                 _printc(</span>
+    <span class="c1">#                     _bcolors.OKBLUE, &quot;Run will be executed from the main directory&quot;,</span>
+    <span class="c1">#                 )</span>
+    <span class="c1">#                 _printc(</span>
+    <span class="c1">#                     _bcolors.OKBLUE, &quot;Warning: [Reproduciblity] Run is not linked to any git commit&quot;,</span>
+    <span class="c1">#                 )</span>
+
+    <span class="c1">#             done = True</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             _printc(_bcolors.OKBLUE, &quot;Invalid choice. Please try again. (y/n)&quot;)</span>
+
+    <span class="c1">#         if done:</span>
+    <span class="c1">#             break</span>
+
     <span class="k">def</span> <span class="nf">_handle_cloning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">relpath</span><span class="p">):</span>
-        <span class="n">choice</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
-        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">valid_choice</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
-                <span class="n">choice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">get_im_choice</span><span class="p">(</span><span class="s2">&quot;cloning&quot;</span><span class="p">)</span>
-                <span class="n">valid_choice</span> <span class="o">=</span> <span class="n">choice</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_choice</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">interactive_mode</span><span class="p">:</span>
-                    <span class="n">choice</span> <span class="o">=</span> <span class="n">_get_cloning_choice</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">im_handler</span><span class="o">.</span><span class="n">set_im_choice</span><span class="p">(</span><span class="s2">&quot;cloning&quot;</span><span class="p">,</span> <span class="n">choice</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
-                    <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span>
-                        <span class="s2">&quot;Run will be executed from a backup directory based on the latest commit &quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_handle_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_handle_commit_state</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_set_requirements</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
-                <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
-                    <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Run will be executed from the main directory&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">_printc</span><span class="p">(</span>
-                        <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Warning: [Reproduciblity] Run is not linked to any git commit&quot;</span><span class="p">,</span>
-                    <span class="p">)</span>
-
-                <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (y/n)&quot;</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
-                <span class="k">break</span>
-
-        <span class="k">return</span> <span class="n">choice</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clone_repo</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_requirements</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst</span><span class="p">,</span> <span class="n">relpath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_choices</span><span class="p">:</span>
+            <span class="n">_printc</span><span class="p">(</span>
+                <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Run will be executed from a backup directory based on the latest commit &quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_handle_commit_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">):</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
@@ -571,17 +578,17 @@
 
 <span class="k">def</span> <span class="nf">_is_done_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
     <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">choice</span> <span class="o">=</span> <span class="n">_get_choice_untracked_files</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span>
-        <span class="n">file_to_track</span> <span class="o">=</span> <span class="n">_get_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
-        <span class="c1"># If user input is not empty</span>
-        <span class="n">_add_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">file_to_track</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span><span class="p">:</span>
-            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">elif</span> <span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;n&quot;</span><span class="p">:</span>
+    <span class="c1"># choice = _get_choice_untracked_files()</span>
+    <span class="c1"># if choice == &quot;y&quot;:</span>
+    <span class="n">file_to_track</span> <span class="o">=</span> <span class="n">_get_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+    <span class="c1"># If user input is not empty</span>
+    <span class="n">_add_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">file_to_track</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">untracked_files</span><span class="p">:</span>
         <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Invalid choice. Please try again. (y/n)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_to_track</span><span class="p">:</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">_printc</span><span class="p">(</span><span class="n">_bcolors</span><span class="o">.</span><span class="n">OKBLUE</span><span class="p">,</span> <span class="s2">&quot;Skipping untracked files!&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">done</span>
 
@@ -618,8 +625,6 @@
 
 
 <span class="k">def</span> <span class="nf">_get_files_to_track</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Untracked files:&quot;</span><span class="p">)</span>
-    <span class="n">_disp_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
     <span class="n">_printc</span><span class="p">(</span>
         <span class="n">_bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="p">,</span> <span class="s2">&quot;Please select files to be tracked (comma-separated) and hit Enter to skip:&quot;</span><span class="p">,</span>
     <span class="p">)</span>
@@ -671,7 +676,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=360bc84d"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
