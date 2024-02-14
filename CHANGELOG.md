@@ -1,4 +1,4 @@
 # Changes
 
-- Bug fix when using version manager and scheduler in interactive mode.
+- Adding mlxpsub command for easy submission to a job scheduler.
 - Simplifying the interactive mode. 
