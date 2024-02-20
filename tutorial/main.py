@@ -45,6 +45,9 @@ def train(ctx: mlxp.Context)->None:
         logger.log_metrics({'loss': train_err.item(),
                             'epoch': epoch}, log_name='train')
         
+        logger.log_metrics({'loss': train_err.item()**2,
+                            'epoch': epoch}, log_name='test')
+
         logger.log_checkpoint({'model': model,
                                'epoch':epoch}, log_name='last_ckpt' )
 

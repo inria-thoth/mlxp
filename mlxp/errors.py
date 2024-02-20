@@ -26,8 +26,8 @@ class InvalidArtifactError(Exception):
     pass
 
 
-class InvalidAggregationMapError(Exception):
-    """Raised when an aggregation map is not an instance of AggregationMap."""
+class InvalidMapError(Exception):
+    """Raised when a map is not an valid tuple of type Map."""
 
     pass
 

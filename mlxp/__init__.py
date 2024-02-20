@@ -1,5 +1,5 @@
 from mlxp.data_structures.config_dict import ConfigDict
-from mlxp.data_structures.data_dict import DataDictList
+from mlxp.data_structures.dataframe import DataFrame
 from mlxp.launcher import Context, launch
 from mlxp.logger import DefaultLogger
 from mlxp.reader import Reader
@@ -13,6 +13,6 @@ __all__ = [
     "Scheduler",
     "ConfigDict",
     "Context",
-    "DataDictList",
+    "DataFrame",
     "GitVM",
 ]

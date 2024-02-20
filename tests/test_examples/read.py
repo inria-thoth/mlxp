@@ -36,16 +36,17 @@ def read_outputs():
 	group_keys = ['config.optimizer.lr']
 	    
 	# Grouping the results           
-	grouped_results = results.groupBy(group_keys)
+	grouped_results = results.groupby(group_keys)
 
 
 	print(grouped_results)
 
-	# Creating the aggregation maps 
-	from mlxp.data_structures.contrib.aggregation_maps import AvgStd
-	agg_maps = [AvgStd('train.epoch')]
+	def mean(x):
+		import numpy as np
+		x = np.array(x)
+		return np.mean(x,axis=0)
 
-	agg_results = grouped_results.aggregate(agg_maps)
+	agg_results = grouped_results.aggregate((mean,'train.loss'))
 
 	print(agg_results)
 	try:

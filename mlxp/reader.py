@@ -11,7 +11,7 @@ from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.table import Document
 
-from mlxp.data_structures.data_dict import LAZYDATA, DataDict, DataDictList
+from mlxp.data_structures.dataframe import LAZYDATA, DataDict, DataFrame
 from mlxp.enumerations import DataFrameType, Directories
 from mlxp.parser import DefaultParser, Parser, _is_searchable
 
@@ -22,7 +22,7 @@ class Reader(object):
 
     Once, created, it is possible to query the database using the method 'filter'
     to get the results matching a specific configuration setting.
-    The result of the query is returned either as a DataDictList object or a pandas dataframe.
+    The result of the query is returned either as a DataFrame object or a pandas dataframe.
     The queries are processed using a parser inheriting form the abstract class Parser.
     By default, the parser is DefaultParser.
     However, the user can provide a custom parser with a custom syntax
@@ -97,17 +97,17 @@ class Reader(object):
         return len(self.runs)
 
     def filter(
-        self, query_string: str = "", result_format: str = DataFrameType.DataDictList.value,
-    ) -> Union[DataDictList, pd.DataFrame]:
+        self, query_string: str = "", result_format: str = DataFrameType.DataFrame.value,
+    ) -> Union[DataFrame, pd.DataFrame]:
         """Search a query in a database of runs.
 
         :param query_string: a string defining the query constaints.
         :param result_format: format of the result (either a pandas dataframe or an
-            object of type DataDictList). By default returns a DataDictList object.
+            object of type DataFrame). By default returns a DataFrame object.
         :type query_string: str (default "")
         :type result_format: str (default False)
-        :return: The result of a query either as a DataDictList or a pandas dataframe.
-        :rtype: Union[DataDictList,pd.DataFrame]
+        :return: The result of a query either as a DataFrame or a pandas dataframe.
+        :rtype: Union[DataFrame,pd.DataFrame]
         :raises SyntaxError: if the query string does not follow expected syntax.
         """
         is_valid = False
@@ -127,10 +127,10 @@ class Reader(object):
         else:
             res = self.runs.all()
         res = [DataDict(r, parent_dir=_get_metrics_dir(r, self.src_dir)) for r in res]
-        res = DataDictList(res)
+        res = DataFrame(res)
         if result_format == DataFrameType.Pandas.value:
-            return res.toPandasDF(lazy=False)
-        elif result_format == DataFrameType.DataDictList.value:
+            return res.toPandas(lazy=False)
+        elif result_format == DataFrameType.DataFrame.value:
             return res
 
     @property

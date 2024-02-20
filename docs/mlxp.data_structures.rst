@@ -31,10 +31,10 @@ The :class:`~mlxp.data_structures.artifacts.Artifact` Class
 
 
 
-The :class:`~mlxp.data_structures.data_dict` Module
+The :class:`~mlxp.data_structures.dataframe` Module
 ----------------------------------------------------
 
-.. automodule:: mlxp.data_structures.data_dict
+.. automodule:: mlxp.data_structures.dataframe
    :members:
    :show-inheritance:
 

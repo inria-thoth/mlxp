@@ -14,7 +14,7 @@ class DataFrameType(Enum):
     """Types of data that can be returned by the method filter of a Reader object."""
 
     Pandas = "pandas"
-    DataDictList = "datadict"
+    DataFrame = "datadict"
 
 
 class DefaultSchedulers(Enum):
