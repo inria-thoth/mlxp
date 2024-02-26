@@ -11,9 +11,10 @@ from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.table import Document
 
-from mlxp.data_structures.dataframe import LAZYDATA, DataDict, DataFrame
+from mlxp.data_structures.dataframe import LAZYDATA, LAZYARTIFACT, DataDict, DataFrame
 from mlxp.enumerations import DataFrameType, Directories
 from mlxp.parser import DefaultParser, Parser, _is_searchable
+from mlxp.data_structures.artifacts import Artifact_types, Artifact
 
 
 class Reader(object):
@@ -51,7 +52,7 @@ class Reader(object):
         src_dir: str,
         dst_dir: Optional[str] = None,
         parser: Parser = DefaultParser(),
-        reload: bool = False,
+        recreate: bool = False,
     ):
         """Create a reader object.
 
@@ -59,11 +60,11 @@ class Reader(object):
             runs.
         :param dst_dir: The destination directory where the database will be created.
         :param parser: A parser for querying the database.
-        :param reload: Re-create the database even if it already exists.
+        :param recreate: Re-create the database even if it already exists.
         :type src_dir: str
         :type dst_dir: str (default None)
         :type parser: Parser (default DefaultParser)
-        :type reload: bool (default False)
+        :type recreate: bool (default False)
         :raises PermissionError: if user has no writing priviledges on dst_dir
         """
         self.parser = parser
@@ -83,7 +84,7 @@ class Reader(object):
         self.runs = self.db.table("runs")
         self._fields = self.db.table("fields")
 
-        if not self.db.tables() or reload:
+        if not self.db.tables() or recreate:
             print("Creating a database file of the runs...")
             self._create_base()
             print(f"Database file created in {self.dst_dir}")
@@ -126,7 +127,7 @@ class Reader(object):
             res = self.runs.search(Q)
         else:
             res = self.runs.all()
-        res = [DataDict(r, parent_dir=_get_metrics_dir(r, self.src_dir)) for r in res]
+        res = [DataDict(r, parent_dir=_get_log_dir(r, self.src_dir)) for r in res]
         res = DataFrame(res)
         if result_format == DataFrameType.Pandas.value:
             return res.toPandas(lazy=False)
@@ -199,8 +200,12 @@ def _get_metrics_dir(r, src_dir):
     return os.path.join(src_dir, relpath)
 
 
+def _get_log_dir(r, src_dir):
+    abs_metrics_dir = r["info.logger.metrics_dir"]
+    return  r["info.logger.log_dir"]
+
 def _get_data(path, metadata_file):
-    data = {"config": {}, "info": {}, "mlxp": {}}
+    data = {"config": {}, "info": {}}
     for key in data:
         fname = os.path.join(path, Directories.Metadata.value, key + ".yaml")
         with open(fname, "r") as file:
@@ -209,6 +214,17 @@ def _get_data(path, metadata_file):
     metadata_dict = _flatten_dict(data, parent_key="")
 
     fields = {key: str(type(value)) for key, value in metadata_dict.items()}
+
+    metrics_dict = _get_metrics_data(path)
+    artifacts_dict = _get_artifacts_data(path)
+
+    metadata_dict.update(metrics_dict)
+    metadata_dict.update(artifacts_dict)
+    fields.update(metrics_dict)
+    fields.update({key: 'Artifact' for key in  artifacts_dict.keys()})
+    return metadata_dict, fields
+
+def _get_metrics_data(path):
     keys_dir = os.path.join(path, Directories.Metrics.value, ".keys")
 
     lazydata_dict = {}
@@ -220,14 +236,26 @@ def _get_data(path, metadata_file):
                 with open(full_file_name, "r") as f:
                     keys_dict = yaml.safe_load(f)
                 if keys_dict:
-                    lazydata_dict.update({prefix + "." + key: LAZYDATA for key in keys_dict.keys()})
+                    lazydata_dict.update({prefix +"." + key: LAZYDATA for key in keys_dict.keys()})
     except FileNotFoundError:
         pass
+    return lazydata_dict
 
-    fields.update({key: LAZYDATA for key, value in lazydata_dict.items()})
+def _get_artifacts_data(path):
+    artifacts_dict_name = os.path.join(path, Directories.Artifacts.value, ".keys/artifacts.yaml")
+    
+    lazydata_dict = {}
+    try:
+        with open(artifacts_dict_name, "r") as f:
+            keys_dict = yaml.safe_load(f)
+        if keys_dict:
+            for key, value in keys_dict.items():
 
-    metadata_dict.update(lazydata_dict)
-    return metadata_dict, fields
+                lazydata_dict.update({".".join(["artifact",key,path]): LAZYARTIFACT for path in value.keys()})
+
+    except FileNotFoundError:
+        pass
+    return lazydata_dict
 
 
 def _ensure_writable(dst_dir):

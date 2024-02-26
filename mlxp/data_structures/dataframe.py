@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import yaml
 import os
 from collections.abc import ItemsView, KeysView, Mapping, MutableMapping
 from functools import reduce
@@ -10,9 +11,13 @@ from typing import Any, Dict, List, Tuple, Optional, Callable, Union
 
 import pandas as pd
 
-from mlxp.errors import InvalidMapError, InvalidKeyError
+from mlxp.errors import InvalidMapError, InvalidKeyError, InvalidArtifactError
+from mlxp.enumerations import Directories
+from mlxp.data_structures.artifacts import Artifact_types, Artifact
+import marshal, types
 
-LAZYDATA = "LAZYDATA"
+LAZYDATA = "METRIC"
+LAZYARTIFACT = "ARTIFACT"
 
 map_types = ['Generic','Columnwise', 'Rowwise','Pointwise']
 Map = Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]]
@@ -28,6 +33,7 @@ class DataDict(Mapping):
         self.parent_dir = parent_dir
         
         self._make_lazydict()
+        self._make_artifact()
 
     def _flattened(self):
         return self.config["flattened"]
@@ -70,14 +76,31 @@ class DataDict(Mapping):
         if self.parent_dir:
             all_keys = [key for key, value in self._flattened().items() if value == LAZYDATA]
             parent_keys = set([key.split(".")[0] for key in all_keys])
+            metrics_dir = os.path.join(self.parent_dir, Directories.Metrics.value)
             # try:
             self.lazydata_dict = {
-                parent_key: _LazyData(self.parent_dir, parent_key) for parent_key in parent_keys
+                parent_key: _LazyData(metrics_dir, parent_key) for parent_key in parent_keys
             }
             # except:
             #    pass
 
             self._lazy().update({key: self.lazydata_dict[key.split(".")[0]].get_data for key in all_keys})
+
+
+    def _make_artifact(self):
+        if self.parent_dir:
+            all_keys = [key for key, value in self._flattened().items() if value == LAZYARTIFACT]
+            artifacts_dir = os.path.join(self.parent_dir, Directories.Artifacts.value)
+            artifact_types = set([key.split(".")[1] for key in all_keys])
+
+            self.lazyartifact_dict = {
+                artifact_type: _LazyArtifact(artifacts_dir, artifact_type) for artifact_type in artifact_types
+            }
+
+            self._lazy().update({key: self.lazyartifact_dict[key.split(".")[1]].get_data for key in all_keys})
+
+
+
 
     def update(self, new_dict):
         """Update the dictionary with values from another dictionary."""
@@ -135,6 +158,63 @@ class _LazyData(object):
             unused_keys = all_keys.difference(self.used_keys)
             for key in unused_keys:
                 del self._data[key]
+
+
+class _LazyArtifact(object):
+    def __init__(self, artifacts_dir, artifact_type):
+        self.artifact_type = artifact_type
+        self.artifacts_dir = artifacts_dir
+        if artifact_type in Artifact_types:
+            self.load = Artifact_types[artifact_type]['load']
+            self.save = Artifact_types[artifact_type]['save']
+        else:
+
+            types_file = os.path.join(artifacts_dir,'.keys/custom_types.yaml')
+            try:
+                with open(types_file, "r") as f:
+                    types_dict_marshal = yaml.safe_load(f)
+                code = marshal.loads(types_dict_marshal[artifact_type]['load'])
+                self.load = types.FunctionType(code, globals(), "load")
+                code = marshal.loads(types_dict_marshal[artifact_type]['save'])
+                self.save = types.FunctionType(code, globals(), "save")
+            except:
+                raise InvalidArtifactError
+        artifacts_dict_name = os.path.join(artifacts_dir, ".keys/artifacts.yaml")
+    
+        lazydata_dict = {}
+        try:
+            with open(artifacts_dict_name, "r") as f:
+                keys_dict = yaml.safe_load(f)
+            if keys_dict:
+                self.artifacts = keys_dict[artifact_type]
+        except:
+            raise InvalidArtifactError
+
+
+
+        self.used_keys = set()
+        self._data = {}
+
+    def get_data(self, key):
+        splitted_key = key.split('.')[2:]
+        parent_key = '.'.join(splitted_key)
+        if not self._data or parent_key not in self.used_keys:
+            parent_dir = os.path.join(*tuple(splitted_key))
+            parent_dir = os.path.join(self.artifacts_dir,self.artifact_type,parent_dir)
+            self._data[parent_key] = {name: Artifact(name,parent_dir,self.load, self.save) 
+            for name  in  self.artifacts[parent_key]}
+            self.used_keys.add(parent_key)
+        return self._data[parent_key]
+
+    def _free_unused(self):
+        if self._data:
+            all_keys = set(self._data.keys())
+            unused_keys = all_keys.difference(self.used_keys)
+            for key in unused_keys:
+                del self._data[key]
+
+
+
 
 
 class _MyListProxy:
@@ -260,8 +340,8 @@ class DataFrame(list):
         _check_valid_keys(group_keys,self.keys())
 
         # Need to handle the case when keys are empty
-        collection_dict, new_group_keys, group_vals = _group_by(self, group_keys)
-        return GroupedDataFrame(new_group_keys, collection_dict)
+        collection_dict, group_vals = _group_by(self, group_keys)
+        return GroupedDataFrame(group_keys, collection_dict)
 
     def aggregate(self, maps: Union[Map, List[Map]]) -> DataFrame:
         """Perform aggregation of of columns of a dataframe according to some aggregation maps and returns a new dataframe with a single row.
@@ -382,6 +462,7 @@ class DataFrame(list):
         :type filter_map: Union[Map, List[Map]]
         :params bygroups: Optionally apply the filter by groups when bygroups is either a column name or list of column names by which the dataframe must be grouped. 
             Once the filter is applied by group, the groups are merged together into a single ungrouped dataframe. This is equivalent to performing self.groupby(bygroups).filter(filter_map).ungroup()
+        :type bygroups: Union[None,str,List[str]]
         :return: A DataFrame object containing a filtered version of the initial dataframe.
         :rtype: DataFrame
         :raises InvalidMapError: if the filter map are not of type List[Map] or Map.
@@ -475,7 +556,7 @@ class GroupedDataFrame:
             - Using self.items() to iterate over the key/value pairs of self.grouped_dict.
     """
 
-    def __init__(self, group_keys: List[str], grouped_dict: Dict[Tuple[str, ...], DataFrame]):
+    def __init__(self, group_keys: List[str], grouped_dict: Dict[Tuple[str, ...], Union[GroupedDataFrame,DataFrame]]):
         """Create an GroupedDataFrame object.
 
         :param group_keys: A list of string containing the column names used for grouping.
@@ -498,7 +579,7 @@ class GroupedDataFrame:
         """Iterate over the groups of the GroupedDataFrame object."""
         return iter(self.grouped_dict)
 
-    def __getitem__(self, key: Tuple[str, ...]) -> DataFrame:
+    def __getitem__(self, key: Tuple[str, ...]) -> Union[GroupedDataFrame,DataFrame]:
         """Return the group corresponding to a given group key."""
         return self.grouped_dict[key]
 
@@ -530,12 +611,18 @@ class GroupedDataFrame:
         :rtype: DataFrame        
         """
         data_list = []
-        for keys, config_list in self.items():
-            group_dict = {key_name: key for key_name, key in zip(self.group_keys, list(keys))}
-            for data_dict in config_list:
-                data_dict.update(group_dict) 
-            data_list +=  [data_dict for data_dict in config_list]
-        return DataFrame(data_list)
+        try: 
+            assert all(isinstance(config_list,GroupedDataFrame) for keys, config_list in self.items())
+            ungrouped_dict = {keys: config_list.ungroup() for keys, config_list in self.items()}
+            return GroupedDataFrame(self.group_keys,ungrouped_dict)
+        except:
+            assert all(isinstance(config_list,DataFrame) for keys, config_list in self.items())
+            for keys, config_list in self.items():
+                group_dict = {key_name: key for key_name, key in zip(self.group_keys, list(keys))}
+                for data_dict in config_list:
+                    data_dict.update(group_dict) 
+                data_list +=  [data_dict for data_dict in config_list]
+            return DataFrame(data_list)
 
 
     def toPandas(self, lazy=True) -> pd.DataFrame:
@@ -601,7 +688,7 @@ class GroupedDataFrame:
         """
         return self._apply_to_groups(maps, 'aggregate', {},ungroup=ungroup)
 
-    def filter(self,filter_map: Map, ungroup: bool=False)-> Union[GroupedDataFrame,DataFrame]:
+    def filter(self,filter_map: Map, bygroups:Union[None,str,List[str]]=None, ungroup: bool=False)-> Union[GroupedDataFrame,DataFrame]:
         """Filters the dataframe of each group. see DataDictsList.filter.
         Returns a groupped dataframe of type GroupedDataFrame that is optionally ungroupped into a dataframe object of type DataFrame.
 
@@ -609,13 +696,20 @@ class GroupedDataFrame:
         :type filter_map: Map
         :params ungroup: Optionally returns a ungroupped version of the result. 
         :type ungroup: bool
+        :params bygroups: Optionally apply the filter by groups when bygroups is either a column name or list of column names by which the dataframe must be grouped. 
+            Once the filter is applied by group, the groups are merged together into a single ungrouped dataframe. This is equivalent to performing self.groupby(bygroups).filter(filter_map).ungroup()
+        :type bygroups: Union[None,str,List[str]]
         :return: An object containing the result of the filtering.
         :rtype: Union[GroupedDataFrame,DataFrame]
         :raises InvalidMapError: if the map is not of type Map.
         """
-
-
-        return self._apply_to_groups(filter_map, 'filter', {},ungroup=ungroup)
+        if bygroups:
+            filtered = self.ungroup().groupby(bygroups).filter(filter_map,ungroup=True)
+            if ungroup:
+                return filtered
+            return filtered.groupby(self.group_keys)
+        else:
+            return self._apply_to_groups(filter_map, 'filter', {},ungroup=ungroup)
 
     def transform(self,maps: Union[Map, List[Map]], ungroup: bool=False)-> Union[GroupedDataFrame,DataFrame]:
         """Applies a columnwise tranformation to the dataframe corresponding to each group. see DataDictsList.transform.
@@ -679,11 +773,14 @@ class GroupedDataFrame:
 
 
         return self._apply_to_groups(by, 'sort', {'ascending':ascending}, ungroup=ungroup)
+    def groupby(self, group_keys: Union[str,List[str]]) -> GroupedDataFrame:
 
+        return self._apply_to_groups(group_keys, 'groupby', {}, ungroup=False)
+        
 
 def _groups_toPandas(grouped_dict,group_keys,lazy):
     all_configs = []
-    df_dict = {key: value.toPandas(lazy=lazy) for key,value in grouped_dict.items()}
+    #df_dict = {key: value.toPandas(lazy=lazy) for key,value in grouped_dict.items()}
     group_dfs = []
 
     #Iterate over groups and store group dataframes
@@ -700,7 +797,7 @@ def _groups_toPandas(grouped_dict,group_keys,lazy):
 def _group_by(config_dicts, list_group_keys):
     collection_dict = {}
     group_vals = set()
-    group_keys = tuple(list_group_keys)
+    #group_keys = tuple(list_group_keys)
     for config_dict in config_dicts:
         pkey_list = [config_dict._flattened()[group_key] for group_key in list_group_keys]
         #pkey_val = [str(pkey) for pkey in pkey_list if pkey is not None]
@@ -711,7 +808,7 @@ def _group_by(config_dicts, list_group_keys):
 
     grouped_dict = {key: DataFrame(reduce(dict.get, key, collection_dict)) for key in group_vals}
 
-    return grouped_dict, group_keys, group_vals
+    return grouped_dict, group_vals
 
 
 def _add_nested_keys_val(dictionary, keys, val):

@@ -13,8 +13,5 @@
 
 
 
-
-
-
 python main.py  model.num_units=2,3,4 optimizer.lr=10.,1. seed=1,2,3\
                 +mlxp.use_version_manager=False +mlxp.interactive_mode=False

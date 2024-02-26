@@ -20,7 +20,7 @@ class MissingFieldError(Exception):
 
 
 class InvalidArtifactError(Exception):
-    """Raised when an object passed to the log_artifact method of a Logger is not of
+    """Raised when an object passed to the log_artifacts method of a Logger is not of
     type Artifact."""
 
     pass

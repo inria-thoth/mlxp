@@ -49,7 +49,7 @@ def train(ctx: mlxp.Context)->None:
                             'epoch': epoch}, log_name='test')
 
         logger.log_checkpoint({'model': model,
-                               'epoch':epoch}, log_name='last_ckpt' )
+                               'epoch':epoch}, log_name='last_ckpt.pkl' )
 
     print(f"Completed training with a learning rate of {cfg.optimizer.lr}")
 

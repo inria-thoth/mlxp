@@ -29,7 +29,7 @@ setup(
     packages=find_packages(".", exclude=["*tests*", "*.develop"]),
     entry_points={
         'console_scripts': [
-            'mlxpsub=mlxp.mlxpsub:__main__',
+            'mlxpsub=mlxp.mlxpsub:main',
         ],
     },
     install_requires=["hydra-core>=1.3.2", 

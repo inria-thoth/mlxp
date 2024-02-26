@@ -16,7 +16,7 @@ def read_outputs():
 
 	# Displaying searchable fields must start with info or config
 	print(reader.searchable)
-
+ 	
 
 	# Searching using a query string
 	query = "info.status in ['COMPLETE', 'RUNNING'] & config.optimizer.lr >= 0.1"
@@ -46,7 +46,7 @@ def read_outputs():
 		x = np.array(x)
 		return np.mean(x,axis=0)
 
-	agg_results = grouped_results.aggregate((mean,'train.loss'))
+	agg_results = grouped_results.aggregate((mean,'train.epoch'))
 
 	print(agg_results)
 	try:
