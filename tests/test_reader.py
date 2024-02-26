@@ -9,6 +9,7 @@ import mlxp
 from mlxp.reader import Reader
 
 # Unit tests for the class Reader in mlxp/reader.py
+tutorial_path = os.path.join(str(pathlib.Path(os.getcwd()).parent),'tutorial')
 
 
 def _delete_directory(log_dir):
@@ -25,10 +26,10 @@ def launch():
 	# Launching toy experiments
 
 	# Delete directory ./logs/ if it exists 
-	log_dir = os.path.join('test_examples','logs')
-	log_dir = os.path.abspath(log_dir)
+	log_dir = os.path.join(tutorial_path,'logs')
 	_delete_directory(log_dir)
-	scripts = pathlib.Path('.').resolve().glob('launch_script*')
+	scripts = pathlib.Path(tutorial_path).resolve().glob('launch_script.sh')
+
 	for script in scripts:
 		parent_path = str(script.parent)
 		sys.path.insert(0,parent_path)
@@ -36,19 +37,22 @@ def launch():
 	parent_path = str(script.parent)
 	sys.path.insert(0,parent_path)
 
-	with open(script, 'rb') as file:
+	with open(script, 'r') as file:
 		script_code = file.read()
-	rc = subprocess.call(script_code, shell=True)
+	rc = subprocess.call([f"cd {tutorial_path}\n"+script_code] , shell=True)
 
 	assert rc==0
 	yield rc
+
+	_delete_directory(log_dir)
+
 
 @pytest.fixture
 def reader(launch):
 	# Create reader object 
 
 
-	parent_log_dir = os.path.join('test_examples','logs')
+	parent_log_dir = os.path.join(tutorial_path,'logs')
 	reader = mlxp.Reader(parent_log_dir)
 	
 	assert reader.src_dir == os.path.abspath(parent_log_dir)
@@ -80,7 +84,7 @@ def test_filter(reader):
 	# Assert optimizer.lr > 0.1
 	assert all(lr > 0.1 for lr in results[:]['config.optimizer.lr'])
 	# Assert df has 8 elements
-	assert len(results) == 8
+	assert len(results) == 18
 
 	# Test equality query
 
@@ -168,25 +172,25 @@ def test_filter(reader):
 	query = ""
 	results = reader.filter(query_string=query)
 
-	assert len(results) == 12
+	assert len(results) == 18
 
 
 
-def test_config_diff(reader):
+def test_diff(reader):
 	
 	results = reader.filter()
 
-	diffs = results.config_diff()
-	assert set(diffs)==set(['config.optimizer.lr', 'config.seed'])
+	diffs = results.diff()
+	assert set(diffs)==set(['config.model.num_units','config.optimizer.lr', 'config.seed'])
 
 def test_dataframe_groupby(reader):
 	results = reader.filter()
 	group_keys = ['config.optimizer.lr']
 	grouped_results = results.groupby(group_keys)
 	
-	assert len(grouped_results.keys()) == 3
-	assert all(key in [(10.,),(1.,),(0.1,)] for key in grouped_results.keys())
-	assert all(len(res)==4 for key,res in grouped_results.items())
+	assert len(grouped_results.keys()) == 2
+	assert all(key in [(10.,),(1.,)] for key in grouped_results.keys())
+	assert all(len(res)==9 for key,res in grouped_results.items())
 
 
 def test_dataframe_aggregate(reader):
@@ -200,8 +204,8 @@ def test_dataframe_aggregate(reader):
 		return np.mean(x,axis=0)
 	agg_maps = (mean,('train.loss','train.epoch'))
 	agg_results = grouped_results.aggregate(agg_maps)
-	assert len(agg_results.keys()) == 3
-	assert all(key in [(10.,),(1.,),(0.1,)] for key in agg_results.keys())
+	assert len(agg_results.keys()) == 2
+	assert all(key in [(10.,),(1.,)] for key in agg_results.keys())
 	assert all(len(res)==1 for key,res in agg_results.items())
 
 	manual_agg = {key: mean(value[:]['train.loss']) for key,value in grouped_results.items()}
@@ -224,19 +228,20 @@ def test_dataframe_filter(reader):
 		x = np.array(x)
 		return np.min(x[:,-1])
 
-	def minimum(x):
+	def argmin(x):
 		import numpy as np
 		x = np.array(x)
 		return x[:,-1]==np.min(x[:,-1])
 	methods_keys = ['config.model.num_units']
 	agg_results = grouped_results.aggregate((mean,'train.loss'))
-	best_results = agg_results.filter((minimum,'fmean.train.loss'), bygroups = methods_keys)
+	best_results = agg_results.filter((argmin,'fmean.train.loss'), bygroups = methods_keys)
 	import numpy as np
-	methods_groups = grouped_results.ungroup().groupby(methods_keys).aggregate((mean,'train.loss')).filter((minimum,'fmean.train.loss'))
+	methods_groups = agg_results.ungroup().groupby(methods_keys)
 	manual_filter = {key: my_min(values[:]['fmean.train.loss']) for key,values in methods_groups.items()}
 	for key, value in best_results.items():
 		array_val = np.array(value[:]['fmean.train.loss']) 
 		assert array_val[:,-1] == manual_filter[(key[0],)]
+
 
 
 

@@ -142,9 +142,9 @@ jobs:
     - name: Run tests without the lib
       uses: knicknic/os-specific-run@v1.0.3
       with:
-        macos: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest
-        linux: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest 
-        windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
+        macos: rm -rf MLXP && python -m pip install pytest && python -m pip install torch && cd tests && python -m pytest
+        linux: rm -rf MLXP && python -m pip install pytest && python -m pip install torch && cd tests && python -m pytest 
+        windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pip install torch && cd tests && python -m pytest
 
   upload_pypi:
     if: github.ref == 'refs/heads/master'

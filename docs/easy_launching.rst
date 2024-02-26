@@ -263,7 +263,7 @@ Once, the job finishes execution, we can double-check that everything went well 
    │   │   └── .keys/
    │   │        └── metrics.yaml
    │   ├── artifacts/
-   │   │   └── Checkpoint/
+   │   │   └── pickle/
    │   │       └── last_ckpt.pkl
    │   ├── log.stderr
    │   ├── log.stdout

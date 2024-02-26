@@ -74,26 +74,26 @@ it in their research as follows:
 
 .. code-block:: bibtex 
 
-   @Misc{Arbel2023MLXP,
-     author = {Michael Arbel},
-     title = {MLXP: A framework for conducting machine learning experiments in python},
-     howpublished = {Github},
-     year = {2023},
-     url = {https://github.com/inria-thoth/mlxp}
+   @Misc{mlxp2024,
+     author = {Michael Arbel, Alexandre Zouaoui},
+     title = {MLXP: A framework for conducting replicable Machine Learning eXperiments in Python},
+     howpublished = {arXiv preprint arXiv:2402.13831},
+     year = {2024},
+     url = {https://arxiv.org/abs/2402.13831}
    }
 
 Acknowledgments
 ^^^^^^^^^^^^^^^
 
-I would like to acknowledge the following contributors for their contributions to the development of this package:
 
-- `Alexandre Zouaoui <https://azouaoui.me/>`_ kindly shared his python implementation for creating job scripts and submiting them to a cluster. His code served as the basis for the implementation of the Scheduler class. While the process of job submission significantly evolved, by integrating it with MLXpy's launching functionality, I am grateful for Alexandre's contribution which were invaluable to the development of this project.
+The authors would like to thank the following people for their valuable feedback and contributions to the development of MLXP: 
 
-- `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested a premature version of MLXP. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXP's functionalities.  
+
+- `Juliette Marrie <https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr>`_ tested an early version of MLXP. We are grateful for her feedback which was extremetly helpful for shaping and improving MLXP's functionalities.  
 
 - `Romain Ménégaux <https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr>`_ and `Pierre Wolinski <https://pierre-wolinski.fr/>`_ provided valuable feedback and suggestions to improve MLXP. They also found and reported several bugs in the software which helped improve its quality and stability. 
 
-
+- `Thomas Ryckeboer <https://www.linkedin.com/in/thomas-ryckeboer-a97ab7143/?locale=en_US>`_ for providing guidance on continuous integration of MLXP.
 
 Tables of content
 -----------------

@@ -52,7 +52,7 @@ class Reader(object):
         src_dir: str,
         dst_dir: Optional[str] = None,
         parser: Parser = DefaultParser(),
-        recreate: bool = False,
+        refresh: bool = False,
     ):
         """Create a reader object.
 
@@ -60,11 +60,11 @@ class Reader(object):
             runs.
         :param dst_dir: The destination directory where the database will be created.
         :param parser: A parser for querying the database.
-        :param recreate: Re-create the database even if it already exists.
+        :param refresh: Re-create the database even if it already exists.
         :type src_dir: str
         :type dst_dir: str (default None)
         :type parser: Parser (default DefaultParser)
-        :type recreate: bool (default False)
+        :type refresh: bool (default False)
         :raises PermissionError: if user has no writing priviledges on dst_dir
         """
         self.parser = parser
@@ -84,7 +84,7 @@ class Reader(object):
         self.runs = self.db.table("runs")
         self._fields = self.db.table("fields")
 
-        if not self.db.tables() or recreate:
+        if not self.db.tables() or refresh:
             print("Creating a database file of the runs...")
             self._create_base()
             print(f"Database file created in {self.dst_dir}")

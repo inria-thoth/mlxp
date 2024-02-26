@@ -262,7 +262,7 @@ class DataFrame(list):
         else:
             return super().__getitem__(index)
 
-    def config_diff(self, start_key:str="config") -> List[str]:
+    def diff(self, start_key:str="config") -> List[str]:
         """Return a list of colums keys starting with 'start_key' and whose value varies
         in the dataframe.
 
@@ -365,7 +365,6 @@ class DataFrame(list):
         #return _aggregate(self, aggregation_maps)
 
     def apply(self,maps: Union[Map, List[Map]], map_type='Generic')-> DataFrame:
-        
         """Applies a generic map or list of maps to a dataframe.
 
         This function returns a DataFrame object containing the results of applying the maps to the dataframe.
@@ -381,8 +380,8 @@ class DataFrame(list):
             - 'Columnwise': In this case, the apply method is equivalent to either tranform or aggregate method. It applies the maps columnwise and expects the output to either preserve the same number of rows as the initial dataframe (as the tranform method) or to reduce it to a single value (like the aggregate method). 
             - 'Rowwise': Applied a map rowise. In that case, the apply method returns a dataframe with the same number of rows as the initial one. The signature of the callable (the first element of the tuple Map) must be Callable[[Union[Any,Tuple[Any,...]]], Any]. It takes the values of some specific columns at a single row and returns an output for that row. The column names on which the map operates are provided as the second element of the Map tuple.
             - 'Generic': Extends the transform and aggregate methods to support operations that are not columnwise. The input to the callable (the first element of the tuple Map) must be either List[Any] or Tuple[List[Any],...]. 
-                The callable must have the same return type as the callables used in a transform or aggregate methods: either Union[Any,Tuple[Any,...]] or  Union[List[Any],Tuple[List[Any],...]].
-                It takes lists of values of some specific columns applies the map to them and returns transformed outputs that can be either lists of values (as in the tranform method) or single values (as in the aggregate method).
+            The callable must have the same return type as the callables used in a transform or aggregate methods: either Union[Any,Tuple[Any,...]] or  Union[List[Any],Tuple[List[Any],...]].
+            It takes lists of values of some specific columns applies the map to them and returns transformed outputs that can be either lists of values (as in the tranform method) or single values (as in the aggregate method).
         :return: A DataFrame object containing the result of the maps.
         :rtype: DataFrame
         :raises InvalidMapError: if the maps are not of type List[Map] or Map.
@@ -401,18 +400,18 @@ class DataFrame(list):
         return res
     
     def transform(self,maps: Union[Map, List[Map]])->DataFrame:
-
         """Applies a map columnwise to a dataframe while preserving the number of rows.
 
         This function returns a DataFrame object containing the results of the tranformation maps. 
         The new dataframe has the same number of rows as the initial dataframe on which the transform is applied.
         This method extends the map method to support operation that are not pointwise and can depend on values from different rows of the same column.
+        
         :params maps: Either an element of type Map or a list of elements of type Map. 
             A Map is a tuple with signature Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]].
             - The first element is a Callable[[List[Any]], Union[List[Any],Tuple[List[Any],...]]] that must take a list of all values of a given column in the dataframe.
-                It must return a list or a tuple of lists of elements of arbitrary types. 
-                The size of the returned lists must be the same as the input list. 
-                Each element of the returned lists corresponds to a transformation of the value at a given row and columns of the original dataframe.
+            It must return a list or a tuple of lists of elements of arbitrary types. 
+            The size of the returned lists must be the same as the input list. 
+            Each element of the returned lists corresponds to a transformation of the value at a given row and columns of the original dataframe.
             - The second element of the Map tuple represents the list of columns in the dataframe on which the map is applied columnwise.
             - The third element reprensents the optional name of the output columns. 
         :type maps: Union[Map, List[Map]]

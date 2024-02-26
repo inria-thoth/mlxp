@@ -4,6 +4,10 @@ import mlxp
 parent_log_dir = './logs/'
 reader = mlxp.Reader(parent_log_dir)
 
+# Displaying the number of runs accessible to the reader
+print(len(reader))
+
+
 # Displaying all fields accessible in the database.
 print(reader.fields)
 
@@ -15,22 +19,33 @@ print(reader.searchable)
 
 
 # Searching using a query string
-query = "info.status == 'COMPLETE' & config.optimizer.lr <= 100."
+query = "info.status == 'COMPLETE' & config.model.num_units < 4"
 results = reader.filter(query_string=query, result_format="pandas")
+
+# Display the result as a pandas dataframe 
 print(results)
 
 
+# Returning an mlxp.DataFrame as a result
 results = reader.filter(query_string=query)
 
+# Display the result as a pandas dataframe
 print(results)
-results.config_diff
+
 
 # Access a particular column
 print(results[0]['train.loss'])
 
+# Access a particular column of the results 
+art = results[0]['artifact.pickle.']
+print(art)
+
+# Loading an artifact
+art['last_ckpt.pkl'].load()
+
 
 # Inspect configurations that vary accross runs
-print(results.config_diff())
+print(results.diff())
 
 # List of group keys.
 group_keys = ['config.optimizer.lr']
@@ -52,26 +67,23 @@ agg_results = grouped_results.aggregate(agg_maps)
 print(agg_results)
 
 # Finding the best performing hyper-parameters
-def maximum(x):
+def argmin(x):
 	import numpy as np
 	x = np.array(x)
-	return x[:,-1]==np.max(x[:,-1])
+	return x[:,-1]==np.min(x[:,-1])
 
 group_keys = ['config.model.num_units','config.optimizer.lr']         
 methods_keys = ['config.model.num_units']
 
-best_keys = results.groupby(group_keys)\
-			.aggregate((mean,'train.loss'),ungroup=True)\
-			.filter((maximum,'fmean.train.loss'), bygroups = methods_keys)\
-			.groupby(group_keys).keys()
+grouped_res = results.groupby(group_keys)
+
+best_results = grouped_res.aggregate((mean,'train.loss'))\
+				   		.filter((argmin,'fmean.train.loss'), bygroups = methods_keys)
 
 
 # Extracting the best results 
-filtered_results = results.groupby(group_keys)\
-						.select(best_keys)\
-						.aggregate((mean,'test.loss'),ungroup=True)\
-						.groupby(methods_keys)
-
+filtered_results = grouped_res.select(best_results.keys())\
+						.aggregate((mean,'test.loss'))
 
 
 print(filtered_results)

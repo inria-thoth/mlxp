@@ -170,6 +170,50 @@ class Logger(abc.ABC):
         self._artifact_types[artifact_type]['save'](artifact,fname)
         self._log_artifact_type(artifact_name,artifact_type)
 
+    def load_artifacts(self, artifact_name:str, artifact_type:Union[str,None]=None, root:Union[str, None]=None) -> Any:
+        """Restore an artifact from 'log_dir/artifacts/artifact_type/artifact_name' or a
+        user defined directory root.
+
+        Raises an error if it fails to do so.
+
+        :param artifact_name: Name of the file where the checkpoint is saved.
+        :type artifact_name: str (default 'checkpoint')
+        :param root: Absolute path to the log directory (log_dir) (assuming it was created using a logger object).
+        If set to None, then the logger in its own log_dir.
+        :param artifact_type: Type of the artifact to save. 
+        If set to None, the method will try to infer the artifact type from the artifact_name.
+        :type root: Union[str,None] (default 'None')
+        :type artifact_type: Union[str,None] (default 'None')
+        return: Any serializable object stored in 'root/artifacts/artifact_type/artifact_name'.
+        rtype: Any
+        """
+        if not root:
+            root =self.log_dir
+        if not artifact_type:
+            
+            artifact_type_file = os.path.join(root,Directories.Artifacts.value,".keys", "custom_types.yaml")
+            artifact_dict_name = os.path.join(root,Directories.Artifacts.value,".keys", "artifacts.yaml")
+
+            # get the base name of the artifact
+            artifact_base_name = os.path.basename(artifact_name)
+            artifact_dir_name = _path_as_key(os.path.dirname(artifact_name))
+            try:
+                with open(artifact_dict_name, "r") as f:
+                    cur_yaml = yaml.safe_load(f)
+                for key, value in cur_yaml.items():
+                    if artifact_dir_name in value:
+                        if artifact_base_name in value[artifact_dir_name]:
+                            artifact_type=key
+                            break
+                assert artifact_type
+            except BaseException:
+                message= "Could not infer artifact type! Please provide a value for artifact_type."
+                raise InvalidArtifactError(message)
+        artifact_path = os.path.join(root,Directories.Artifacts.value, artifact_type, artifact_name)
+
+        return self._artifact_types[artifact_type]['load'](artifact_path)
+
+
     def register_artifact_type(self, name:str, save:Callable[[object, str], None], load:Callable[[str], object])->None:
         """ Register a new artifact type with a save and load method.
         
@@ -303,7 +347,7 @@ class DefaultLogger(Logger):
         please use the method log_artifacts
 
         :param checkpoint: Any serializable object to be stored in
-            'run_dir/Artifacts/Checkpoint/last.pkl'.
+            'run_dir/artifacts/pickle/last.pkl'.
         :type checkpoint: Any
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
@@ -311,7 +355,7 @@ class DefaultLogger(Logger):
         self.log_artifacts(checkpoint, artifact_name=log_name, artifact_type='pickle')
 
     def load_checkpoint(self, log_name, root=None) -> Any:
-        """Restore a checkpoint from 'run_dir/Artifacts/Checkpoint/log_name.pkl' or a
+        """Restore a checkpoint from 'run_dir/artifacts/pickle/log_name.pkl' or a
         user defined directory root.
 
         Raises an error if it fails to do so.
@@ -319,9 +363,9 @@ class DefaultLogger(Logger):
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
         :param root: Absolute path to the checkpoint.
-        If set to None, the logger looks for the checkpoint in 'run_dir/Artifacts/Checkpoint'.
+        If set to None, the logger looks for the checkpoint in 'run_dir/artifacts/pickle'.
         :type root: Union[str,None] (default 'None')
-        return: Any serializable object stored in 'run_dir/Artifacts/Checkpoint/last.pkl'.
+        return: Any serializable object stored in 'run_dir/artifacts/pickle/last.pkl'.
         rtype: Any
         """
 

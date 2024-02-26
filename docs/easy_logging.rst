@@ -10,9 +10,95 @@ Logging metrics and artifacts
 The logger provides four methods for logging objects:
     
     - :samp:`log_metrics`: For logging dictionaries of scalars in a json file. This method can be used to log the loss and other scalar quantities that can evolve during the run. These dictionaries are stored in a json file.
-    - :samp:`log_artifacts`: For logging more complex objects such as the weights of a network, etc. This method requires passing objects inheriting from the abstract class :samp:`Artifacts`.
+    - :samp:`log_artifacts`: For logging more complex objects such as the weights of a network, etc. This method requires passing the desired artifact format (ex: pickle, image, torch checkpoint) and the name of the artifact.
+    - :samp: `load_artifacts`: For lading artifacts.
     - :samp:`log_checkpoint`: A simpler method for logging serializable objects as a pickle file.
     - :samp:`load_checkpoint`: A method for loading a saved checkpoint.
+
+Logging metrics
+"""""""""""""""
+
+In the :samp:`main.py` file, we have added a new line to log the loss at each epoch using the method :samp:`log_metrics`:. This methods takes a dictionary of scalars as inputs as well as the name of the JSON file where it will be stored: 
+
+.. code-block:: python
+    :caption: main.py
+
+    ...
+    logger.log_metrics({'loss': train_err.item(),
+                        'epoch': epoch}, log_name='train')
+    ...
+
+
+..note::
+    Several dictonaries can be stored successively in the same JSON file even if they do not have the same keys. 
+
+
+..warning::
+    The keys of the dictionary must be consistent accross runs and within each JSON file. 
+
+
+Logging artifacts
+"""""""""""""""""
+
+We also added a line to log the model's weights using the method :samp:`log_checkpoint`. This method is used to log serializable objects as pickle files. The name of the pickle file is provided as an argument. 
+
+
+.. code-block:: python
+    :caption: main.py
+
+    ...
+    logger.log_checkpoint({'model': model,
+                           'epoch':epoch}, log_name='last_ckpt')
+    ...
+
+For more general artifact, you can use the method :samp:`log_artifacts` which takes the artifact format and the name of the artifact as arguments. For instance, below we log the model's weights as a torch checkpoint:
+
+
+.. code-block:: python
+    :caption: main.py
+
+    ...
+    logger.log_artifacts({'model': model,
+                          'epoch':epoch}, 
+                          artifact_name='last_ckpt', 
+                          artifact_format='torch')
+    ...
+
+
+The method :samp:`log_artifacts` natively supports the following types: :samp:`pickle`, :samp:`torch`, :samp:`image`, :samp:`numpy`. 
+
+
+
+Registering custom artifacts
+""""""""""""""""""""""""""""
+
+In case other non supported artifacts need to be logged, the user can register custom artifact types. This is done using the method :samp:`register_artifact_type` which takes three arguments: the name of the artifact type, the method for saving the artifact, and the method for loading the artifact:
+
+
+.. code-block:: python
+    :caption: main.py
+
+    ...
+    def save(obj,path):
+        import pickle
+        with open(path, 'wb') as f:
+            pickle.dump(obj, f)
+
+    def load(path):
+        import pickle
+        with open(path, 'rb') as f:
+            return pickle.load(f)
+
+
+    logger.register_artifact_type('my_pickle', save, load)
+    ...
+
+    logger.log_artifacts({'model': model,
+                          'epoch':epoch}, 
+                          artifact_name='last_ckpt', 
+                          artifact_format='my_pickle')
+
+The method :samp:`register_artifact_type` must be called before the method :samp:`log_artifacts` is used with the new type.
 
 
 File structure of the logs
@@ -48,7 +134,7 @@ Each log directory contains three sub-directories: :samp:`metadata`, :samp:`metr
    │   │   └──.keys/
    │   │       └── metrics.yaml
    │   └── artifacts/
-   │       └── Checkpoint/
+   │       └── pickle/
    │           └── last_ckpt.pkl
    │    
    ├── 2/...
@@ -84,8 +170,8 @@ The hidden directory :samp:`.keys` is used by the reader module of MLXP and is n
 The :samp:`metadata` directory
 """"""""""""""""""""""""""""""
 
-The :samp:`metadata`  directory contains three yaml files: :samp:`config`, :samp:`info`, and :samp:`mlxp`, each storing the content of the corresponding fields of the context object :samp:`ctx`. 
-:samp:`config` stores the user config of the run, :samp:`info` stores general information about the run such as the assigned :samp:`log_id` and the absolute path to the logs of the run :samp:`log_dir`. Finally, :samp:`mlxp` stores the MLXP's settings used for the run (e.g. the logger settings). 
+The :samp:`metadata`  directory contains two yaml files: :samp:`config` and :samp:`info``, each storing the content of the corresponding fields of the context object :samp:`ctx`. 
+:samp:`config` stores the user config of the run, :samp:`info` stores general information about the run such as the assigned :samp:`log_id` and the absolute path to the logs of the run :samp:`log_dir`. 
 
 .. code-block:: yaml
     :caption: ./logs/1/metadata/config.yaml
@@ -117,36 +203,12 @@ The :samp:`metadata`  directory contains three yaml files: :samp:`config`, :samp
     user: marbel
     work_dir: absolute_path_to/tutorial
 
-.. code-block:: yaml
-    :caption: ./logs/1/metadata/mlxp.yaml
-
-    logger:
-      forced_log_id: -1
-      log_streams_to_file: false
-      name: DefaultLogger
-      parent_log_dir: ./logs
-    scheduler:
-      cleanup_cmd: ''
-      env_cmd: ''
-      name: NoScheduler
-      option_cmd: []
-      shell_config_cmd: ''
-      shell_path: /bin/bash
-    version_manager:
-      name: GitVM
-      parent_work_dir: ./.workdir
-      compute_requirements: false
-    use_logger: true
-    use_scheduler: false
-    use_version_manager: false
-    interactive_mode: true
-
 
 The :samp:`artifacts` directory 
 """""""""""""""""""""""""""""""
 
 The directory :samp:`artifacts` is where all data passed to the logger's methods :samp:`log_artifacts` and :samp:`log_checkpoint` are stored. 
-These are stored in different directories depending on the artifact type. In this example, since we used the reserved method :samp:`log_checkpoint`, the logged data are considered as checkpoint objects, hence the sub-directory :samp:`Checkpoint`. 
+These are stored in different directories depending on the artifact type. In this example, since we used the reserved method :samp:`log_checkpoint`, the logged data are considered as pickle objects, hence the sub-directory :samp:`pickle`. 
 You can see that it contains the pickle file :samp:`last_ckpt.pkl` which is the name we provided when calling the method :samp:`log_checkpoint` in the :samp:`main.py` file. 
 
 
@@ -200,7 +262,7 @@ Checkpointing can be particularly useful if you need to restart a job from its l
                                 'epoch': epoch}, log_name='train')
             
             logger.log_checkpoint({'model': model,
-                                   'epoch':epoch}, log_name='last_ckpt' )
+                                   'epoch':epoch}, log_name='last_ckpt')
 
         print(f"Completed training with learing rate: {cfg.optimizer.lr}")
 
