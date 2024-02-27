@@ -45,7 +45,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         # publish dir is of the form docs/_build/html_<branch_name>
         publish_dir: docs/_build/html
-        if: ${{! github.ref == 'refs/heads/master'}}
-        destination_dir: ${{ steps.extract-branch.outputs.branch_name }}
         # Destination directory in the gh-pages branch
+        destination_dir: ${{ steps.extract-branch.outputs.branch_name }}
 
