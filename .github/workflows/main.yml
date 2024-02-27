@@ -147,7 +147,7 @@ jobs:
         windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
 
   upload_pypi:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
     needs: [build_wheels, build_sdist, run_tests]
     runs-on: ubuntu-latest
     steps:   
