@@ -37,7 +37,7 @@ jobs:
       run: cd docs && sphinx-build -b html . _build/html
     - name: Extract branch name
       id: extract-branch
-      run: echo "::set-output name=branch_name::${GITHUB_REF#refs/heads/ | tr / _}"
+      run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/} | tr / _)"
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
@@ -45,6 +45,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         # publish dir is of the form docs/_build/html_<branch_name>
         publish_dir: docs/_build/html
+        if: ${{! github.ref == 'refs/heads/master'}}
         destination_dir: ${{ steps.extract-branch.outputs.branch_name }}
         # Destination directory in the gh-pages branch
 
