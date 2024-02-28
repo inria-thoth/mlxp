@@ -22,7 +22,10 @@ exec(
 )
 
 with open(path_version_file) as version_file:
-    version = version_file.read().strip()
+    version = '.'.join((version_file.read().strip()).split('.')[:2])
+
+
+
 
 
 VERSION = tuple([int(s) for s in version.split('.')])
@@ -33,8 +36,7 @@ release = RELEASE
 project = ver_dic["PROJECT"]
 author = ver_dic["AUTHOR"]
 copyright = ver_dic["COPYRIGHT"]
-
-
+html_title= project+ " "+version
 
 
 intersphinx_mapping = {
@@ -58,13 +60,35 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'autodocsumm']
+    'autodocsumm',
+    'sphinx_multiversion']
 
 
+templates_path = [
+    "_templates",
+]
 
+html_sidebars = {
+    '**': [
+        "sidebar/brand.html",
+        "sidebar/search.html",
+        "versioning.html", 
+        "sidebar/scroll-start.html",
+        "sidebar/navigation.html",
+        "sidebar/ethical-ads.html",
+        "sidebar/scroll-end.html",
+        #"sidebar/variant-selector.html",
+    ],
+}
 
 autodoc_member_order = 'bysource'
 autodoc_inherit_docstrings = True
+ 
 
-
+# Use tags for versioning
+smv_tag_whitelist = None#r'^\d+\.\d+\.\d+$'
+# Use regex for smv_branch_whitelist to include master branch and branches of the form release/*
+smv_branch_whitelist= r'(master|release/.*)'
+smv_remote_whitelist=r'^.*$'
+smv_prefer_remote_refs = True  
 

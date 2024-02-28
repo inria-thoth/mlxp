@@ -3,7 +3,6 @@ name: Sphinx build
 on: 
   push: 
     branches: # include master and release branches
-      - master
       - 'release/*'
 
 jobs:
@@ -14,8 +13,11 @@ jobs:
     #runs-on: self-hosted
     env:
         AGENT_TOOLSDIRECTORY: /usr/local/bin/
-    steps:
-    - uses: actions/checkout@v3
+    steps:    
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Set up Python environment
       uses: actions/setup-python@v3
       with:
@@ -32,9 +34,14 @@ jobs:
     # With higher version of docutils bullet lists does not work
       run: |
         pip install sphinx furo autodocsumm
+        pip install sphinx-multiversion
     # Build documentation for each release branch in a directory named after the branch.  
-    - name: Build the sphinx documentation and posts warnings as github comments.
-      run: cd docs && sphinx-build -b html . _build/html
+    - name: Build the sphinx documentation for all branches and store them in the _build/html directory.
+      run: |
+        cd docs
+        git fetch
+        git pull
+        sphinx-multiversion . _build/html
     - name: Extract branch name
       id: extract-branch
       run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/} | tr / _)"
@@ -43,8 +50,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        # publish dir is of the form docs/_build/html_<branch_name>
         publish_dir: docs/_build/html
-        # Destination directory in the gh-pages branch
-        destination_dir: ${{ steps.extract-branch.outputs.branch_name }}
+        #if: ${{! github.ref == 'refs/heads/master'}}
+        destination_dir: pages
 
