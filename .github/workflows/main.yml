@@ -175,7 +175,7 @@ jobs:
       run: |
         latest_release_branch=$(git branch --list 'release/*' --sort=-version:refname | head -n1 | cut -d' ' -f2)
         current_branch=$(git rev-parse --abbrev-ref HEAD)
-        if [[ "${current_branch}" == "${latest_release_branch}" &&  "${{ github.event_name }}" == "release"]]; then
+        if [[ "${current_branch}" == "${latest_release_branch}" ]] &&  [[ "${{ github.event_name }}" == "release" ]]; then
           git checkout master
           git merge --ff-only $latest_release_branch
           git push origin master
