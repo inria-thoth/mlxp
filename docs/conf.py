@@ -89,5 +89,6 @@ autodoc_inherit_docstrings = True
 smv_tag_whitelist = None#r'^\d+\.\d+\.\d+$'
 # Use regex for smv_branch_whitelist to include master branch and branches of the form release/*
 smv_branch_whitelist= r'(master|release/.*)'
-smv_remote_whitelist=r'(origin/master|origin/release/.*)'  
+smv_remote_whitelist=r'^.*$'
+smv_prefer_remote_refs = True  
 
