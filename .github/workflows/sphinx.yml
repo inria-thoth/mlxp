@@ -40,7 +40,7 @@ jobs:
       run: |
         cd docs
         git fetch
-        git branch
+        git pull
         sphinx-multiversion . _build/html
     - name: Extract branch name
       id: extract-branch
