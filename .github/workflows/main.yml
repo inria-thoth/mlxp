@@ -7,165 +7,164 @@ on:
       - 'develop'
 
 jobs:
-  lint_code:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Lint with flake8
-        run: |
-          flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
-  build_wheels:
-    needs: [lint_code]
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        #os: [ubuntu-latest]
+  # lint_code:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Set up Python 3.9
+  #       uses: actions/setup-python@v3
+  #       with:
+  #         python-version: 3.9
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install flake8
+  #         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+  #     - name: Lint with flake8
+  #       run: |
+  #         flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
+  # build_wheels:
+  #   needs: [lint_code]
+  #   name: Build wheels on ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [macos-latest, windows-latest, ubuntu-latest]
+  #       #os: [ubuntu-latest]
 
-    steps:
-      - uses: actions/checkout@v3
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v3
+  #     - uses: actions/setup-python@v3
           
-      - name: Install pypa/build
-        run: python -m pip install build --user
-      - name: Build a binary wheel and a source tarball
-        run: python -m build --sdist --wheel --outdir wheelhouse/
-      # - name: Build wheels
-      #   run: python -m pip wheel --wheel-dir=wheelhouse mlxp 
+  #     - name: Install pypa/build
+  #       run: python -m pip install build --user
+  #     - name: Build a binary wheel and a source tarball
+  #       run: python -m build --sdist --wheel --outdir wheelhouse/
+  #     # - name: Build wheels
+  #     #   run: python -m pip wheel --wheel-dir=wheelhouse mlxp 
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         path: ./wheelhouse/*.whl
 
-  build_sdist:
-    if: startsWith(github.ref, 'refs/heads/release/')
-    needs: [lint_code]
-    name: Build source distribution
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+  # build_sdist:
+  #   if: startsWith(github.ref, 'refs/heads/release/')
+  #   needs: [lint_code]
+  #   name: Build source distribution
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set version
-        run: echo "PACKAGE_VERSION=$(cat VERSION)" >> $GITHUB_ENV
+  #     - name: Set version
+  #       run: echo "PACKAGE_VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
-      - uses: actions/setup-python@v3
-        name: Install Python
-        with:
-          python-version: 3.9
-      # - name: Build sdist
-      #   run: python setup.py sdist
+  #     - uses: actions/setup-python@v3
+  #       name: Install Python
+  #       with:
+  #         python-version: 3.9
+  #     # - name: Build sdist
+  #     #   run: python setup.py sdist
 
-      - name: Install pypa/build
-        run: python -m pip install build --user
-      - name: Build a binary wheel and a source tarball
-        run: python -m build --sdist --outdir dist/
+  #     - name: Install pypa/build
+  #       run: python -m pip install build --user
+  #     - name: Build a binary wheel and a source tarball
+  #       run: python -m build --sdist --outdir dist/
 
-      - uses: actions/upload-artifact@v3
-        with:
-          path: dist/*.tar.gz
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         path: dist/*.tar.gz
           
-      - name: version
-        run: echo "::set-output name=version::${{ env.PACKAGE_VERSION }}"
-        id: version
-      - name: release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          draft: false
-          prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ steps.version.outputs.version }}
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: upload zip archive
-        #uses: actions/upload-release-asset@v1
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/MLXP-${{ env.PACKAGE_VERSION }}.zip
-          asset_name: MLXP-${{ env.PACKAGE_VERSION }}.zip
-          asset_content_type: application/zip
-      - name: upload targz archive
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          tag_name: ${{ steps.version.outputs.version }}
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/MLXP-${{ env.PACKAGE_VERSION }}.tar.gz
-          asset_name: MLXP-${{ env.PACKAGE_VERSION }}.tar.gz
-          asset_content_type: application/gzip
+  #     - name: version
+  #       run: echo "::set-output name=version::${{ env.PACKAGE_VERSION }}"
+  #       id: version
+  #     - name: release
+  #       uses: actions/create-release@v1
+  #       id: create_release
+  #       with:
+  #         draft: false
+  #         prerelease: false
+  #         release_name: ${{ steps.version.outputs.version }}
+  #         tag_name: ${{ steps.version.outputs.version }}
+  #         body_path: CHANGELOG.md
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #     - name: upload zip archive
+  #       #uses: actions/upload-release-asset@v1
+  #       uses: softprops/action-gh-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #       with:
+  #         tag_name: ${{ steps.version.outputs.version }}
+  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #         asset_path: dist/MLXP-${{ env.PACKAGE_VERSION }}.zip
+  #         asset_name: MLXP-${{ env.PACKAGE_VERSION }}.zip
+  #         asset_content_type: application/zip
+  #     - name: upload targz archive
+  #       uses: softprops/action-gh-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #       with:
+  #         tag_name: ${{ steps.version.outputs.version }}
+  #         upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #         asset_path: dist/MLXP-${{ env.PACKAGE_VERSION }}.tar.gz
+  #         asset_name: MLXP-${{ env.PACKAGE_VERSION }}.tar.gz
+  #         asset_content_type: application/gzip
 
-  run_tests:
-    needs: [build_wheels]
-    name: Run the tests on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        #os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-        #python-version: ['3.9']
-    steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: artifact
-        path: dist
+  # run_tests:
+  #   needs: [build_wheels]
+  #   name: Run the tests on ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [macos-latest, ubuntu-latest, windows-latest]
+  #       #os: [ubuntu-latest]
+  #       python-version: ['3.8', '3.9', '3.10', '3.11']
+  #       #python-version: ['3.9']
+  #   steps:
+  #   - uses: actions/download-artifact@v3
+  #     with:
+  #       name: artifact
+  #       path: dist
     
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v3
+  #     with:
+  #       python-version: ${{ matrix.python-version }}
       
-    - name: Try to import mlxp
-      run: python -m pip install --find-links dist MLXP &&  python -c "import mlxp;"
+  #   - name: Try to import mlxp
+  #     run: python -m pip install --find-links dist MLXP &&  python -c "import mlxp;"
     
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
+  #     with:
+  #       fetch-depth: 0
           
-    - name: Switch to Current Branch
-      run: git checkout ${{ env.BRANCH }}
+  #   - name: Switch to Current Branch
+  #     run: git checkout ${{ env.BRANCH }}
 
-    - name: Run tests without the lib
-      uses: knicknic/os-specific-run@v1.0.3
-      with:
-        macos: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest
-        linux: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest 
-        windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
+  #   - name: Run tests without the lib
+  #     uses: knicknic/os-specific-run@v1.0.3
+  #     with:
+  #       macos: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest
+  #       linux: rm -rf MLXP && python -m pip install pytest && cd tests && python -m pytest 
+  #       windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
 
-  upload_pypi:
-    if:  startsWith(github.ref, 'refs/heads/release/')
-    needs: [build_wheels, build_sdist, run_tests]
-    runs-on: ubuntu-latest
-    steps:   
-      - uses: actions/download-artifact@v3
-        with:
-          name: artifact
-          path: dist
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+  # upload_pypi:
+  #   if:  startsWith(github.ref, 'refs/heads/release/')
+  #   needs: [build_wheels, build_sdist, run_tests]
+  #   runs-on: ubuntu-latest
+  #   steps:   
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: artifact
+  #         path: dist
+  #     - name: Publish distribution 📦 to PyPI
+  #       uses: pypa/gh-action-pypi-publish@release/v1
+  #       with:
+  #         password: ${{ secrets.PYPI_API_TOKEN }}
   
   update-master:
-    needs: [build_sdist]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
