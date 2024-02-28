@@ -13,7 +13,7 @@
 - Revamp `Artifact` to allow users to log custom objects by specifying new types using `register_artifact_type`.
 
 
-## 0.2.1 (2024-02-27)
+## 0.2.7 (2024-02-27)
 
 ### Bug fixes
 
