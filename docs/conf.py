@@ -58,13 +58,34 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'autodocsumm']
+    'autodocsumm',
+    'sphinx_multiversion']
 
 
+templates_path = [
+    "_templates",
+]
 
+html_sidebars = {
+    '**': [
+        "sidebar/brand.html",
+        "sidebar/search.html",
+        "sidebar/scroll-start.html",
+        "sidebar/navigation.html",
+        "sidebar/ethical-ads.html",
+        "sidebar/scroll-end.html",
+        #"sidebar/variant-selector.html",
+        "versioning.html", 
+    ],
+}
 
 autodoc_member_order = 'bysource'
 autodoc_inherit_docstrings = True
+ 
 
-
+# Use tags for versioning
+smv_tag_whitelist = None#r'^\d+\.\d+\.\d+$'
+# Use regex for smv_branch_whitelist to include master branch and branches of the form release/*
+smv_branch_whitelist= r'(master|release/.*)'
+smv_remote_whitelist=None
 

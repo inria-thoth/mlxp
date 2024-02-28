@@ -32,6 +32,7 @@ jobs:
     # With higher version of docutils bullet lists does not work
       run: |
         pip install sphinx furo autodocsumm
+        pip install sphinxcontrib-versioning
     # Build documentation for each release branch in a directory named after the branch.  
     - name: Build the sphinx documentation and posts warnings as github comments.
       run: cd docs && sphinx-build -b html . _build/html
