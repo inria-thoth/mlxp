@@ -34,7 +34,10 @@ jobs:
         pip install sphinx-multiversion
     # Build documentation for each release branch in a directory named after the branch.  
     - name: Build the sphinx documentation and posts warnings as github comments.
-      run: cd docs && sphinx-multiversion . _build/html
+      run: |
+        cd docs 
+        git fetch
+        sphinx-multiversion . _build/html
     - name: Extract branch name
       id: extract-branch
       run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/} | tr / _)"
