@@ -9,8 +9,10 @@ def _delete_directory(log_dir):
 	import shutil
 	import os
 	if os.path.exists(log_dir):
-		shutil.rmtree(log_dir)
-
+		try:
+			shutil.rmtree(log_dir)
+		except:
+			pass
 
 @pytest.fixture
 def logger():
@@ -24,6 +26,8 @@ def logger():
 	_delete_directory(log_dir)
 	logger = Logger(log_dir)
 	yield logger
+
+	_delete_directory(log_dir)
 
 def test_Logger(logger):
 	# Create a logger object to log the results of the experiment

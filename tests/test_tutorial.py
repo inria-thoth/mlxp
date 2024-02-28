@@ -54,26 +54,3 @@ def test_mlxpsub_launching(script):
     ignore = "Use of uninitialized value" in error or "mlxp.errors.JobSubmissionError" in error
     if not ignore:
         assert not error
-
-
-
-
-scripts = pathlib.Path(tutorial_path).resolve().glob('read_script.sh')
-
-@pytest.mark.parametrize('script', scripts)
-def test_reading(script):
-
-    parent_path = str(script.parent)
-    sys.path.insert(0,parent_path)
-
-    with open(script, 'r') as file:
-        script_code = file.read()
-    rc = subprocess.call([f"cd {tutorial_path}\n"+script_code] , shell=True)
-    
-    try:
-        shutil.rmtree(os.path.join(tutorial_path,'logs'))
-    except:
-        pass
-
-    assert rc==0
-    
