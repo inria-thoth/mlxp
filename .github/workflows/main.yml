@@ -1,6 +1,11 @@
 name: Test and release
 
-on: push
+on: 
+  push:
+    branches:
+      - 'release/*'
+      - develop
+
 
 jobs:
   lint_code:
@@ -45,7 +50,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   build_sdist:
-    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
+    if: startsWith(github.ref, 'refs/heads/release/')
     needs: [lint_code]
     name: Build source distribution
     runs-on: ubuntu-latest
@@ -147,7 +152,7 @@ jobs:
         windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && cd tests && python -m pytest
 
   upload_pypi:
-    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
+    if:  startsWith(github.ref, 'refs/heads/release/')
     needs: [build_wheels, build_sdist, run_tests]
     runs-on: ubuntu-latest
     steps:   
@@ -159,3 +164,21 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+  update-master:
+        runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check if release is made and branch is latest release branch
+        run: |
+          latest_release_branch=$(git branch --list 'release/*' --sort=-version:refname | head -n1 | cut -d' ' -f2)
+          current_branch=$(git rev-parse --abbrev-ref HEAD)
+          if [[ "${GITHUB_REF}" == "refs/tags/*" && "${current_branch}" == "${latest_release_branch}" &&  "${{ github.event_name }}" == "release"]]; then
+            git checkout master
+            git merge --ff-only $latest_release_branch
+            git push origin master
+          else
+            echo "No release made or branch is not latest release branch"
+            exit 1
+          fi

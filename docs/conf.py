@@ -22,7 +22,10 @@ exec(
 )
 
 with open(path_version_file) as version_file:
-    version = version_file.read().strip()
+    version = '.'.join((version_file.read().strip()).split('.')[:2])
+
+
+
 
 
 VERSION = tuple([int(s) for s in version.split('.')])
@@ -33,8 +36,7 @@ release = RELEASE
 project = ver_dic["PROJECT"]
 author = ver_dic["AUTHOR"]
 copyright = ver_dic["COPYRIGHT"]
-
-
+html_title= project+ " "+version
 
 
 intersphinx_mapping = {
@@ -70,12 +72,12 @@ html_sidebars = {
     '**': [
         "sidebar/brand.html",
         "sidebar/search.html",
+        "versioning.html", 
         "sidebar/scroll-start.html",
         "sidebar/navigation.html",
         "sidebar/ethical-ads.html",
         "sidebar/scroll-end.html",
         #"sidebar/variant-selector.html",
-        "versioning.html", 
     ],
 }
 

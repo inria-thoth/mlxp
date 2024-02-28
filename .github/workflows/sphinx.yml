@@ -3,7 +3,6 @@ name: Sphinx build
 on: 
   push: 
     branches: # include master and release branches
-      - master
       - 'release/*'
 
 jobs:
@@ -32,10 +31,10 @@ jobs:
     # With higher version of docutils bullet lists does not work
       run: |
         pip install sphinx furo autodocsumm
-        pip install sphinxcontrib-versioning
+        pip install sphinx-multiversion
     # Build documentation for each release branch in a directory named after the branch.  
     - name: Build the sphinx documentation and posts warnings as github comments.
-      run: cd docs && sphinx-build -b html . _build/html
+      run: cd docs && sphinx-multiversion . _build/html
     - name: Extract branch name
       id: extract-branch
       run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/} | tr / _)"
