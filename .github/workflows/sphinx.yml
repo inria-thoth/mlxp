@@ -33,9 +33,10 @@ jobs:
         pip install sphinx furo autodocsumm
         pip install sphinx-multiversion
     # Build documentation for each release branch in a directory named after the branch.  
-    - name: Build the sphinx documentation and posts warnings as github comments.
+    - name: Build the sphinx documentation for all branches and store them in the _build/html directory.
       run: |
-        cd docs 
+        cd docs
+        git branch
         sphinx-multiversion . _build/html
     - name: Extract branch name
       id: extract-branch
