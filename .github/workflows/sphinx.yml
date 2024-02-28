@@ -2,8 +2,9 @@ name: Sphinx build
 
 on: 
   push: 
-    branches: 
+    branches: # include master and release branches
       - master
+      - 'release/*'
 
 jobs:
   build:
@@ -31,10 +32,19 @@ jobs:
     # With higher version of docutils bullet lists does not work
       run: |
         pip install sphinx furo autodocsumm
+    # Build documentation for each release branch in a directory named after the branch.  
     - name: Build the sphinx documentation and posts warnings as github comments.
       run: cd docs && sphinx-build -b html . _build/html
+    - name: Extract branch name
+      id: extract-branch
+      run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/} | tr / _)"
+
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        # publish dir is of the form docs/_build/html_<branch_name>
         publish_dir: docs/_build/html
+        # Destination directory in the gh-pages branch
+        destination_dir: ${{ steps.extract-branch.outputs.branch_name }}
+
