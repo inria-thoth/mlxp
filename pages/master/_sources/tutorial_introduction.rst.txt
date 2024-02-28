@@ -50,6 +50,16 @@ In the rest of the tutorial, we will not need to worry about the content of :sam
             optimizer.step()
         return train_err
 
+    def test_epoch(dataloader,
+                    model):
+        err = 0.
+        for i,data in enumerate(dataloader):
+            x,y = data
+            pred = model(x)
+            err += torch.mean((pred-y)**2)
+        err /= i+1
+        return err        
+
     class Dataset(torch.utils.data.Dataset):
 
         def __init__(self, d_int, device):
@@ -109,17 +119,21 @@ The file :samp:`main.py` contains code for training the model :samp:`OneHiddenLa
         model = OneHiddenLayer(d_int=d_int, n_units = num_units)
         model = model.to(device)
         optimizer = torch.optim.SGD(model.parameters(),lr=lr)
-        dataloader = DataLoader(d_int,device)         
+        train_dataloader = DataLoader(d_int,device)
+        test_dataloader = DataLoader(d_int,device)               
 
         # Training
         for epoch in range(num_epoch):
 
-            train_err = train_epoch(dataloader,
+            train_err = train_epoch(train_dataloader,
                                     model,
                                     optimizer)
 
-            print({'loss': train_err.item(),
-                  'epoch': epoch})
+            test_err = test_epoch(test_dataloader,
+                                    model)
+
+            print({'loss': train_err.item(), 
+                    'epoch': epoch})
 
         print(f"Completed training with learing rate: {lr}")
 

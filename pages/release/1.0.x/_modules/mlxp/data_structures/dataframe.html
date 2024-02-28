@@ -1,0 +1,1398 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+        <title>mlxp.data_structures.dataframe - MLXP 1.0</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">MLXP 1.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">MLXP 1.0</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div>
+<div class="sidebar-tree">
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="index.html">Versions</a><input class="toctree-checkbox" id="toctree-checkbox-v" name="toctree-checkbox-v" role="switch" type="checkbox"/><label for="toctree-checkbox-v"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label>
+  <ul>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../../../../0.2.x/index.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="dataframe.html">1.0</a></li>
+  </ul>
+</li>
+</ul>
+</div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Content:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../guide.html">Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Guide</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installing.html">Installing MLXP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started.html">Quick start guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuring_mlxp.html">Configuring MLXP</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial_introduction.html">Introduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../easy_launching.html">1- Launching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../easy_logging.html">2- Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../easy_versioning.html">3- Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../easy_reading.html">3- Reading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../tutorial_conclusion.html">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../mlxp.html">MLXP package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of MLXP package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../mlxp.launching.html">Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mlxp.logging.html">Logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mlxp.reading.html">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mlxp.scheduling.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mlxp.version_managment.html">Version manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../mlxp.data_structures.html">Data structures</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for mlxp.data_structures.dataframe</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Data structures returned by Reader object.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">marshal</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">ItemsView</span><span class="p">,</span> <span class="n">KeysView</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">MutableMapping</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">mlxp.data_structures.artifacts</span> <span class="kn">import</span> <span class="n">Artifact</span><span class="p">,</span> <span class="n">Artifact_types</span>
+<span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
+<span class="kn">from</span> <span class="nn">mlxp.errors</span> <span class="kn">import</span> <span class="n">InvalidArtifactError</span><span class="p">,</span> <span class="n">InvalidKeyError</span><span class="p">,</span> <span class="n">InvalidMapError</span>
+
+<span class="n">LAZYDATA</span> <span class="o">=</span> <span class="s2">&quot;METRIC&quot;</span>
+<span class="n">LAZYARTIFACT</span> <span class="o">=</span> <span class="s2">&quot;ARTIFACT&quot;</span>
+
+<span class="n">map_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Generic&quot;</span><span class="p">,</span> <span class="s2">&quot;Columnwise&quot;</span><span class="p">,</span> <span class="s2">&quot;Rowwise&quot;</span><span class="p">,</span> <span class="s2">&quot;Pointwise&quot;</span><span class="p">]</span>
+<span class="n">Map</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span>
+
+
+<div class="viewcode-block" id="DataDict">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataDict">[docs]</a>
+<span class="k">class</span> <span class="nc">DataDict</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dictionary of key values pairs where some values are loaded lazyly from a</span>
+<span class="sd">    specific path whenever they are accessed.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flattened_dict</span><span class="p">,</span> <span class="n">parent_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;flattened&quot;</span><span class="p">:</span> <span class="n">flattened_dict</span><span class="p">,</span> <span class="s2">&quot;lazy&quot;</span><span class="p">:</span> <span class="n">_LazyDict</span><span class="p">(</span><span class="n">flattened_dict</span><span class="p">)}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span> <span class="o">=</span> <span class="n">parent_dir</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_lazydict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_artifact</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_flattened</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;flattened&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_lazy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;lazy&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get item corresponding to a key.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">()[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over elements of the dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of items in the dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a view of the dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flattened</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a view of the dictionary compatible with html.&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">_repr_html_</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DataDict.keys">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataDict.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return keys of the dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DataDict.items">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataDict.items">[docs]</a>
+    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return items of the dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_make_lazydict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span><span class="p">:</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">LAZYDATA</span><span class="p">]</span>
+            <span class="n">parent_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">])</span>
+            <span class="n">metrics_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="c1"># try:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lazydata_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">parent_key</span><span class="p">:</span> <span class="n">_LazyData</span><span class="p">(</span><span class="n">metrics_dir</span><span class="p">,</span> <span class="n">parent_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">parent_key</span> <span class="ow">in</span> <span class="n">parent_keys</span>
+            <span class="p">}</span>
+            <span class="c1"># except:</span>
+            <span class="c1">#    pass</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lazydata_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">get_data</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">_make_artifact</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span><span class="p">:</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">LAZYARTIFACT</span><span class="p">]</span>
+            <span class="n">artifacts_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Artifacts</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">artifact_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">lazyartifact_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">artifact_type</span><span class="p">:</span> <span class="n">_LazyArtifact</span><span class="p">(</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">artifact_type</span> <span class="ow">in</span> <span class="n">artifact_types</span>
+            <span class="p">}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lazyartifact_dict</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">get_data</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">})</span>
+
+<div class="viewcode-block" id="DataDict.update">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataDict.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the dictionary with values from another dictionary.&quot;&quot;&quot;</span>
+        <span class="n">copy_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">LAZYDATA</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lazy</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_dict</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">copy_dict</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_free_unused</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lazydata_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">_free_unused</span><span class="p">()</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">_LazyDict</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_dict</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw_dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+
+<span class="k">class</span> <span class="nc">_LazyData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span> <span class="o">=</span> <span class="n">parent_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">+</span> <span class="n">extension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">_load_dict_from_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_free_unused</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">unused_keys</span> <span class="o">=</span> <span class="n">all_keys</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">unused_keys</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">_LazyArtifact</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artifact_type</span> <span class="o">=</span> <span class="n">artifact_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span> <span class="o">=</span> <span class="n">artifacts_dir</span>
+        <span class="k">if</span> <span class="n">artifact_type</span> <span class="ow">in</span> <span class="n">Artifact_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span> <span class="o">=</span> <span class="n">Artifact_types</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;load&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">Artifact_types</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;save&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">types_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="s2">&quot;.keys/custom_types.yaml&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">types_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">types_dict_marshal</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="n">marshal</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">types_dict_marshal</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;load&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">&quot;load&quot;</span><span class="p">)</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="n">marshal</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">types_dict_marshal</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;save&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">&quot;save&quot;</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InvalidArtifactError</span>
+        <span class="n">artifacts_dict_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="s2">&quot;.keys/artifacts.yaml&quot;</span><span class="p">)</span>
+
+        <span class="n">lazydata_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifacts_dict_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">keys_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">keys_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span> <span class="o">=</span> <span class="n">keys_dict</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidArtifactError</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">splitted_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">parent_key</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splitted_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">or</span> <span class="n">parent_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span><span class="p">:</span>
+            <span class="n">parent_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="nb">tuple</span><span class="p">(</span><span class="n">splitted_key</span><span class="p">))</span>
+            <span class="n">parent_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">artifact_type</span><span class="p">,</span> <span class="n">parent_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">parent_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="n">Artifact</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parent_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">artifacts</span><span class="p">[</span><span class="n">parent_key</span><span class="p">]</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">parent_key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">parent_key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_free_unused</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">unused_keys</span> <span class="o">=</span> <span class="n">all_keys</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">used_keys</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">unused_keys</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">_MyListProxy</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_dicts</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_of_dicts</span> <span class="o">=</span> <span class="n">list_of_dicts</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_of_dicts</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="DataFrame">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame">[docs]</a>
+<span class="k">class</span> <span class="nc">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A list of elements of type DataDict.</span>
+
+<span class="sd">    This list can be viewed as a dataframe where each row represents a given entry of type</span>
+<span class="sd">    DataDict and columns represent the keys of the DataDict objects.  This structure allows to</span>
+<span class="sd">    load some columns lazyly: the content of these columns is loaded from their</span>
+<span class="sd">    corresponding file only when that column is explicitly accessed.</span>
+
+<span class="sd">    It is displayed as a pandas dataframe and can be converted to it using the method</span>
+<span class="sd">    toPandas.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DataDict</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">iterable</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">DataDict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the DataFrame object as a pandas dataframe.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the DataFrame object as a pandas dataframe for html.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span><span class="o">.</span><span class="n">_repr_html_</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the item at a given index.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_MyListProxy</span><span class="p">([</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DataFrame.diff">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.diff">[docs]</a>
+    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;config&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of colums keys starting with &#39;start_key&#39; and whose value varies</span>
+<span class="sd">        in the dataframe.</span>
+
+<span class="sd">        :param start_key: A string with which all column names to be considered must</span>
+<span class="sd">            start.</span>
+<span class="sd">        :type start_key: str (default &#39;config&#39;)</span>
+<span class="sd">        :return: A list of strings containing the column names starting with &#39;start_key&#39;</span>
+<span class="sd">            and whose values vary in the dataframe.</span>
+<span class="sd">        :rtype: List[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">diff_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ref_dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ref_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_dict</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ref_dict</span> <span class="ow">and</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">start_key</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">ref_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">item</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">diff_keys</span><span class="p">:</span>
+                                <span class="n">diff_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ref_dict</span> <span class="ow">and</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">start_key</span><span class="p">):</span>
+                            <span class="n">diff_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">diff_keys</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.toPandas">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.toPandas">[docs]</a>
+    <span class="k">def</span> <span class="nf">toPandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lazy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the list into a pandas dataframe.</span>
+
+<span class="sd">        :param lazy: If true the pandas dataframe does not contain the results of data</span>
+<span class="sd">            loaded lazyly.</span>
+<span class="sd">        :return: A panda dataframe containing logs (configs and data) of the DataFrame</span>
+<span class="sd">            object</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">lazy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">config</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">config</span><span class="o">.</span><span class="n">_lazy</span><span class="p">()</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.keys">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of column names of the dataframe.</span>
+
+<span class="sd">        :return: List of strings containing the column names of the dataframe</span>
+<span class="sd">        :rtype: List[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.groupby">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.groupby">[docs]</a>
+    <span class="k">def</span> <span class="nf">groupby</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">GroupedDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a groupby operation on the dataframe according to a list of colum</span>
+<span class="sd">        names (group_keys).</span>
+
+<span class="sd">        Returns an object of the class GroupedDataFrame</span>
+
+<span class="sd">        :params group_keys: A string or list of strings containing the names of the</span>
+<span class="sd">            columns to be grouped.</span>
+<span class="sd">        :type group_keys: Union[str,List[str]]</span>
+<span class="sd">        :return: A dictionary of dataframes grouped by the values of the columns</span>
+<span class="sd">            provided to group_keys. Each key of the dictionary is a tuple of values</span>
+<span class="sd">            taken by the columns in group_keys.</span>
+<span class="sd">        :rtype: GroupedDataFrame</span>
+<span class="sd">        :raises InvalidKeyError: if one of the provided keys does not match any column</span>
+<span class="sd">            of the dataframe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if keys are valid</span>
+        <span class="n">group_keys</span> <span class="o">=</span> <span class="n">_to_list_str</span><span class="p">(</span><span class="n">group_keys</span><span class="p">)</span>
+        <span class="n">_check_valid_keys</span><span class="p">(</span><span class="n">group_keys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Need to handle the case when keys are empty</span>
+        <span class="n">collection_dict</span><span class="p">,</span> <span class="n">group_vals</span> <span class="o">=</span> <span class="n">_group_by</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_keys</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">GroupedDataFrame</span><span class="p">(</span><span class="n">group_keys</span><span class="p">,</span> <span class="n">collection_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.aggregate">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.aggregate">[docs]</a>
+    <span class="k">def</span> <span class="nf">aggregate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform aggregation of of columns of a dataframe according to some</span>
+<span class="sd">        aggregation maps and returns a new dataframe with a single row.</span>
+
+<span class="sd">        This function returns a DataFrame object with a single row containing the results of the aggregation maps.</span>
+
+<span class="sd">        :params maps: Either an element of type Map or a list of elements of type Map.</span>
+<span class="sd">            A Map is a tuple with signature Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]].</span>
+<span class="sd">            - The first element is a Callable[[List[Any]], Union[Any,Tuple[Any,...]]] that must take a list of all values of a given column in the dataframe.</span>
+<span class="sd">            It must reduce the list into a single element of arbitrary type which is stored as the value of a single output column in a dataframe with a single row.</span>
+<span class="sd">            - The second element of the Map tuple represents the list of columns in the dataframe on which the map is applied columnwise.</span>
+<span class="sd">            - The third element reprensents the optional name of the output columns.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :return: A DataFrame object containing the result of the aggregation maps.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">maps</span> <span class="o">=</span> <span class="n">format_apply_map</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;Columnwise&quot;</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_apply_column_wise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">res</span><span class="p">)])</span></div>
+
+        <span class="c1"># return _aggregate(self, aggregation_maps)</span>
+
+<div class="viewcode-block" id="DataFrame.apply">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.apply">[docs]</a>
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]],</span> <span class="n">map_type</span><span class="o">=</span><span class="s2">&quot;Generic&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies a generic map or list of maps to a dataframe.</span>
+
+<span class="sd">        This function returns a DataFrame object containing the results of applying the maps to the dataframe.</span>
+
+<span class="sd">        :params maps: Either an element of type Map or a list of elements of type Map.</span>
+<span class="sd">            A Map is a tuple with signature Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]].</span>
+<span class="sd">            - The first element of a Map is a callable to be applied to the dataframe.</span>
+<span class="sd">            - The second element of the Map represents the list of columns in the dataframe to provide as input to the callable.</span>
+<span class="sd">            - The third element reprensents the optional name of the output columns.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :params map_type: Specifies the types of maps to be applied: &#39;Generic&#39;, &#39;Columnwise&#39;, &#39;Rowwise&#39;, &#39;Pointwise&#39;:</span>
+<span class="sd">            - &#39;Pointwise&#39;: In this case, the apply method is equivalent to the method map. It applied the maps pointwise on each value corresponding to a row and selected column.</span>
+<span class="sd">            - &#39;Columnwise&#39;: In this case, the apply method is equivalent to either tranform or aggregate method. It applies the maps columnwise and expects the output to either preserve the same number of rows as the initial dataframe (as the tranform method) or to reduce it to a single value (like the aggregate method).</span>
+<span class="sd">            - &#39;Rowwise&#39;: Applied a map rowise. In that case, the apply method returns a dataframe with the same number of rows as the initial one. The signature of the callable (the first element of the tuple Map) must be Callable[[Union[Any,Tuple[Any,...]]], Any]. It takes the values of some specific columns at a single row and returns an output for that row. The column names on which the map operates are provided as the second element of the Map tuple.</span>
+<span class="sd">            - &#39;Generic&#39;: Extends the transform and aggregate methods to support operations that are not columnwise. The input to the callable (the first element of the tuple Map) must be either List[Any] or Tuple[List[Any],...].</span>
+<span class="sd">            The callable must have the same return type as the callables used in a transform or aggregate methods: either Union[Any,Tuple[Any,...]] or  Union[List[Any],Tuple[List[Any],...]].</span>
+<span class="sd">            It takes lists of values of some specific columns applies the map to them and returns transformed outputs that can be either lists of values (as in the tranform method) or single values (as in the aggregate method).</span>
+<span class="sd">        :return: A DataFrame object containing the result of the maps.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="n">map_type</span> <span class="ow">in</span> <span class="n">map_types</span>
+        <span class="k">if</span> <span class="n">map_type</span> <span class="o">==</span> <span class="s2">&quot;Columnwise&quot;</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_column_wise_map</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">map_type</span> <span class="o">==</span> <span class="s2">&quot;Rowwise&quot;</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_row_wise_map</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">map_type</span> <span class="o">==</span> <span class="s2">&quot;Pointwise&quot;</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_pointwise_map</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">map_type</span> <span class="o">==</span> <span class="s2">&quot;Generic&quot;</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_generic_map</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.transform">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies a map columnwise to a dataframe while preserving the number of rows.</span>
+
+<span class="sd">        This function returns a DataFrame object containing the results of the tranformation maps.</span>
+<span class="sd">        The new dataframe has the same number of rows as the initial dataframe on which the transform is applied.</span>
+<span class="sd">        This method extends the map method to support operation that are not pointwise and can depend on values from different rows of the same column.</span>
+
+<span class="sd">        :params maps: Either an element of type Map or a list of elements of type Map.</span>
+<span class="sd">            A Map is a tuple with signature Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]].</span>
+<span class="sd">            - The first element is a Callable[[List[Any]], Union[List[Any],Tuple[List[Any],...]]] that must take a list of all values of a given column in the dataframe.</span>
+<span class="sd">            It must return a list or a tuple of lists of elements of arbitrary types.</span>
+<span class="sd">            The size of the returned lists must be the same as the input list.</span>
+<span class="sd">            Each element of the returned lists corresponds to a transformation of the value at a given row and columns of the original dataframe.</span>
+<span class="sd">            - The second element of the Map tuple represents the list of columns in the dataframe on which the map is applied columnwise.</span>
+<span class="sd">            - The third element reprensents the optional name of the output columns.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :return: A DataFrame object containing the result of the columnwise maps.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span><span class="p">,</span> <span class="n">reducing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_column_wise_map</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">reducing</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.map">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.map">[docs]</a>
+    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies a map pointwise to each value corresponsing to specified columns of</span>
+<span class="sd">        the dataframe.</span>
+
+<span class="sd">        This function returns a DataFrame object containing the results of the pointwise maps.</span>
+<span class="sd">        The new dataframe has the same number of rows as the initial dataframe on which the transform is applied.</span>
+<span class="sd">        Each row is processed independtly from the others.</span>
+
+<span class="sd">        :params maps: Either an element of type Map or a list of elements of type Map.</span>
+<span class="sd">            A Map is a tuple with signature Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]].</span>
+<span class="sd">            - The first element is a Callable[[Any], Any] that must take a value corresponding to a given row and column in the dataframe and tranforms it.</span>
+<span class="sd">            - The second element of the Map tuple represents the list of columns in the dataframe on which the map is applied columnwise.</span>
+<span class="sd">            - The third element reprensents the optional name of the output columns.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :return: A DataFrame object containing the result of the pointwise map.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span><span class="p">,</span> <span class="n">reducing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_pointwise_map</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">reducing</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.filter">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.filter">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_map</span><span class="p">:</span> <span class="n">Map</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a new dataframe containing a subset of rows of the initial dataframe</span>
+<span class="sd">        that pass a given filter.</span>
+
+<span class="sd">        :params filter_map: An element of type Map.</span>
+<span class="sd">            A Map is a tuple with signature Tuple[Callable, Tuple[str, ...], Optional[Tuple[str, ...]]].</span>
+<span class="sd">            - The first element of the filter map is a function with signature Callable[[Union[List[Any], Tuple[List[Any],...]]], List[Any]] that can take a list or a tuple of lists.</span>
+<span class="sd">            Each input list contains all values of some columns of the dataframe defined in the second element of the Map tuple.</span>
+<span class="sd">            The filter map must return a list of booleans of the same size as the initial lists, each boolean value corresponding to an element of the initial lists at the same location.</span>
+<span class="sd">            Only rows of the dataframe for whicht the returned boolean value is true pass the filter.</span>
+<span class="sd">            - The second element of the Map tuple represents the list of columns that the filter map takes as input.</span>
+<span class="sd">            - The third element of the Map tuple is never used.</span>
+<span class="sd">        :type filter_map: Union[Map, List[Map]]</span>
+<span class="sd">        :params bygroups: Optionally apply the filter by groups when bygroups is either a column name or list of column names by which the dataframe must be grouped.</span>
+<span class="sd">            Once the filter is applied by group, the groups are merged together into a single ungrouped dataframe. This is equivalent to performing self.groupby(bygroups).filter(filter_map).ungroup()</span>
+<span class="sd">        :type bygroups: Union[None,str,List[str]]</span>
+<span class="sd">        :return: A DataFrame object containing a filtered version of the initial dataframe.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        :raises InvalidMapError: if the filter map are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">filter_map</span> <span class="o">=</span> <span class="n">format_apply_map</span><span class="p">(</span><span class="n">filter_map</span><span class="p">,</span> <span class="s2">&quot;Generic&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bygroups</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">bygroups</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filter_map</span><span class="p">)</span><span class="o">.</span><span class="n">ungroup</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">,</span> <span class="n">reducing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_generic_map</span><span class="p">(</span><span class="n">filter_map</span><span class="p">)</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="nb">bool</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
+            <span class="n">_check_filter</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">filter_map</span><span class="p">),</span> <span class="n">reducing</span><span class="p">)</span>
+            <span class="n">filtered</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span><span class="p">,</span> <span class="n">cond</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conditions</span><span class="p">)</span> <span class="k">if</span> <span class="n">cond</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataFrame.sort">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.DataFrame.sort">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">ascending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a sorted dataframe according to a list of columns.</span>
+
+<span class="sd">        :params by: Either column name or a list of column names by which the dataframe</span>
+<span class="sd">            must be sorted with.</span>
+<span class="sd">        :type maps: Union[str,List[str]]</span>
+<span class="sd">        :params ascending: Sorting either by increasing values (ascending=True) or</span>
+<span class="sd">            descreasing values (ascending=False) of the specified columns.</span>
+<span class="sd">        :type ascending: bool</span>
+<span class="sd">        :return: A sorted DataFrame object.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">by</span> <span class="o">=</span> <span class="n">_to_list_str</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>
+
+        <span class="c1"># Sort the data by the given column(s)</span>
+        <span class="n">sorted_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">by</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="ow">not</span> <span class="n">ascending</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">sorted_data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_apply_row_wise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">maps</span> <span class="o">=</span> <span class="n">format_apply_map</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;Rowwise&quot;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">_apply_row_wise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]),</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_apply_column_wise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+
+        <span class="n">maps</span> <span class="o">=</span> <span class="n">format_apply_map</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;Columnwise&quot;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">_apply_column_wise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">reducing</span> <span class="o">=</span> <span class="n">_format_reducing</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">reducing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">output</span><span class="p">)]),</span> <span class="n">reducing</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]),</span> <span class="n">reducing</span>
+
+    <span class="k">def</span> <span class="nf">_apply_generic_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">maps</span> <span class="o">=</span> <span class="n">format_apply_map</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;Generic&quot;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">_apply_generic_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">reducing</span> <span class="o">=</span> <span class="n">_format_reducing</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">reducing</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">output</span><span class="p">)]),</span> <span class="n">reducing</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]),</span> <span class="n">reducing</span>
+
+    <span class="k">def</span> <span class="nf">_apply_pointwise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">maps</span> <span class="o">=</span> <span class="n">format_apply_map</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;Pointwise&quot;</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">_apply_pointwise_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DataFrame</span><span class="p">([</span><span class="n">DataDict</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]),</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="GroupedDataFrame">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame">[docs]</a>
+<span class="k">class</span> <span class="nc">GroupedDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dictionary where each key represents the tuple of values taken by the grouped</span>
+<span class="sd">    column of some processed dataframe.</span>
+
+<span class="sd">    The values corresponsing to each key are objects of type DataFrame containing a group.</span>
+<span class="sd">    This object is usually obtained as the output of the group_by method of the class  DataFrame.</span>
+<span class="sd">    It is displayed as a hierarchical pandas dataframe and</span>
+<span class="sd">    can be converted to it using toPandas method.</span>
+
+<span class="sd">    .. py:attribute:: group_keys</span>
+<span class="sd">        :type: List[str]</span>
+
+<span class="sd">        A list of string containing the column names used for grouping.</span>
+
+<span class="sd">    .. note:: It is possible to directly access the keys and values of self.grouped_dict</span>
+<span class="sd">            by identifying self with self.grouped_dict:</span>
+
+<span class="sd">            - Using self[key] instead of self.grouped_dict[key] to access the value of self.grouped_dict at a given key</span>
+
+<span class="sd">            - Using self.keys() to get all keys of self.grouped_dict.</span>
+
+<span class="sd">            - Using self.items() to iterate over the key/value pairs of self.grouped_dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">group_keys</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">grouped_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]]</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an GroupedDataFrame object.</span>
+
+<span class="sd">        :param group_keys: A list of string containing the column names used for grouping.</span>
+<span class="sd">        :param grouped_dict: A dictionary where each key represents the tuple of values</span>
+<span class="sd">        taken by the grouped column of some processed dataframe.</span>
+<span class="sd">        The values corresponsing to each key are objects of type DataFrame containing a group.</span>
+
+<span class="sd">        :type group_keys: List[str]</span>
+<span class="sd">        :type grouped_dict: Dict[Tuple[str, ...], DataFrame]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span> <span class="o">=</span> <span class="n">group_keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span> <span class="o">=</span> <span class="n">grouped_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_vals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over the groups of the GroupedDataFrame object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the group corresponding to a given group key.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the GroupedDataFrame object as a pandas dataframe.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+
+<div class="viewcode-block" id="GroupedDataFrame.items">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.items">[docs]</a>
+    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the items of the grouped dictionary.</span>
+
+<span class="sd">        :return: items of the dictionary</span>
+<span class="sd">        :rtype: ItemsView</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.keys">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.keys">[docs]</a>
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the keys of the grouped dictionary.</span>
+
+<span class="sd">        :return: keys of the dictionary</span>
+<span class="sd">        :rtype: KeysView</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.ungroup">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.ungroup">[docs]</a>
+    <span class="k">def</span> <span class="nf">ungroup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenates the dataframes representing each group into a single dataframe.</span>
+<span class="sd">        The group keys are added as columns to the resulting dataframe.</span>
+
+<span class="sd">        :return: A dataframe representing the ungrouped version of the groupped</span>
+<span class="sd">            dictionary.</span>
+<span class="sd">        :rtype: DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">config_list</span><span class="p">,</span> <span class="n">GroupedDataFrame</span><span class="p">)</span> <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">config_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="n">ungrouped_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">keys</span><span class="p">:</span> <span class="n">config_list</span><span class="o">.</span><span class="n">ungroup</span><span class="p">()</span> <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">config_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">return</span> <span class="n">GroupedDataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="n">ungrouped_dict</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">config_list</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">config_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">config_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">group_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key_name</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key_name</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">keys</span><span class="p">))}</span>
+                <span class="k">for</span> <span class="n">data_dict</span> <span class="ow">in</span> <span class="n">config_list</span><span class="p">:</span>
+                    <span class="n">data_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">group_dict</span><span class="p">)</span>
+                <span class="n">data_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">data_dict</span> <span class="k">for</span> <span class="n">data_dict</span> <span class="ow">in</span> <span class="n">config_list</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.toPandas">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.toPandas">[docs]</a>
+    <span class="k">def</span> <span class="nf">toPandas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert. the list into a pandas dataframe.</span>
+
+<span class="sd">        :param: If true the pandas dataframe does not contain the results of data loaded</span>
+<span class="sd">            lazyly.</span>
+<span class="sd">        :return: A panda dataframe containing logs (configs and data) of the DataFrame</span>
+<span class="sd">            object</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">lazy</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span> <span class="o">=</span> <span class="n">_groups_toPandas</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas_lazy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span> <span class="o">=</span> <span class="n">_groups_toPandas</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pandas</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_apply_to_groups</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+        <span class="n">grouped_res</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">config_list</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">config_list</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+            <span class="n">grouped_res</span><span class="p">[</span><span class="n">keys</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ungroup</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">GroupedDataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="n">grouped_res</span><span class="p">)</span><span class="o">.</span><span class="n">ungroup</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">GroupedDataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="n">grouped_res</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GroupedDataFrame.apply">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.apply">[docs]</a>
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]],</span> <span class="n">map_type</span><span class="o">=</span><span class="s2">&quot;Generic&quot;</span><span class="p">,</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GroupedDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies a generic tranformation to each dataframe representing each group.</span>
+<span class="sd">        see DataDictsList.apply. Returns a groupped dataframe of type GroupedDataFrame</span>
+<span class="sd">        that is optionally ungroupped into a dataframe object of type DataFrame.</span>
+
+<span class="sd">        :params maps: Either a single instance of tuple Map or a list of tuple of type</span>
+<span class="sd">            Map.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :params map_type: Type of the transformation to apply (see DataDictsList.apply):</span>
+<span class="sd">            &#39;Generic&#39;, &#39;Columnwise&#39;, &#39;Rowwise&#39; or &#39;Pointwise&#39;.</span>
+<span class="sd">        :type map_type: str</span>
+<span class="sd">        :params ungroup: Optionally returns a ungroupped version of the result.</span>
+<span class="sd">        :type ungroup: bool</span>
+<span class="sd">        :return: An object containing the result of the applied transformations.</span>
+<span class="sd">        :rtype: Union[GroupedDataFrame,DataFrame]</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;apply&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;map_type&quot;</span><span class="p">:</span> <span class="n">map_type</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.aggregate">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.aggregate">[docs]</a>
+    <span class="k">def</span> <span class="nf">aggregate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]],</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform aggregation of the dataframe corresponding to each group. see</span>
+<span class="sd">        DataDictsList.aggregate. Returns a groupped dataframe of type GroupedDataFrame</span>
+<span class="sd">        that is optionally ungroupped into a dataframe object of type DataFrame.</span>
+
+<span class="sd">        :params maps: Either a single instance of tuple Map or a list of tuple of type</span>
+<span class="sd">            Map.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :params ungroup: Optionally returns a ungroupped version of the result.</span>
+<span class="sd">        :type ungroup: bool</span>
+<span class="sd">        :return: An object containing the result of the aggregation.</span>
+<span class="sd">        :rtype: Union[GroupedDataFrame,DataFrame]</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;aggregate&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">ungroup</span><span class="o">=</span><span class="n">ungroup</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.filter">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.filter">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">filter_map</span><span class="p">:</span> <span class="n">Map</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Filters the dataframe of each group. see DataDictsList.filter. Returns a</span>
+<span class="sd">        groupped dataframe of type GroupedDataFrame that is optionally ungroupped into a</span>
+<span class="sd">        dataframe object of type DataFrame.</span>
+
+<span class="sd">        :params filter_map: An instance of tuple Map.</span>
+<span class="sd">        :type filter_map: Map</span>
+<span class="sd">        :params ungroup: Optionally returns a ungroupped version of the result.</span>
+<span class="sd">        :type ungroup: bool</span>
+<span class="sd">        :params bygroups: Optionally apply the filter by groups when bygroups is either a column name or list of column names by which the dataframe must be grouped.</span>
+<span class="sd">            Once the filter is applied by group, the groups are merged together into a single ungrouped dataframe. This is equivalent to performing self.groupby(bygroups).filter(filter_map).ungroup()</span>
+<span class="sd">        :type bygroups: Union[None,str,List[str]]</span>
+<span class="sd">        :return: An object containing the result of the filtering.</span>
+<span class="sd">        :rtype: Union[GroupedDataFrame,DataFrame]</span>
+<span class="sd">        :raises InvalidMapError: if the map is not of type Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">bygroups</span><span class="p">:</span>
+            <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ungroup</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">bygroups</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filter_map</span><span class="p">,</span> <span class="n">ungroup</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ungroup</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">filtered</span>
+            <span class="k">return</span> <span class="n">filtered</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">filter_map</span><span class="p">,</span> <span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">ungroup</span><span class="o">=</span><span class="n">ungroup</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.transform">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]],</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies a columnwise tranformation to the dataframe corresponding to each</span>
+<span class="sd">        group. see DataDictsList.transform. Returns a groupped dataframe of type</span>
+<span class="sd">        GroupedDataFrame that is optionally ungroupped into a dataframe object of type</span>
+<span class="sd">        DataFrame.</span>
+
+<span class="sd">        :params maps: Either a single instance of tuple Map or a list of tuple of type</span>
+<span class="sd">            Map.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :params ungroup: Optionally returns a ungroupped version of the result.</span>
+<span class="sd">        :type ungroup: bool</span>
+<span class="sd">        :return: An object containing the result of the transformation.</span>
+<span class="sd">        :rtype: Union[GroupedDataFrame,DataFrame]</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">ungroup</span><span class="o">=</span><span class="n">ungroup</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.map">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.map">[docs]</a>
+    <span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Map</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Map</span><span class="p">]],</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies a pointwise tranformation to the dataframe corresponding to each</span>
+<span class="sd">        group. see DataDictsList.map. Returns a groupped dataframe of type</span>
+<span class="sd">        GroupedDataFrame that is optionally ungroupped into a dataframe object of type</span>
+<span class="sd">        DataFrame.</span>
+
+<span class="sd">        :params maps: Either a single instance of tuple Map or a list of tuple of type</span>
+<span class="sd">            Map.</span>
+<span class="sd">        :type maps: Union[Map, List[Map]]</span>
+<span class="sd">        :params ungroup: Optionally returns a ungroupped version of the result.</span>
+<span class="sd">        :type ungroup: bool</span>
+<span class="sd">        :return: An object containing the result of the pointwise transformation.</span>
+<span class="sd">        :rtype: Union[GroupedDataFrame,DataFrame]</span>
+<span class="sd">        :raises InvalidMapError: if the maps are not of type List[Map] or Map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="s2">&quot;map&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">ungroup</span><span class="o">=</span><span class="n">ungroup</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.select">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.select">[docs]</a>
+    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">GroupedDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extracts subgroups from a group object that corresponding to specific values</span>
+<span class="sd">        of the group keys.</span>
+
+<span class="sd">        :params key_list: List of keys representing the groups to select.</span>
+<span class="sd">        :type key_list: List[Tuple[str,...]]</span>
+<span class="sd">        :return: An object containing the selected groups</span>
+<span class="sd">        :rtype: GroupedDataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">grouped_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grouped_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">key_list</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">GroupedDataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_keys</span><span class="p">,</span> <span class="n">grouped_dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GroupedDataFrame.sort">
+<a class="viewcode-back" href="../../../mlxp.data_structures.html#mlxp.data_structures.dataframe.GroupedDataFrame.sort">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">by</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">ascending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ungroup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GroupedDataFrame</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a grouped object where the dataframe of each group is sorted</span>
+<span class="sd">        according to a list of columns. (see DataFrame.sort) optionally ungroupps the</span>
+<span class="sd">        grouped object into a single dataframe of type DataFrame.</span>
+
+<span class="sd">        :params by: Either column name or a list of column names by which the dataframe</span>
+<span class="sd">            must be sorted with.</span>
+<span class="sd">        :type maps: Union[str,List[str]]</span>
+<span class="sd">        :params ascending: Sorting either by increasing values (ascending=True) or</span>
+<span class="sd">            descreasing values (ascending=False) of the specified columns.</span>
+<span class="sd">        :type ascending: bool</span>
+<span class="sd">        :params ungroup: Optionally returns a ungroupped version of the result.</span>
+<span class="sd">        :type ungroup: bool</span>
+<span class="sd">        :return: A sorted object.</span>
+<span class="sd">        :rtype: Union[GroupedDataFrame,DataFrame]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">by</span><span class="p">,</span> <span class="s2">&quot;sort&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;ascending&quot;</span><span class="p">:</span> <span class="n">ascending</span><span class="p">},</span> <span class="n">ungroup</span><span class="o">=</span><span class="n">ungroup</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">groupby</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">GroupedDataFrame</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_to_groups</span><span class="p">(</span><span class="n">group_keys</span><span class="p">,</span> <span class="s2">&quot;groupby&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">ungroup</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_groups_toPandas</span><span class="p">(</span><span class="n">grouped_dict</span><span class="p">,</span> <span class="n">group_keys</span><span class="p">,</span> <span class="n">lazy</span><span class="p">):</span>
+    <span class="n">all_configs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># df_dict = {key: value.toPandas(lazy=lazy) for key,value in grouped_dict.items()}</span>
+    <span class="n">group_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Iterate over groups and store group dataframes</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">grouped_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">group_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">toPandas</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="n">lazy</span><span class="p">))</span>
+
+    <span class="c1"># Concatenate group dataframes</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">group_dfs</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">grouped_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">names</span><span class="o">=</span><span class="n">group_keys</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="c1">################ Grouping</span>
+
+
+<span class="k">def</span> <span class="nf">_group_by</span><span class="p">(</span><span class="n">config_dicts</span><span class="p">,</span> <span class="n">list_group_keys</span><span class="p">):</span>
+    <span class="n">collection_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">group_vals</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c1"># group_keys = tuple(list_group_keys)</span>
+    <span class="k">for</span> <span class="n">config_dict</span> <span class="ow">in</span> <span class="n">config_dicts</span><span class="p">:</span>
+        <span class="n">pkey_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">config_dict</span><span class="o">.</span><span class="n">_flattened</span><span class="p">()[</span><span class="n">group_key</span><span class="p">]</span> <span class="k">for</span> <span class="n">group_key</span> <span class="ow">in</span> <span class="n">list_group_keys</span><span class="p">]</span>
+        <span class="c1"># pkey_val = [str(pkey) for pkey in pkey_list if pkey is not None]</span>
+        <span class="n">pkey_val</span> <span class="o">=</span> <span class="p">[</span><span class="n">pkey</span> <span class="k">for</span> <span class="n">pkey</span> <span class="ow">in</span> <span class="n">pkey_list</span> <span class="k">if</span> <span class="n">pkey</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">group_vals</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">pkey_val</span><span class="p">))</span>
+        <span class="n">_add_nested_keys_val</span><span class="p">(</span><span class="n">collection_dict</span><span class="p">,</span> <span class="n">pkey_val</span><span class="p">,</span> <span class="p">[</span><span class="n">config_dict</span><span class="p">])</span>
+    <span class="n">group_vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_vals</span><span class="p">)</span>
+
+    <span class="n">grouped_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">reduce</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">collection_dict</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">group_vals</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">grouped_dict</span><span class="p">,</span> <span class="n">group_vals</span>
+
+
+<span class="k">def</span> <span class="nf">_add_nested_keys_val</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="n">dico</span> <span class="o">=</span> <span class="n">dictionary</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">dico</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dico</span> <span class="o">=</span> <span class="n">dico</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">dico</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">dico</span> <span class="o">=</span> <span class="n">dico</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">dico</span> <span class="o">+</span> <span class="n">val</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">parent</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+
+<span class="c1">################### maps</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_pointwise_map</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">apply_maps</span><span class="p">):</span>
+    <span class="n">all_input_keys</span><span class="p">,</span> <span class="n">input_key_list</span> <span class="o">=</span> <span class="n">_extract_input_keys</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">)</span>
+
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_input_keys</span><span class="p">}</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="p">:</span>
+        <span class="n">outputs_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">apply_map</span><span class="p">,</span> <span class="n">input_keys</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">,</span> <span class="n">input_key_list</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">apply_map</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">row</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_keys</span><span class="p">])</span>
+            <span class="n">outputs_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_output_apply_map_as_dict</span><span class="p">(</span><span class="n">apply_map</span><span class="p">,</span> <span class="n">output</span><span class="p">))</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputs_dict</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">_free_unused</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">outputs</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_column_wise_map</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">apply_maps</span><span class="p">):</span>
+    <span class="n">all_input_keys</span><span class="p">,</span> <span class="n">input_key_list</span> <span class="o">=</span> <span class="n">_extract_input_keys</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">dataframe</span><span class="p">[:][</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_input_keys</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="p">:</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">_free_unused</span><span class="p">()</span>
+
+    <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">apply_map</span><span class="p">,</span> <span class="n">input_keys</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">,</span> <span class="n">input_key_list</span><span class="p">)):</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">apply_map</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_keys</span><span class="p">])</span>
+        <span class="n">data_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_output_apply_map_as_dict</span><span class="p">(</span><span class="n">apply_map</span><span class="p">,</span> <span class="n">outputs</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">data_dict</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_row_wise_map</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">apply_maps</span><span class="p">):</span>
+    <span class="n">all_input_keys</span><span class="p">,</span> <span class="n">input_key_list</span> <span class="o">=</span> <span class="n">_extract_input_keys</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">)</span>
+
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_input_keys</span><span class="p">}</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="p">:</span>
+        <span class="n">outputs_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">apply_map</span><span class="p">,</span> <span class="n">input_keys</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">,</span> <span class="n">input_key_list</span><span class="p">):</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_keys</span><span class="p">])</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">apply_map</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">outputs_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_output_apply_map_as_dict</span><span class="p">(</span><span class="n">apply_map</span><span class="p">,</span> <span class="n">output</span><span class="p">))</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outputs_dict</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">_free_unused</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">outputs</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_generic_map</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">apply_maps</span><span class="p">):</span>
+    <span class="n">all_input_keys</span><span class="p">,</span> <span class="n">input_key_list</span> <span class="o">=</span> <span class="n">_extract_input_keys</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_input_keys</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_input_keys</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">_free_unused</span><span class="p">()</span>
+
+    <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">apply_map</span><span class="p">,</span> <span class="n">input_keys</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">apply_maps</span><span class="p">,</span> <span class="n">input_key_list</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">input_keys</span><span class="p">])</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">apply_map</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="n">data_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_output_apply_map_as_dict</span><span class="p">(</span><span class="n">apply_map</span><span class="p">,</span> <span class="n">outputs</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">data_dict</span>
+
+
+<span class="k">def</span> <span class="nf">_format_reducing</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">dataframe_size</span><span class="p">):</span>
+
+    <span class="n">reducing</span> <span class="o">=</span> <span class="p">[</span><span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">dataframe_size</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">red</span> <span class="o">==</span> <span class="kc">True</span> <span class="k">for</span> <span class="n">red</span> <span class="ow">in</span> <span class="n">reducing</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">(</span><span class="n">red</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">red</span> <span class="ow">in</span> <span class="n">reducing</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">reducing</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">[{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataframe_size</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data_dict</span><span class="p">,</span> <span class="kc">True</span>
+
+
+<span class="c1">########################## Output maps</span>
+
+
+<span class="k">def</span> <span class="nf">_output_apply_map_as_dict</span><span class="p">(</span><span class="n">apply_map</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">apply_map</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">apply_map</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">outputs</span><span class="p">)}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">apply_map</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">apply_map</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span> <span class="n">outputs</span><span class="p">}</span>
+
+
+<span class="c1">###################### Assertions</span>
+
+
+<span class="k">def</span> <span class="nf">_check_filter</span><span class="p">(</span><span class="n">len_keys</span><span class="p">,</span> <span class="n">len_maps</span><span class="p">,</span> <span class="n">reducing</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">len_maps</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Only a single filter can be applied at a time.&quot;</span>
+        <span class="k">raise</span> <span class="n">InvalidMapError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">reducing</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid filter map: Should keep the same size as the dataframe&quot;</span>
+        <span class="k">raise</span> <span class="n">InvalidMapError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">len_keys</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid filter map: Should have a single boolean output&quot;</span>
+        <span class="k">raise</span> <span class="n">InvalidMapError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_valid_keys</span><span class="p">(</span><span class="n">list_group_keys</span><span class="p">,</span> <span class="n">valid_keys</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">list_group_keys</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">valid_keys</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The provided key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is invalid! Valid keys are: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">valid_keys</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">InvalidKeyError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="c1">################### Loading data</span>
+
+
+<span class="k">def</span> <span class="nf">_load_dict_from_json</span><span class="p">(</span><span class="n">json_file_name</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+    <span class="n">out_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">cur_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="n">cur_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                    <span class="n">full_key</span> <span class="o">=</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">key</span>
+                    <span class="k">if</span> <span class="n">full_key</span> <span class="ow">in</span> <span class="n">out_dict</span><span class="p">:</span>
+                        <span class="n">out_dict</span><span class="p">[</span><span class="n">full_key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cur_dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">out_dict</span><span class="p">[</span><span class="n">full_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">cur_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">out_dict</span>
+
+
+<span class="c1">###################### Extracting keys</span>
+
+
+<span class="k">def</span> <span class="nf">_extract_input_keys</span><span class="p">(</span><span class="n">agg_maps</span><span class="p">):</span>
+    <span class="n">all_input_keys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">input_key_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">agg_map</span> <span class="ow">in</span> <span class="n">agg_maps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agg_map</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">all_input_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agg_map</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">input_key_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">agg_map</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agg_map</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">all_input_keys</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">agg_map</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">input_key_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agg_map</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_input_keys</span><span class="p">),</span> <span class="n">input_key_list</span>
+
+
+<span class="c1">################################# Format</span>
+
+
+<span class="k">def</span> <span class="nf">_to_list_str</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inputs</span>
+
+
+<span class="k">def</span> <span class="nf">_to_tuple_str</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">inputs</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inputs</span>
+
+
+<span class="k">def</span> <span class="nf">_to_list_tuple</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inputs</span>
+
+
+<span class="k">def</span> <span class="nf">format_apply_map</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="n">map_type</span><span class="p">):</span>
+    <span class="n">maps</span> <span class="o">=</span> <span class="n">_to_list_tuple</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">func_tuple</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">maps</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">func_tuple_input</span> <span class="o">=</span> <span class="n">_to_tuple_str</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">new_func_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">func_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">func_tuple_input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">func_tuple_output</span> <span class="o">=</span> <span class="n">_infer_output_name</span><span class="p">(</span><span class="n">new_func_tuple</span><span class="p">,</span> <span class="n">map_type</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func_tuple_output</span> <span class="o">=</span> <span class="n">_to_tuple_str</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">_check_output_format</span><span class="p">(</span><span class="n">map_type</span><span class="p">,</span> <span class="n">func_tuple_input</span><span class="p">,</span> <span class="n">func_tuple_output</span><span class="p">)</span>
+        <span class="n">maps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_func_tuple</span> <span class="o">+</span> <span class="p">(</span><span class="n">func_tuple_output</span><span class="p">,)</span>
+    <span class="k">return</span> <span class="n">maps</span>
+
+
+<span class="k">def</span> <span class="nf">_infer_output_name</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">,</span> <span class="n">map_type</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">map_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Generic&quot;</span><span class="p">,</span> <span class="s2">&quot;Rowwise&quot;</span><span class="p">]:</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="n">func_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">func_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="n">func_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">keys</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">map_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Columnwise&quot;</span><span class="p">,</span> <span class="s2">&quot;Pointwise&quot;</span><span class="p">]:</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="n">func_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="s2">&quot;f&quot;</span> <span class="o">+</span> <span class="n">func_name</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">func_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+
+<span class="k">def</span> <span class="nf">_check_output_format</span><span class="p">(</span><span class="n">map_type</span><span class="p">,</span> <span class="n">func_tuple_input</span><span class="p">,</span> <span class="n">func_tuple_output</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">map_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Columnwise&quot;</span><span class="p">,</span> <span class="s2">&quot;Pointwise&quot;</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_tuple_input</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">func_tuple_output</span><span class="p">)</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; Copyright (C) 2023 Michael Arbel
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="2- Logging" href="easy_logging.html" /><link rel="prev" title="Introduction" href="tutorial_introduction.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>1- Launching - MLXP 0.2</title>
+        <title>1- Launching - MLXP 1.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.2</div></a>
+      <a href="index.html"><div class="brand">MLXP 1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.2</span>
+  <span class="sidebar-brand-text">MLXP 1.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -160,6 +160,8 @@
   <ul>
   <!-- extract version from branch name  of the form relase/0.2.x -->
     <li class="toctree-l2"><a class="reference internal" href="../release/0.2.x/easy_launching.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../release/1.0.x/easy_launching.html">1.0</a></li>
   </ul>
 </li>
 </ul>
@@ -292,18 +294,23 @@ Note, however, that <code class="samp docutils literal notranslate"><span class=
     <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
                                 <span class="n">lr</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
-    <span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">d_int</span><span class="p">,</span>
+    <span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">d_int</span><span class="p">,</span>
                             <span class="n">cfg</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># Training</span>
     <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_epoch</span><span class="p">,</span><span class="n">cfg</span><span class="o">.</span><span class="n">num_epoch</span><span class="p">):</span>
 
-        <span class="n">train_err</span> <span class="o">=</span> <span class="n">train_epoch</span><span class="p">(</span><span class="n">dataloader</span><span class="p">,</span>
+        <span class="n">train_err</span> <span class="o">=</span> <span class="n">train_epoch</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">,</span>
                                 <span class="n">model</span><span class="p">,</span>
                                 <span class="n">optimizer</span><span class="p">)</span>
+        <span class="n">test_err</span> <span class="o">=</span> <span class="n">test_epoch</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">,</span>
+                                <span class="n">model</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">({</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">train_err</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
                             <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">},</span> <span class="n">log_name</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">({</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">test_err</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                            <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">},</span> <span class="n">log_name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">log_checkpoint</span><span class="p">({</span><span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
                                <span class="s1">&#39;epoch&#39;</span><span class="p">:</span><span class="n">epoch</span><span class="p">},</span> <span class="n">log_name</span><span class="o">=</span><span class="s1">&#39;last_ckpt&#39;</span> <span class="p">)</span>
@@ -437,7 +444,7 @@ Additionally, MLXP pre-processes the python command to extract the working direc
 │   │   └── .keys/
 │   │        └── metrics.yaml
 │   ├── artifacts/
-│   │   └── Checkpoint/
+│   │   └── pickle/
 │   │       └── last_ckpt.pkl
 │   ├── log.stderr
 │   ├── log.stdout
@@ -532,7 +539,7 @@ Additionally, MLXP pre-processes the python command to extract the working direc
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=10f1778b"></script>
+</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

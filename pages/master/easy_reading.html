@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Conclusion" href="tutorial_conclusion.html" /><link rel="prev" title="3- Versioning" href="easy_versioning.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>3- Reading - MLXP 0.2</title>
+        <title>3- Reading - MLXP 1.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.2</div></a>
+      <a href="index.html"><div class="brand">MLXP 1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.2</span>
+  <span class="sidebar-brand-text">MLXP 1.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -160,6 +160,8 @@
   <ul>
   <!-- extract version from branch name  of the form relase/0.2.x -->
     <li class="toctree-l2"><a class="reference internal" href="../release/0.2.x/easy_reading.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../release/1.0.x/easy_reading.html">1.0</a></li>
   </ul>
 </li>
 </ul>
@@ -225,10 +227,13 @@
         <article role="main">
           <section id="reading">
 <h1>3- Reading<a class="headerlink" href="#reading" title="Link to this heading">#</a></h1>
-<p>We have already stored information about 3 runs so far.
-We can access this information easily using MLXP’s reader module, which allows querying results, grouping, and aggregating them. Let’s do this interactively!</p>
+<p>Here we assume that we run a number of experiments by running the following python command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>model.num_units<span class="o">=</span><span class="m">2</span>,3,4<span class="w"> </span>optimizer.lr<span class="o">=</span><span class="m">10</span>.,1.<span class="w"> </span><span class="nv">seed</span><span class="o">=</span><span class="m">1</span>,2,3
+</pre></div>
+</div>
+<p>We can access this information easily using MLXP’s reader module, which allows querying results, grouping, and aggregating them. Let’s do this interactively!</p>
 <section id="creating-a-result-database">
-<h2>Creating a result database<a class="headerlink" href="#creating-a-result-database" title="Link to this heading">#</a></h2>
+<h2>1. Creating a result database<a class="headerlink" href="#creating-a-result-database" title="Link to this heading">#</a></h2>
 <p>We first start by creating a <code class="samp docutils literal notranslate"><span class="pre">reader</span></code> objects that interacts with the logs of multiple runs contained in the same parent directory (here <code class="samp docutils literal notranslate"><span class="pre">./logs/</span></code>):</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [1]: import mlxp
 
@@ -244,6 +249,7 @@ In [2]: # Creates a database of results stored by the logger that is accessible 
 ├── 1/...
 ├── 2/...
 ├── 3/...
+├── ...
 └── database.json
 </pre></div>
 </div>
@@ -251,47 +257,76 @@ In [2]: # Creates a database of results stored by the logger that is accessible 
 <p>This database allows, for instance, obtaining general information about the runs contained in the log directory <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code>, such as the number of runs or the list of fields that are stored in the various files of the log directories: (e.g. in <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> , <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code> or <code class="samp docutils literal notranslate"><span class="pre">metrics/</span></code>):</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [3]: # Displaying the number of runs accessible to the reader
    ...: len(reader)
-Out[3]: 3
+Out[3]: 18
 
 In [4]: # Displaying all fields accessible in the database.
    ...: print(reader.fields)
 Out[4]:
-                                 Type
-Fields
-config.data.d_int         &#39;&lt;class &#39;int&#39;&gt;&#39;
-config.data.device        &#39;&lt;class &#39;str&#39;&gt;&#39;
-config.model.num_units    &#39;&lt;class &#39;int&#39;&gt;&#39;
-config.num_epoch          &#39;&lt;class &#39;int&#39;&gt;&#39;
-config.optimizer.lr     &#39;&lt;class &#39;float&#39;&gt;&#39;
-config.seed               &#39;&lt;class &#39;int&#39;&gt;&#39;
-info.app                  &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.cmd                  &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.end_date             &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.end_time             &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.exec                 &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.hostname             &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.log_dir              &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.log_id               &#39;&lt;class &#39;int&#39;&gt;&#39;
-info.process_id           &#39;&lt;class &#39;int&#39;&gt;&#39;
-info.start_date           &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.start_time           &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.status               &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.user                 &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.work_dir             &#39;&lt;class &#39;str&#39;&gt;&#39;
-train.epoch                    &#39;LAZYDATA&#39;
-train.loss                     &#39;LAZYDATA&#39;
+                                                Type
+ Fields
+ artifact.pickle.                           Artifact
+ config.data.d_int                     &lt;class &#39;int&#39;&gt;
+ config.data.device                    &lt;class &#39;str&#39;&gt;
+ config.model.num_units                &lt;class &#39;int&#39;&gt;
+ config.num_epoch                      &lt;class &#39;int&#39;&gt;
+ config.optimizer.lr                 &lt;class &#39;float&#39;&gt;
+ config.seed                           &lt;class &#39;int&#39;&gt;
+ info.current_file_path                &lt;class &#39;str&#39;&gt;
+ info.end_date                         &lt;class &#39;str&#39;&gt;
+ info.end_time                         &lt;class &#39;str&#39;&gt;
+ info.executable                       &lt;class &#39;str&#39;&gt;
+ info.hostname                         &lt;class &#39;str&#39;&gt;
+ info.logger.artifacts_dir             &lt;class &#39;str&#39;&gt;
+ info.logger.log_dir                   &lt;class &#39;str&#39;&gt;
+ info.logger.log_id                    &lt;class &#39;int&#39;&gt;
+ info.logger.metadata_dir              &lt;class &#39;str&#39;&gt;
+ info.logger.metrics_dir               &lt;class &#39;str&#39;&gt;
+ info.process_id                       &lt;class &#39;int&#39;&gt;
+ info.scheduler.scheduler_job_id       &lt;class &#39;str&#39;&gt;
+ info.start_date                       &lt;class &#39;str&#39;&gt;
+ info.start_time                       &lt;class &#39;str&#39;&gt;
+ info.status                           &lt;class &#39;str&#39;&gt;
+ info.version_manager             &lt;class &#39;NoneType&#39;&gt;
+ info.work_dir                         &lt;class &#39;str&#39;&gt;
+ test.epoch                                   METRIC
+ test.loss                                    METRIC
+ train.epoch                                  METRIC
+ train.loss                                   METRIC
 </pre></div>
 </div>
 <p>For instance, the method <code class="samp docutils literal notranslate"><span class="pre">fields</span></code> displace a table of existing fields along with their type.
 You can see that all the user config options are preceded by the prefix <code class="samp docutils literal notranslate"><span class="pre">config</span></code>.
 The table also contains all fields stored in the files <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code> of the metadata directory for each run.
 Finally, all keys stored by the logger when calling the method <code class="samp docutils literal notranslate"><span class="pre">log_metrics</span></code> are also available.
-Note that these keys are of type <code class="samp docutils literal notranslate"><span class="pre">LAZYDATA</span></code>, meaning that the database does not store these data but only a reference to them (more on this later).</p>
+Note that these keys are of type <code class="samp docutils literal notranslate"><span class="pre">METRIC</span></code> or <code class="samp docutils literal notranslate"><span class="pre">ARTIFACT</span></code>, meaning that the database does not store these data but only a reference to them (more on this later).</p>
+<section id="refreshing-the-database">
+<h3>Refreshing the database<a class="headerlink" href="#refreshing-the-database" title="Link to this heading">#</a></h3>
+<p>By default, the database file <code class="samp docutils literal notranslate"><span class="pre">database.json</span></code> is created only once. However, if the directory structure changed meanwhile (ex: more experiments were added), it is possible to refresh the database by setting the option <code class="samp docutils literal notranslate"><span class="pre">refresh</span></code> to <code class="samp docutils literal notranslate"><span class="pre">True</span></code> when creating the reader object:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [2]: # Creates a database of results stored by the logger that is accessible using a reader object.
+   ...: parent_log_dir = &#39;./logs/&#39;
+        reader = mlxp.Reader(parent_log_dir, refresh=True)
+</pre></div>
+</div>
+</section>
+<section id="database-location">
+<h3>Database location<a class="headerlink" href="#database-location" title="Link to this heading">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, the database is located under the log directory containing all runs (here <code class="samp docutils literal notranslate"><span class="pre">./logs/</span></code>). In some cases, the user has only reading access to it, for instance, if the runs were created by a different user. In this case, the reader will fail to create the database file <code class="samp docutils literal notranslate"><span class="pre">database.json</span></code> under the log directory. To prevent this error from happening, it is possible to create the database file in a different directory with writing access by passing the option <code class="samp docutils literal notranslate"><span class="pre">dst_dir</span></code> to the reader constructor:</p>
+</div>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [2]: # Creates a database of results stored by the logger that is accessible using a reader object.
+   ...: parent_log_dir = &#39;./logs/&#39;
+        reader = mlxp.Reader(parent_log_dir, dst_dir=&#39;path/to/database/&#39;)
+</pre></div>
+</div>
+</section>
 </section>
 <section id="querying-the-database">
-<h2>Querying the database<a class="headerlink" href="#querying-the-database" title="Link to this heading">#</a></h2>
-<p>Once the database is created, the reader object allows filtering the database by the values taken by some of its fields.
-Not all fields can make a valid query. Only those obtained when displaying the attribute ‘searchable’ are acceptable:</p>
+<h2>2. Querying the database<a class="headerlink" href="#querying-the-database" title="Link to this heading">#</a></h2>
+<p>Once the database is created, the reader object allows filtering the database by the values taken by some of its fields.</p>
+<section id="searchable-field">
+<h3>Searchable field<a class="headerlink" href="#searchable-field" title="Link to this heading">#</a></h3>
+<p>Not all fields can make a valid query. Only those obtained when displaying the attribute ‘searchable’ are acceptable:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [5]: # Displaying searchable fields must start with info or config
    ...: print(reader.searchable)
 Out[5]:
@@ -306,7 +341,8 @@ config.seed               &#39;&lt;class &#39;int&#39;&gt;&#39;
 info.executable           &#39;&lt;class &#39;str&#39;&gt;&#39;
 info.cmd                  &#39;&lt;class &#39;str&#39;&gt;&#39;
 info.end_date             &#39;&lt;class &#39;str&#39;&gt;&#39;
-info.end_time             &#39;&lt;class &#39;str&#39;&gt;&#39;    info.current_file_path    &#39;&lt;class &#39;str&#39;&gt;&#39;
+info.end_time             &#39;&lt;class &#39;str&#39;&gt;&#39;
+info.current_file_path    &#39;&lt;class &#39;str&#39;&gt;&#39;
 info.hostname             &#39;&lt;class &#39;str&#39;&gt;&#39;
 info.log_dir              &#39;&lt;class &#39;str&#39;&gt;&#39;
 info.log_id               &#39;&lt;class &#39;int&#39;&gt;&#39;
@@ -318,97 +354,198 @@ info.user                 &#39;&lt;class &#39;str&#39;&gt;&#39;
 info.work_dir             &#39;&lt;class &#39;str&#39;&gt;&#39;
 </pre></div>
 </div>
-<p>The <code class="samp docutils literal notranslate"><span class="pre">searchable</span></code> fields must start with the prefixes: <code class="samp docutils literal notranslate"><span class="pre">info.</span></code> or <code class="samp docutils literal notranslate"><span class="pre">config.</span></code> to indicate that they correspond to keys in the files <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> and <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code> of the directories <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code> of the logs.  Let’s make a simple query and use the <code class="samp docutils literal notranslate"><span class="pre">filter</span></code> method:</p>
+<p>The <code class="samp docutils literal notranslate"><span class="pre">searchable</span></code> fields must start with the prefixes: <code class="samp docutils literal notranslate"><span class="pre">info.</span></code> or <code class="samp docutils literal notranslate"><span class="pre">config.</span></code> to indicate that they correspond to keys in the files <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> and <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code> of the directories <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code> of the logs.</p>
+</section>
+<section id="the-filter-method">
+<h3>The filter method<a class="headerlink" href="#the-filter-method" title="Link to this heading">#</a></h3>
+<p>Let’s make a simple query and use the <code class="samp docutils literal notranslate"><span class="pre">filter</span></code> method:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [6]: # Searching using a query string
-   ... query = &quot;info.status == &#39;COMPLETE&#39; &amp; config.optimizer.lr &lt;= 0.1&quot;
-   ... results = reader.filter(query_string=query, result_format=&quot;pandas&quot;)
+   ...: query = &quot;info.status == &#39;COMPLETE&#39; &amp; config.model.num_units &lt;4 &quot;
+   ...: results = reader.filter(query_string=query, result_format=&quot;pandas&quot;)
 
 In [7]: # Display the result as a pandas dataframe
    ...: results
 Out[7]:
-   config.data.d_int  ...                                         train.loss
-0                 10  ...  [0.030253788456320763, 0.03025251068174839, 0....
-1                 10  ...  [0.030253788456320763, 0.03024102933704853, 0....
+                                     artifact.pickle.  ...                                         train.loss
+0   {&#39;last_ckpt.pkl&#39;: &lt;mlxp.data_structures.artifa...  ...  [0.007952751591801643, 0.0046330224722623825, ...
+1   {&#39;last_ckpt.pkl&#39;: &lt;mlxp.data_structures.artifa...  ...  [0.03218596801161766, 0.019587023183703423, 0....
+
+[12 rows x 44 columns]
 </pre></div>
 </div>
 <p>Here, we call the method <code class="samp docutils literal notranslate"><span class="pre">filter</span></code> with the option <code class="samp docutils literal notranslate"><span class="pre">result_format</span></code> set to <code class="samp docutils literal notranslate"><span class="pre">pandas</span></code>. This allows to return the result as a pandas dataframe where the rows correspond to runs stored in the <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> and matching the query. If the query is an empty string, then all entries of the database are returned.</p>
 <p>The dataframe’s column names correspond to the fields contained in  <code class="samp docutils literal notranslate"><span class="pre">reader.fields</span></code>. These names are constructed as follows:</p>
 <ul class="simple">
-<li><p>The dot-separated flattened keys of the hierarchical options contained in the YAML file <code class="samp docutils literal notranslate"><span class="pre">metadata.yaml</span></code> preceded by the prefix <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code>.</p></li>
-<li><p>The keys of the dictionaries stored in the files contained in the <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code>  directories (here <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code>) preceded by the file name as a suffix (here: <code class="samp docutils literal notranslate"><span class="pre">train.</span></code>).</p></li>
+<li><p><strong>Metadata columns:</strong> They represent the options contained in the YAML files <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> and <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code>. The column names are constructed as dot-separated flattened keys of the hierarchical options contained in the YAML files <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> and <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code> preceded by the prefixes <code class="samp docutils literal notranslate"><span class="pre">config</span></code> or  <code class="samp docutils literal notranslate"><span class="pre">info</span></code>.</p></li>
+<li><p><strong>Metrics columns:</strong> They represent the content of the metrics dictionaries stored using the method <code class="samp docutils literal notranslate"><span class="pre">log_metrics</span></code> and wich are stored in JSON files under the <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> directory (ex <code class="samp docutils literal notranslate"><span class="pre">metrics/train.json</span></code>). The column names are constructed using the metrics dictionary keys preceded by the file name containing them as a prefix (ex: <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code>). Each field of a metrics column is a list of all values taken by a particular key accross all the metrics dictionaries stored in a given JSON file.</p></li>
+<li><p><strong>Artifact columns:</strong> They represent the content of the artifacts stored using the method <code class="samp docutils literal notranslate"><span class="pre">log_artifacts</span></code> or <code class="samp docutils literal notranslate"><span class="pre">log_checkpoint</span></code> and which are stored in the <code class="samp docutils literal notranslate"><span class="pre">artifacts</span></code> directory.</p></li>
 </ul>
+<p>The column names are constructed as a dot-separed version of the relative parent path of each artifact w.r.t. log directory (ie: <code class="samp docutils literal notranslate"><span class="pre">artifact/artifact_type/path/to/parent_dir</span></code> becomes <code class="samp docutils literal notranslate"><span class="pre">artifact.artifact_type.path.to.parent_dir</span></code>). For more details on loading artifacts, see the section <a class="reference internal" href="#loading-artifacts"><span class="std std-ref">Lazy loading of artifacts</span></a>.</p>
 <p>As you can see, the dataframe loads the content of all keys in the files <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code> (contained in the <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> directories of each run), which might not be desirable if these files are large.
 This can be avoided using <strong>lazy evaluation</strong> which we describe next.</p>
 </section>
-<section id="lazy-evaluation">
-<h2>Lazy evaluation<a class="headerlink" href="#lazy-evaluation" title="Link to this heading">#</a></h2>
-<p>Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code> file, we can return a <code class="samp docutils literal notranslate"><span class="pre">mlxp.DataDictList</span></code> object.
+</section>
+<section id="the-mlxp-dataframe-object">
+<h2>3. The mlxp.DataFrame object<a class="headerlink" href="#the-mlxp-dataframe-object" title="Link to this heading">#</a></h2>
+<p>Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code> file, we can return a <code class="samp docutils literal notranslate"><span class="pre">mlxp.DataFrame</span></code> object.
 This object can also be rendered as a dataframe but does not load the <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code> files in memory unless the corresponding fields are explicitly accessed.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [8]: # Returning a DataDictList as a result
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [8]: # Returning an mlxp.DataFrame as a result
    ... results = reader.filter(query_string=query)
 
 In [9]: # Display the result as a pandas dataframe
    ...: results
 Out[9]:
-   config.data.d_int config.data.device  ...  train.epoch train.loss
-0                 10                cpu  ...     LAZYDATA    LAZYDATA
-1                 10                cpu  ...     LAZYDATA    LAZYDATA
+   artifact.pickle.  config.data.d_int config.data.device  ...  test.loss  train.epoch  train.loss
+0          ARTIFACT                 10                cpu  ...     METRIC       METRIC      METRIC
+1          ARTIFACT                 10                cpu  ...     METRIC       METRIC      METRIC
 
-[2 rows x 39 columns]
+
+[18 rows x 44 columns]
 </pre></div>
 </div>
-<p>As you can see, the content of the columns <code class="samp docutils literal notranslate"><span class="pre">train.epoch</span></code> and <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code> is simply marked as <code class="samp docutils literal notranslate"><span class="pre">LAZYDATA</span></code>, meaning that it is not loaded for now. If we try to access a specific column (e.g. <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code>), <code class="samp docutils literal notranslate"><span class="pre">DataDictList</span></code> will automatically load the desired result:</p>
+<section id="lazy-evaluation-of-metrics">
+<h3>Lazy evaluation of metrics<a class="headerlink" href="#lazy-evaluation-of-metrics" title="Link to this heading">#</a></h3>
+<p>The content of the columns <code class="samp docutils literal notranslate"><span class="pre">train.epoch</span></code> and <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code> is simply marked as <code class="samp docutils literal notranslate"><span class="pre">METRIC</span></code>, meaning that it is not loaded for now. If we try to access a specific column (e.g. <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code>), <code class="samp docutils literal notranslate"><span class="pre">DataFrame</span></code> will automatically load the desired result:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [10]: # Access a particular column of the results
    ...: results[0][&#39;train.loss&#39;]
 Out[10]:
-[0.030253788456320763, 0.03025251068174839, 0.030249962583184242, 0.030246131122112274, 0.03024103306233883, 0.030234655365347862, 0.03022700361907482, 0.030218079686164856, 0.030207885429263115, 0.030196424573659897]
+[0.007952751591801643, 0.0046330224722623825, 0.002196301706135273, 0.0019588489085435867, 0.0023327688686549664, 0.002409915439784527, 0.0011680149473249912, 0.004345299676060677, 0.05447549372911453, 1.3118325471878052]
 </pre></div>
 </div>
-<p>The object results should be viewed as a list of dictionaries. Each element of the list corresponds to a particular run in the <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> directory. The keys of each dictionary in the list are the columns of the dataframe. Finally, it is always to convert a <code class="samp docutils literal notranslate"><span class="pre">DataDictList</span></code> object to a pandas dataframe using the method <code class="samp docutils literal notranslate"><span class="pre">toPandasDF</span></code>.</p>
+<p>The object results should be viewed as a list of dictionaries. Each element of the list corresponds to a particular run in the <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> directory. The keys of each dictionary in the list are the columns of the dataframe. Finally, it is always to convert a <code class="samp docutils literal notranslate"><span class="pre">DataFrame</span></code> object to a pandas dataframe using the method <code class="samp docutils literal notranslate"><span class="pre">toPandas</span></code>.</p>
+</section>
+<section id="lazy-loading-of-artifacts">
+<span id="loading-artifacts"></span><h3>Lazy loading of artifacts<a class="headerlink" href="#lazy-loading-of-artifacts" title="Link to this heading">#</a></h3>
+<p>The reader automatically detects all artifacts that were created and group them by their parent directories. More precisely, an artifact colum is always of the form <code class="samp docutils literal notranslate"><span class="pre">artifact.artifact_type.path.to.parent_dir</span></code> which is a dot separated version of the directory <code class="samp docutils literal notranslate"><span class="pre">artifact/artifact_type/path.to.parent_dir</span></code> containing some artifacts of the same type <code class="samp docutils literal notranslate"><span class="pre">artifact_type</span></code>. In our example, the column <code class="samp docutils literal notranslate"><span class="pre">artifact.pickle.</span></code> represents the path to the directory <code class="samp docutils literal notranslate"><span class="pre">artifact/pickle</span></code> containing the artifact <code class="samp docutils literal notranslate"><span class="pre">last_ckpt.pkl</span></code>.</p>
+<p>When creating the dataframe <code class="samp docutils literal notranslate"><span class="pre">results</span></code>, the artifacts in the directory <code class="samp docutils literal notranslate"><span class="pre">artifact/pickle</span></code>  <code class="samp docutils literal notranslate"><span class="pre">last_ckpt.pkl</span></code> are not loaded. This is indicated by the fact that the content of the field <code class="samp docutils literal notranslate"><span class="pre">artifact.pickle.</span></code> is simply marked as <code class="samp docutils literal notranslate"><span class="pre">ARTIFACT</span></code>. However, as soon as a specific artifact field is accessed, the dataframe <code class="samp docutils literal notranslate"><span class="pre">results</span></code> creates a dictionary containing the file names and the corresponding artifact objects.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [10]: # Access a particular column of the results
+   ...: art = results[0][&#39;artifact.pickle.&#39;]
+   ...: art
+Out[10]:
+{&#39;last_ckpt.pkl&#39;: &lt;mlxp.data_structures.artifact.Artifact at 0x7f7c3f3e9f10&gt;}
+</pre></div>
+</div>
+<p>The returned object (here: <code class="samp docutils literal notranslate"><span class="pre">art</span></code>) corresponds to column <code class="samp docutils literal notranslate"><span class="pre">artifact.pickle.</span></code> of the first row of the dataframe. It is a dictionary whose keys are the file names stored under <code class="samp docutils literal notranslate"><span class="pre">artifact/pickle</span></code> and the values are instances of a special <code class="samp docutils literal notranslate"><span class="pre">Artifact</span></code> class reprenting each file.
+Loading the actual content of each file can be done using the method <code class="samp docutils literal notranslate"><span class="pre">load</span></code> of the <code class="samp docutils literal notranslate"><span class="pre">Artifact</span></code> class, without the need for providing any additional argument:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [10]: # Loading an artifact
+   ...: art[&#39;last_ckpt.pkl&#39;].load()
+Out[10]:
+{&#39;model&#39;: OneHiddenLayer(
+  (linear1): Linear(in_features=10, out_features=2, bias=True)
+  (linear2): Linear(in_features=1, out_features=2, bias=False)
+  (non_linearity): SiLU()
+), &#39;epoch&#39;: 9}
+</pre></div>
+</div>
+<p>The above call returns the content of the file <code class="samp docutils literal notranslate"><span class="pre">last_ckpt.pkl</span></code> stored in the directory <code class="samp docutils literal notranslate"><span class="pre">artifact/pickle</span></code> corresponding to the first row in the results dataframe.</p>
+<p>Under the hood, the method <code class="samp docutils literal notranslate"><span class="pre">load</span></code> calls the appropriate loading method depending on the artifact type (here: ‘pickle’). If the artifact has a custom type, then mlxp recovers the custom load function provided by the user that was registered using <code class="samp docutils literal notranslate"><span class="pre">register_artifact_type</span></code> prior to saving the artifact.</p>
+</section>
+<section id="configuration-differences-between-runs">
+<h3>Configuration differences between runs<a class="headerlink" href="#configuration-differences-between-runs" title="Link to this heading">#</a></h3>
+<p>When running multiple experiments that have a similar structure but vary only by some specific option values, tt is often useful easily recover the options that varies accross the different runs. This can be done using the method <code class="samp docutils literal notranslate"><span class="pre">diff</span></code> of the <code class="samp docutils literal notranslate"><span class="pre">DataFrame</span></code> object.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [10]: # Inspect configurations that vary accross runs
+   ...: results.diff()
+Out[10]:
+[&#39;config.model.num_units&#39;, &#39;config.optimizer.lr&#39;, &#39;config.seed&#39;]
+</pre></div>
+</div>
+<p>The displayed keys exactly match the options passed to the python script <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> when running the experiments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, the method  <code class="samp docutils literal notranslate"><span class="pre">diff</span></code> only compares column values that start with the prefix <code class="samp docutils literal notranslate"><span class="pre">config</span></code>, as these are the ones that are often most relevant for the user. It is possible, however, to modify this behavior by passing a different suffix to the method <code class="samp docutils literal notranslate"><span class="pre">diff</span></code> using the option <code class="samp docutils literal notranslate"><span class="pre">start_key</span></code>.</p>
+</div>
 </section>
 <section id="grouping-and-aggregation">
-<h2>Grouping and aggregation<a class="headerlink" href="#grouping-and-aggregation" title="Link to this heading">#</a></h2>
+<h3>Grouping and aggregation<a class="headerlink" href="#grouping-and-aggregation" title="Link to this heading">#</a></h3>
 <p>While it is possible to directly convert the results of a query to a pandas dataframe which supports grouping and aggregation operations,
 MLXP also provides basic support for these operations. Let’s see how this works:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [11]: # List of group keys.
-   ... group_keys = [&#39;config.optimizer.lr&#39;]
+   ...: group_keys = [&#39;config.optimizer.lr&#39;]
 
 In [12]: # Grouping the results
-   ...: grouped_results = results.groupBy(group_keys)
+   ...: grouped_results = results.groupby(group_keys)
    ...: print(grouped_results)
 Out[12]:
-                             config.data.d_int config.data.device  ...  train.epoch  train.loss
+                      artifact.pickle.  config.data.d_int  ... train.epoch  train.loss
 config.optimizer.lr                                        ...
-0.01                                10                cpu  ...     LAZYDATA    LAZYDATA
-0.10                                10                cpu  ...     LAZYDATA    LAZYDATA
+1.0                 0         ARTIFACT                 10  ...      METRIC      METRIC
+                    1         ARTIFACT                 10  ...      METRIC      METRIC
+                    2         ARTIFACT                 10  ...      METRIC      METRIC
+                    3         ARTIFACT                 10  ...      METRIC      METRIC
+                    4         ARTIFACT                 10  ...      METRIC      METRIC
+                    5         ARTIFACT                 10  ...      METRIC      METRIC
+                    6         ARTIFACT                 10  ...      METRIC      METRIC
+                    7         ARTIFACT                 10  ...      METRIC      METRIC
+                    8         ARTIFACT                 10  ...      METRIC      METRIC
+10.0                0         ARTIFACT                 10  ...      METRIC      METRIC
+                    1         ARTIFACT                 10  ...      METRIC      METRIC
+                    2         ARTIFACT                 10  ...      METRIC      METRIC
+                    3         ARTIFACT                 10  ...      METRIC      METRIC
+                    4         ARTIFACT                 10  ...      METRIC      METRIC
+                    5         ARTIFACT                 10  ...      METRIC      METRIC
+                    6         ARTIFACT                 10  ...      METRIC      METRIC
+                    7         ARTIFACT                 10  ...      METRIC      METRIC
+                    8         ARTIFACT                 10  ...      METRIC      METRIC
 
-[2 rows x 38 columns]
+[18 rows x 44 columns]
 </pre></div>
 </div>
-<p>The output is an object of type <code class="samp docutils literal notranslate"><span class="pre">GroupedDataDicts</span></code>. It can be viewed as a dictionary whose keys are given by the different values taken by the group variables. Here the group variable is the learning rate <code class="samp docutils literal notranslate"><span class="pre">config.optimizer.lr</span></code> which takes the values  <code class="samp docutils literal notranslate"><span class="pre">0.01</span></code> and <code class="samp docutils literal notranslate"><span class="pre">0.10</span></code>. Hence, the keys of <code class="samp docutils literal notranslate"><span class="pre">GroupedDataDicts</span></code> are <code class="samp docutils literal notranslate"><span class="pre">0.01</span></code> and <code class="samp docutils literal notranslate"><span class="pre">0.10</span></code>. Each group (for instance the group with key <code class="samp docutils literal notranslate"><span class="pre">0.01</span></code>) is a <code class="samp docutils literal notranslate"><span class="pre">DataDictList</span></code> object containing the different runs belonging to that group.</p>
+<p>The output is an object of type <code class="samp docutils literal notranslate"><span class="pre">GroupedDataFrame</span></code>. It can be viewed as a dictionary whose keys are given by the different values taken by the group variables. Here the group variable is the learning rate <code class="samp docutils literal notranslate"><span class="pre">config.optimizer.lr</span></code> which takes the values  <code class="samp docutils literal notranslate"><span class="pre">0.01</span></code> and <code class="samp docutils literal notranslate"><span class="pre">0.10</span></code>. Hence, the keys of <code class="samp docutils literal notranslate"><span class="pre">GroupedDataFrame</span></code> are <code class="samp docutils literal notranslate"><span class="pre">0.01</span></code> and <code class="samp docutils literal notranslate"><span class="pre">0.10</span></code>. Each group (for instance the group with key <code class="samp docutils literal notranslate"><span class="pre">0.01</span></code>) is a <code class="samp docutils literal notranslate"><span class="pre">DataFrame</span></code> object containing the different runs belonging to that group.</p>
 <p>Finally, we can aggregate these groups according to some aggregation operations:</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [13]: # Creating the aggregation maps
-    ... from mlxp.data_structures.contrib.aggregation_maps import AvgStd
-    ... agg_maps = [AvgStd(&#39;train.loss&#39;),AvgStd(&#39;train.epoch&#39;)]
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [13]: # Creating the aggregation map
+    ... def mean(x):
+    ...    import numpy as np
+    ...    x = np.array(x)
+    ...    return np.mean(x,axis=0)
+    ...: agg_maps = (mean,(&#39;train.loss&#39;, &#39;train.epoch&#39;))
 
 
 In [14]: # Aggregating the results
-   ...: agg_results = grouped_results.aggregate(agg_maps)
-   ...: print(agg_results)
+    ...: agg_results = grouped_results.aggregate(agg_maps)
+    ...: print(agg_results)
 Out[14]:
-                                      train.loss_avg  ... config.optimizer.lr
-0  [0.030253788456320763, 0.03024102933704853, 0....  ...                 0.1
-1  [0.030253788456320763, 0.03025251068174839, 0....  ...                0.01
-
-[2 rows x 3 columns]
+                                                        fmean.train.loss                                   fmean.train.epoch
+config.optimizer.lr
+1.0                 0  [0.022193991630855534, 0.014857375011261966, 0...  [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, ...
+10.0                0  [0.022193991630855534, 0.006496786553826597, 0...  [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, ...
 </pre></div>
 </div>
-<p>Here, we compute the average and standard deviation of the field <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code> which contains a list of loss values. The loss values are averaged per group and the result is returned as a <code class="samp docutils literal notranslate"><span class="pre">DataDictList</span></code> object whose columns consist of:</p>
+<p>Here, we compute the average and standard deviation of the field <code class="samp docutils literal notranslate"><span class="pre">train.loss</span></code> which contains a list of loss values. The loss values are averaged per group and the result is returned as a <code class="samp docutils literal notranslate"><span class="pre">DataFrame</span></code> object whose columns consist of:</p>
 <ul class="simple">
-<li><p>The resulting fields: <code class="samp docutils literal notranslate"><span class="pre">train.loss_avg</span></code> and <code class="samp docutils literal notranslate"><span class="pre">train.loss_std</span></code></p></li>
+<li><p>The resulting fields: <code class="samp docutils literal notranslate"><span class="pre">fmean.train.loss</span></code> and <code class="samp docutils literal notranslate"><span class="pre">fmean.train.epoch</span></code></p></li>
 <li><p>The original group key: <code class="samp docutils literal notranslate"><span class="pre">config.optimizer.lr</span></code>.</p></li>
 </ul>
 <p>Of course, one can always convert these structures to a pandas dataframe at any time!</p>
+</section>
+<section id="selecting-and-filtering">
+<h3>Selecting and filtering<a class="headerlink" href="#selecting-and-filtering" title="Link to this heading">#</a></h3>
+<p>Dataframes and their grouped versions come with two  powerful methods: filter and select. the filter method  allows to filter a dataframe (even by groups) according to some user-defined filter function. Finally, the select method of a grouped dataframe allows extracting groups given their keys.</p>
+<p>We will now combine all these methods to find the best performing learning rate for each model choice according to the average training loss and compute the average test loss of the best performing learning rate for each model choice.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [15]: # Finding the best performing hyper-parameters
+    ...: def argmin(x):
+    ...:    import numpy as np
+    ...:    x = np.array(x)
+    ...:    return x[:,-1]==np.min(x[:,-1])
+    ...: group_keys = [&#39;config.model.num_units&#39;,&#39;config.optimizer.lr&#39;]
+    ...: methods_keys = [&#39;config.model.num_units&#39;]
+    ...: grouped_res = results.groupby(group_keys)
+
+    ...: best_results = grouped_res.aggregate((mean,&#39;train.loss&#39;))\
+    ...:                           .filter((argmin,&#39;fmean.train.loss&#39;), bygroups = methods_keys)
+
+In [16]: # Extracting the best results
+    ...: filtered_results = grouped_res.select(best_results.keys())\
+                    .aggregate((mean,&#39;test.loss&#39;))
+    ...: print(filtered_results)
+Out[16]:
+                                                                                fmean.test.loss
+config.model.num_units config.optimizer.lr
+2                      1.0                 0  [0.0017979409814658706, 0.0005170967701183023,...
+3                      10.0                0  [0.0007184867955337895, 2.5653200725978367e-05...
+4                      1.0                 0  [0.00011732726838105476, 9.964336470179331e-05...
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -468,10 +605,24 @@ Out[14]:
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">3- Reading</a><ul>
-<li><a class="reference internal" href="#creating-a-result-database">Creating a result database</a></li>
-<li><a class="reference internal" href="#querying-the-database">Querying the database</a></li>
-<li><a class="reference internal" href="#lazy-evaluation">Lazy evaluation</a></li>
+<li><a class="reference internal" href="#creating-a-result-database">1. Creating a result database</a><ul>
+<li><a class="reference internal" href="#refreshing-the-database">Refreshing the database</a></li>
+<li><a class="reference internal" href="#database-location">Database location</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#querying-the-database">2. Querying the database</a><ul>
+<li><a class="reference internal" href="#searchable-field">Searchable field</a></li>
+<li><a class="reference internal" href="#the-filter-method">The filter method</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-mlxp-dataframe-object">3. The mlxp.DataFrame object</a><ul>
+<li><a class="reference internal" href="#lazy-evaluation-of-metrics">Lazy evaluation of metrics</a></li>
+<li><a class="reference internal" href="#lazy-loading-of-artifacts">Lazy loading of artifacts</a></li>
+<li><a class="reference internal" href="#configuration-differences-between-runs">Configuration differences between runs</a></li>
 <li><a class="reference internal" href="#grouping-and-aggregation">Grouping and aggregation</a></li>
+<li><a class="reference internal" href="#selecting-and-filtering">Selecting and filtering</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -483,7 +634,7 @@ Out[14]:
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=10f1778b"></script>
+</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

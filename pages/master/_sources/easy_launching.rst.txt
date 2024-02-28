@@ -80,19 +80,24 @@ Here is how the code would look like:
         model = model.to(cfg.data.device)
         optimizer = torch.optim.SGD(model.parameters(),
                                     lr=cfg.optimizer.lr)
-        dataloader = DataLoader(cfg.data.d_int,
+        train_dataloader = DataLoader(cfg.data.d_int,
                                 cfg.data.device)         
 
         # Training
         for epoch in range(start_epoch,cfg.num_epoch):
 
-            train_err = train_epoch(dataloader,
+            train_err = train_epoch(train_dataloader,
                                     model,
                                     optimizer)
+            test_err = test_epoch(train_dataloader,
+                                    model)
 
             logger.log_metrics({'loss': train_err.item(),
                                 'epoch': epoch}, log_name='train')
-            
+
+            logger.log_metrics({'loss': test_err.item(),
+                                'epoch': epoch}, log_name='test')
+
             logger.log_checkpoint({'model': model,
                                    'epoch':epoch}, log_name='last_ckpt' )
 
@@ -258,7 +263,7 @@ Once, the job finishes execution, we can double-check that everything went well 
    │   │   └── .keys/
    │   │        └── metrics.yaml
    │   ├── artifacts/
-   │   │   └── Checkpoint/
+   │   │   └── pickle/
    │   │       └── last_ckpt.pkl
    │   ├── log.stderr
    │   ├── log.stdout

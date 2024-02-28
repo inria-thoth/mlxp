@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Reader" href="mlxp.reading.html" /><link rel="prev" title="Launcher" href="mlxp.launching.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Logger - MLXP 0.2</title>
+        <title>Logger - MLXP 1.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.2</div></a>
+      <a href="index.html"><div class="brand">MLXP 1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.2</span>
+  <span class="sidebar-brand-text">MLXP 1.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -160,6 +160,8 @@
   <ul>
   <!-- extract version from branch name  of the form relase/0.2.x -->
     <li class="toctree-l2"><a class="reference internal" href="../release/0.2.x/mlxp.logging.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../release/1.0.x/mlxp.logging.html">1.0</a></li>
   </ul>
 </li>
 </ul>
@@ -243,7 +245,7 @@ for the specific run.</p>
 <span class="go">│   │                   when running the method log_metrics(metrics_dict, file_name)</span>
 <span class="go">│   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics.</span>
 <span class="go">│            Each file &#39;file_name&#39;.yaml corresponds to a json file &#39;file_name&#39;.json containing the dictionaries.</span>
-<span class="go">├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.</span>
+<span class="go">├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifacts.</span>
 <span class="go">├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)</span>
 <span class="go">├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)</span>
 <span class="go">└── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)</span>
@@ -292,23 +294,67 @@ either int, float of string.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mlxp.logger.Logger.log_artifact">
-<span class="sig-name descname"><span class="pre">log_artifact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.artifacts.Artifact" title="mlxp.data_structures.artifacts.Artifact"><span class="pre">Artifact</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/mlxp/logger.html#Logger.log_artifact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.logger.Logger.log_artifact" title="Link to this definition">#</a></dt>
-<dd><p>Save the attribute obj of an instance inheriting from the abstract class Artifact into a destination file: ‘log_dir/artifacts/artifact_class_name/log_name’.</p>
+<dt class="sig sig-object py" id="mlxp.logger.Logger.log_artifacts">
+<span class="sig-name descname"><span class="pre">log_artifacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><span class="pre">object</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/mlxp/logger.html#Logger.log_artifacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.logger.Logger.log_artifacts" title="Link to this definition">#</a></dt>
+<dd><p>Save an artifact object into a destination file: ‘log_dir/artifacts/artifact_name’,</p>
 <p>The directory ‘artifact_class_name’ is named after
 the child class inheriting from Artifact.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>artifact</strong> (<a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.artifacts.Artifact" title="mlxp.data_structures.artifacts.Artifact"><em>Artifact</em></a>) – An instance of a class inheriting from the abstract class Artifact.</p></li>
-<li><p><strong>log_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Name of the file where the artifact is saved.</p></li>
+<li><p><strong>artifact</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a>) – An object to save.</p></li>
+<li><p><strong>artifact_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Name of the file where the artifact is saved.</p></li>
+<li><p><strong>artifact_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Type of the artifact to save.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Assertionerror</strong> – if artifact is not an instance of Artifact.</p>
+<dd class="field-odd"><p><strong>InvalidArtifactError</strong> – if artifact type does not correspond to any existing type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlxp.logger.Logger.load_artifacts">
+<span class="sig-name descname"><span class="pre">load_artifacts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="_modules/mlxp/logger.html#Logger.load_artifacts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.logger.Logger.load_artifacts" title="Link to this definition">#</a></dt>
+<dd><p>Restore an artifact from ‘log_dir/artifacts/artifact_type/artifact_name’ or a
+user defined directory root.</p>
+<p>Raises an error if it fails to do so.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>artifact_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> (</em><em>default 'checkpoint'</em><em>)</em>) – Name of the file where the checkpoint is saved.</p></li>
+<li><p><strong>root</strong> – Absolute path to the log directory (log_dir) (assuming it was created using a logger object).</p></li>
+</ul>
+</dd>
+</dl>
+<p>If set to None, then the logger in its own log_dir.
+:param artifact_type: Type of the artifact to save.
+If set to None, the method will try to infer the artifact type from the artifact_name.
+:type root: Union[str,None] (default ‘None’)
+:type artifact_type: Union[str,None] (default ‘None’)
+return: Any serializable object stored in ‘root/artifacts/artifact_type/artifact_name’.
+rtype: Any</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mlxp.logger.Logger.register_artifact_type">
+<span class="sig-name descname"><span class="pre">register_artifact_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><span class="pre">object</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/mlxp/logger.html#Logger.register_artifact_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.logger.Logger.register_artifact_type" title="Link to this definition">#</a></dt>
+<dd><p>Register a new artifact type with a save and load method.</p>
+<p>Use this method when you want to save and load a custom artifact type. This
+method should be called before using log_artifacts with the new artifact type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – Name of the artifact type.</p></li>
+<li><p><strong>save</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em><em>, </em><em>None</em><em>]</em>) – User-defined function to save the artifact.</p></li>
+<li><p><strong>load</strong> (<em>Callable</em><em>[</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><em>object</em></a><em>]</em>) – User-defined function to load the artifact.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -361,7 +407,7 @@ please use the method log_artifacts</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>checkpoint</strong> (<em>Any</em>) – Any serializable object to be stored in
-‘run_dir/Artifacts/Checkpoint/last.pkl’.</p></li>
+‘run_dir/artifacts/pickle/last.pkl’.</p></li>
 <li><p><strong>log_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> (</em><em>default 'checkpoint'</em><em>)</em>) – Name of the file where the checkpoint is saved.</p></li>
 </ul>
 </dd>
@@ -371,8 +417,8 @@ please use the method log_artifacts</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.logger.DefaultLogger.load_checkpoint">
 <span class="sig-name descname"><span class="pre">load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="_modules/mlxp/logger.html#DefaultLogger.load_checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.logger.DefaultLogger.load_checkpoint" title="Link to this definition">#</a></dt>
-<dd><p>Restore a checkpoint from ‘run_dir/Artifacts/Checkpoint/log_name.pkl’ or a
-user defined directory root.</p>
+<dd><p>Restore a checkpoint from ‘run_dir/artifacts/pickle/log_name.pkl’ or a user
+defined directory root.</p>
 <p>Raises an error if it fails to do so.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -382,9 +428,9 @@ user defined directory root.</p>
 </ul>
 </dd>
 </dl>
-<p>If set to None, the logger looks for the checkpoint in ‘run_dir/Artifacts/Checkpoint’.
+<p>If set to None, the logger looks for the checkpoint in ‘run_dir/artifacts/pickle’.
 :type root: Union[str,None] (default ‘None’)
-return: Any serializable object stored in ‘run_dir/Artifacts/Checkpoint/last.pkl’.
+return: Any serializable object stored in ‘run_dir/artifacts/pickle/last.pkl’.
 rtype: Any</p>
 </dd></dl>
 
@@ -454,7 +500,9 @@ rtype: Any</p>
 <li><a class="reference internal" href="#mlxp.logger.Logger.parent_log_dir"><code class="docutils literal notranslate"><span class="pre">Logger.parent_log_dir</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.logger.Logger.get_info"><code class="docutils literal notranslate"><span class="pre">Logger.get_info()</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.logger.Logger.log_metrics"><code class="docutils literal notranslate"><span class="pre">Logger.log_metrics()</span></code></a></li>
-<li><a class="reference internal" href="#mlxp.logger.Logger.log_artifact"><code class="docutils literal notranslate"><span class="pre">Logger.log_artifact()</span></code></a></li>
+<li><a class="reference internal" href="#mlxp.logger.Logger.log_artifacts"><code class="docutils literal notranslate"><span class="pre">Logger.log_artifacts()</span></code></a></li>
+<li><a class="reference internal" href="#mlxp.logger.Logger.load_artifacts"><code class="docutils literal notranslate"><span class="pre">Logger.load_artifacts()</span></code></a></li>
+<li><a class="reference internal" href="#mlxp.logger.Logger.register_artifact_type"><code class="docutils literal notranslate"><span class="pre">Logger.register_artifact_type()</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.logger.Logger.log_id"><code class="docutils literal notranslate"><span class="pre">Logger.log_id</span></code></a></li>
 <li><a class="reference internal" href="#mlxp.logger.Logger.log_dir"><code class="docutils literal notranslate"><span class="pre">Logger.log_dir</span></code></a></li>
 </ul>
@@ -477,7 +525,7 @@ rtype: Any</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=10f1778b"></script>
+</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

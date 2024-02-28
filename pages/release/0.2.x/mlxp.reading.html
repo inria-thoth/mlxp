@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Scheduler" href="mlxp.scheduling.html" /><link rel="prev" title="Logger" href="mlxp.logging.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>Reader - MLXP 0.2</title>
+        <title>Reader - MLXP 1.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">MLXP 0.2</div></a>
+      <a href="index.html"><div class="brand">MLXP 1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.2</span>
+  <span class="sidebar-brand-text">MLXP 1.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -160,6 +160,8 @@
   <ul>
   <!-- extract version from branch name  of the form relase/0.2.x -->
     <li class="toctree-l2"><a class="reference internal" href="mlxp.reading.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../1.0.x/mlxp.reading.html">1.0</a></li>
   </ul>
 </li>
 </ul>
@@ -231,13 +233,13 @@
 on the content of these logs (e.g. grouping and aggregation).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.reader.Reader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.reader.</span></span><span class="sig-name descname"><span class="pre">Reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_dir:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_dir:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser:</span> <span class="pre">~mlxp.parser.Parser</span> <span class="pre">=</span> <span class="pre">&lt;mlxp.parser.DefaultParser</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reload:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/reader.html#Reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.reader.</span></span><span class="sig-name descname"><span class="pre">Reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_dir:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_dir:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser:</span> <span class="pre">~mlxp.parser.Parser</span> <span class="pre">=</span> <span class="pre">&lt;mlxp.parser.DefaultParser</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/reader.html#Reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class for exploiting the results stored in several runs contained in a same
 parent directory ‘src_dir’.</p>
 <p>Once, created, it is possible to query the database using the method ‘filter’
 to get the results matching a specific configuration setting.
-The result of the query is returned either as a DataDictList object or a pandas dataframe.
+The result of the query is returned either as a DataFrame object or a pandas dataframe.
 The queries are processed using a parser inheriting form the abstract class Parser.
 By default, the parser is DefaultParser.
 However, the user can provide a custom parser with a custom syntax
@@ -263,21 +265,21 @@ by setting the variable ‘dst_dir’ of the constructor to a different director
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.reader.Reader.filter">
-<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'datadict'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.data_dict.DataDictList" title="mlxp.data_structures.data_dict.DataDictList"><span class="pre">DataDictList</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/mlxp/reader.html#Reader.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader.filter" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'datadict'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/mlxp/reader.html#Reader.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader.filter" title="Link to this definition">#</a></dt>
 <dd><p>Search a query in a database of runs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>query_string</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> (</em><em>default &quot;&quot;</em><em>)</em>) – a string defining the query constaints.</p></li>
 <li><p><strong>result_format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> (</em><em>default False</em><em>)</em>) – format of the result (either a pandas dataframe or an
-object of type DataDictList). By default returns a DataDictList object.</p></li>
+object of type DataFrame). By default returns a DataFrame object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The result of a query either as a DataDictList or a pandas dataframe.</p>
+<dd class="field-even"><p>The result of a query either as a DataFrame or a pandas dataframe.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Union[<a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.data_dict.DataDictList" title="mlxp.data_structures.data_dict.DataDictList">DataDictList</a>,pd.DataFrame]</p>
+<dd class="field-odd"><p>Union[DataFrame,pd.DataFrame]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#SyntaxError" title="(in Python v3.12)"><strong>SyntaxError</strong></a> – if the query string does not follow expected syntax.</p>

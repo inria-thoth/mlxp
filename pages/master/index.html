@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Guide" href="guide.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>MLXP 0.2</title>
+        <title>MLXP 1.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">MLXP 0.2</div></a>
+      <a href="#"><div class="brand">MLXP 1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
   
-  <span class="sidebar-brand-text">MLXP 0.2</span>
+  <span class="sidebar-brand-text">MLXP 1.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -160,6 +160,8 @@
   <ul>
   <!-- extract version from branch name  of the form relase/0.2.x -->
     <li class="toctree-l2"><a class="reference internal" href="../release/0.2.x/index.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../release/1.0.x/index.html">1.0</a></li>
   </ul>
 </li>
 </ul>
@@ -223,8 +225,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="welcome-mlxp-s-documentation">
-<h1>Welcome MLXP’s documentation!<a class="headerlink" href="#welcome-mlxp-s-documentation" title="Link to this heading">#</a></h1>
+          <section id="welcome-to-mlxp-s-documentation">
+<h1>Welcome to MLXP’s documentation!<a class="headerlink" href="#welcome-to-mlxp-s-documentation" title="Link to this heading">#</a></h1>
 <p>MLXP (Machine Learning eXperimentalist for Python) package is an open-source Python framework for managing multiple experiments with a flexible option structure from launching, and logging to querying results. The source code is available in <a class="reference external" href="https://github.com/inria-thoth/mlxp">MLXP’s GitHub repository</a>.</p>
 <section id="key-functionalities">
 <h2>Key functionalities<a class="headerlink" href="#key-functionalities" title="Link to this heading">#</a></h2>
@@ -317,23 +319,23 @@
 <h2>Citing MLXP<a class="headerlink" href="#citing-mlxp" title="Link to this heading">#</a></h2>
 <p>Even though this is non-legally binding, the author kindly ask users to cite MLXP in their publications if they use
 it in their research as follows:</p>
-<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@Misc</span><span class="p">{</span><span class="nl">Arbel2023MLXP</span><span class="p">,</span>
-<span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Michael Arbel}</span><span class="p">,</span>
-<span class="w">  </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{MLXP: A framework for conducting machine learning experiments in python}</span><span class="p">,</span>
-<span class="w">  </span><span class="na">howpublished</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Github}</span><span class="p">,</span>
-<span class="w">  </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2023}</span><span class="p">,</span>
-<span class="w">  </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://github.com/inria-thoth/mlxp}</span>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@Misc</span><span class="p">{</span><span class="nl">mlxp2024</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Michael Arbel, Alexandre Zouaoui}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{MLXP: A framework for conducting replicable Machine Learning eXperiments in Python}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">howpublished</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{arXiv preprint arXiv:2402.13831}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2024}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://arxiv.org/abs/2402.13831}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 </section>
 <section id="acknowledgments">
 <h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading">#</a></h2>
-<p>I would like to acknowledge the following contributors for their contributions to the development of this package:</p>
+<p>The authors would like to thank the following people for their valuable feedback and contributions to the development of MLXP:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://azouaoui.me/">Alexandre Zouaoui</a> kindly shared his python implementation for creating job scripts and submiting them to a cluster. His code served as the basis for the implementation of the Scheduler class. While the process of job submission significantly evolved, by integrating it with MLXpy’s launching functionality, I am grateful for Alexandre’s contribution which were invaluable to the development of this project.</p></li>
-<li><p><a class="reference external" href="https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr">Juliette Marrie</a> tested a premature version of MLXP. I am grateful for her feedback which was extremetly helpful for shaping and improving MLXP’s functionalities.</p></li>
+<li><p><a class="reference external" href="https://www.linkedin.com/in/juliette-marrie-5b8a59179/?originalSubdomain=fr">Juliette Marrie</a> tested an early version of MLXP. We are grateful for her feedback which was extremetly helpful for shaping and improving MLXP’s functionalities.</p></li>
 <li><p><a class="reference external" href="https://www.linkedin.com/in/romain-menegaux-88a147134/?originalSubdomain=fr">Romain Ménégaux</a> and <a class="reference external" href="https://pierre-wolinski.fr/">Pierre Wolinski</a> provided valuable feedback and suggestions to improve MLXP. They also found and reported several bugs in the software which helped improve its quality and stability.</p></li>
+<li><p><a class="reference external" href="https://www.linkedin.com/in/thomas-ryckeboer-a97ab7143/?locale=en_US">Thomas Ryckeboer</a> for providing guidance on continuous integration of MLXP.</p></li>
 </ul>
 <section id="tables-of-content">
 <h3>Tables of content<a class="headerlink" href="#tables-of-content" title="Link to this heading">#</a></h3>
@@ -414,7 +416,7 @@ it in their research as follows:</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Welcome MLXP’s documentation!</a><ul>
+<li><a class="reference internal" href="#">Welcome to MLXP’s documentation!</a><ul>
 <li><a class="reference internal" href="#key-functionalities">Key functionalities</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#citing-mlxp">Citing MLXP</a></li>
@@ -434,7 +436,7 @@ it in their research as follows:</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=10f1778b"></script>
+</div><script src="_static/documentation_options.js?v=f2a433a1"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

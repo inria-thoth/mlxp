@@ -92,7 +92,7 @@ Logging is activated by default and as soon as the run is launched, the logger c
    │   │   └──.keys/
    │   │       └── metrics.yaml
    │   └── artifacts/
-   │       └── Checkpoint/
+   │       └── pickle/
    │           └── last_ckpt.pkl
    │    
    ├── 2/...

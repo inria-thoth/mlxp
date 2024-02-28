@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
-        <title>mlxp.logger - MLXP 0.2</title>
+        <title>mlxp.logger - MLXP 1.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -122,7 +122,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">MLXP 0.2</div></a>
+      <a href="../../index.html"><div class="brand">MLXP 1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -145,7 +145,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
   
-  <span class="sidebar-brand-text">MLXP 0.2</span>
+  <span class="sidebar-brand-text">MLXP 1.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -159,6 +159,8 @@
   <ul>
   <!-- extract version from branch name  of the form relase/0.2.x -->
     <li class="toctree-l2"><a class="reference internal" href="logger.html">0.2</a></li>
+  <!-- extract version from branch name  of the form relase/0.2.x -->
+    <li class="toctree-l2"><a class="reference internal" href="../../../1.0.x/index.html">1.0</a></li>
   </ul>
 </li>
 </ul>
@@ -227,19 +229,22 @@
 
 <span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">marshal</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">dill</span> <span class="k">as</span> <span class="nn">pkl</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">mlxp.data_structures.artifacts</span> <span class="kn">import</span> <span class="n">Artifact</span><span class="p">,</span> <span class="n">Checkpoint</span>
+<span class="kn">from</span> <span class="nn">mlxp.data_structures.artifacts</span> <span class="kn">import</span> <span class="n">Artifact_types</span>
 <span class="kn">from</span> <span class="nn">mlxp.data_structures.config_dict</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
 <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
 <span class="kn">from</span> <span class="nn">mlxp.errors</span> <span class="kn">import</span> <span class="n">InvalidArtifactError</span><span class="p">,</span> <span class="n">InvalidKeyError</span>
+
+<span class="n">invalid_metrics_file_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;mlxp&quot;</span><span class="p">,</span> <span class="s2">&quot;artifacts&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="Logger">
@@ -260,7 +265,7 @@
 <span class="sd">        │   │                   when running the method log_metrics(metrics_dict, file_name)</span>
 <span class="sd">        │   └── .keys/ Directory of yaml files containing the keys of dictionaries saved using log_metrics.</span>
 <span class="sd">        │            Each file &#39;file_name&#39;.yaml corresponds to a json file &#39;file_name&#39;.json containing the dictionaries.</span>
-<span class="sd">        ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifact.</span>
+<span class="sd">        ├── artifacts/ : A directory where each subdirectory contains objects of the same subclass of Artifact saved using the method log_artifacts.</span>
 <span class="sd">        ├── log.stderr: Contains error logs (Only if job is submitted in bacth mode to a scheduler)</span>
 <span class="sd">        ├── log.stdout: Contains output logs (Only if job is submitted in bacth mode to a scheduler)</span>
 <span class="sd">        └── script.sh: Contains the script for running the job (Only if job is submitted using a job scheduler)</span>
@@ -288,6 +293,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">parent_log_dir</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">forced_log_id</span> <span class="o">=</span> <span class="n">forced_log_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span> <span class="o">=</span> <span class="n">Artifact_types</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span> <span class="o">=</span> <span class="n">_make_log_dir</span><span class="p">(</span><span class="n">forced_log_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_log_dir</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metrics</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -313,9 +319,9 @@
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_dir</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_dir</span><span class="p">,</span> <span class="s2">&quot;mlxp&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">)</span>
+        <span class="c1"># file_name = os.path.join(self.metadata_dir, &quot;mlxp&quot;)</span>
+        <span class="c1"># with open(file_name + &quot;.yaml&quot;, &quot;w&quot;) as f:</span>
+        <span class="c1">#    yaml.dump(config.mlxp.to_dict(), f)</span>
 
 <div class="viewcode-block" id="Logger.get_info">
 <a class="viewcode-back" href="../../mlxp.logging.html#mlxp.logger.Logger.get_info">[docs]</a>
@@ -351,12 +357,11 @@
 <span class="sd">        :type log_name: str</span>
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">invalid_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;mlxp&quot;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">log_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;mlxp&quot;</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">log_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalid_metrics_file_names</span>
         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidKeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The chosen log_nam:  </span><span class="si">{</span><span class="n">log_name</span><span class="si">}</span><span class="s2"> is invalid! It must be different from these protected names: </span><span class="si">{</span><span class="n">invalid_names</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The chosen log_nam:  </span><span class="si">{</span><span class="n">log_name</span><span class="si">}</span><span class="s2"> is invalid! It must be different from these protected names: </span><span class="si">{</span><span class="n">invalid_metrics_file_names</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics_key</span><span class="p">(</span><span class="n">metrics_dict</span><span class="p">,</span> <span class="n">log_name</span><span class="p">)</span>
@@ -369,33 +374,149 @@
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metrics_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Logger.log_artifact">
-<a class="viewcode-back" href="../../mlxp.logging.html#mlxp.logger.Logger.log_artifact">[docs]</a>
-    <span class="k">def</span> <span class="nf">log_artifact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artifact</span><span class="p">:</span> <span class="n">Artifact</span><span class="p">,</span> <span class="n">log_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the attribute obj of an instance inheriting from the abstract class Artifact into a destination file: &#39;log_dir/artifacts/artifact_class_name/log_name&#39;.</span>
+<div class="viewcode-block" id="Logger.log_artifacts">
+<a class="viewcode-back" href="../../mlxp.logging.html#mlxp.logger.Logger.log_artifacts">[docs]</a>
+    <span class="k">def</span> <span class="nf">log_artifacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artifact</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">artifact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save an artifact object into a destination file: &#39;log_dir/artifacts/artifact_name&#39;, </span>
 
 <span class="sd">        The directory &#39;artifact_class_name&#39; is named after</span>
 <span class="sd">        the child class inheriting from Artifact.</span>
 
-<span class="sd">        :param artifact:  An instance of a class inheriting from the abstract class Artifact.</span>
-<span class="sd">        :param log_name: Name of the file where the artifact is saved.</span>
-<span class="sd">        :type artifact: Artifact</span>
-<span class="sd">        :type log_name: str</span>
+<span class="sd">        :param artifact:  An object to save.</span>
+<span class="sd">        :param artifact_name: Name of the file where the artifact is saved. </span>
+<span class="sd">        :param artifact_type: Type of the artifact to save.</span>
+<span class="sd">        :type artifact: object</span>
+<span class="sd">        :type artifact_name: str</span>
+<span class="sd">        :type artifact_type: str</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        :raises Assertionerror: if artifact is not an instance of Artifact.</span>
+<span class="sd">        :raises InvalidArtifactError: if artifact type does not correspond to any existing type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">artifact</span><span class="p">,</span> <span class="n">Artifact</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">artifact_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidArtifactError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The object </span><span class="si">{</span><span class="n">artifact</span><span class="si">}</span><span class="s2"> must be an instance of the abstract class </span><span class="si">{</span><span class="n">Artifact</span><span class="si">}</span><span class="s2">. Instead, it is of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">artifact</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
-        <span class="n">subdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">artifact</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type: </span><span class="si">{</span><span class="n">artifact_type</span><span class="si">}</span><span class="s2"> is an invalid Artifact type.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Valid types are: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;To add a new artifact type, use the method register_artifact_type before calling this method.&quot;</span>
+            <span class="k">raise</span> <span class="n">InvalidArtifactError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">subdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">))</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">log_name</span><span class="p">)</span>
-        <span class="n">artifact</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span></div>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">,</span> <span class="n">artifact_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;save&quot;</span><span class="p">](</span><span class="n">artifact</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_artifact_type</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Logger.load_artifacts">
+<a class="viewcode-back" href="../../mlxp.logging.html#mlxp.logger.Logger.load_artifacts">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_artifacts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">artifact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore an artifact from &#39;log_dir/artifacts/artifact_type/artifact_name&#39; or a</span>
+<span class="sd">        user defined directory root.</span>
+
+<span class="sd">        Raises an error if it fails to do so.</span>
+
+<span class="sd">        :param artifact_name: Name of the file where the checkpoint is saved.</span>
+<span class="sd">        :type artifact_name: str (default &#39;checkpoint&#39;)</span>
+<span class="sd">        :param root: Absolute path to the log directory (log_dir) (assuming it was created using a logger object).</span>
+<span class="sd">        If set to None, then the logger in its own log_dir.</span>
+<span class="sd">        :param artifact_type: Type of the artifact to save.</span>
+<span class="sd">        If set to None, the method will try to infer the artifact type from the artifact_name.</span>
+<span class="sd">        :type root: Union[str,None] (default &#39;None&#39;)</span>
+<span class="sd">        :type artifact_type: Union[str,None] (default &#39;None&#39;)</span>
+<span class="sd">        return: Any serializable object stored in &#39;root/artifacts/artifact_type/artifact_name&#39;.</span>
+<span class="sd">        rtype: Any</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">root</span><span class="p">:</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">artifact_type</span><span class="p">:</span>
+
+            <span class="n">artifact_type_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Artifacts</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;.keys&quot;</span><span class="p">,</span> <span class="s2">&quot;custom_types.yaml&quot;</span><span class="p">)</span>
+            <span class="n">artifact_dict_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Artifacts</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;.keys&quot;</span><span class="p">,</span> <span class="s2">&quot;artifacts.yaml&quot;</span><span class="p">)</span>
+
+            <span class="c1"># get the base name of the artifact</span>
+            <span class="n">artifact_base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">)</span>
+            <span class="n">artifact_dir_name</span> <span class="o">=</span> <span class="n">_path_as_key</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifact_dict_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">cur_yaml</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cur_yaml</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">artifact_dir_name</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">artifact_base_name</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="n">artifact_dir_name</span><span class="p">]:</span>
+                            <span class="n">artifact_type</span> <span class="o">=</span> <span class="n">key</span>
+                            <span class="k">break</span>
+                <span class="k">assert</span> <span class="n">artifact_type</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Could not infer artifact type! Please provide a value for artifact_type.&quot;</span>
+                <span class="k">raise</span> <span class="n">InvalidArtifactError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">artifact_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Artifacts</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">,</span> <span class="n">artifact_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;load&quot;</span><span class="p">](</span><span class="n">artifact_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Logger.register_artifact_type">
+<a class="viewcode-back" href="../../mlxp.logging.html#mlxp.logger.Logger.register_artifact_type">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_artifact_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">save</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">object</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">load</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">object</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a new artifact type with a save and load method.</span>
+
+<span class="sd">        Use this method when you want to save and load a custom artifact type. This</span>
+<span class="sd">        method should be called before using log_artifacts with the new artifact type.</span>
+
+<span class="sd">        :param name: Name of the artifact type.</span>
+<span class="sd">        :param save: User-defined function to save the artifact.</span>
+<span class="sd">        :param load: User-defined function to load the artifact.</span>
+<span class="sd">        :type name: str</span>
+<span class="sd">        :type save: Callable[[object, str], None]</span>
+<span class="sd">        :type load: Callable[[str], object]</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">is_new</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">is_new</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;load&quot;</span><span class="p">:</span> <span class="n">load</span><span class="p">,</span> <span class="s2">&quot;save&quot;</span><span class="p">:</span> <span class="n">save</span><span class="p">}})</span>
+
+            <span class="n">code_string_load</span> <span class="o">=</span> <span class="n">marshal</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">load</span><span class="o">.</span><span class="vm">__code__</span><span class="p">)</span>
+            <span class="n">code_string_save</span> <span class="o">=</span> <span class="n">marshal</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">save</span><span class="o">.</span><span class="vm">__code__</span><span class="p">)</span>
+
+            <span class="n">artifact_type_serialized</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;load&quot;</span><span class="p">:</span> <span class="n">code_string_load</span><span class="p">,</span> <span class="s2">&quot;save&quot;</span><span class="p">:</span> <span class="n">code_string_save</span><span class="p">}}</span>
+            <span class="n">artifact_type_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="s2">&quot;.keys&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">artifact_type_file</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">artifact_type_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">artifact_type_file</span><span class="p">,</span> <span class="s2">&quot;custom_types.yaml&quot;</span><span class="p">)</span>
+            <span class="n">cur_yaml</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifact_type_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">cur_yaml</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">cur_yaml</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">artifact_type_serialized</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifact_type_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cur_yaml</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_log_artifact_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">artifact_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Logging new keys appearing in a metrics dict</span>
+
+        <span class="n">artifact_keys_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="s2">&quot;.keys&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">artifact_keys_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">artifact_dict_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">artifact_keys_dir</span><span class="p">,</span> <span class="s2">&quot;artifacts.yaml&quot;</span><span class="p">)</span>
+        <span class="n">cur_yaml</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifact_dict_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">cur_yaml</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="n">artifact_base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">)</span>
+        <span class="n">artifact_dir</span> <span class="o">=</span> <span class="n">_path_as_key</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">artifact_type</span> <span class="ow">in</span> <span class="n">cur_yaml</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">artifact_dir</span> <span class="ow">in</span> <span class="n">cur_yaml</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">]:</span>
+                <span class="n">cur_yaml</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="n">artifact_dir</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">artifact_base_name</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cur_yaml</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="n">artifact_dir</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">artifact_base_name</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cur_yaml</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">artifact_dir</span><span class="p">:</span> <span class="p">{</span><span class="n">artifact_base_name</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}}</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">artifact_dict_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cur_yaml</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">log_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -419,40 +540,29 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_dir</span>
 
-    <span class="k">def</span> <span class="nf">log_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span><span class="p">,</span> <span class="s2">&quot;last_session.pkl&quot;</span><span class="p">)</span>
-        <span class="n">pkl</span><span class="o">.</span><span class="n">dump_session</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">load_session</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_dir</span><span class="p">,</span> <span class="s2">&quot;last_session.pkl&quot;</span><span class="p">)</span>
-        <span class="n">pkl</span><span class="o">.</span><span class="n">load_session</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">_log_metrics_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">log_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="c1"># Logging new keys appearing in a metrics dict</span>
 
         <span class="k">if</span> <span class="n">log_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span><span class="p">[</span><span class="n">log_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">new_keys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metrics_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span><span class="p">[</span><span class="n">log_name</span><span class="p">]:</span>
-                <span class="n">new_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span><span class="p">[</span><span class="n">log_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new_keys</span>
-        <span class="n">dict_file</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_keys</span><span class="p">}</span>
-        <span class="n">keys_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span><span class="p">,</span> <span class="s2">&quot;.keys&quot;</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">keys_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">log_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys_dir</span><span class="p">,</span> <span class="n">log_name</span><span class="p">)</span>
-        <span class="n">cur_yaml</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">cur_yaml</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="n">cur_yaml</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dict_file</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cur_yaml</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+        <span class="n">new_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metrics_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span><span class="p">[</span><span class="n">log_name</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">new_keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metric_dict_keys</span><span class="p">[</span><span class="n">log_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new_keys</span>
+            <span class="n">dict_file</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">new_keys</span><span class="p">}</span>
+            <span class="n">keys_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span><span class="p">,</span> <span class="s2">&quot;.keys&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">keys_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">log_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys_dir</span><span class="p">,</span> <span class="n">log_name</span><span class="p">)</span>
+            <span class="n">cur_yaml</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">cur_yaml</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">cur_yaml</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dict_file</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_name</span> <span class="o">+</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cur_yaml</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 
 
 
@@ -474,38 +584,36 @@
 <span class="sd">        please use the method log_artifacts</span>
 
 <span class="sd">        :param checkpoint: Any serializable object to be stored in</span>
-<span class="sd">            &#39;run_dir/Artifacts/Checkpoint/last.pkl&#39;.</span>
+<span class="sd">            &#39;run_dir/artifacts/pickle/last.pkl&#39;.</span>
 <span class="sd">        :type checkpoint: Any</span>
 <span class="sd">        :param log_name: Name of the file where the checkpoint is saved.</span>
 <span class="sd">        :type log_name: str (default &#39;checkpoint&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">Checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">),</span> <span class="n">log_name</span><span class="o">=</span><span class="n">log_name</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_artifacts</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">artifact_name</span><span class="o">=</span><span class="n">log_name</span><span class="p">,</span> <span class="n">artifact_type</span><span class="o">=</span><span class="s2">&quot;pickle&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DefaultLogger.load_checkpoint">
 <a class="viewcode-back" href="../../mlxp.logging.html#mlxp.logger.DefaultLogger.load_checkpoint">[docs]</a>
     <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_name</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore a checkpoint from &#39;run_dir/Artifacts/Checkpoint/log_name.pkl&#39; or a</span>
-<span class="sd">        user defined directory root.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore a checkpoint from &#39;run_dir/artifacts/pickle/log_name.pkl&#39; or a user</span>
+<span class="sd">        defined directory root.</span>
 
 <span class="sd">        Raises an error if it fails to do so.</span>
 
 <span class="sd">        :param log_name: Name of the file where the checkpoint is saved.</span>
 <span class="sd">        :type log_name: str (default &#39;checkpoint&#39;)</span>
 <span class="sd">        :param root: Absolute path to the checkpoint.</span>
-<span class="sd">        If set to None, the logger looks for the checkpoint in &#39;run_dir/Artifacts/Checkpoint&#39;.</span>
+<span class="sd">        If set to None, the logger looks for the checkpoint in &#39;run_dir/artifacts/pickle&#39;.</span>
 <span class="sd">        :type root: Union[str,None] (default &#39;None&#39;)</span>
-<span class="sd">        return: Any serializable object stored in &#39;run_dir/Artifacts/Checkpoint/last.pkl&#39;.</span>
+<span class="sd">        return: Any serializable object stored in &#39;run_dir/artifacts/pickle/last.pkl&#39;.</span>
 <span class="sd">        rtype: Any</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
-            <span class="n">checkpoint_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">log_name</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">)</span>
+            <span class="n">checkpoint_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">log_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">checkpoint_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="s2">&quot;Checkpoint&quot;</span><span class="p">,</span> <span class="n">log_name</span> <span class="o">+</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">checkpoint_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">pkl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">checkpoint</span></div>
+            <span class="n">checkpoint_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">log_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Artifact_types</span><span class="p">[</span><span class="s2">&quot;pickle&quot;</span><span class="p">][</span><span class="s2">&quot;load&quot;</span><span class="p">](</span><span class="n">checkpoint_name</span><span class="p">)</span></div>
 </div>
 
 
@@ -541,6 +649,26 @@
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">dir_nrs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">_path_as_key</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_split_all_directories</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_split_all_directories</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="n">directories</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">file_path</span><span class="p">,</span> <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">directory</span><span class="p">:</span>
+            <span class="n">directories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file_path</span><span class="p">:</span>
+                <span class="n">directories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="n">directories</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">directories</span>
 </pre></div>
         </article>
       </div>
