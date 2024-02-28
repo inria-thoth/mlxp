@@ -51,9 +51,9 @@ fi
 
 # Build the documentation
 
-version="3.9"
-cd docs
+
 pip install sphinx furo autodocsumm sphinx_multiversion
-sphinx-multiversion html . _build/html
+cd docs
+sphinx-multiversion . _build/html
 
 
