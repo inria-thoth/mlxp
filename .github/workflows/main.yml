@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - 'release/*'
-      - develop
-
+      - 'develop'
 
 jobs:
   lint_code:
