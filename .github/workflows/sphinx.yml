@@ -17,9 +17,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        submodules: true
         fetch-depth: 0
-        persist-credentials: false
     - name: Set up Python environment
       uses: actions/setup-python@v3
       with:
@@ -41,6 +39,7 @@ jobs:
     - name: Build the sphinx documentation for all branches and store them in the _build/html directory.
       run: |
         cd docs
+        git fetch
         git branch
         sphinx-multiversion . _build/html
     - name: Extract branch name
