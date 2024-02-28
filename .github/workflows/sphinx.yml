@@ -6,21 +6,20 @@ on:
       - 'release/*'
 
 jobs:
-  checkout_code:
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-
   build:
-    needs: [checkout_code]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
     #runs-on: self-hosted
     env:
         AGENT_TOOLSDIRECTORY: /usr/local/bin/
-    steps:
+    steps:    
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+        fetch-depth: 0
+        persist-credentials: false
     - name: Set up Python environment
       uses: actions/setup-python@v3
       with:
