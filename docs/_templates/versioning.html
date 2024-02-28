@@ -5,7 +5,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="index.html">Versions</a><input class="toctree-checkbox" id="toctree-checkbox-v" name="toctree-checkbox-v" role="switch" type="checkbox"/><label for="toctree-checkbox-v"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label>
   <ul>
 
-{%- for item in versions.branches %}
+{%- for item in versions.branches | sort(attribute='name', reverse=True) %}
   {%- if item.name.startswith('release') %}
   <!-- extract version from branch name  of the form relase/0.2.x -->
   {%- set version = '.'.join(item.name.split('/')[1].split('.')[:2]) %}

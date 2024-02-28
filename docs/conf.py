@@ -36,7 +36,7 @@ release = RELEASE
 project = ver_dic["PROJECT"]
 author = ver_dic["AUTHOR"]
 copyright = ver_dic["COPYRIGHT"]
-html_title= project+ " "+version
+html_title= project
 
 
 intersphinx_mapping = {
