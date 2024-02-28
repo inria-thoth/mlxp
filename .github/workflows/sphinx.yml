@@ -6,7 +6,13 @@ on:
       - 'release/*'
 
 jobs:
+  checkout_code:
+    - name: Checkout code
+    - uses: actions/checkout@v2
+
+
   build:
+    needs: [checkout_code]
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -14,7 +20,6 @@ jobs:
     env:
         AGENT_TOOLSDIRECTORY: /usr/local/bin/
     steps:
-    - uses: actions/checkout@v2
     - name: Set up Python environment
       uses: actions/setup-python@v3
       with:
