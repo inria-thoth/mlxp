@@ -53,7 +53,7 @@ fi
 
 version="3.9"
 cd docs
-pip install sphinx furo autodocsumm
-sphinx-build -b html . _build/html
+pip install sphinx furo autodocsumm sphinx_multiversion
+sphinx_multiversion html . _build/html
 
 

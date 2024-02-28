@@ -11,10 +11,10 @@ from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.table import Document
 
-from mlxp.data_structures.dataframe import LAZYDATA, LAZYARTIFACT, DataDict, DataFrame
+from mlxp.data_structures.artifacts import Artifact, Artifact_types
+from mlxp.data_structures.dataframe import LAZYARTIFACT, LAZYDATA, DataDict, DataFrame
 from mlxp.enumerations import DataFrameType, Directories
 from mlxp.parser import DefaultParser, Parser, _is_searchable
-from mlxp.data_structures.artifacts import Artifact_types, Artifact
 
 
 class Reader(object):
@@ -202,7 +202,8 @@ def _get_metrics_dir(r, src_dir):
 
 def _get_log_dir(r, src_dir):
     abs_metrics_dir = r["info.logger.metrics_dir"]
-    return  r["info.logger.log_dir"]
+    return r["info.logger.log_dir"]
+
 
 def _get_data(path, metadata_file):
     data = {"config": {}, "info": {}}
@@ -221,8 +222,9 @@ def _get_data(path, metadata_file):
     metadata_dict.update(metrics_dict)
     metadata_dict.update(artifacts_dict)
     fields.update(metrics_dict)
-    fields.update({key: 'Artifact' for key in  artifacts_dict.keys()})
+    fields.update({key: "Artifact" for key in artifacts_dict.keys()})
     return metadata_dict, fields
+
 
 def _get_metrics_data(path):
     keys_dir = os.path.join(path, Directories.Metrics.value, ".keys")
@@ -236,14 +238,15 @@ def _get_metrics_data(path):
                 with open(full_file_name, "r") as f:
                     keys_dict = yaml.safe_load(f)
                 if keys_dict:
-                    lazydata_dict.update({prefix +"." + key: LAZYDATA for key in keys_dict.keys()})
+                    lazydata_dict.update({prefix + "." + key: LAZYDATA for key in keys_dict.keys()})
     except FileNotFoundError:
         pass
     return lazydata_dict
 
+
 def _get_artifacts_data(path):
     artifacts_dict_name = os.path.join(path, Directories.Artifacts.value, ".keys/artifacts.yaml")
-    
+
     lazydata_dict = {}
     try:
         with open(artifacts_dict_name, "r") as f:
@@ -251,7 +254,9 @@ def _get_artifacts_data(path):
         if keys_dict:
             for key, value in keys_dict.items():
 
-                lazydata_dict.update({".".join(["artifact",key,path]): LAZYARTIFACT for path in value.keys()})
+                lazydata_dict.update(
+                    {".".join(["artifact", key, path]): LAZYARTIFACT for path in value.keys()}
+                )
 
     except FileNotFoundError:
         pass

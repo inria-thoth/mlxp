@@ -3,14 +3,14 @@
 
 import abc
 import json
+import marshal
 import os
 import random
 import sys
 from time import sleep
-from typing import Any, Dict, Union, Callable
+from typing import Any, Callable, Dict, Union
 
 import dill as pkl
-import marshal
 import yaml
 
 from mlxp.data_structures.artifacts import Artifact_types
@@ -18,8 +18,7 @@ from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.enumerations import Directories
 from mlxp.errors import InvalidArtifactError, InvalidKeyError
 
-
-invalid_metrics_file_names = ["info", "config", "mlxp","artifacts"]
+invalid_metrics_file_names = ["info", "config", "mlxp", "artifacts"]
 
 
 class Logger(abc.ABC):
@@ -92,8 +91,8 @@ class Logger(abc.ABC):
         file_name = os.path.join(self.metadata_dir, "info")
         with open(file_name + ".yaml", "w") as f:
             yaml.dump(config.info.to_dict(), f)
-        #file_name = os.path.join(self.metadata_dir, "mlxp")
-        #with open(file_name + ".yaml", "w") as f:
+        # file_name = os.path.join(self.metadata_dir, "mlxp")
+        # with open(file_name + ".yaml", "w") as f:
         #    yaml.dump(config.mlxp.to_dict(), f)
 
     def get_info(self) -> None:
@@ -141,8 +140,7 @@ class Logger(abc.ABC):
             json.dump(metrics_dict, f)
             f.write(os.linesep)
 
-
-    def log_artifacts(self, artifact: object, artifact_name: str, artifact_type:str) -> None:
+    def log_artifacts(self, artifact: object, artifact_name: str, artifact_type: str) -> None:
         """Save an artifact object into a destination file: 'log_dir/artifacts/artifact_name', 
 
         The directory 'artifact_class_name' is named after
@@ -160,17 +158,19 @@ class Logger(abc.ABC):
         try:
             assert artifact_type in self._artifact_types.keys()
         except AssertionError:
-            message = f'Provided type: {artifact_type} is an invalid Artifact type.\n'
-            message = f'Valid types are: {list(self._artifact_types.keys())}.\n'
-            message = f'To add a new artifact type, use the method register_artifact_type before calling this method.'
+            message = f"Provided type: {artifact_type} is an invalid Artifact type.\n"
+            message = f"Valid types are: {list(self._artifact_types.keys())}.\n"
+            message = f"To add a new artifact type, use the method register_artifact_type before calling this method."
             raise InvalidArtifactError(message)
-        subdir = os.path.join(self.artifacts_dir,artifact_type, os.path.dirname(artifact_name))
+        subdir = os.path.join(self.artifacts_dir, artifact_type, os.path.dirname(artifact_name))
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(self.artifacts_dir, artifact_type, artifact_name)
-        self._artifact_types[artifact_type]['save'](artifact,fname)
-        self._log_artifact_type(artifact_name,artifact_type)
+        self._artifact_types[artifact_type]["save"](artifact, fname)
+        self._log_artifact_type(artifact_name, artifact_type)
 
-    def load_artifacts(self, artifact_name:str, artifact_type:Union[str,None]=None, root:Union[str, None]=None) -> Any:
+    def load_artifacts(
+        self, artifact_name: str, artifact_type: Union[str, None] = None, root: Union[str, None] = None
+    ) -> Any:
         """Restore an artifact from 'log_dir/artifacts/artifact_type/artifact_name' or a
         user defined directory root.
 
@@ -180,7 +180,7 @@ class Logger(abc.ABC):
         :type artifact_name: str (default 'checkpoint')
         :param root: Absolute path to the log directory (log_dir) (assuming it was created using a logger object).
         If set to None, then the logger in its own log_dir.
-        :param artifact_type: Type of the artifact to save. 
+        :param artifact_type: Type of the artifact to save.
         If set to None, the method will try to infer the artifact type from the artifact_name.
         :type root: Union[str,None] (default 'None')
         :type artifact_type: Union[str,None] (default 'None')
@@ -188,11 +188,11 @@ class Logger(abc.ABC):
         rtype: Any
         """
         if not root:
-            root =self.log_dir
+            root = self.log_dir
         if not artifact_type:
-            
-            artifact_type_file = os.path.join(root,Directories.Artifacts.value,".keys", "custom_types.yaml")
-            artifact_dict_name = os.path.join(root,Directories.Artifacts.value,".keys", "artifacts.yaml")
+
+            artifact_type_file = os.path.join(root, Directories.Artifacts.value, ".keys", "custom_types.yaml")
+            artifact_dict_name = os.path.join(root, Directories.Artifacts.value, ".keys", "artifacts.yaml")
 
             # get the base name of the artifact
             artifact_base_name = os.path.basename(artifact_name)
@@ -203,22 +203,23 @@ class Logger(abc.ABC):
                 for key, value in cur_yaml.items():
                     if artifact_dir_name in value:
                         if artifact_base_name in value[artifact_dir_name]:
-                            artifact_type=key
+                            artifact_type = key
                             break
                 assert artifact_type
             except BaseException:
-                message= "Could not infer artifact type! Please provide a value for artifact_type."
+                message = "Could not infer artifact type! Please provide a value for artifact_type."
                 raise InvalidArtifactError(message)
-        artifact_path = os.path.join(root,Directories.Artifacts.value, artifact_type, artifact_name)
+        artifact_path = os.path.join(root, Directories.Artifacts.value, artifact_type, artifact_name)
 
-        return self._artifact_types[artifact_type]['load'](artifact_path)
+        return self._artifact_types[artifact_type]["load"](artifact_path)
 
+    def register_artifact_type(
+        self, name: str, save: Callable[[object, str], None], load: Callable[[str], object]
+    ) -> None:
+        """Register a new artifact type with a save and load method.
 
-    def register_artifact_type(self, name:str, save:Callable[[object, str], None], load:Callable[[str], object])->None:
-        """ Register a new artifact type with a save and load method.
-        
-        Use this method when you want to save and load a custom artifact type.
-        This method should be called before using log_artifacts with the new artifact type.
+        Use this method when you want to save and load a custom artifact type. This
+        method should be called before using log_artifacts with the new artifact type.
 
         :param name: Name of the artifact type.
         :param save: User-defined function to save the artifact.
@@ -228,20 +229,14 @@ class Logger(abc.ABC):
         :type load: Callable[[str], object]
         :return: None
         """
-
-
         is_new = name not in self._artifact_types.keys()
         if is_new:
-            self._artifact_types.update({name: {'load': load,
-                                                        'save': save}
-                                        })
+            self._artifact_types.update({name: {"load": load, "save": save}})
 
             code_string_load = marshal.dumps(load.__code__)
             code_string_save = marshal.dumps(save.__code__)
 
-            artifact_type_serialized = {name: {'load': code_string_load,
-                                               'save': code_string_save}
-                                        }
+            artifact_type_serialized = {name: {"load": code_string_load, "save": code_string_save}}
             artifact_type_file = os.path.join(self.artifacts_dir, ".keys")
             os.makedirs(artifact_type_file, exist_ok=True)
             artifact_type_file = os.path.join(artifact_type_file, "custom_types.yaml")
@@ -255,32 +250,30 @@ class Logger(abc.ABC):
             with open(artifact_type_file, "w") as f:
                 yaml.dump(cur_yaml, f)
 
-    def _log_artifact_type(self, artifact_name: str, artifact_type:str):
+    def _log_artifact_type(self, artifact_name: str, artifact_type: str):
         # Logging new keys appearing in a metrics dict
 
-            artifact_keys_dir = os.path.join(self.artifacts_dir, ".keys")
-            os.makedirs(artifact_keys_dir, exist_ok=True)
-            artifact_dict_name = os.path.join(artifact_keys_dir, "artifacts.yaml")
-            cur_yaml = {}
-            try:
-                with open(artifact_dict_name, "r") as f:
-                    cur_yaml = yaml.safe_load(f)
-            except BaseException:
-                pass
-            artifact_base_name = os.path.basename(artifact_name)
-            artifact_dir = _path_as_key(os.path.dirname(artifact_name))
-            if artifact_type in cur_yaml.keys():
-                if artifact_dir in cur_yaml[artifact_type]:
-                    cur_yaml[artifact_type][artifact_dir].update({artifact_base_name:""})
-                else:
-                    cur_yaml[artifact_type][artifact_dir] = {artifact_base_name:""}   
+        artifact_keys_dir = os.path.join(self.artifacts_dir, ".keys")
+        os.makedirs(artifact_keys_dir, exist_ok=True)
+        artifact_dict_name = os.path.join(artifact_keys_dir, "artifacts.yaml")
+        cur_yaml = {}
+        try:
+            with open(artifact_dict_name, "r") as f:
+                cur_yaml = yaml.safe_load(f)
+        except BaseException:
+            pass
+        artifact_base_name = os.path.basename(artifact_name)
+        artifact_dir = _path_as_key(os.path.dirname(artifact_name))
+        if artifact_type in cur_yaml.keys():
+            if artifact_dir in cur_yaml[artifact_type]:
+                cur_yaml[artifact_type][artifact_dir].update({artifact_base_name: ""})
             else:
-                cur_yaml[artifact_type] = {artifact_dir:{artifact_base_name:""}}
-            
-            with open(artifact_dict_name, "w") as f:
-                yaml.dump(cur_yaml, f)
+                cur_yaml[artifact_type][artifact_dir] = {artifact_base_name: ""}
+        else:
+            cur_yaml[artifact_type] = {artifact_dir: {artifact_base_name: ""}}
 
-
+        with open(artifact_dict_name, "w") as f:
+            yaml.dump(cur_yaml, f)
 
     @property
     def log_id(self):
@@ -329,10 +322,6 @@ class Logger(abc.ABC):
                 yaml.dump(cur_yaml, f)
 
 
-
-
-
-
 class DefaultLogger(Logger):
     """A logger that provides methods for logging checkpoints and loading them."""
 
@@ -352,11 +341,11 @@ class DefaultLogger(Logger):
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
         """
-        self.log_artifacts(checkpoint, artifact_name=log_name, artifact_type='pickle')
+        self.log_artifacts(checkpoint, artifact_name=log_name, artifact_type="pickle")
 
     def load_checkpoint(self, log_name, root=None) -> Any:
-        """Restore a checkpoint from 'run_dir/artifacts/pickle/log_name.pkl' or a
-        user defined directory root.
+        """Restore a checkpoint from 'run_dir/artifacts/pickle/log_name.pkl' or a user
+        defined directory root.
 
         Raises an error if it fails to do so.
 
@@ -373,7 +362,7 @@ class DefaultLogger(Logger):
             checkpoint_name = os.path.join(root, log_name)
         else:
             checkpoint_name = os.path.join(self.artifacts_dir, log_name)
-        return Artifact_types['pickle']['load'](checkpoint_name)
+        return Artifact_types["pickle"]["load"](checkpoint_name)
 
 
 def _make_log_dir(forced_log_id, root):
@@ -408,13 +397,15 @@ def _maximum_existing_log_id(root):
     else:
         return 0
 
+
 def _path_as_key(path):
     if path:
-        return "."+".".join(_split_all_directories(path))
-    return ''
+        return "." + ".".join(_split_all_directories(path))
+    return ""
+
 
 def _split_all_directories(file_path):
-    directories = []    
+    directories = []
     while True:
         file_path, directory = os.path.split(file_path)
         if directory:
