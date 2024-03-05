@@ -301,6 +301,20 @@ class DataFrame(list):
             if self.pandas is None:
                 self.pandas = pd.DataFrame([config._lazy() for config in self])
             return self.pandas
+    def merge(self, new_df: DataFrame)->DataFrame:
+        """Merge a target dataframe to the current dataframe.
+            
+        The target dataframe must have the same number of rows as the current one.
+
+        :params new_df: The target dataframe to merge
+        :type new_df: DataFrame
+        :return: A new merged dataframe.
+        :rtype: DataFrame
+        """
+
+        for new_dict,old_dict in zip(new_df, self):
+            old_dict.update(new_dict)
+        return DataFrame([old_dict for old_dict in self])
 
     def keys(self) -> List[str]:
         """Return a list of column names of the dataframe.
