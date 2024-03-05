@@ -52,7 +52,7 @@ class Reader(object):
         src_dir: str,
         dst_dir: Optional[str] = None,
         parser: Parser = DefaultParser(),
-        refresh: bool = False,
+        refresh: bool = True,
     ):
         """Create a reader object.
 
@@ -64,7 +64,7 @@ class Reader(object):
         :type src_dir: str
         :type dst_dir: str (default None)
         :type parser: Parser (default DefaultParser)
-        :type refresh: bool (default False)
+        :type refresh: bool (default True)
         :raises PermissionError: if user has no writing priviledges on dst_dir
         """
         self.parser = parser
