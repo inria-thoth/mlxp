@@ -50,7 +50,7 @@ Note: You may need to use `pip3` instead of `pip` depending on your setup.
 
 
 
-Before installing MLXP, make sure you the requirements are installed.
+Before installing MLXP, make sure the requirements are installed.
 
 
 Requirements

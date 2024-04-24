@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="3- Reading" href="easy_reading.html" /><link rel="prev" title="2- Logging" href="easy_logging.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>3- Versioning - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,7 +226,7 @@
         </div>
         <article role="main">
           <section id="versioning">
-<h1>3- Versioning<a class="headerlink" href="#versioning" title="Link to this heading">#</a></h1>
+<h1>3- Versioning<a class="headerlink" href="#versioning" title="Link to this heading">¶</a></h1>
 <p>Sometimes, there can be a delay between the time when a job is submitted and when it gets executed. This typically happens when submitting jobs to a cluster queue.
 Meanwhile, the development code might have already changed, with some potential bugs introduced!
 Without careful version management, it is hard to know for sure what code was used to produce the results.</p>
@@ -235,11 +235,11 @@ Without careful version management, it is hard to know for sure what code was us
 - Systematically checking for uncommitted change/ untracked files.
 - Systematically copying the code from the git repository containing the executable to another ‘safe’ location based on the latest commit. The code is then run from this location to avoid any interference with changes introduced later to the development code and before executing a job.</p>
 <section id="using-mlxp-s-version-manager">
-<h2>1- Using MLXP’s version manager<a class="headerlink" href="#using-mlxp-s-version-manager" title="Link to this heading">#</a></h2>
+<h2>1- Using MLXP’s version manager<a class="headerlink" href="#using-mlxp-s-version-manager" title="Link to this heading">¶</a></h2>
 <p>Let’s see how this works! We simply need to set the option
 <code class="samp docutils literal notranslate"><span class="pre">use_version_manager</span></code> to true and make sure the code belong to a git repository. Depending on whether the interactive mode is active (<code class="samp docutils literal notranslate"><span class="pre">mlxp.interactive_mode=True</span></code>) or not, an interactive session is created where the user can tell the version manager what to do or the job is executed from on a copy of the code based on the latest commit.</p>
 <section id="without-the-interactive-mode">
-<h3>Without the interactive mode<a class="headerlink" href="#without-the-interactive-mode" title="Link to this heading">#</a></h3>
+<h3>Without the interactive mode<a class="headerlink" href="#without-the-interactive-mode" title="Link to this heading">¶</a></h3>
 <p>If the version manager is used without the interative mode (<code class="samp docutils literal notranslate"><span class="pre">mlxp.interactive_mode=False</span></code>), a copy of the code based on the latest commit is created, if it does not already exists. It is located in a directory of the form
 <code class="samp docutils literal notranslate"><span class="pre">parent_work_dir/repo_name/commit_hash</span></code>, where <code class="samp docutils literal notranslate"><span class="pre">parent_work_dir</span></code> is provided by the user in the mlxp config file, <code class="samp docutils literal notranslate"><span class="pre">repo_name</span></code> is the name of the git repository and <code class="samp docutils literal notranslate"><span class="pre">commit_hash</span></code> is the latest commit’s hash.</p>
 <p>MLXP then proceeds to execute the code from that copy:</p>
@@ -252,7 +252,7 @@ Without careful version management, it is hard to know for sure what code was us
 </div>
 <p>We can double check where the code was executed from by inspecting the <code class="samp docutils literal notranslate"><span class="pre">info.yaml</span></code> file (Note that this is the 4th run, so the file should be located in  <code class="samp docutils literal notranslate"><span class="pre">./logs/4/</span></code> )</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">./logs/4/metadata/info.yaml</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/4/metadata/info.yaml</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">work_dir</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/.workdir/mlxp/commit_hash/tutorial</span>
 <span class="w"> </span><span class="nt">version_manager</span><span class="p">:</span>
@@ -276,7 +276,7 @@ Without careful version management, it is hard to know for sure what code was us
 <code class="samp docutils literal notranslate"><span class="pre">mlxp.version_manager.compute_requirements</span></code> is set to <code class="samp docutils literal notranslate"><span class="pre">True</span></code>.</p>
 </section>
 <section id="with-the-interactive-mode">
-<h3>With the interactive mode<a class="headerlink" href="#with-the-interactive-mode" title="Link to this heading">#</a></h3>
+<h3>With the interactive mode<a class="headerlink" href="#with-the-interactive-mode" title="Link to this heading">¶</a></h3>
 <p>When the interactive mode is active (<code class="samp docutils literal notranslate"><span class="pre">mlxp.interactive_mode=False</span></code>), the version manager checks for untracked files and uncommited changes and asks if how to handle those before executing the code.</p>
 <p>First, the version manager checks for untracked files and asks the user whether untracked files should be added to the git repository.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">There are untracked files in the repository:</span>
@@ -305,7 +305,7 @@ Without careful version management, it is hard to know for sure what code was us
 </section>
 </section>
 <section id="using-the-version-manager-with-a-job-scheduler">
-<h2>2- Using the version manager with a job scheduler<a class="headerlink" href="#using-the-version-manager-with-a-job-scheduler" title="Link to this heading">#</a></h2>
+<h2>2- Using the version manager with a job scheduler<a class="headerlink" href="#using-the-version-manager-with-a-job-scheduler" title="Link to this heading">¶</a></h2>
 <p>You can combine both features to run several reproducible jobs with a controlled version of the code they use. For this, you can create a script (here <code class="samp docutils literal notranslate"><span class="pre">script.sh</span></code>) containing all the jobs you need to run as well as the options to your scheduler. You’ll need to activate the version manager when executing each command.</p>
 <blockquote>
 <div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
@@ -407,7 +407,7 @@ Without careful version management, it is hard to know for sure what code was us
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

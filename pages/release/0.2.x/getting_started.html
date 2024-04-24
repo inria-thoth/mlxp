@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Configuring MLXP" href="configuring_mlxp.html" /><link rel="prev" title="Installing MLXP" href="installing.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>Quick start guide - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,11 +226,11 @@
         </div>
         <article role="main">
           <section id="quick-start-guide">
-<h1>Quick start guide<a class="headerlink" href="#quick-start-guide" title="Link to this heading">#</a></h1>
+<h1>Quick start guide<a class="headerlink" href="#quick-start-guide" title="Link to this heading">¶</a></h1>
 <p>This quick-start guide is meant to give you a overview of how MLXP works.
 To get a more in-depth understanding of MLXP’s capabilities, please follow the  <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
 <section id="using-mlxp">
-<h2>1- Using MLXP<a class="headerlink" href="#using-mlxp" title="Link to this heading">#</a></h2>
+<h2>1- Using MLXP<a class="headerlink" href="#using-mlxp" title="Link to this heading">¶</a></h2>
 <p>Let’s say you are given a directory <code class="samp docutils literal notranslate"><span class="pre">my_project</span></code> containing a python file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> and a sub-directory <code class="samp docutils literal notranslate"><span class="pre">configs</span></code> containing a file ‘config.yaml’ with option configurations for the project:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>my_project/
 ├── configs/
@@ -268,10 +268,10 @@ Importantly, it contains:</p>
 </div></blockquote>
 </section>
 <section id="configuring">
-<h2>2- Configuring<a class="headerlink" href="#configuring" title="Link to this heading">#</a></h2>
+<h2>2- Configuring<a class="headerlink" href="#configuring" title="Link to this heading">¶</a></h2>
 <p>Just like when using <a class="reference external" href="https://hydra.cc/">hydra</a>, you can provide all default options needed for the code in a separate Yaml file named <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> and contained in the <code class="samp docutils literal notranslate"><span class="pre">./configs</span></code> directory. These will be passed to the object <code class="samp docutils literal notranslate"><span class="pre">ctx.config</span></code>.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">./configs/config.yaml</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./configs/config.yaml</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="nt">num_epoch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="nt">model</span><span class="p">:</span>
@@ -286,7 +286,7 @@ Importantly, it contains:</p>
 </div>
 </section>
 <section id="logging">
-<h2>3- Logging<a class="headerlink" href="#logging" title="Link to this heading">#</a></h2>
+<h2>3- Logging<a class="headerlink" href="#logging" title="Link to this heading">¶</a></h2>
 <p>Logging is activated by default and as soon as the run is launched, the logger creates a directory <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir/log_id</span></code>  where <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> is provided by the user (default to <code class="samp docutils literal notranslate"><span class="pre">./logs</span></code>) while <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code> is unique id that MLXP assigns to the run.</p>
 <ul class="simple">
 <li><p><strong>Logging metadata:</strong> Once the job is executed, the configuration options used for the run are automatically stored in a file <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir/log_id/metadata/config.yaml</span></code>.</p></li>
@@ -294,7 +294,7 @@ Importantly, it contains:</p>
 </ul>
 <p><strong>Log directory structure:</strong> Each log directory contains three sub-directories: samp:<cite>metadata</cite>, <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> and samp:<cite>artifacts</cite>:</p>
 <div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
 ├── 1/
 │   ├── metadata/
@@ -316,7 +316,7 @@ Importantly, it contains:</p>
 </div>
 </section>
 <section id="launching-locally">
-<h2>4- Launching locally<a class="headerlink" href="#launching-locally" title="Link to this heading">#</a></h2>
+<h2>4- Launching locally<a class="headerlink" href="#launching-locally" title="Link to this heading">¶</a></h2>
 <p>When executing the Python file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> from the command line, we get the following output:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py
 
@@ -332,7 +332,7 @@ Importantly, it contains:</p>
 </pre></div>
 </div>
 <section id="overriding-options-from-the-command-line-interface">
-<h3>Overriding options from the command-line interface<a class="headerlink" href="#overriding-options-from-the-command-line-interface" title="Link to this heading">#</a></h3>
+<h3>Overriding options from the command-line interface<a class="headerlink" href="#overriding-options-from-the-command-line-interface" title="Link to this heading">¶</a></h3>
 <p>Just like in <a class="reference external" href="https://hydra.cc/">hydra</a>, you can also override the options contained in the <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> file from the command line:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>optimizer.lr<span class="o">=</span><span class="m">0</span>.1<span class="w"> </span>model.num_layers<span class="o">=</span><span class="m">6</span>
 
@@ -351,10 +351,10 @@ Importantly, it contains:</p>
 </section>
 </section>
 <section id="submitting-multiple-jobs-to-a-job-scheduler">
-<h2>5- Submitting multiple jobs to a job scheduler<a class="headerlink" href="#submitting-multiple-jobs-to-a-job-scheduler" title="Link to this heading">#</a></h2>
+<h2>5- Submitting multiple jobs to a job scheduler<a class="headerlink" href="#submitting-multiple-jobs-to-a-job-scheduler" title="Link to this heading">¶</a></h2>
 <p>Let’s say, you’d like to submit multiple jobs into a job scheduler. You can do this easily using the mlxpsub command!</p>
 <section id="i-creating-a-job-script">
-<h3>i) Creating a job script<a class="headerlink" href="#i-creating-a-job-script" title="Link to this heading">#</a></h3>
+<h3>i) Creating a job script<a class="headerlink" href="#i-creating-a-job-script" title="Link to this heading">¶</a></h3>
 <p>The first step is to create a script ‘script.sh’ in your working directory (here under <code class="samp docutils literal notranslate"><span class="pre">my_project</span></code>). In this script you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for exectuting the python script <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> with different option values. Thanks to Hydra, you don’t need any for loops and your job as be as concise as what follows:</p>
 <blockquote>
 <div><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
@@ -379,14 +379,14 @@ Importantly, it contains:</p>
 All what you have to do is to use the native syntax for specifying resources for the job as commants in the script.</p>
 </section>
 <section id="ii-submitting-using-mlxpsub">
-<h3>ii) Submitting using mlxpsub<a class="headerlink" href="#ii-submitting-using-mlxpsub" title="Link to this heading">#</a></h3>
+<h3>ii) Submitting using mlxpsub<a class="headerlink" href="#ii-submitting-using-mlxpsub" title="Link to this heading">¶</a></h3>
 <p>You only need to run the following command in the terminal:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">mlxpsub script.sh</span>
 </pre></div>
 </div>
 </section>
 <section id="how-it-works">
-<h3>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h3>
+<h3>How it works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h3>
 <p>MLXP creates a script for each job corresponding to optionsetting. Each script is located in a directory of the form <code class="samp docutils literal notranslate"><span class="pre">parent_log/log_id</span></code>  , where log_id is automatically assigned by MLXP for each job.</p>
 <p>Here is an example of the first created script in <code class="samp docutils literal notranslate"><span class="pre">logs/1/script.sh</span></code>  where the user sets <code class="samp docutils literal notranslate"><span class="pre">parent_log</span></code>  to <code class="samp docutils literal notranslate"><span class="pre">logs</span></code>.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">#</span>!/bin/bash
@@ -491,7 +491,7 @@ as in <code class="samp docutils literal notranslate"><span class="pre">script.s
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=10f1778b"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

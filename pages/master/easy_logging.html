@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="3- Versioning" href="easy_versioning.html" /><link rel="prev" title="1- Launching" href="easy_launching.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>2- Logging - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,9 +226,9 @@
         </div>
         <article role="main">
           <section id="logging">
-<span id="id1"></span><h1>2- Logging<a class="headerlink" href="#logging" title="Link to this heading">#</a></h1>
+<span id="id1"></span><h1>2- Logging<a class="headerlink" href="#logging" title="Link to this heading">¶</a></h1>
 <section id="logging-metrics-and-artifacts">
-<h2>Logging metrics and artifacts<a class="headerlink" href="#logging-metrics-and-artifacts" title="Link to this heading">#</a></h2>
+<h2>Logging metrics and artifacts<a class="headerlink" href="#logging-metrics-and-artifacts" title="Link to this heading">¶</a></h2>
 <p>The logger provides four methods for logging objects:</p>
 <blockquote>
 <div><ul class="simple">
@@ -245,10 +245,10 @@
 </ul>
 </div></blockquote>
 <section id="logging-metrics">
-<h3>Logging metrics<a class="headerlink" href="#logging-metrics" title="Link to this heading">#</a></h3>
+<h3>Logging metrics<a class="headerlink" href="#logging-metrics" title="Link to this heading">¶</a></h3>
 <p>In the <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file, we have added a new line to log the loss at each epoch using the method <code class="samp docutils literal notranslate"><span class="pre">log_metrics</span></code>:. This methods takes a dictionary of scalars as inputs as well as the name of the JSON file where it will be stored:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">({</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">train_err</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
                     <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">},</span> <span class="n">log_name</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">)</span>
@@ -256,18 +256,20 @@
 </pre></div>
 </div>
 </div>
-<dl class="simple">
-<dt>..note::</dt><dd><p>Several dictonaries can be stored successively in the same JSON file even if they do not have the same keys.</p>
-</dd>
-<dt>..warning::</dt><dd><p>The keys of the dictionary must be consistent accross runs and within each JSON file.</p>
-</dd>
-</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Several dictonaries can be stored successively in the same JSON file even if they do not have the same keys.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The keys of the dictionary must be consistent accross runs and within each JSON file.</p>
+</div>
 </section>
 <section id="logging-artifacts">
-<h3>Logging artifacts<a class="headerlink" href="#logging-artifacts" title="Link to this heading">#</a></h3>
+<h3>Logging artifacts<a class="headerlink" href="#logging-artifacts" title="Link to this heading">¶</a></h3>
 <p>We also added a line to log the model’s weights using the method <code class="samp docutils literal notranslate"><span class="pre">log_checkpoint</span></code>. This method is used to log serializable objects as pickle files. The name of the pickle file is provided as an argument.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">log_checkpoint</span><span class="p">({</span><span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
                        <span class="s1">&#39;epoch&#39;</span><span class="p">:</span><span class="n">epoch</span><span class="p">},</span> <span class="n">log_name</span><span class="o">=</span><span class="s1">&#39;last_ckpt&#39;</span><span class="p">)</span>
@@ -277,7 +279,7 @@
 </div>
 <p>For more general artifact, you can use the method <code class="samp docutils literal notranslate"><span class="pre">log_artifacts</span></code> which takes the artifact format and the name of the artifact as arguments. For instance, below we log the model’s weights as a torch checkpoint:</p>
 <div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id4" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">log_artifacts</span><span class="p">({</span><span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
                       <span class="s1">&#39;epoch&#39;</span><span class="p">:</span><span class="n">epoch</span><span class="p">},</span>
@@ -290,10 +292,10 @@
 <p>The method <code class="samp docutils literal notranslate"><span class="pre">log_artifacts</span></code> natively supports the following types: <code class="samp docutils literal notranslate"><span class="pre">pickle</span></code>, <code class="samp docutils literal notranslate"><span class="pre">torch</span></code>, <code class="samp docutils literal notranslate"><span class="pre">image</span></code>, <code class="samp docutils literal notranslate"><span class="pre">numpy</span></code>.</p>
 </section>
 <section id="registering-custom-artifacts">
-<h3>Registering custom artifacts<a class="headerlink" href="#registering-custom-artifacts" title="Link to this heading">#</a></h3>
+<h3>Registering custom artifacts<a class="headerlink" href="#registering-custom-artifacts" title="Link to this heading">¶</a></h3>
 <p>In case other non supported artifacts need to be logged, the user can register custom artifact types. This is done using the method <code class="samp docutils literal notranslate"><span class="pre">register_artifact_type</span></code> which takes three arguments: the name of the artifact type, the method for saving the artifact, and the method for loading the artifact:</p>
 <div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id5" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
 <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">pickle</span>
@@ -320,12 +322,12 @@
 </section>
 </section>
 <section id="file-structure-of-the-logs">
-<h2>File structure of the logs<a class="headerlink" href="#file-structure-of-the-logs" title="Link to this heading">#</a></h2>
+<h2>File structure of the logs<a class="headerlink" href="#file-structure-of-the-logs" title="Link to this heading">¶</a></h2>
 <p>When the logger is activated, it stores the results of a run in a sub-directory of the parent directory <code class="samp docutils literal notranslate"><span class="pre">./logs</span></code>. This parent directory is created automatically if it does not exists already. By default it is set to <code class="samp docutils literal notranslate"><span class="pre">./logs</span></code>, but this behavior can be modified (see <a class="reference internal" href="#custom-log-dir"><span class="std std-ref">Customizing the parent log directory</span></a>).</p>
 <p>First, the logger assigns a <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code> to the run. Every time <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> is executed with an active logger, the <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code> of the new run is incremented by 1 starting from 1. Then a new sub-directory of <code class="samp docutils literal notranslate"><span class="pre">./logs</span></code> is created and named after the assigned <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code>.
 Since we executed the code three times in total, we should expect three sub-directories under <code class="samp docutils literal notranslate"><span class="pre">./logs</span></code> called <code class="samp docutils literal notranslate"><span class="pre">1</span></code>, <code class="samp docutils literal notranslate"><span class="pre">2</span></code> and <code class="samp docutils literal notranslate"><span class="pre">3</span></code>, all having the same structure:</p>
 <div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id6" title="Link to this code">¶</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
 ├── 1/...
 ├── 2/...
@@ -335,7 +337,7 @@ Since we executed the code three times in total, we should expect three sub-dire
 </div>
 <p>Each log directory contains three sub-directories: <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code>, <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> and <code class="samp docutils literal notranslate"><span class="pre">artifacts</span></code>:</p>
 <div class="literal-block-wrapper docutils container" id="id7">
-<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id7" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id7" title="Link to this code">¶</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
 ├── 1/
 │   ├── metadata/
@@ -357,12 +359,12 @@ Since we executed the code three times in total, we should expect three sub-dire
 </div>
 <p>Let’s go through these three directories.</p>
 <section id="the-metrics-directory">
-<h3>The <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> directory<a class="headerlink" href="#the-metrics-directory" title="Link to this heading">#</a></h3>
+<h3>The <code class="samp docutils literal notranslate"><span class="pre">metrics</span></code> directory<a class="headerlink" href="#the-metrics-directory" title="Link to this heading">¶</a></h3>
 <p>This directory contains JSON files created when calling the logger’s method
 <code class="samp docutils literal notranslate"><span class="pre">log_metrics(dict,</span> <span class="pre">log_name)</span></code>.
 Each file is named after the variable <code class="samp docutils literal notranslate"><span class="pre">log_name</span></code> and stores the dictionaries provided as input to the <code class="samp docutils literal notranslate"><span class="pre">log_metrics</span></code> method.</p>
 <div class="literal-block-wrapper docutils container" id="id8">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metrics/train.json</span><a class="headerlink" href="#id8" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/1/metrics/train.json</span><a class="headerlink" href="#id8" title="Link to this code">¶</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.030253788456320763</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;epoch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
 <span class="p">{</span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.02899891696870327</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;epoch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
 <span class="p">{</span><span class="nt">&quot;loss&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.026649776846170425</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;epoch&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
@@ -379,11 +381,11 @@ Each file is named after the variable <code class="samp docutils literal notrans
 <p>The hidden directory <code class="samp docutils literal notranslate"><span class="pre">.keys</span></code> is used by the reader module of MLXP and is not something to worry about here. Instead, we inspect the remaining directories below.</p>
 </section>
 <section id="the-metadata-directory">
-<h3>The <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code> directory<a class="headerlink" href="#the-metadata-directory" title="Link to this heading">#</a></h3>
+<h3>The <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code> directory<a class="headerlink" href="#the-metadata-directory" title="Link to this heading">¶</a></h3>
 <p>The <code class="samp docutils literal notranslate"><span class="pre">metadata</span></code>  directory contains two yaml files: <code class="samp docutils literal notranslate"><span class="pre">config</span></code> and <code class="samp docutils literal notranslate"><span class="pre">info`</span></code>, each storing the content of the corresponding fields of the context object <code class="samp docutils literal notranslate"><span class="pre">ctx</span></code>.
 <code class="samp docutils literal notranslate"><span class="pre">config</span></code> stores the user config of the run, <code class="samp docutils literal notranslate"><span class="pre">info</span></code> stores general information about the run such as the assigned <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code> and the absolute path to the logs of the run <code class="samp docutils literal notranslate"><span class="pre">log_dir</span></code>.</p>
 <div class="literal-block-wrapper docutils container" id="id9">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/config.yaml</span><a class="headerlink" href="#id9" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/config.yaml</span><a class="headerlink" href="#id9" title="Link to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
 <span class="nt">num_epoch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
 <span class="nt">model</span><span class="p">:</span>
@@ -397,7 +399,7 @@ Each file is named after the variable <code class="samp docutils literal notrans
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id10">
-<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/info.yaml</span><a class="headerlink" href="#id10" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/1/metadata/info.yaml</span><a class="headerlink" href="#id10" title="Link to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">executable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolute_path_to/bin/python</span>
 <span class="nt">cmd</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&#39;</span>
 <span class="nt">end_date</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20/04/2023</span>
@@ -416,17 +418,17 @@ Each file is named after the variable <code class="samp docutils literal notrans
 </div>
 </section>
 <section id="the-artifacts-directory">
-<h3>The <code class="samp docutils literal notranslate"><span class="pre">artifacts</span></code> directory<a class="headerlink" href="#the-artifacts-directory" title="Link to this heading">#</a></h3>
+<h3>The <code class="samp docutils literal notranslate"><span class="pre">artifacts</span></code> directory<a class="headerlink" href="#the-artifacts-directory" title="Link to this heading">¶</a></h3>
 <p>The directory <code class="samp docutils literal notranslate"><span class="pre">artifacts</span></code> is where all data passed to the logger’s methods <code class="samp docutils literal notranslate"><span class="pre">log_artifacts</span></code> and <code class="samp docutils literal notranslate"><span class="pre">log_checkpoint</span></code> are stored.
 These are stored in different directories depending on the artifact type. In this example, since we used the reserved method <code class="samp docutils literal notranslate"><span class="pre">log_checkpoint</span></code>, the logged data are considered as pickle objects, hence the sub-directory <code class="samp docutils literal notranslate"><span class="pre">pickle</span></code>.
 You can see that it contains the pickle file <code class="samp docutils literal notranslate"><span class="pre">last_ckpt.pkl</span></code> which is the name we provided when calling the method <code class="samp docutils literal notranslate"><span class="pre">log_checkpoint</span></code> in the <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file.</p>
 </section>
 </section>
 <section id="checkpointing">
-<h2>Checkpointing<a class="headerlink" href="#checkpointing" title="Link to this heading">#</a></h2>
+<h2>Checkpointing<a class="headerlink" href="#checkpointing" title="Link to this heading">¶</a></h2>
 <p>Checkpointing can be particularly useful if you need to restart a job from its latest state without having to re-run it from scratch. To do this, you only need to slightly modify the function <code class="samp docutils literal notranslate"><span class="pre">train</span></code> to load the latest checkpoint by default:</p>
 <div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id11" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id11" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">OneHiddenLayer</span>
 
@@ -485,14 +487,14 @@ You can see that it contains the pickle file <code class="samp docutils literal 
 </div>
 </section>
 <section id="customizing-the-parent-log-directory">
-<span id="custom-log-dir"></span><h2>Customizing the parent log directory<a class="headerlink" href="#customizing-the-parent-log-directory" title="Link to this heading">#</a></h2>
+<span id="custom-log-dir"></span><h2>Customizing the parent log directory<a class="headerlink" href="#customizing-the-parent-log-directory" title="Link to this heading">¶</a></h2>
 <p>You can change the parent directory by overriding the option <code class="samp docutils literal notranslate"><span class="pre">+mlxp.logger.parent_log_dir</span></code> from the command-line:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxp.logger.parent_log_dir<span class="o">=</span><span class="s1">&#39;./new_logs&#39;</span>
 </pre></div>
 </div>
 <p>Alternatively, the parent directory can be modified directly in the MLXP default settings file <code class="samp docutils literal notranslate"><span class="pre">configs/mlxp.yaml</span></code>. This file is created automatically if it doesn’t exist already and contains all the defaults options for using MLXP in the current project:</p>
 <div class="literal-block-wrapper docutils container" id="id12">
-<div class="code-block-caption"><span class="caption-text">./configs/mlxp.yaml</span><a class="headerlink" href="#id12" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./configs/mlxp.yaml</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">logger</span><span class="p">:</span>
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">parent_log_dir</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./logs</span>
@@ -585,7 +587,7 @@ You can see that it contains the pickle file <code class="samp docutils literal 
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

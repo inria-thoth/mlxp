@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Tutorial" href="tutorial.html" /><link rel="prev" title="Quick start guide" href="getting_started.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>Configuring MLXP - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,7 +226,7 @@
         </div>
         <article role="main">
           <section id="configuring-mlxp">
-<span id="id1"></span><h1>Configuring MLXP<a class="headerlink" href="#configuring-mlxp" title="Link to this heading">#</a></h1>
+<span id="id1"></span><h1>Configuring MLXP<a class="headerlink" href="#configuring-mlxp" title="Link to this heading">¶</a></h1>
 <p>MLXP is intended to be a configurable tool with default functionalities that can be adjusted by the user.
 The package default settings are stored in a file <code class="samp docutils literal notranslate"><span class="pre">mlxp.yaml</span></code> located in the same directory as the <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code> file. These files are created automatically if they don’t already exist.
 By default,  <code class="samp docutils literal notranslate"><span class="pre">./configs/mlxp.yaml</span></code> contains the following:</p>
@@ -253,7 +253,7 @@ By default,  <code class="samp docutils literal notranslate"><span class="pre">.
 </pre></div>
 </div>
 <section id="the-logger">
-<h2>The logger<a class="headerlink" href="#the-logger" title="Link to this heading">#</a></h2>
+<h2>The logger<a class="headerlink" href="#the-logger" title="Link to this heading">¶</a></h2>
 <p>The options under  <code class="samp docutils literal notranslate"><span class="pre">logger</span></code> are specific to the MLXP logger object. The field <code class="samp docutils literal notranslate"><span class="pre">name</span></code> must contain the class name of the used logger. By default, it is set to <code class="samp docutils literal notranslate"><span class="pre">DefaultLogger</span></code>. The user can provide a custom Logger provided that it inherits from the abstract class <code class="samp docutils literal notranslate"><span class="pre">Logger</span></code>. The remaining fields refer to logger’s options:</p>
 <ul class="simple">
 <li><p><code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code>: The location where the directories of each run will be stored. The outputs for each run are saved in a directory of the form <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir/log_id</span></code> where <code class="samp docutils literal notranslate"><span class="pre">log_id</span></code> is an integer uniquely assigned by the logger to the run.</p></li>
@@ -262,11 +262,11 @@ By default,  <code class="samp docutils literal notranslate"><span class="pre">.
 </ul>
 </section>
 <section id="the-scheduler-deprecated-since-version-0-2-0">
-<h2>The scheduler (Deprecated since version 0.2.0)<a class="headerlink" href="#the-scheduler-deprecated-since-version-0-2-0" title="Link to this heading">#</a></h2>
+<h2>The scheduler (Deprecated since version 0.2.0)<a class="headerlink" href="#the-scheduler-deprecated-since-version-0-2-0" title="Link to this heading">¶</a></h2>
 <p>Since version 0.2.0, there is no need to configure the scheduler. The <code class="samp docutils literal notranslate"><span class="pre">mlxpsub</span></code> command automatically detects the scheduler’s configurations from the main submission script (see <a class="reference internal" href="easy_launching.html#mlxpsub"><span class="std std-ref">mlxpsub command</span></a>)</p>
 </section>
 <section id="the-version-manager">
-<h2>The version manager<a class="headerlink" href="#the-version-manager" title="Link to this heading">#</a></h2>
+<h2>The version manager<a class="headerlink" href="#the-version-manager" title="Link to this heading">¶</a></h2>
 <p>The options under <code class="samp docutils literal notranslate"><span class="pre">version_manager</span></code> are specific to the MLXP version manager object. The field <code class="samp docutils literal notranslate"><span class="pre">name</span></code> must contain the class name of the used version manager. By default, it is set to <code class="samp docutils literal notranslate"><span class="pre">GitVM</span></code>, which is the version manager based on git. The user can provide a custom version manager inheriting from the abstract class <code class="samp docutils literal notranslate"><span class="pre">VersionManager</span></code>. The remaining fields refer to manager’s options:</p>
 <ul class="simple">
 <li><p><code class="samp docutils literal notranslate"><span class="pre">parent_work_dir</span></code>: The target parent directory of the new working directory returned by the version manager</p></li>
@@ -274,7 +274,7 @@ By default,  <code class="samp docutils literal notranslate"><span class="pre">.
 </ul>
 </section>
 <section id="the-interactive-mode">
-<h2>The interactive mode<a class="headerlink" href="#the-interactive-mode" title="Link to this heading">#</a></h2>
+<h2>The interactive mode<a class="headerlink" href="#the-interactive-mode" title="Link to this heading">¶</a></h2>
 <p>This option allows to enable/disable MLXP’s interactive mode.</p>
 <p>When set to <code class="samp docutils literal notranslate"><span class="pre">True</span></code>, MLXP uses the interactive mode for interacting with some MLXP modules:</p>
 <blockquote>
@@ -290,7 +290,7 @@ By default,  <code class="samp docutils literal notranslate"><span class="pre">.
 </div></blockquote>
 </section>
 <section id="overriding-mlxp-s-settings">
-<h2>Overriding MLXP’s settings<a class="headerlink" href="#overriding-mlxp-s-settings" title="Link to this heading">#</a></h2>
+<h2>Overriding MLXP’s settings<a class="headerlink" href="#overriding-mlxp-s-settings" title="Link to this heading">¶</a></h2>
 <p>It is possible to override these options from the command line by adding the prefix <code class="samp docutils literal notranslate"><span class="pre">+mlxp</span></code> before the options. For instance, setting the option <code class="samp docutils literal notranslate"><span class="pre">use_logger</span></code> to <code class="samp docutils literal notranslate"><span class="pre">False</span></code> disables logging. In this case, the logger object in <code class="samp docutils literal notranslate"><span class="pre">ctx.logger</span></code>  has a <code class="samp docutils literal notranslate"><span class="pre">Null</span></code> value:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py<span class="w"> </span>+mlxp.use_logger<span class="o">=</span><span class="nb">false</span>
 
@@ -380,7 +380,7 @@ By default,  <code class="samp docutils literal notranslate"><span class="pre">.
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

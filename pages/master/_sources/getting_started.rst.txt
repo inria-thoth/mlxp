@@ -130,7 +130,7 @@ Just like in `hydra <https://hydra.cc/>`_, you can also override the options con
 
 .. code-block:: console
 
-   $ python main.py optimizer.lr=0.1 model.num_layers=6
+   $ python main.py optimizer.lr=0.1
    
    seed: 0
    num_epoch: 10

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="1- Launching" href="easy_launching.html" /><link rel="prev" title="Tutorial" href="tutorial.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>Introduction - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,16 +226,16 @@
         </div>
         <article role="main">
           <section id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h1>
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h1>
 <p>In this tutorial, we will go through the three main functionalities: Launching, Logging, and Reading and explain these are easily handled by MLXP.
 Then we will see how to enhance reproducibility of experiments using the git-based version manager provided by MLXP and how to submit several jobs to a cluster in a single command using the MLXP’s scheduler.</p>
 <p>To make things concrete, we will consider a simple use-case where we are interested in training a neural network on a regression task. You can find code for reproducing this tutorial by following this link <a class="reference external" href="https://github.com/inria-thoth/mlxp/tree/master/tutorial">https://github.com/inria-thoth/mlxp/tree/master/tutorial</a>.</p>
 <section id="the-working-example">
-<h2>The working example<a class="headerlink" href="#the-working-example" title="Link to this heading">#</a></h2>
+<h2>The working example<a class="headerlink" href="#the-working-example" title="Link to this heading">¶</a></h2>
 <p>We will now give a quick overview of our working example, where we present the directory structure of the code and its main content.</p>
 <p>The first step is to create a directory ‘tutorial’ containing the code needed for this project. The directory is structured as follow:</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">tutorial/</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">tutorial/</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tutorial/
 ├── configs/
 │   └── config.yaml
@@ -247,11 +247,11 @@ Then we will see how to enhance reproducibility of experiments using the git-bas
 </div>
 <p>The directory contains three files: <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code>, <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> <code class="samp docutils literal notranslate"><span class="pre">results.py</span></code>. It also contains a directory <code class="samp docutils literal notranslate"><span class="pre">configs</span></code> that will be used later by MLXP. For now, we will only have a look at the <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> and <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> files.</p>
 <section id="the-core-py-file">
-<h3>The <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> file<a class="headerlink" href="#the-core-py-file" title="Link to this heading">#</a></h3>
+<h3>The <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> file<a class="headerlink" href="#the-core-py-file" title="Link to this heading">¶</a></h3>
 <p>The file <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code> contains a PyTorch implementation of a one hidden layer network <code class="samp docutils literal notranslate"><span class="pre">OneHiddenLayer</span></code> as well as a simple data loader <code class="samp docutils literal notranslate"><span class="pre">DataLoader</span></code> that we will use during training.
 In the rest of the tutorial, we will not need to worry about the content of <code class="samp docutils literal notranslate"><span class="pre">core.py</span></code>, but let’s just have a quick look at this file:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id2" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
@@ -315,10 +315,10 @@ In the rest of the tutorial, we will not need to worry about the content of <cod
 </div>
 </section>
 <section id="the-main-py-file">
-<span id="old-main-file"></span><h3>The <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file<a class="headerlink" href="#the-main-py-file" title="Link to this heading">#</a></h3>
+<span id="old-main-file"></span><h3>The <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file<a class="headerlink" href="#the-main-py-file" title="Link to this heading">¶</a></h3>
 <p>The file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> contains code for training the model <code class="samp docutils literal notranslate"><span class="pre">OneHiddenLayer</span></code> on data provided by the <code class="samp docutils literal notranslate"><span class="pre">DataLoader</span></code>. Training is performed using the function <code class="samp docutils literal notranslate"><span class="pre">train</span></code>:</p>
 <div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id3" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">OneHiddenLayer</span>
 
@@ -357,7 +357,7 @@ In the rest of the tutorial, we will not need to worry about the content of <cod
 </div>
 </section>
 <section id="training-the-model">
-<h3>Training the model<a class="headerlink" href="#training-the-model" title="Link to this heading">#</a></h3>
+<h3>Training the model<a class="headerlink" href="#training-the-model" title="Link to this heading">¶</a></h3>
 <p>If we execute the function <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code>, we can see that the training performs 10 <code class="samp docutils literal notranslate"><span class="pre">epochs</span></code> and then prints a message confirming that the training is complete.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>main.py
 <span class="go">{&#39;loss&#39;: 0.030253788456320763, &#39;epoch&#39;: 0}</span>
@@ -452,7 +452,7 @@ In the rest of the tutorial, we will not need to worry about the content of <cod
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=f2a433a1"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

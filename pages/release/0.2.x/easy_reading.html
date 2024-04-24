@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Conclusion" href="tutorial_conclusion.html" /><link rel="prev" title="3- Versioning" href="easy_versioning.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>3- Reading - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,11 +226,11 @@
         </div>
         <article role="main">
           <section id="reading">
-<h1>3- Reading<a class="headerlink" href="#reading" title="Link to this heading">#</a></h1>
+<h1>3- Reading<a class="headerlink" href="#reading" title="Link to this heading">¶</a></h1>
 <p>We have already stored information about 3 runs so far.
 We can access this information easily using MLXP’s reader module, which allows querying results, grouping, and aggregating them. Let’s do this interactively!</p>
 <section id="creating-a-result-database">
-<h2>Creating a result database<a class="headerlink" href="#creating-a-result-database" title="Link to this heading">#</a></h2>
+<h2>Creating a result database<a class="headerlink" href="#creating-a-result-database" title="Link to this heading">¶</a></h2>
 <p>We first start by creating a <code class="samp docutils literal notranslate"><span class="pre">reader</span></code> objects that interacts with the logs of multiple runs contained in the same parent directory (here <code class="samp docutils literal notranslate"><span class="pre">./logs/</span></code>):</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [1]: import mlxp
 
@@ -241,7 +241,7 @@ In [2]: # Creates a database of results stored by the logger that is accessible 
 </div>
 <p>Under the woods, the reader object creates a JSON file <code class="samp docutils literal notranslate"><span class="pre">database.json</span></code> in the directory <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> and stores metadata about all runs contained in that directory.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-text">./logs/</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>logs/
 ├── 1/...
 ├── 2/...
@@ -291,7 +291,7 @@ Finally, all keys stored by the logger when calling the method <code class="samp
 Note that these keys are of type <code class="samp docutils literal notranslate"><span class="pre">LAZYDATA</span></code>, meaning that the database does not store these data but only a reference to them (more on this later).</p>
 </section>
 <section id="querying-the-database">
-<h2>Querying the database<a class="headerlink" href="#querying-the-database" title="Link to this heading">#</a></h2>
+<h2>Querying the database<a class="headerlink" href="#querying-the-database" title="Link to this heading">¶</a></h2>
 <p>Once the database is created, the reader object allows filtering the database by the values taken by some of its fields.
 Not all fields can make a valid query. Only those obtained when displaying the attribute ‘searchable’ are acceptable:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [5]: # Displaying searchable fields must start with info or config
@@ -343,7 +343,7 @@ Out[7]:
 This can be avoided using <strong>lazy evaluation</strong> which we describe next.</p>
 </section>
 <section id="lazy-evaluation">
-<h2>Lazy evaluation<a class="headerlink" href="#lazy-evaluation" title="Link to this heading">#</a></h2>
+<h2>Lazy evaluation<a class="headerlink" href="#lazy-evaluation" title="Link to this heading">¶</a></h2>
 <p>Instead of returning the result of the search as a pandas dataframe, which loads all the content of the, possibly large, <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code> file, we can return a <code class="samp docutils literal notranslate"><span class="pre">mlxp.DataDictList</span></code> object.
 This object can also be rendered as a dataframe but does not load the <code class="samp docutils literal notranslate"><span class="pre">train.json</span></code> files in memory unless the corresponding fields are explicitly accessed.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [8]: # Returning a DataDictList as a result
@@ -369,7 +369,7 @@ Out[10]:
 <p>The object results should be viewed as a list of dictionaries. Each element of the list corresponds to a particular run in the <code class="samp docutils literal notranslate"><span class="pre">parent_log_dir</span></code> directory. The keys of each dictionary in the list are the columns of the dataframe. Finally, it is always to convert a <code class="samp docutils literal notranslate"><span class="pre">DataDictList</span></code> object to a pandas dataframe using the method <code class="samp docutils literal notranslate"><span class="pre">toPandasDF</span></code>.</p>
 </section>
 <section id="grouping-and-aggregation">
-<h2>Grouping and aggregation<a class="headerlink" href="#grouping-and-aggregation" title="Link to this heading">#</a></h2>
+<h2>Grouping and aggregation<a class="headerlink" href="#grouping-and-aggregation" title="Link to this heading">¶</a></h2>
 <p>While it is possible to directly convert the results of a query to a pandas dataframe which supports grouping and aggregation operations,
 MLXP also provides basic support for these operations. Let’s see how this works:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span>In [11]: # List of group keys.
@@ -486,7 +486,7 @@ Out[14]:
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=10f1778b"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

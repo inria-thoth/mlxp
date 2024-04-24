@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Scheduler" href="mlxp.scheduling.html" /><link rel="prev" title="Logger" href="mlxp.logging.html" />
 
-    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>Reader - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
@@ -226,14 +226,14 @@
         </div>
         <article role="main">
           <section id="reader">
-<h1>Reader<a class="headerlink" href="#reader" title="Link to this heading">#</a></h1>
+<h1>Reader<a class="headerlink" href="#reader" title="Link to this heading">¶</a></h1>
 <section id="module-mlxp.reader">
-<span id="the-reader-class"></span><h2>The <a class="reference internal" href="#mlxp.reader.Reader" title="mlxp.reader.Reader"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reader</span></code></a> Class<a class="headerlink" href="#module-mlxp.reader" title="Link to this heading">#</a></h2>
+<span id="the-reader-class"></span><h2>The <a class="reference internal" href="#mlxp.reader.Reader" title="mlxp.reader.Reader"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reader</span></code></a> Class<a class="headerlink" href="#module-mlxp.reader" title="Link to this heading">¶</a></h2>
 <p>The reader allows queryring the logs of several experiments and performing operations
 on the content of these logs (e.g. grouping and aggregation).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.reader.Reader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.reader.</span></span><span class="sig-name descname"><span class="pre">Reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_dir:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_dir:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser:</span> <span class="pre">~mlxp.parser.Parser</span> <span class="pre">=</span> <span class="pre">&lt;mlxp.parser.DefaultParser</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/reader.html#Reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.reader.</span></span><span class="sig-name descname"><span class="pre">Reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_dir:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dst_dir:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser:</span> <span class="pre">~mlxp.parser.Parser</span> <span class="pre">=</span> <span class="pre">&lt;mlxp.parser.DefaultParser</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/reader.html#Reader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class for exploiting the results stored in several runs contained in a same
 parent directory ‘src_dir’.</p>
@@ -246,7 +246,7 @@ However, the user can provide a custom parser with a custom syntax
 inheriting from the class Parser.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxp.reader.Reader.src_dir">
-<span class="sig-name descname"><span class="pre">src_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.reader.Reader.src_dir" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">src_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.reader.Reader.src_dir" title="Link to this definition">¶</a></dt>
 <dd><p>The absolute path of the source/parent directory
 containing logs of the runs.
 It must contain sub-directories ‘src_dir/log_id’,
@@ -255,7 +255,7 @@ where log_id is the uniquely assigned id of a run.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxp.reader.Reader.dst_dir">
-<span class="sig-name descname"><span class="pre">dst_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.reader.Reader.dst_dir" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">dst_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.reader.Reader.dst_dir" title="Link to this definition">¶</a></dt>
 <dd><p>The destination directory where
 the database containing the runs is created.
 By default it is set to the source directory ‘src_dir’.
@@ -265,7 +265,7 @@ by setting the variable ‘dst_dir’ of the constructor to a different director
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.reader.Reader.filter">
-<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'datadict'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/mlxp/reader.html#Reader.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader.filter" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'datadict'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/mlxp/reader.html#Reader.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.reader.Reader.filter" title="Link to this definition">¶</a></dt>
 <dd><p>Search a query in a database of runs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -289,7 +289,7 @@ object of type DataFrame). By default returns a DataFrame object.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="mlxp.reader.Reader.fields">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mlxp.reader.Reader.fields" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mlxp.reader.Reader.fields" title="Link to this definition">¶</a></dt>
 <dd><p>Return all fields of the database except those specific to MLXP, excluding
 the fields contained in the file ‘mlxp.yaml’.</p>
 <p>return: a dataframe of all fields contained in the database
@@ -298,7 +298,7 @@ rtype: pd.DataFrame</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="mlxp.reader.Reader.searchable">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">searchable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mlxp.reader.Reader.searchable" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">searchable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mlxp.reader.Reader.searchable" title="Link to this definition">¶</a></dt>
 <dd><p>Return all fields of the database that are searchable, excluding the fields
 contained in the file ‘mlxp.yaml’.</p>
 <p>return: a dataframe of all fields contained in the database that can be searched using the method filter
@@ -309,17 +309,17 @@ rtype: pd.DataFrame</p>
 
 </section>
 <section id="module-mlxp.parser">
-<span id="the-parser-module"></span><h2>The <a class="reference internal" href="#mlxp.parser.Parser" title="mlxp.parser.Parser"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parser</span></code></a> Module<a class="headerlink" href="#module-mlxp.parser" title="Link to this heading">#</a></h2>
+<span id="the-parser-module"></span><h2>The <a class="reference internal" href="#mlxp.parser.Parser" title="mlxp.parser.Parser"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parser</span></code></a> Module<a class="headerlink" href="#module-mlxp.parser" title="Link to this heading">¶</a></h2>
 <p>Parser object for querying results stored by the reader.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.parser.Parser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><a class="reference internal" href="_modules/mlxp/parser.html#Parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.Parser" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.parser.</span></span><span class="sig-name descname"><span class="pre">Parser</span></span><a class="reference internal" href="_modules/mlxp/parser.html#Parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.Parser" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>An abstract class for parsing queries.</p>
 <p>Any parser used by the class Reader must inherit from this abstract class.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.parser.Parser.parse">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QueryInstance</span></span></span><a class="reference internal" href="_modules/mlxp/parser.html#Parser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.Parser.parse" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QueryInstance</span></span></span><a class="reference internal" href="_modules/mlxp/parser.html#Parser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.Parser.parse" title="Link to this definition">¶</a></dt>
 <dd><p>Parse a query string into a tinydb QueryInstance object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -341,12 +341,12 @@ rtype: pd.DataFrame</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.parser.DefaultParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.parser.</span></span><span class="sig-name descname"><span class="pre">DefaultParser</span></span><a class="reference internal" href="_modules/mlxp/parser.html#DefaultParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.DefaultParser" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.parser.</span></span><span class="sig-name descname"><span class="pre">DefaultParser</span></span><a class="reference internal" href="_modules/mlxp/parser.html#DefaultParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.DefaultParser" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mlxp.parser.Parser" title="mlxp.parser.Parser"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parser</span></code></a></p>
 <p>MLXP’s deafult parser inspired from python’s syntax.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.parser.DefaultParser.parse">
-<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QueryInstance</span></span></span><a class="reference internal" href="_modules/mlxp/parser.html#DefaultParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.DefaultParser.parse" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">QueryInstance</span></span></span><a class="reference internal" href="_modules/mlxp/parser.html#DefaultParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.parser.DefaultParser.parse" title="Link to this definition">¶</a></dt>
 <dd><p>Parse a query string into a tinydb QueryInstance object.</p>
 </dd></dl>
 
@@ -445,7 +445,7 @@ rtype: pd.DataFrame</p>
     </aside>
   </div>
 </div><script src="_static/documentation_options.js?v=10f1778b"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>

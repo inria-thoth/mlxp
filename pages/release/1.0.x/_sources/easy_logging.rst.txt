@@ -29,11 +29,11 @@ In the :samp:`main.py` file, we have added a new line to log the loss at each ep
     ...
 
 
-..note::
+.. note::
     Several dictonaries can be stored successively in the same JSON file even if they do not have the same keys. 
 
 
-..warning::
+.. warning::
     The keys of the dictionary must be consistent accross runs and within each JSON file. 
 
 
