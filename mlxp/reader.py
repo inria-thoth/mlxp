@@ -201,8 +201,12 @@ def _get_metrics_dir(r, src_dir):
 
 
 def _get_log_dir(r, src_dir):
-    abs_metrics_dir = r["info.logger.metrics_dir"]
-    return r["info.logger.log_dir"]
+    #abs_metrics_dir = r["info.logger.metrics_dir"]
+    return os.path.join(src_dir, str(r['info.logger.log_id']))
+    
+
+
+
 
 
 def _get_data(path, metadata_file):
