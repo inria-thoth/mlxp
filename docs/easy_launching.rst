@@ -184,7 +184,7 @@ mlxpsub command!
 
 
 The first step is to create a script ex.: :samp:`script.sh` in your working directory (here under :samp:`my_project/`). 
-In this script, you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for exectuting your main python script. You can then pass different option values to your python script :samp:`main.py` as discussed earlier in 
+In this script, you can define the resources allocated to your jobs, using the syntax of your job scheduler, as well as the python command for executing your main python script. You can then pass different option values to your python script :samp:`main.py` as discussed earlier in 
 :ref:`the launching tutorial <launching_multiruns>`:
 
 .. code-block:: console
@@ -208,7 +208,7 @@ You only need to run the following command in the terminal:
   mlxpsub script.sh
 
 
-What happens under the woods?
+What happens under the hood?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
@@ -220,7 +220,7 @@ Here is what happens:
 4. All generated scripts are submitted to the job scheduler.
 
 
-What you should expect?
+What should you expect?
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 MLXP creates a script for each job corresponding to an option setting. Each script is located in a directory of the form 

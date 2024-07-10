@@ -21,7 +21,7 @@ The first step is to create a directory 'tutorial' containing the code needed fo
    │   └── config.yaml
    ├── core.py
    ├── main.py
-   └── results.py
+   └── read.py
 
 The directory contains three files: :samp:`core.py`, :samp:`main.py` :samp:`results.py`. It also contains a directory :samp:`configs` that will be used later by MLXP. For now, we will only have a look at the :samp:`core.py` and :samp:`main.py` files.
 

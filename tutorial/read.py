@@ -19,7 +19,7 @@ print(reader.searchable)
 
 
 # Searching using a query string
-query = "info.status == 'COMPLETE' & config.model.num_units < 4"
+query = "info.status == 'COMPLETE' & config.model.num_units < 128"
 results = reader.filter(query_string=query, result_format="pandas")
 
 # Display the result as a pandas dataframe 
