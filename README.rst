@@ -70,11 +70,11 @@ Documentation
 A full documentation is available in the `MLXP's official  documentation website <https://inria-thoth.github.io/mlxp/>`_.  
 See the following pages for more detailled information:
 
-`Quick start guide <https://inria-thoth.github.io/mlxp/getting_started.html>`_:  
+`Quick start guide <https://inria-thoth.github.io/mlxp/pages/master/getting_started.html>`_:
 for a simple example of how to use MLXP. 
-`Tutorial <https://inria-thoth.github.io/mlxp/tutorial.html>`_: 
+`Tutorial <https://inria-thoth.github.io/mlxp/pages/master/tutorial.html>`_: 
 to get a better understanding of all functionalities provided by MLXP.
-`Documentation <https://inria-thoth.github.io/mlxp/mlxp.html>`_: 
+`Documentation <https://inria-thoth.github.io/mlxp/pages/master/mlxp.html>`_: 
 for detailed documentation.
 
 

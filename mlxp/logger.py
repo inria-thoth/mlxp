@@ -12,6 +12,7 @@ from typing import Any, Callable, Dict, Union
 
 import dill as pkl
 import yaml
+import shutil
 
 from mlxp.data_structures.artifacts import Artifact_types
 from mlxp.data_structures.config_dict import ConfigDict
@@ -19,6 +20,8 @@ from mlxp.enumerations import Directories
 from mlxp.errors import InvalidArtifactError, InvalidKeyError
 
 invalid_metrics_file_names = ["info", "config", "mlxp", "artifacts"]
+
+
 
 
 class Logger(abc.ABC):
@@ -165,7 +168,9 @@ class Logger(abc.ABC):
         subdir = os.path.join(self.artifacts_dir, artifact_type, os.path.dirname(artifact_name))
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(self.artifacts_dir, artifact_type, artifact_name)
-        self._artifact_types[artifact_type]["save"](artifact, fname)
+        fname_tmp = fname+'_tmp'
+        self._artifact_types[artifact_type]["save"](artifact, fname_tmp)
+        shutil.move(fname_tmp,fname)
         self._log_artifact_type(artifact_name, artifact_type)
 
     def load_artifacts(
