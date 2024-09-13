@@ -17,11 +17,12 @@ from hydra import version
 from hydra._internal.utils import _run_hydra, get_args_parser
 from hydra.core.hydra_config import HydraConfig
 from hydra.types import TaskFunction
-from omegaconf import DictConfig
+import omegaconf
+from omegaconf import DictConfig, OmegaConf
 
 import mlxp
 from mlxp._internal.configure import _build_config, _process_config_path
-from mlxp.data_structures.config_dict import ConfigDict
+from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.enumerations import Status
 from mlxp.errors import InvalidSchedulerError, MissingFieldError
 from mlxp.logger import Logger
@@ -163,7 +164,7 @@ def launch(
         def decorated_task(overrides):
             co_filename = task_function.__code__.co_filename
 
-            cfg, im_handler = _build_config(
+            config, mlxp_cfg, info_cfg, im_handler = _build_config(
                 config_path, config_name, co_filename, overrides, interactive_mode_file
             )
             now = datetime.now()
@@ -176,29 +177,30 @@ def launch(
                 "start_time": now.strftime("%H:%M:%S"),
                 "status": Status.STARTING.value,
             }
-
-            cfg.update({"info": info})
-
-            if cfg.mlxp.use_version_manager:
-                version_manager = _instance_from_config(cfg.mlxp.version_manager)
+            OmegaConf.update(info_cfg, "info", info, merge=True)
+            if mlxp_cfg.mlxp.use_version_manager:
+                version_manager = _instance_from_config(mlxp_cfg.mlxp.version_manager)
                 version_manager._set_im_handler(im_handler)
                 work_dir = version_manager.make_working_directory()
-                cfg.update({"info": {"version_manager": version_manager.get_info()}})
+                #cfg.update({"info": {"version_manager": version_manager.get_info()}})
+                OmegaConf.update(info_cfg, "info", {"version_manager": version_manager.get_info()}, merge=True)
             else:
                 work_dir = os.getcwd()
 
-            cfg.update({"info": {"work_dir": work_dir}})
+            #cfg.update({"info": {"work_dir": work_dir}})
+            OmegaConf.update(info_cfg, "info", {"work_dir": work_dir}, merge=True)
 
-            if cfg.mlxp.use_scheduler:
+            if mlxp_cfg.mlxp.use_scheduler:
                 try:
-                    scheduler = _instance_from_config(cfg.mlxp.scheduler, module=mlxp.scheduler)
-                    if not cfg.mlxp.use_logger:
+                    scheduler = _instance_from_config(mlxp_cfg.mlxp.scheduler, module=mlxp.scheduler)
+                    if not mlxp_cfg.mlxp.use_logger:
                         print("Logger is currently disabled.")
                         print("To use the scheduler, the logger must be enabled")
                         print("Enabling the logger...")
-                        cfg.mlxp.use_logger = True
+                        OmegaConf.update(mlxp_cfg, "mlxp", {"use_logger": True}, merge=True)
+                        #mlxp_cfg.mlxp.use_logger = True
                 except AttributeError:
-                    error_msg = cfg.mlxp.scheduler.name + " is not a valid scheduler\n"
+                    error_msg = mlxp_cfg.mlxp.scheduler.name + " is not a valid scheduler\n"
                     error_msg += "There are two options to prevent this error from happening:\n"
                     error_msg += " 1) Disable the scheduler by setting mlxp.use_scheduler=False\n"
                     error_msg += " 2) Configure a valid scheduler: for instance, you can use the interactive mode to select one of the default schedulers\n"
@@ -209,46 +211,70 @@ def launch(
             else:
                 scheduler = None
 
-            if cfg.mlxp.use_logger:
-                logger = _instance_from_config(cfg.mlxp.logger)
+            if mlxp_cfg.mlxp.use_logger:
+                logger = _instance_from_config(mlxp_cfg.mlxp.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
-                cfg.update({"info": {"logger": logger.get_info()}})
-                cfg.update({"config": _get_configs(log_dir)})
+                OmegaConf.update(info_cfg, "info", {"logger": logger.get_info()}, merge=True)
+                #config = OmegaConf.merge(config , _get_configs(log_dir)) #### TODO: ensures existing job can only use the config for which it was originally created  
+
             else:
                 logger = None
 
-            if cfg.mlxp.use_scheduler:
+            if mlxp_cfg.mlxp.use_scheduler:
                 main_cmd = _main_job_command(
-                    cfg.info.executable, cfg.info.current_file_path, work_dir, parent_log_dir, log_id,
+                    info_cfg.info.executable, info_cfg.info.current_file_path, work_dir, parent_log_dir, log_id,
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
-                cfg.update({"info": {"scheduler": scheduler.get_info()}})
-                logger._log_configs(cfg)
+                OmegaConf.update(info_cfg, "info", {"scheduler": scheduler.get_info()}, merge=True)
+                logger._log_configs(config, "config_unresolved", resolve=False)
+                logger._log_configs(info_cfg.info, "info")
 
             else:
                 # ## Setting up the working directory
                 cur_dir = os.getcwd()
                 _set_work_dir(work_dir)
+                OmegaConf.update(info_cfg, "info", {"status": Status.RUNNING.value}, merge=True)
+
 
                 if logger:
-                    cfg.update({"info": _get_mlxp_configs(log_dir)})
+                    #cfg.update({"info": _get_mlxp_configs(log_dir)})
+                    OmegaConf.update(info_cfg, "info", _get_mlxp_configs(log_dir), merge=True)
+                    logger._log_configs(config)
+                    logger._log_configs(info_cfg.info, "info")
+
+                
                 try:
-                    cfg.update({"info": {"status": Status.RUNNING.value}})
-                    if logger:
-                        logger._log_configs(cfg)
+                    
+                   # cfg.update({"info": {"status": Status.RUNNING.value}})
+
                     if seeding_function:
                         try:
-                            assert "seed" in cfg.config.keys()
+                            assert "seed" in config.keys()
                         except AssertionError:
                             msg = "Missing field: The 'config' must contain a field named 'seed'\n"
                             msg += "provided as argument to the function 'seeding_function' "
                             raise MissingFieldError(msg)
-                        seeding_function(cfg.config.seed)
+                        seeding_function(config.seed)
+                    # if mlxp_cfg.mlxp.config_read_only:
+                    #     OmegaConf.set_readonly(config, True)
+                    # else:
+                    #     OmegaConf.set_readonly(config, False)
+                    
+                    if mlxp_cfg.mlxp.resolve:
+                        OmegaConf.resolve(config)
 
-                    ctx = Context(config=cfg.config, mlxp=cfg.mlxp, info=cfg.info, logger=logger)
+                    if mlxp_cfg.mlxp.as_ConfigDict:
+                        config = convert_dict(config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    
+                    ctx = Context(config=config, mlxp=mlxp_cfg, info=info_cfg, logger=logger)
+                    #config_dict = convert_dict(config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    #mlxp_cfg_dict = convert_dict(mlxp_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    #info_cfg_dict = convert_dict(info_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    #ctx = Context(config=config_dict, mlxp=mlxp_cfg_dict, info=info_cfg_dict, logger=logger)
+
                     task_function(ctx)
                     now = datetime.now()
                     info = {
@@ -256,11 +282,9 @@ def launch(
                         "end_time": now.strftime("%H:%M:%S"),
                         "status": Status.COMPLETE.value,
                     }
-
-                    cfg.update({"info": info})
-
+                    OmegaConf.update(info_cfg, "info", info, merge=True)
                     if logger:
-                        logger._log_configs(cfg)
+                        logger._log_configs(info_cfg.info, "info")
 
                     _reset_work_dir(cur_dir)
                     return None
@@ -271,11 +295,9 @@ def launch(
                         "end_time": now.strftime("%H:%M:%S"),
                         "status": Status.FAILED.value,
                     }
-
-                    cfg.update({"info": info})
-
+                    OmegaConf.update(info_cfg, "info", info, merge=True)
                     if logger:
-                        logger._log_configs(cfg)
+                        logger._log_configs(info_cfg.info, "info")
 
                     _reset_work_dir(cur_dir)
                     raise
@@ -325,9 +347,12 @@ class Context:
         When logging is enabled, these variables are all stored in a uniquely defined directory.
     """
 
-    config: ConfigDict = None
-    mlxp: ConfigDict = None
-    info: ConfigDict = None
+    #config: ConfigDict = None
+    #mlxp: ConfigDict = None
+    #info: ConfigDict = None
+    config: DictConfig = None
+    mlxp: DictConfig = None
+    info: DictConfig = None
     logger: Union[Logger, None] = None
 
 
@@ -416,7 +441,7 @@ def _get_configs(log_dir):
     if os.path.isfile(abs_name):
         with open(abs_name, "r") as file:
             configs = yaml.safe_load(file)
-
+    configs = OmegaConf.create(configs)
     return configs
 
 

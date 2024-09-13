@@ -158,6 +158,57 @@ def mlxpsub():
         These commands will be copied from  'script.sh' to  the new created script 
         and placed before the python command. Variable assignments and directory changes
         will be systematically ignored.
+
+    To use :samp:`mlxpsub`, MLXP must be installed on both the head node and all compute nodes. 
+    However, application-specific modules do not need to be installed on the head node. 
+    You can avoid installing them on the head node by ensuring that these modules are only 
+    imported within the function that is decorated with the :samp:`mlxp.launch` decorator. 
+
+    In the follwing example, the :samp:`mlxp.launch` decorator is used in the file :samp:`main.py` to decorate the function :samp:`train`.
+    The version below of :samp:`main.py` requires :samp:`torch` to be installed in the head node:
+
+
+    .. code-block:: python
+        :caption: main.py
+
+        
+        import torch
+
+        import mlxp
+
+        @mlxp.launch(config_path='./configs')
+        def train(ctx: mlxp.Context)->None:
+
+            cfg = ctx.config
+            logger = ctx.logger
+
+            ...
+
+        if __name__ == "__main__":
+            train()
+
+
+    To avoid installing :samp:`torch` on the head node, 
+    you can make the following simple modification to the :samp:`main.py` file:  
+
+    .. code-block:: python
+        :caption: main.py
+
+        import mlxp
+
+        @mlxp.launch(config_path='./configs')
+        def train(ctx: mlxp.Context)->None:
+            
+            import torch
+
+            cfg = ctx.config
+            logger = ctx.logger
+
+            ...
+
+        if __name__ == "__main__":
+            train()
+
     """
 
     if len(sys.argv) != 2:

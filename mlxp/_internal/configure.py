@@ -6,7 +6,6 @@ import yaml
 from omegaconf import OmegaConf
 
 from mlxp._internal._interactive_mode import InteractiveModeHandler, _bcolors, _printc
-from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.data_structures.schemas import Metadata
 from mlxp.enumerations import DefaultSchedulers
 from mlxp.errors import InvalidConfigFileError
@@ -136,16 +135,30 @@ def _ask_configure_scheduler(mlxp_config):
             break
 
 
+# def _update_config(default_cfg, overrides_config, overrides_mlxp):
+
+#     if overrides_mlxp:
+#         cfg = OmegaConf.merge(default_cfg, overrides_mlxp)
+#     else:
+#         cfg = deepcopy(default_cfg)
+
+#     cfg = OmegaConf.merge(cfg, overrides_config)
+
+#     return cfg
+
 def _update_config(default_cfg, overrides_config, overrides_mlxp):
-
+    info_cfg = OmegaConf.create({"info": default_cfg.info})
+    mlxp_cfg = OmegaConf.create({"mlxp": default_cfg.mlxp}) 
+    config = default_cfg.config
     if overrides_mlxp:
-        cfg = OmegaConf.merge(default_cfg, overrides_mlxp)
-    else:
-        cfg = deepcopy(default_cfg)
+        mlxp_cfg = OmegaConf.merge(mlxp_cfg, overrides_mlxp)
+    #else:
+    #    cfg = deepcopy(default_cfg)
+    #if overrides_config:
+    #    config = OmegaConf.merge(default_cfg.config, overrides_config)
 
-    cfg = OmegaConf.merge(cfg, overrides_config)
+    return overrides_config, mlxp_cfg, info_cfg
 
-    return cfg
 
 
 def _build_config(config_path, config_name, co_filename, overrides, interactive_mode_file):
@@ -156,44 +169,47 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
     if not os.path.exists(custom_config_file):
         with open(custom_config_file, "w"):
             pass
-
-    overrides_mlxp, overrides_config = _process_overrides(overrides)
-
     default_cfg = _get_default_config(config_path)
-    # Override default configsq
-    cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
-
-    im_handler = InteractiveModeHandler(cfg["mlxp"]["interactive_mode"], interactive_mode_file)
-    # scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
-    # update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
 
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
     if not os.path.exists(mlxp_file):
-        _save_mlxp_file(default_cfg, mlxp_file)
+        _save_mlxp_file(default_cfg.mlxp, mlxp_file)
 
-    cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
-    cfg = _update_scheduler_config(cfg)
-    cfg = convert_dict(cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-    _update_default_directories(cfg.mlxp, co_filename)
+    overrides_mlxp, overrides_config = _process_overrides(overrides)
 
-    return cfg, im_handler
+    # Override default configsq
+    config, mlxp_cfg, info_cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
+
+    
+    # scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
+    # update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
+
+
+
+    #cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
+    
+    mlxp_cfg = _update_scheduler_config(mlxp_cfg)
+    _update_default_directories(mlxp_cfg.mlxp, co_filename)
+    im_handler = InteractiveModeHandler(mlxp_cfg.mlxp.interactive_mode, interactive_mode_file)
+    
+    return config, mlxp_cfg, info_cfg, im_handler
 
 
 def _process_overrides(overrides):
+
     if "mlxp" in overrides:
-        overrides_mlxp = OmegaConf.create({"mlxp": overrides["mlxp"]})
+        #overrides_mlxp = OmegaConf.to_container(cfg.hydra.overrides.task, resolve=False)
+        overrides_mlxp = OmegaConf.create({"mlxp": overrides.mlxp})
     #        cfg = OmegaConf.merge(cfg, overrides_mlxp)
     else:
         overrides_mlxp = None
 
-    overrides = convert_dict(overrides, src_class=omegaconf.dictconfig.DictConfig, dst_class=dict)
-    if "mlxp" in overrides:
+    omegaconf.OmegaConf.set_struct(overrides, True)
+    with omegaconf.open_dict(overrides):
         overrides.pop("mlxp")
-    overrides = convert_dict(overrides, src_class=dict, dst_class=omegaconf.dictconfig.DictConfig)
+    omegaconf.OmegaConf.set_struct(overrides, False)
 
-    overrides_config = OmegaConf.create({"config": overrides})
-
-    return overrides_mlxp, overrides_config
+    return overrides_mlxp, overrides
 
 
 def _get_mlxp_configs(mlxp_file, default_config_mlxp):
@@ -269,9 +285,9 @@ def _get_default_config(config_path):
     return default_config
 
 
-def _save_mlxp_file(default_config, mlxp_file):
+def _save_mlxp_file(mlxp_conf, mlxp_file):
 
-    mlxp_conf = OmegaConf.create(default_config["mlxp"])
+    #mlxp_conf = OmegaConf.create(default_config["mlxp"])
     omegaconf.OmegaConf.save(config=mlxp_conf, f=mlxp_file)
     _printc(
         _bcolors.OKBLUE, f"Default settings for mlxp are saved in {mlxp_file} ",

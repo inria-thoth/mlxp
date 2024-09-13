@@ -14,8 +14,9 @@ import dill as pkl
 import yaml
 import shutil
 
+import omegaconf
+from omegaconf import DictConfig, OmegaConf
 from mlxp.data_structures.artifacts import Artifact_types
-from mlxp.data_structures.config_dict import ConfigDict
 from mlxp.enumerations import Directories
 from mlxp.errors import InvalidArtifactError, InvalidKeyError
 
@@ -87,16 +88,14 @@ class Logger(abc.ABC):
             log_stderr = open(os.path.join(self._log_dir, "log.stderr"), "w", buffering=1)
             sys.stderr = log_stderr
 
-    def _log_configs(self, config: ConfigDict) -> None:
-        file_name = os.path.join(self.metadata_dir, "config")
+    def _log_configs(self, config: omegaconf.dictconfig.DictConfig, 
+                    name: str = "config" ,
+                    resolve: bool = True) -> None:
+        file_name = os.path.join(self.metadata_dir, name)
+        #config = OmegaConf.to_container(config, resolve=resolve)   
         with open(file_name + ".yaml", "w") as f:
-            yaml.dump(config.config.to_dict(), f)
-        file_name = os.path.join(self.metadata_dir, "info")
-        with open(file_name + ".yaml", "w") as f:
-            yaml.dump(config.info.to_dict(), f)
-        # file_name = os.path.join(self.metadata_dir, "mlxp")
-        # with open(file_name + ".yaml", "w") as f:
-        #    yaml.dump(config.mlxp.to_dict(), f)
+            OmegaConf.save(config=config, f=f, resolve=resolve)
+            #yaml.dump(config, f)
 
     def get_info(self) -> None:
         """Return a dictionary containing information about the logger settings used for
@@ -126,12 +125,13 @@ class Logger(abc.ABC):
         :type metrics_dict: Dict[str, Union[int, float, str]]
         :type log_name: str
         :return: None
+        :raises InvalidKeyError: if one of the keys in the metrics_dict is protected: the key must be different from "info", "config", "mlxp" and "artifacts".
         """
         try:
             assert log_name not in invalid_metrics_file_names
         except AssertionError:
             raise InvalidKeyError(
-                f"The chosen log_nam:  {log_name} is invalid! It must be different from these protected names: {invalid_metrics_file_names} "
+                f"The chosen log_name:  {log_name} is invalid! It must be different from these protected names: {invalid_metrics_file_names} "
             )
 
         self._log_metrics_key(metrics_dict, log_name)

@@ -294,6 +294,20 @@ class MLXPConfig:
 
                     - Existing untracked files or uncommitted changes are ignored.
                     - A copy of the code is made based on the latest commit (if not already existing) and code is executed from there.
+    
+    .. py:attribute:: resolve
+        :type: bool
+
+        If true, resolves the configurations prior to stating the job
+        (default True)
+
+    .. py:attribute:: as_ConfigDict
+        :type: bool
+
+        If true, converts the configurations from an omegaconf.dictconfig.DictConfig object to the custom mlxp.ConfigDict object.
+        Once converted, the object becomes mutable. 
+        (default True)
+
     """
 
     logger: ConfigLogger = field(default_factory=lambda: ConfigLogger())
@@ -303,7 +317,9 @@ class MLXPConfig:
     use_scheduler: bool = False
     use_logger: bool = True
     interactive_mode: bool = True
-
+    #config_read_only: bool = False
+    resolve: bool = True
+    as_ConfigDict: bool = True
 
 @dataclass
 class Metadata:
