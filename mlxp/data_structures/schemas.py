@@ -305,7 +305,7 @@ class MLXPConfig:
         :type: bool
 
         If true, converts the configurations from an omegaconf.dictconfig.DictConfig object to the custom mlxp.ConfigDict object.
-        Once converted, the object becomes mutable. 
+        Once converted, the object becomes mutable and all its values are resolved. 
         (default True)
 
     """
