@@ -96,6 +96,10 @@ class Reader(object):
         :rtype: int
         """
         return len(self.runs)
+    
+    def __del__(self):
+        self.db.close()
+
 
     def filter(
         self, query_string: str = "", result_format: str = DataFrameType.DataFrame.value,
