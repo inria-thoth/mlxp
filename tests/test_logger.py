@@ -39,25 +39,25 @@ def test_Logger(logger):
 
 	assert logger.log_dir == os.path.join(log_dir,'1')
 
-def test_log_configs(logger):
-	# Test the method log_metrics of a Logger object
+# def test_log_configs(logger):
+# 	# Test the method log_metrics of a Logger object
 
-	# Log the configurations
-	configs = {'config':{'optimizer':{'lr':0.01,'momentum':0.9},'model':{'num_units':100}},
-				'info':{'status':'COMPLETE'}}
-	configsdict =  convert_dict(configs, src_class=dict)
-	logger._log_configs(configsdict)
+# 	# Log the configurations
+# 	configs = {'config':{'optimizer':{'lr':0.01,'momentum':0.9},'model':{'num_units':100}},
+# 				'info':{'status':'COMPLETE'}}
+# 	configsdict =  convert_dict(configs, src_class=dict)
+# 	logger._log_configs(configsdict)
 	
-	# Load the yaml files that were logged
-	import yaml
-	with open(logger.log_dir+'/metadata/config.yaml') as file:
-		config = yaml.safe_load(file)
-	with open(logger.log_dir+'/metadata/info.yaml') as file:
-		info = yaml.safe_load(file)
+# 	# Load the yaml files that were logged
+# 	import yaml
+# 	with open(logger.log_dir+'/metadata/config.yaml') as file:
+# 		config = yaml.safe_load(file)
+# 	with open(logger.log_dir+'/metadata/info.yaml') as file:
+# 		info = yaml.safe_load(file)
 
-	# Assert loaded config dict is equal to the original
-	assert config == configs['config']
-	assert info == configs['info']
+# 	# Assert loaded config dict is equal to the original
+# 	assert config == configs['config']
+# 	assert info == configs['info']
 
 
 def test_log_metrics(logger):

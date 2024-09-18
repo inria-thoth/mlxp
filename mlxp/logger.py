@@ -6,23 +6,21 @@ import json
 import marshal
 import os
 import random
+import shutil
 import sys
 from time import sleep
 from typing import Any, Callable, Dict, Union
 
 import dill as pkl
-import yaml
-import shutil
-
 import omegaconf
+import yaml
 from omegaconf import DictConfig, OmegaConf
+
 from mlxp.data_structures.artifacts import Artifact_types
 from mlxp.enumerations import Directories
 from mlxp.errors import InvalidArtifactError, InvalidKeyError
 
 invalid_metrics_file_names = ["info", "config", "mlxp", "artifacts"]
-
-
 
 
 class Logger(abc.ABC):
@@ -88,14 +86,14 @@ class Logger(abc.ABC):
             log_stderr = open(os.path.join(self._log_dir, "log.stderr"), "w", buffering=1)
             sys.stderr = log_stderr
 
-    def _log_configs(self, config: omegaconf.dictconfig.DictConfig, 
-                    name: str = "config" ,
-                    resolve: bool = True) -> None:
+    def _log_configs(
+        self, config: omegaconf.dictconfig.DictConfig, name: str = "config", resolve: bool = True
+    ) -> None:
         file_name = os.path.join(self.metadata_dir, name)
-        #config = OmegaConf.to_container(config, resolve=resolve)   
+        # config = OmegaConf.to_container(config, resolve=resolve)
         with open(file_name + ".yaml", "w") as f:
             OmegaConf.save(config=config, f=f, resolve=resolve)
-            #yaml.dump(config, f)
+            # yaml.dump(config, f)
 
     def get_info(self) -> None:
         """Return a dictionary containing information about the logger settings used for
@@ -125,7 +123,8 @@ class Logger(abc.ABC):
         :type metrics_dict: Dict[str, Union[int, float, str]]
         :type log_name: str
         :return: None
-        :raises InvalidKeyError: if one of the keys in the metrics_dict is protected: the key must be different from "info", "config", "mlxp" and "artifacts".
+        :raises InvalidKeyError: if one of the keys in the metrics_dict is protected:
+            the key must be different from "info", "config", "mlxp" and "artifacts".
         """
         try:
             assert log_name not in invalid_metrics_file_names
@@ -168,9 +167,9 @@ class Logger(abc.ABC):
         subdir = os.path.join(self.artifacts_dir, artifact_type, os.path.dirname(artifact_name))
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(self.artifacts_dir, artifact_type, artifact_name)
-        fname_tmp = fname+'_tmp'
+        fname_tmp = fname + "_tmp"
         self._artifact_types[artifact_type]["save"](artifact, fname_tmp)
-        shutil.move(fname_tmp,fname)
+        shutil.move(fname_tmp, fname)
         self._log_artifact_type(artifact_name, artifact_type)
 
     def load_artifacts(

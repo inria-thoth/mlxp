@@ -53,7 +53,7 @@ class ConfigScheduler:
         A list of strings containing the scheduler's options for the job. This allows to specify the desired resources to the scheduler such as the duration of the job, the quantity and type of resources, etc.
     """
 
-    name: str = "NoScheduler"
+    name: str = "mlxp.Scheduler"
     shell_path: str = get_defautl_shell_path()
     shell_config_cmd: str = ""
     env_cmd: str = ""
@@ -97,7 +97,7 @@ class ConfigGitVM(ConfigVersionManager):
         When set to true, the version manager stores a list of requirements and their version.
     """
 
-    name: str = "GitVM"
+    name: str = "mlxp.GitVM"
     parent_work_dir: str = os.path.join(".", ".work_dir")
     compute_requirements: bool = False
 
@@ -136,7 +136,7 @@ class ConfigLogger:
         "log.stdour" and "log.stderr" in the log directory.
     """
 
-    name: str = "DefaultLogger"
+    name: str = "mlxp.DefaultLogger"
     parent_log_dir: str = os.path.join(".", "logs")
     forced_log_id: int = -1
     log_streams_to_file: bool = False
@@ -294,7 +294,7 @@ class MLXPConfig:
 
                     - Existing untracked files or uncommitted changes are ignored.
                     - A copy of the code is made based on the latest commit (if not already existing) and code is executed from there.
-    
+
     .. py:attribute:: resolve
         :type: bool
 
@@ -305,21 +305,21 @@ class MLXPConfig:
         :type: bool
 
         If true, converts the configurations from an omegaconf.dictconfig.DictConfig object to the custom mlxp.ConfigDict object.
-        Once converted, the object becomes mutable and all its values are resolved. 
+        Once converted, the object becomes mutable and all its values are resolved.
         (default True)
-
     """
 
     logger: ConfigLogger = field(default_factory=lambda: ConfigLogger())
-    scheduler: ConfigScheduler = field(default_factory=lambda: ConfigScheduler())
+    #scheduler: ConfigScheduler = field(default_factory=lambda: ConfigScheduler())
     version_manager: ConfigVersionManager = field(default_factory=lambda: ConfigGitVM())
     use_version_manager: bool = False
     use_scheduler: bool = False
     use_logger: bool = True
     interactive_mode: bool = True
-    #config_read_only: bool = False
+    # config_read_only: bool = False
     resolve: bool = True
     as_ConfigDict: bool = True
+
 
 @dataclass
 class Metadata:

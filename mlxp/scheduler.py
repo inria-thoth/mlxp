@@ -186,7 +186,7 @@ class Scheduler(abc.ABC):
         self.error_file_cmd = error_file_cmd
         self.submission_cmd = submission_cmd
         self.option_cmd = option_cmd
-        self.shell_config_cmd = shell_config_cmd
+        self.shell_config_cmd = shell_config_cmd  # Not used anymore 
         self.shell_path = shell_path
         self.env_cmd = env_cmd
         self.process_output = None
@@ -343,8 +343,8 @@ def create_scheduler(scheduler_spec):
     # return globals()[subclass_name]
 
 
-for key, value in Schedulers_dict.items():
-    create_scheduler(value)
+#for key, value in Schedulers_dict.items():
+#    create_scheduler(value)
 
 
 # class OARScheduler(Scheduler):

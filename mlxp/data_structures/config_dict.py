@@ -5,6 +5,7 @@ from typing import Any, Dict, Type
 import omegaconf
 import yaml
 
+
 class ConfigDict(dict):
     """A subclass of the dict class containing the configuration options.
 

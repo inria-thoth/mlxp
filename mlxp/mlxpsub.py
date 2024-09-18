@@ -7,6 +7,7 @@ import tempfile
 import yaml
 
 from mlxp.scheduler import Schedulers_dict
+from mlxp.errors import InvalidSchedulerError
 
 scheduler_env_var = "MLXP_SCHEDULER"
 
@@ -34,17 +35,19 @@ def process_bash_script(bash_script_name):
                 if len(splitted_line) > 1:
                     directive = splitted_line[0]
                     option_cmd = " ".join(splitted_line[1:])
-                    if directive in Schedulers_dict:
-                        scheduler["name"] = Schedulers_dict[directive]["name"]
+                    
+                    try:
+                        assert directive in Schedulers_dict
+                        scheduler["name"] = directive #Schedulers_dict[directive]["name"]
                         scheduler["option_cmd"].append(option_cmd)
+                    except AssertionError:
+                        error_msg = directive + " does not correspond to any supported scheduler\n"
+                        error_msg += f"Supported directives are {list(Schedulers_dict.keys())}" 
+                        raise InvalidSchedulerError(error_msg) from None
 
             elif not skip_cmd(line):
                 scheduler["env_cmd"].append(line)
                 continue
-
-    if scheduler["name"] == "NoScheduler":
-        print("Warning: No valid scheduler syntax were found")
-        print("Valid scheduler")
 
     configs = {"scheduler": scheduler, "use_scheduler": True}
     return configs, shebang

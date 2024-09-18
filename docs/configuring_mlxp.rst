@@ -17,13 +17,6 @@ By default,  :samp:`./configs/mlxp.yaml` contains the following:
      parent_log_dir: ./logs
      forced_log_id: -1
      log_streams_to_file: false
-   scheduler:
-     name: NoScheduler
-     shell_path: ''
-     shell_config_cmd: ''
-     env_cmd: ''
-     cleanup_cmd: ''
-     option_cmd: []
    version_manager:
      name: GitVM
      parent_work_dir: ./.workdir
@@ -40,11 +33,6 @@ The options under  :samp:`logger` are specific to the MLXP logger object. The fi
 - :samp:`parent_log_dir`: The location where the directories of each run will be stored. The outputs for each run are saved in a directory of the form :samp:`parent_log_dir/log_id` where :samp:`log_id` is an integer uniquely assigned by the logger to the run.
 - :samp:`forced_log_id`: An id optionally provided by the user for the run. If :samp:`forced_log_id` is positive, the logs of the run will be stored under :samp:`parent_log_dir/forced_log_id`. Otherwise, the logs will be stored in a directory :samp:`parent_log_dir/log_id` where :samp:`log_id` is assigned uniquely for the run during execution. 
 - :samp:`log_streams_to_file`: If true logs the system stdout and stderr of a run to a file named :samp:`log.stdout`  and :samp:`log.stderr` in the log directory.
-
-The scheduler (Deprecated since version 0.2.0)
-----------------------------------------------
-
-Since version 0.2.0, there is no need to configure the scheduler. The :samp:`mlxpsub` command automatically detects the scheduler's configurations from the main submission script (see :ref:`mlxpsub command <mlxpsub>`)
 
 
 The version manager

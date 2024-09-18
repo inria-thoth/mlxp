@@ -166,8 +166,11 @@ class GitVM(VersionManager):
             _printc(
                 _bcolors.OKBLUE, "Run will be executed from a backup directory based on the latest commit ",
             )
-            _printc(_bcolors.FAIL, f"Warning: if you are using relative paths in the config, these will be relative to the backup directory. If you do not want this behavior please use absolute paths.")
-    
+            _printc(
+                _bcolors.FAIL,
+                f"Warning: if you are using relative paths in the config, these will be relative to the backup directory. If you do not want this behavior please use absolute paths.",
+            )
+
     def _handle_commit_state(self, repo):
         while True:
             done = True

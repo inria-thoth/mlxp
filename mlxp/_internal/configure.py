@@ -146,19 +146,19 @@ def _ask_configure_scheduler(mlxp_config):
 
 #     return cfg
 
+
 def _update_config(default_cfg, overrides_config, overrides_mlxp):
     info_cfg = OmegaConf.create({"info": default_cfg.info})
-    mlxp_cfg = OmegaConf.create({"mlxp": default_cfg.mlxp}) 
+    mlxp_cfg = OmegaConf.create({"mlxp": default_cfg.mlxp})
     config = default_cfg.config
     if overrides_mlxp:
         mlxp_cfg = OmegaConf.merge(mlxp_cfg, overrides_mlxp)
-    #else:
+    # else:
     #    cfg = deepcopy(default_cfg)
-    #if overrides_config:
+    # if overrides_config:
     #    config = OmegaConf.merge(default_cfg.config, overrides_config)
 
     return overrides_config, mlxp_cfg, info_cfg
-
 
 
 def _build_config(config_path, config_name, co_filename, overrides, interactive_mode_file):
@@ -180,25 +180,22 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
     # Override default configsq
     config, mlxp_cfg, info_cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
 
-    
     # scheduler_settings = _get_scheduler_settings(default_cfg, overrides_mlxp)
     # update_default_config = _set_scheduler(default_cfg, scheduler_settings,  im_handler)
 
+    # cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
 
-
-    #cfg = _update_config(default_cfg, overrides_config, overrides_mlxp)
-    
     mlxp_cfg = _update_scheduler_config(mlxp_cfg)
     _update_default_directories(mlxp_cfg.mlxp, co_filename)
     im_handler = InteractiveModeHandler(mlxp_cfg.mlxp.interactive_mode, interactive_mode_file)
-    
+
     return config, mlxp_cfg, info_cfg, im_handler
 
 
 def _process_overrides(overrides):
 
     if "mlxp" in overrides:
-        #overrides_mlxp = OmegaConf.to_container(cfg.hydra.overrides.task, resolve=False)
+        # overrides_mlxp = OmegaConf.to_container(cfg.hydra.overrides.task, resolve=False)
         overrides_mlxp = OmegaConf.create({"mlxp": overrides.mlxp})
     #        cfg = OmegaConf.merge(cfg, overrides_mlxp)
     else:
@@ -287,7 +284,7 @@ def _get_default_config(config_path):
 
 def _save_mlxp_file(mlxp_conf, mlxp_file):
 
-    #mlxp_conf = OmegaConf.create(default_config["mlxp"])
+    # mlxp_conf = OmegaConf.create(default_config["mlxp"])
     omegaconf.OmegaConf.save(config=mlxp_conf, f=mlxp_file)
     _printc(
         _bcolors.OKBLUE, f"Default settings for mlxp are saved in {mlxp_file} ",

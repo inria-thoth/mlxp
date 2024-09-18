@@ -12,15 +12,14 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
+import omegaconf
 import yaml
 from hydra import version
 from hydra._internal.utils import _run_hydra, get_args_parser
 from hydra.core.hydra_config import HydraConfig
 from hydra.types import TaskFunction
-import omegaconf
 from omegaconf import DictConfig, OmegaConf
 
-import mlxp
 from mlxp._internal.configure import _build_config, _process_config_path
 from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.enumerations import Status
@@ -179,32 +178,36 @@ def launch(
             }
             OmegaConf.update(info_cfg, "info", info, merge=True)
             if mlxp_cfg.mlxp.use_version_manager:
-                version_manager = _instance_from_config(mlxp_cfg.mlxp.version_manager)
+                version_manager = instantiate(mlxp_cfg.mlxp.version_manager.pop('name'))(**mlxp_cfg.mlxp.version_manager)
                 version_manager._set_im_handler(im_handler)
                 work_dir = version_manager.make_working_directory()
-                #cfg.update({"info": {"version_manager": version_manager.get_info()}})
-                OmegaConf.update(info_cfg, "info", {"version_manager": version_manager.get_info()}, merge=True)
+                # cfg.update({"info": {"version_manager": version_manager.get_info()}})
+                OmegaConf.update(
+                    info_cfg, "info", {"version_manager": version_manager.get_info()}, merge=True
+                )
             else:
                 work_dir = os.getcwd()
 
-            #cfg.update({"info": {"work_dir": work_dir}})
+            # cfg.update({"info": {"work_dir": work_dir}})
             OmegaConf.update(info_cfg, "info", {"work_dir": work_dir}, merge=True)
 
             if mlxp_cfg.mlxp.use_scheduler:
                 try:
-                    scheduler = _instance_from_config(mlxp_cfg.mlxp.scheduler, module=mlxp.scheduler)
+                    from mlxp.scheduler import Schedulers_dict, create_scheduler
+                    scheduler_key = mlxp_cfg.mlxp.scheduler.pop('name')
+                    assert scheduler_key in Schedulers_dict
+                    create_scheduler(Schedulers_dict[scheduler_key])
+                    class_name = 'mlxp.scheduler.'+Schedulers_dict[scheduler_key]['name']
+                    scheduler = instantiate(class_name)(**mlxp_cfg.mlxp.scheduler)
                     if not mlxp_cfg.mlxp.use_logger:
                         print("Logger is currently disabled.")
                         print("To use the scheduler, the logger must be enabled")
                         print("Enabling the logger...")
                         OmegaConf.update(mlxp_cfg, "mlxp", {"use_logger": True}, merge=True)
-                        #mlxp_cfg.mlxp.use_logger = True
-                except AttributeError:
-                    error_msg = mlxp_cfg.mlxp.scheduler.name + " is not a valid scheduler\n"
-                    error_msg += "There are two options to prevent this error from happening:\n"
-                    error_msg += " 1) Disable the scheduler by setting mlxp.use_scheduler=False\n"
-                    error_msg += " 2) Configure a valid scheduler: for instance, you can use the interactive mode to select one of the default schedulers\n"
-                    error_msg += "For more information about scheduler configuration, please refer to the documentation"
+                        # mlxp_cfg.mlxp.use_logger = True
+                except AssertionError:
+                    error_msg = scheduler_key + " does not correspond to any supported scheduler\n"
+                    error_msg += f"Supported schedulers are {list(Schedulers_dict.keys())}" 
                     raise InvalidSchedulerError(error_msg) from None
                     # scheduler = None
                     # cfg.mlxp.use_scheduler = False
@@ -212,19 +215,23 @@ def launch(
                 scheduler = None
 
             if mlxp_cfg.mlxp.use_logger:
-                logger = _instance_from_config(mlxp_cfg.mlxp.logger)
+                logger = instantiate(mlxp_cfg.mlxp.logger.pop('name'))(**mlxp_cfg.mlxp.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
                 OmegaConf.update(info_cfg, "info", {"logger": logger.get_info()}, merge=True)
-                #config = OmegaConf.merge(config , _get_configs(log_dir)) #### TODO: ensures existing job can only use the config for which it was originally created  
+                # config = OmegaConf.merge(config , _get_configs(log_dir)) #### TODO: ensures existing job can only use the config for which it was originally created
 
             else:
                 logger = None
 
             if mlxp_cfg.mlxp.use_scheduler:
                 main_cmd = _main_job_command(
-                    info_cfg.info.executable, info_cfg.info.current_file_path, work_dir, parent_log_dir, log_id,
+                    info_cfg.info.executable,
+                    info_cfg.info.current_file_path,
+                    work_dir,
+                    parent_log_dir,
+                    log_id,
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
@@ -238,17 +245,15 @@ def launch(
                 _set_work_dir(work_dir)
                 OmegaConf.update(info_cfg, "info", {"status": Status.RUNNING.value}, merge=True)
 
-
                 if logger:
-                    #cfg.update({"info": _get_mlxp_configs(log_dir)})
+                    # cfg.update({"info": _get_mlxp_configs(log_dir)})
                     OmegaConf.update(info_cfg, "info", _get_mlxp_configs(log_dir), merge=True)
                     logger._log_configs(config)
                     logger._log_configs(info_cfg.info, "info")
 
-                
                 try:
-                    
-                   # cfg.update({"info": {"status": Status.RUNNING.value}})
+
+                    # cfg.update({"info": {"status": Status.RUNNING.value}})
 
                     if seeding_function:
                         try:
@@ -262,18 +267,20 @@ def launch(
                     #     OmegaConf.set_readonly(config, True)
                     # else:
                     #     OmegaConf.set_readonly(config, False)
-                    
+
                     if mlxp_cfg.mlxp.resolve:
                         OmegaConf.resolve(config)
 
                     if mlxp_cfg.mlxp.as_ConfigDict:
-                        config = convert_dict(config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    
+                        config = convert_dict(
+                            config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict
+                        )
+
                     ctx = Context(config=config, mlxp=mlxp_cfg, info=info_cfg, logger=logger)
-                    #config_dict = convert_dict(config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    #mlxp_cfg_dict = convert_dict(mlxp_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    #info_cfg_dict = convert_dict(info_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    #ctx = Context(config=config_dict, mlxp=mlxp_cfg_dict, info=info_cfg_dict, logger=logger)
+                    # config_dict = convert_dict(config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    # mlxp_cfg_dict = convert_dict(mlxp_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    # info_cfg_dict = convert_dict(info_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
+                    # ctx = Context(config=config_dict, mlxp=mlxp_cfg_dict, info=info_cfg_dict, logger=logger)
 
                     task_function(ctx)
                     now = datetime.now()
@@ -347,9 +354,9 @@ class Context:
         When logging is enabled, these variables are all stored in a uniquely defined directory.
     """
 
-    #config: ConfigDict = None
-    #mlxp: ConfigDict = None
-    #info: ConfigDict = None
+    # config: ConfigDict = None
+    # mlxp: ConfigDict = None
+    # info: ConfigDict = None
     config: DictConfig = None
     mlxp: DictConfig = None
     info: DictConfig = None
@@ -359,7 +366,7 @@ class Context:
 T = TypeVar("T")
 
 
-def instance_from_dict(class_name: str, arguments: Dict[str, Any], module: Any = mlxp) -> T:
+def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
     """Create an instance of a class based on a dictionary of arguments.
 
     :param class_name: The name of the class
@@ -370,37 +377,82 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any], module: Any =
         'arguments'.
     :rtype: T
     """
-    attr = _import_module(class_name, module)
-    if arguments:
-        attr = attr(**arguments)
-    else:
-        attr = attr()
 
-    return attr
+    return instantiate(class_name)(**arguments)
 
 
-def _import_module(module_name, main_module):
-    module, attr = os.path.splitext(module_name)
-    if not attr:
-        return getattr(main_module, module)
-    else:
-        try:
-            module = importlib.import_module(module)
-            return getattr(module, attr[1:])
-        except BaseException:
-            try:
-                module = _import_module(module)
-                return getattr(module, attr[1:])
-            except BaseException:
-                return eval(module + attr[1:])
+# def _import_module(module_name, main_module):
+#     module, attr = os.path.splitext(module_name)
+#     if not attr:
+#         return getattr(main_module, module)
+#     else:
+#         try:
+#             module = importlib.import_module(module)
+#             return getattr(module, attr[1:])
+#         except BaseException:
+#             try:
+#                 module = _import_module(module)
+#                 return getattr(module, attr[1:])
+#             except BaseException:
+#                 return eval(module + attr[1:])
 
 
-def _instance_from_config(config, module=mlxp):
-    config_module_name = "name"
-    config = copy.deepcopy(config)
-    module_name = config.pop(config_module_name)
+# def _instance_from_config(config, module=mlxp):
+#     config_module_name = "name"
+#     config = copy.deepcopy(config)
+#     module_name = config.pop(config_module_name)
 
-    return instance_from_dict(module_name, config, module=module)
+#     return instance_from_dict(module_name, config, module=module)
+
+
+
+def instantiate(class_name: str)-> T:
+    """
+    Dynamically imports a module and retrieves a class or function in it by name.
+
+    Given the fully qualified name of a class or function (in the form 'module.submodule.ClassName' or 
+    'module.submodule.function_name'), this function imports the module and returns a handle to the class 
+    or function. 
+
+    :param class_name: The fully qualified name of the class or function to retrieve. 
+                       This should include the module path and the name, 
+                       e.g., 'module.submodule.ClassName' or 'module.submodule.function_name'.
+    :type class_name: str
+
+    :return: A handle (reference) to the class or function specified by `class_name`.
+    :rtype: Type or Callable
+
+    :raises ImportError: If the module cannot be imported.
+    :raises AttributeError: If the class or function cannot be found in the module.
+    :raises NameError: If the name cannot be evaluated after attempts to retrieve it.
+
+    Example:
+    --------
+    >>> MyClass = instantiate('my_module.MyClass')
+    >>> my_instance = MyClass()
+    
+    >>> my_function = instantiate('my_module.my_function')
+    >>> result = my_function()
+    """
+
+    # Split the module and the class/function name
+    module_name, attr = os.path.splitext(class_name)
+    
+    # Ensure the attribute name doesn't start with a dot
+    attr = attr.lstrip('.')
+
+    try:
+        # Import the module dynamically
+        module = importlib.import_module(module_name)
+
+        # Try to get the attribute (class or function)
+        return getattr(module, attr)
+    
+    except ImportError as e:
+        raise ImportError(f"Could not be import '{module_name}' ") from e
+    
+    except AttributeError as e:
+        raise AttributeError(f"'{attr}' not found in '{module_name}'.") from e
 
 
 def _set_work_dir(work_dir):
