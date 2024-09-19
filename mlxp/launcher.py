@@ -1,7 +1,6 @@
 """The launcher allows launching multiple experiments on a cluster using hydra."""
 
 import atexit
-import copy
 import functools
 import importlib
 import os
@@ -25,6 +24,12 @@ from mlxp.data_structures.config_dict import ConfigDict, convert_dict
 from mlxp.enumerations import Status
 from mlxp.errors import InvalidSchedulerError, MissingFieldError
 from mlxp.logger import Logger
+from mlxp.enumerations import Directories
+from mlxp.scheduler import Schedulers_dict, _create_scheduler
+import warnings
+warnings.filterwarnings('ignore', module='hydra')
+
+
 
 _UNSPECIFIED_: Any = object()
 
@@ -52,15 +57,28 @@ def _clean_dir():
         pass
 
 
+def _clean_dir_on_exit(signum, frame):
+    _clean_dir()
+    exit(0)
+
+
+
+
 atexit.register(_clean_dir)
-signal.signal(signal.SIGTERM, _clean_dir)
-signal.signal(signal.SIGINT, _clean_dir)
+signal.signal(signal.SIGTERM, _clean_dir_on_exit)
 
 
 def launch(
     config_path: str = "configs", seeding_function: Union[Callable[[Any], None], None] = None,
 ) -> Callable[[TaskFunction], Any]:
     """Create a decorator of the main function to be executed.
+    :samp:`launch` allows composing configurations from multiple configuration files
+    by leveraging hydra (see hydra-core package).
+    This function behaves similarly to :samp:`hydra.main` provided in the hydra-core package:
+        https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.
+    It expects a path to a configuration file named 'config.yaml'
+    contained in the directory :samp:`config_path` and returns a decorator.
+    The returned decorator expects functions with the following signature: :samp:`main(ctx: mlxp.Context)`.
 
     :example:
 
@@ -70,12 +88,25 @@ def launch(
 
         @mlxp.launch(config_path='configs',
                      seeding_function=set_seeds)
-        def my_func(ctx: mlxp.Context)->None:
+        def main(ctx: mlxp.Context)->None:
 
             print(ctx.config)
 
         if __name__ == "__main__":
-            my_func()
+            main()
+
+    Runing the above python code will create an object :samp:`ctx` of type :samp:`mlxp.Context` on the fly
+    and provide it to the function :samp:`main`. Such object stores information about the run.
+    In particular, the field :samp:`ctx.config` stores the options contained in the config file 'config.yaml'.
+    Additionally, :samp:`ctx.logger`, provides a logger object of the class :samp:`mlxp.Logger` for logging results of the run.
+    Just like in hydra, it is also possible to override the configs from the command line and
+    to sweep over multiple values of a given configuration when executing python code.
+    See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
+
+    This function is necessary to enable MLXP's functionalities including:
+        1. Multiple submissions to a cluster queue using :samp:`mlxpsub`
+        2. Job versioning: Creating a 'safe' working directory from which jobs are executed when submitted to a cluster queue,
+        to ensure each job was executed with a specific version of the code.
 
     :param config_path: The config path, a directory where the default user configuration and MLXP settings are stored.
     :param seeding_function:  A callable for setting the seed of random number generators. It is called with the seed option in 'ctx.config.seed' passed to it.
@@ -84,43 +115,6 @@ def launch(
     :return: A decorator of the main function to be executed.
     :type: Callable[[TaskFunction], Any]
 
-    This function allows four main functionalities:
-
-        1. Composing configurations from multiple files using hydra (see hydra-core package).
-        This behavior is similar to the decorator hydra.main provided in the hydra-core package:
-        https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.
-        The configs are contained in a yaml file 'config.yaml' stored in
-        the directory 'config_path' passed as argument to this function.
-        Unlike hydra.main which decorates functions taking an OmegaConf object,
-        mlxp.launch  decorates functions with the following signature: main(ctx: mlxp.Context).
-        The ctx object is created on the fly during the execution of the program
-        and stores information about the run.
-        In particular, the field cfg.config stores the options contained in the config file 'config.yaml'.
-        Additionally, cfg.logger, provides a logger object of the class mlxp.Logger for logging results of the run.
-        Just like in hydra, it is also possible to override the configs from the command line and
-        to sweep over multiple values of a given configuration when executing python code.
-        See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.
-
-        2. Seeding: Additionally, mlxp.launch takes an optional argument 'seeding_function'.
-        By default, 'seeding_function' is None and does nothing. If a callable object is passed to it, this object is called with the argument cfg.config.seed
-        right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code.
-        In that case, the option 'ctx.config.seed' must be none empty.
-
-        3. Submitting jobs to a cluster queue using a scheduler.
-        This is achieved by setting the config value scheduler.name to the name of a valid scheduler.
-        Two job schedulers are currently supported by default: ['OARScheduler', 'SLURMScheduler' ].
-        It is possible to support other schedulers by
-        defining a subclass of the abstract class Scheduler.
-
-        4. Version management: Creating a 'safe' working directory when submitting jobs to a cluster.
-        This functionality sets the working directory to a new location
-        created by making a copy of the code based on the latest commit
-        to a separate destination, if it doesn't exist already. Executing code
-        from this copy allows separting development code from code deployed in a cluster.
-        It also allows recovering exactly the code used for a given run.
-        This behavior can be modified by using a different version manager VersionManager (default GitVM).
-
-        .. note:: Currently, this functionality expects the executed python file to part of a git repository.
     """
     config_name = "config"
     version_base = None  # by default set the version base for hydra to None.
@@ -133,9 +127,8 @@ def launch(
             processed_config_path = _process_config_path(config_path, task_function.__code__.co_filename)
             os.makedirs(processed_config_path, exist_ok=True)
 
-            if cfg_passthrough is not None:
-                return task_function(cfg_passthrough)
-            else:
+
+            if cfg_passthrough is None:
                 args_parser = get_args_parser()
                 args = args_parser.parse_args()
 
@@ -143,7 +136,6 @@ def launch(
                 hydra_defaults = [key + "=" + value for key, value in hydra_defaults_dict.items()]
                 overrides = args.overrides + hydra_defaults
                 setattr(args, "overrides", overrides)
-
                 _clean_dir()
 
                 _run_hydra(
@@ -155,6 +147,9 @@ def launch(
                 )
 
                 _clean_dir()
+            else:
+                return task_function(cfg_passthrough)
+
 
         return decorated_main
 
@@ -178,7 +173,9 @@ def launch(
             }
             OmegaConf.update(info_cfg, "info", info, merge=True)
             if mlxp_cfg.mlxp.use_version_manager:
-                version_manager = instantiate(mlxp_cfg.mlxp.version_manager.pop('name'))(**mlxp_cfg.mlxp.version_manager)
+                version_manager = instantiate(mlxp_cfg.mlxp.version_manager.pop("name"))(
+                    **mlxp_cfg.mlxp.version_manager
+                )
                 version_manager._set_im_handler(im_handler)
                 work_dir = version_manager.make_working_directory()
                 # cfg.update({"info": {"version_manager": version_manager.get_info()}})
@@ -193,11 +190,10 @@ def launch(
 
             if mlxp_cfg.mlxp.use_scheduler:
                 try:
-                    from mlxp.scheduler import Schedulers_dict, create_scheduler
-                    scheduler_key = mlxp_cfg.mlxp.scheduler.pop('name')
+                    scheduler_key = mlxp_cfg.mlxp.scheduler.pop("name")
                     assert scheduler_key in Schedulers_dict
-                    create_scheduler(Schedulers_dict[scheduler_key])
-                    class_name = 'mlxp.scheduler.'+Schedulers_dict[scheduler_key]['name']
+                    _create_scheduler(Schedulers_dict[scheduler_key])
+                    class_name = "mlxp.scheduler." + Schedulers_dict[scheduler_key]["name"]
                     scheduler = instantiate(class_name)(**mlxp_cfg.mlxp.scheduler)
                     if not mlxp_cfg.mlxp.use_logger:
                         print("Logger is currently disabled.")
@@ -207,7 +203,7 @@ def launch(
                         # mlxp_cfg.mlxp.use_logger = True
                 except AssertionError:
                     error_msg = scheduler_key + " does not correspond to any supported scheduler\n"
-                    error_msg += f"Supported schedulers are {list(Schedulers_dict.keys())}" 
+                    error_msg += f"Supported schedulers are {list(Schedulers_dict.keys())}"
                     raise InvalidSchedulerError(error_msg) from None
                     # scheduler = None
                     # cfg.mlxp.use_scheduler = False
@@ -215,13 +211,11 @@ def launch(
                 scheduler = None
 
             if mlxp_cfg.mlxp.use_logger:
-                logger = instantiate(mlxp_cfg.mlxp.logger.pop('name'))(**mlxp_cfg.mlxp.logger)
+                logger = instantiate(mlxp_cfg.mlxp.logger.pop("name"))(**mlxp_cfg.mlxp.logger)
                 log_id = logger.log_id
                 log_dir = logger.log_dir
                 parent_log_dir = logger.parent_log_dir
                 OmegaConf.update(info_cfg, "info", {"logger": logger.get_info()}, merge=True)
-                # config = OmegaConf.merge(config , _get_configs(log_dir)) #### TODO: ensures existing job can only use the config for which it was originally created
-
             else:
                 logger = None
 
@@ -277,10 +271,6 @@ def launch(
                         )
 
                     ctx = Context(config=config, mlxp=mlxp_cfg, info=info_cfg, logger=logger)
-                    # config_dict = convert_dict(config, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    # mlxp_cfg_dict = convert_dict(mlxp_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    # info_cfg_dict = convert_dict(info_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=ConfigDict)
-                    # ctx = Context(config=config_dict, mlxp=mlxp_cfg_dict, info=info_cfg_dict, logger=logger)
 
                     task_function(ctx)
                     now = datetime.now()
@@ -334,7 +324,8 @@ class Context:
 
         A structure containing project-specific options provided by the user.
         These options are loaded from a yaml file 'config.yaml' contained in the directory 'config_path'
-        provided as argument to the decorator mlxp.launch. It's content can be overriden from the command line.
+        provided as argument to the decorator mlxp.launch.
+        It's content can be overriden from the command line.
 
     .. py:attribute:: mlxp
         :type: ConfigDict
@@ -381,41 +372,15 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
     return instantiate(class_name)(**arguments)
 
 
-# def _import_module(module_name, main_module):
-#     module, attr = os.path.splitext(module_name)
-#     if not attr:
-#         return getattr(main_module, module)
-#     else:
-#         try:
-#             module = importlib.import_module(module)
-#             return getattr(module, attr[1:])
-#         except BaseException:
-#             try:
-#                 module = _import_module(module)
-#                 return getattr(module, attr[1:])
-#             except BaseException:
-#                 return eval(module + attr[1:])
+def instantiate(class_name: str) -> T:
+    """Dynamically imports a module and retrieves a class or function in it by name.
 
+    Given the fully qualified name of a class or function (in the form 'module.submodule.ClassName' or
+    'module.submodule.function_name'), this function imports the module and returns a handle to the class
+    or function.
 
-# def _instance_from_config(config, module=mlxp):
-#     config_module_name = "name"
-#     config = copy.deepcopy(config)
-#     module_name = config.pop(config_module_name)
-
-#     return instance_from_dict(module_name, config, module=module)
-
-
-
-def instantiate(class_name: str)-> T:
-    """
-    Dynamically imports a module and retrieves a class or function in it by name.
-
-    Given the fully qualified name of a class or function (in the form 'module.submodule.ClassName' or 
-    'module.submodule.function_name'), this function imports the module and returns a handle to the class 
-    or function. 
-
-    :param class_name: The fully qualified name of the class or function to retrieve. 
-                       This should include the module path and the name, 
+    :param class_name: The fully qualified name of the class or function to retrieve.
+                       This should include the module path and the name,
                        e.g., 'module.submodule.ClassName' or 'module.submodule.function_name'.
     :type class_name: str
 
@@ -430,16 +395,15 @@ def instantiate(class_name: str)-> T:
     --------
     >>> MyClass = instantiate('my_module.MyClass')
     >>> my_instance = MyClass()
-    
     >>> my_function = instantiate('my_module.my_function')
     >>> result = my_function()
     """
 
     # Split the module and the class/function name
     module_name, attr = os.path.splitext(class_name)
-    
+
     # Ensure the attribute name doesn't start with a dot
-    attr = attr.lstrip('.')
+    attr = attr.lstrip(".")
 
     try:
         # Import the module dynamically
@@ -447,12 +411,12 @@ def instantiate(class_name: str)-> T:
 
         # Try to get the attribute (class or function)
         return getattr(module, attr)
-    
-    except ImportError as e:
-        raise ImportError(f"Could not be import '{module_name}' ") from e
-    
-    except AttributeError as e:
-        raise AttributeError(f"'{attr}' not found in '{module_name}'.") from e
+
+    except ImportError as error:
+        raise ImportError(f"Could not be import '{module_name}' ") from error
+
+    except AttributeError as error:
+        raise AttributeError(f"'{attr}' not found in '{module_name}'.") from error
 
 
 def _set_work_dir(work_dir):
@@ -466,7 +430,6 @@ def _reset_work_dir(cur_dir):
 
 
 def _get_mlxp_configs(log_dir):
-    from mlxp.enumerations import Directories
 
     abs_name = os.path.join(log_dir, Directories.Metadata.value, "info.yaml")
     configs_info = {}
@@ -485,7 +448,7 @@ def _get_mlxp_configs(log_dir):
 
 
 def _get_configs(log_dir):
-    from mlxp.enumerations import Directories
+    
 
     abs_name = os.path.join(log_dir, Directories.Metadata.value, "config.yaml")
     configs = {}
@@ -519,13 +482,13 @@ def _get_overrides():
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
 
-    def filter_fn(x):
+    def filter_fn(config_dict):
         return (
-            ("version_manager" not in x)
-            and ("scheduler" not in x)
-            and ("logger.parent_log_dir" not in x)
-            and ("logger.forced_log_id" not in x)
-            and ("interactive_mode" not in x)
+            ("version_manager" not in config_dict)
+            and ("scheduler" not in config_dict)
+            and ("logger.parent_log_dir" not in config_dict)
+            and ("logger.forced_log_id" not in config_dict)
+            and ("interactive_mode" not in config_dict)
         )
 
     filtered_args = list(filter(filter_fn, overrides))

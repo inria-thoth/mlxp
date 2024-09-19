@@ -19,49 +19,6 @@ def get_defautl_shell_path():
 
 
 @dataclass
-class ConfigScheduler:
-    """Structure of the scheduler config file.
-
-    .. py:attribute:: name
-        :type: str
-
-        Name of the scheduler's class.
-
-    .. py:attribute:: env_cmd
-        :type: str
-
-        Command for activating the working environment. (e.g. 'conda activate my_env')
-
-    .. py:attribute:: shell_path
-        :type: Any
-
-        Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
-
-    .. py:attribute:: shell_config_cmd
-        :type: bool
-
-        command for configuring the shell when submitting a job using a scheduler. (default 'source ~/.bashrc')
-
-    .. py:attribute:: cleanup_cmd
-        :type: str
-
-        A command for clearning the environment when executing a job submitted by the scheduler. (e.g.: 'module purge' for SLURM)
-
-    .. py:attribute:: option_cmd
-        :type: List[str]
-
-        A list of strings containing the scheduler's options for the job. This allows to specify the desired resources to the scheduler such as the duration of the job, the quantity and type of resources, etc.
-    """
-
-    name: str = "mlxp.Scheduler"
-    shell_path: str = get_defautl_shell_path()
-    shell_config_cmd: str = ""
-    env_cmd: str = ""
-    cleanup_cmd: str = ""
-    option_cmd: list = field(default_factory=lambda: [])
-
-
-@dataclass
 class ConfigVersionManager:
     """Structure of the config file for the version manager.
 
@@ -242,12 +199,6 @@ class MLXPConfig:
         The logger's settings.
         (default ConfigLogger)
 
-    .. py:attribute:: scheduler
-        :type: ConfigScheduler
-
-        The scheduler's settings.
-        (default ConfigScheduler)
-
     .. py:attribute:: version_manager
         :type: ConfigVersionManager
 
@@ -279,17 +230,16 @@ class MLXPConfig:
 
             1. If 'interactive_mode==True', MLXP uses the interactive mode whenever applicable:
 
-                - When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"':
-                Asks the user to select a valid scheduler.
                 - When 'use_version_manager==True': Asks the user:
 
                     - If untracked files should be added.
                     - If uncommitted changes should be committed.
-                    - If a copy of the current repository based on the latest commit should be made (if not already existing) to execute the code from there. Otherwise, code is executed from the current directory.
+                    - If a copy of the current repository based on the latest commit should be made
+                    (if not already existing) to execute the code from there.
+                    Otherwise, code is executed from the current directory.
 
             2. If 'interactive_mode==False', no interactive mode is used and current options are used:
 
-                - When 'use_scheduler==True' and 'scheduler.name=="NoScheduler"': An error is thrown
                 - When 'use_version_manager==True':
 
                     - Existing untracked files or uncommitted changes are ignored.
@@ -310,7 +260,6 @@ class MLXPConfig:
     """
 
     logger: ConfigLogger = field(default_factory=lambda: ConfigLogger())
-    #scheduler: ConfigScheduler = field(default_factory=lambda: ConfigScheduler())
     version_manager: ConfigVersionManager = field(default_factory=lambda: ConfigGitVM())
     use_version_manager: bool = False
     use_scheduler: bool = False

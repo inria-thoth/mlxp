@@ -178,7 +178,6 @@ class _LazyArtifact(object):
                 raise InvalidArtifactError
         artifacts_dict_name = os.path.join(artifacts_dir, ".keys/artifacts.yaml")
 
-        lazydata_dict = {}
         try:
             with open(artifacts_dict_name, "r") as f:
                 keys_dict = yaml.safe_load(f)
@@ -987,8 +986,8 @@ def _load_dict_from_json(json_file_name, file_name):
                         out_dict[full_key].append(cur_dict[key])
                     else:
                         out_dict[full_key] = [cur_dict[key]]
-    except Exception as e:
-        print(str(e))
+    except Exception as error:
+        print(str(error))
     return out_dict
 
 

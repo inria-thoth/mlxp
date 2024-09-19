@@ -6,21 +6,24 @@ import os
 import subprocess
 from typing import Any, Dict
 
+import git
+from git.compat import defenc
+
 from mlxp._internal._interactive_mode import _bcolors, _printc
 
-Ignore_untracked_msg = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
-Ignore_untracked_msg += (
+IGNORE_UNTRACKED_MSG = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
+IGNORE_UNTRACKED_MSG += (
     _bcolors.FAIL
     + "Warning:"
     + _bcolors.ENDC
     + "Untracked files will not be accessible during execution of the run!"
 )
 
-Ignore_uncommited_msg = (
+IGNORE_UNCOMMITED_MSG = (
     _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "Run will be executed from the latest commit\n"
 )
 
-Ignore_uncommited_msg += (
+IGNORE_UNCOMMITED_MSG += (
     _bcolors.FAIL
     + "Warning:"
     + _bcolors.ENDC
@@ -51,7 +54,7 @@ class VersionManager(abc.ABC):
         :return: Dictionary containing information about the version used for the run.
         :rtype: Dict[str, Any]
         """
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def make_working_directory(self) -> str:
@@ -61,7 +64,7 @@ class VersionManager(abc.ABC):
         :rtype: str
         :return: A path to the target working directory
         """
-        pass
+        raise NotImplementedError
 
 
 class GitVM(VersionManager):
@@ -166,9 +169,10 @@ class GitVM(VersionManager):
             _printc(
                 _bcolors.OKBLUE, "Run will be executed from a backup directory based on the latest commit ",
             )
+            msg = "Warning: if you are using relative paths in the config, these will be relative to the backup directory.\n"
+            msg += "If you do not want this behavior please use absolute paths."
             _printc(
-                _bcolors.FAIL,
-                f"Warning: if you are using relative paths in the config, these will be relative to the backup directory. If you do not want this behavior please use absolute paths.",
+                _bcolors.FAIL, msg,
             )
 
     def _handle_commit_state(self, repo):
@@ -186,7 +190,7 @@ class GitVM(VersionManager):
 
             if done:
                 if repo.is_dirty() and not self._existing_choices:
-                    print(Ignore_uncommited_msg)
+                    print(IGNORE_UNCOMMITED_MSG)
                 break
 
     def _handle_untracked_files(self, repo):
@@ -204,7 +208,7 @@ class GitVM(VersionManager):
 
             if done:
                 if repo.untracked_files and not self._existing_choices:
-                    print(Ignore_untracked_msg)
+                    print(IGNORE_UNTRACKED_MSG)
                 break
 
     def _make_requirements_file(self):
@@ -247,7 +251,6 @@ def _disp_uncommited_files(repo):
 
 
 def _disp_untracked_files(repo):
-    from git.compat import defenc
 
     status = repo.git.status(porcelain=True, untracked_files=False, as_process=True)
 
@@ -268,13 +271,12 @@ def _disp_untracked_files(repo):
 
 
 def _get_git_repo():
-    import git
 
     try:
         repo = git.Repo(search_parent_directories=True)
-    except git.exc.InvalidGitRepositoryError:
+    except git.exc.InvalidGitRepositoryError as error:
         msg = os.getcwd() + ". To use the GitVM version manager, the code must belong to a git repository!"
-        raise git.exc.InvalidGitRepositoryError(msg)
+        raise git.exc.InvalidGitRepositoryError(msg) from error
 
     return repo
 
@@ -313,7 +315,7 @@ def _is_done_untracked_files(repo):
     done = False
     # choice = _get_choice_untracked_files()
     # if choice == "y":
-    file_to_track = _get_files_to_track(repo)
+    file_to_track = _get_files_to_track()
     # If user input is not empty
     _add_files_to_track(repo, file_to_track)
     if not repo.untracked_files:
@@ -357,7 +359,7 @@ def _get_choice_untracked_files():
     return choice
 
 
-def _get_files_to_track(repo):
+def _get_files_to_track():
     _printc(
         _bcolors.OKGREEN, "Please select files to be tracked (comma-separated) and hit Enter to skip:",
     )

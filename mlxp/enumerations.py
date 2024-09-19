@@ -17,13 +17,6 @@ class DataFrameType(Enum):
     DataFrame = "datadict"
 
 
-class DefaultSchedulers(Enum):
-    """Schedulers supported by default by MLXP."""
-
-    OARScheduler = "OARScheduler"
-    SLURMScheduler = "SLURMScheduler"
-
-
 class Directories(Enum):
     """The sub-directories created by the logger for each run.
 

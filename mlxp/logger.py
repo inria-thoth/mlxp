@@ -11,8 +11,6 @@ import sys
 from time import sleep
 from typing import Any, Callable, Dict, Union
 
-import dill as pkl
-import omegaconf
 import yaml
 from omegaconf import DictConfig, OmegaConf
 
@@ -86,11 +84,8 @@ class Logger(abc.ABC):
             log_stderr = open(os.path.join(self._log_dir, "log.stderr"), "w", buffering=1)
             sys.stderr = log_stderr
 
-    def _log_configs(
-        self, config: omegaconf.dictconfig.DictConfig, name: str = "config", resolve: bool = True
-    ) -> None:
+    def _log_configs(self, config: DictConfig, name: str = "config", resolve: bool = True) -> None:
         file_name = os.path.join(self.metadata_dir, name)
-        # config = OmegaConf.to_container(config, resolve=resolve)
         with open(file_name + ".yaml", "w") as f:
             OmegaConf.save(config=config, f=f, resolve=resolve)
             # yaml.dump(config, f)
@@ -143,13 +138,13 @@ class Logger(abc.ABC):
             f.write(os.linesep)
 
     def log_artifacts(self, artifact: object, artifact_name: str, artifact_type: str) -> None:
-        """Save an artifact object into a destination file: 'log_dir/artifacts/artifact_name', 
+        """Save an artifact object into a destination file: 'log_dir/artifacts/artifact_name',
 
         The directory 'artifact_class_name' is named after
         the child class inheriting from Artifact.
 
         :param artifact:  An object to save.
-        :param artifact_name: Name of the file where the artifact is saved. 
+        :param artifact_name: Name of the file where the artifact is saved.
         :param artifact_type: Type of the artifact to save.
         :type artifact: object
         :type artifact_name: str
@@ -161,8 +156,8 @@ class Logger(abc.ABC):
             assert artifact_type in self._artifact_types.keys()
         except AssertionError:
             message = f"Provided type: {artifact_type} is an invalid Artifact type.\n"
-            message = f"Valid types are: {list(self._artifact_types.keys())}.\n"
-            message = f"To add a new artifact type, use the method register_artifact_type before calling this method."
+            message += f"Valid types are: {list(self._artifact_types.keys())}.\n"
+            message += "To add a new artifact type, use the method register_artifact_type before calling this method."
             raise InvalidArtifactError(message)
         subdir = os.path.join(self.artifacts_dir, artifact_type, os.path.dirname(artifact_name))
         os.makedirs(subdir, exist_ok=True)
@@ -195,7 +190,6 @@ class Logger(abc.ABC):
             root = self.log_dir
         if not artifact_type:
 
-            artifact_type_file = os.path.join(root, Directories.Artifacts.value, ".keys", "custom_types.yaml")
             artifact_dict_name = os.path.join(root, Directories.Artifacts.value, ".keys", "artifacts.yaml")
 
             # get the base name of the artifact

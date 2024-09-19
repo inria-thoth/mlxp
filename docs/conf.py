@@ -40,9 +40,9 @@ html_title= project
 
 
 intersphinx_mapping = {
-    "https://docs.python.org/3": None,
-    "https://numpy.org/doc/stable/": None,
-    "https://documen.tician.de/codepy/": None,
+    "python": ("https://docs.python.org/3", None),
+    "numpy":  ("https://numpy.org/doc/stable/", None),
+    "codepy": ("https://documen.tician.de/codepy/", None),
 }
 
 # -- Project information -----------------------------------------------------

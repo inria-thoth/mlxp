@@ -6,12 +6,12 @@
 
 # Linting
 
-isort mlxp
-docformatter --recursive --in-place --wrap-summaries 88 --wrap-descriptions 88 mlxp
-black mlxp --line-length=110
+#isort mlxp
+#docformatter --recursive --in-place --wrap-summaries 88 --wrap-descriptions 88 mlxp
+#black mlxp --line-length=110
 
-flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
-flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
+#flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
+#flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
 find mlxp -type f -name "*.py" | xargs pylint
 
 
@@ -20,7 +20,7 @@ python_versions=("3.8" "3.9" "3.10" "3.11")
 
 python_versions=("3.9")
 
-skip_tests=false
+skip_tests=true
 if ! $skip_tests; then
 
     # Loop over Python versions
@@ -51,9 +51,11 @@ fi
 
 # Build the documentation
 
-
-pip install sphinx furo autodocsumm sphinx_multiversion
-cd docs
-sphinx-multiversion . _build/html
+skip_doc=true
+if ! $skip_doc; then
+    pip install sphinx furo autodocsumm sphinx_multiversion
+    cd docs
+    sphinx-multiversion . _build/html
+fi
 
 

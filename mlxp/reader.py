@@ -11,13 +11,12 @@ from tinydb import TinyDB
 from tinydb.storages import JSONStorage
 from tinydb.table import Document
 
-from mlxp.data_structures.artifacts import Artifact, Artifact_types
 from mlxp.data_structures.dataframe import LAZYARTIFACT, LAZYDATA, DataDict, DataFrame
 from mlxp.enumerations import DataFrameType, Directories
 from mlxp.parser import DefaultParser, Parser, _is_searchable
 
 
-class Reader(object):
+class Reader:
     """A class for exploiting the results stored in several runs contained in a same
     parent directory 'src_dir'.
 
@@ -74,17 +73,17 @@ class Reader(object):
             dst_dir = self.src_dir
         self.dst_dir = _ensure_writable(dst_dir)
 
-        self.db = TinyDB(
+        self.database = TinyDB(
             os.path.join(self.dst_dir, self.file_name + ".json"),
             storage=JSONStorage,
             sort_keys=True,
             indent=4,
             separators=(",", ": "),
         )
-        self.runs = self.db.table("runs")
-        self._fields = self.db.table("fields")
+        self.runs = self.database.table("runs")
+        self._fields = self.database.table("fields")
 
-        if not self.db.tables() or refresh:
+        if not self.database.tables() or refresh:
             print("Creating a database file of the runs...")
             self._create_base()
             print(f"Database file created in {self.dst_dir}")
@@ -98,7 +97,7 @@ class Reader(object):
         return len(self.runs)
 
     def __del__(self):
-        self.db.close()
+        self.database.close()
 
     def filter(
         self, query_string: str = "", result_format: str = DataFrameType.DataFrame.value,
@@ -125,16 +124,16 @@ class Reader(object):
             )
 
         if query_string:
-            Q = self.parser.parse(query_string)
+            query = self.parser.parse(query_string)
 
-            res = self.runs.search(Q)
+            res = self.runs.search(query)
         else:
             res = self.runs.all()
         res = [DataDict(r, parent_dir=_get_log_dir(r, self.src_dir)) for r in res]
         res = DataFrame(res)
         if result_format == DataFrameType.Pandas.value:
             return res.toPandas(lazy=False)
-        elif result_format == DataFrameType.DataFrame.value:
+        if result_format == DataFrameType.DataFrame.value:
             return res
 
     @property
@@ -146,11 +145,11 @@ class Reader(object):
         rtype: pd.DataFrame
         """
         fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if not k.startswith("mlxp")}
-        df = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
-        df.set_index("Fields", inplace=True)
-        df = df.sort_index()
+        dataframe = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
+        dataframe.set_index("Fields", inplace=True)
+        dataframe = dataframe.sort_index()
 
-        return df
+        return dataframe
 
     @property
     def searchable(self) -> pd.DataFrame:
@@ -161,15 +160,15 @@ class Reader(object):
         rtype: pd.DataFrame
         """
         fields_dict = {k: v for d in self._fields.all() for k, v in d.items() if _is_searchable(k)}
-        df = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
-        df.set_index("Fields", inplace=True)
-        df = df.sort_index()
+        dataframe = pd.DataFrame(list(fields_dict.items()), columns=["Fields", "Type"])
+        dataframe.set_index("Fields", inplace=True)
+        dataframe = dataframe.sort_index()
 
-        return df
+        return dataframe
 
     def _create_base(self):
-        self.db.drop_table("runs")
-        self.db.drop_table("fields")
+        self.database.drop_table("runs")
+        self.database.drop_table("fields")
         all_fields = {}
         dir_nrs = [
             int(d)
@@ -180,7 +179,7 @@ class Reader(object):
         for file_id in dir_nrs:
             path = os.path.join(self.src_dir, str(file_id))
             try:
-                data, fields = _get_data(path, self.file_name)
+                data, fields = _get_data(path)
                 self.runs.insert(Document(data, doc_id=file_id))
                 all_fields.update(fields)
             except FileNotFoundError:
@@ -194,21 +193,21 @@ class Reader(object):
             print(files_not_found)
 
 
-def _get_metrics_dir(r, src_dir):
-    abs_metrics_dir = r["info.logger.metrics_dir"]
-    parent_log_dir = os.path.dirname(r["info.logger.log_dir"])
+def _get_metrics_dir(res_dict, src_dir):
+    abs_metrics_dir = res_dict["info.logger.metrics_dir"]
+    parent_log_dir = os.path.dirname(res_dict["info.logger.log_dir"])
 
     relpath = os.path.relpath(abs_metrics_dir, parent_log_dir)
 
     return os.path.join(src_dir, relpath)
 
 
-def _get_log_dir(r, src_dir):
+def _get_log_dir(res_dict, src_dir):
     # abs_metrics_dir = r["info.logger.metrics_dir"]
-    return os.path.join(src_dir, str(r["info.logger.log_id"]))
+    return os.path.join(src_dir, str(res_dict["info.logger.log_id"]))
 
 
-def _get_data(path, metadata_file):
+def _get_data(path):
     data = {"config": {}, "info": {}}
     for key in data:
         fname = os.path.join(path, Directories.Metadata.value, key + ".yaml")
@@ -225,7 +224,7 @@ def _get_data(path, metadata_file):
     metadata_dict.update(metrics_dict)
     metadata_dict.update(artifacts_dict)
     fields.update(metrics_dict)
-    fields.update({key: "Artifact" for key in artifacts_dict.keys()})
+    fields.update({key: "Artifact" for key,values in artifacts_dict.items()})
     return metadata_dict, fields
 
 
@@ -238,8 +237,8 @@ def _get_metrics_data(path):
             if file_name.endswith(".yaml"):
                 prefix = os.path.splitext(file_name)[0]
                 full_file_name = os.path.join(keys_dir, file_name)
-                with open(full_file_name, "r") as f:
-                    keys_dict = yaml.safe_load(f)
+                with open(full_file_name, "r") as file:
+                    keys_dict = yaml.safe_load(file)
                 if keys_dict:
                     lazydata_dict.update({prefix + "." + key: LAZYDATA for key in keys_dict.keys()})
     except FileNotFoundError:
@@ -252,8 +251,8 @@ def _get_artifacts_data(path):
 
     lazydata_dict = {}
     try:
-        with open(artifacts_dict_name, "r") as f:
-            keys_dict = yaml.safe_load(f)
+        with open(artifacts_dict_name, "r") as file:
+            keys_dict = yaml.safe_load(file)
         if keys_dict:
             for key, value in keys_dict.items():
 
@@ -279,14 +278,14 @@ def _ensure_writable(dst_dir):
     return dst_dir
 
 
-def _flatten_dict(d: MutableMapping, parent_key: str = "", sep: str = "."):
-    return dict(_flatten_dict_gen(d, parent_key, sep))
+def _flatten_dict(src_dict: MutableMapping, parent_key: str = "", sep: str = "."):
+    return dict(_flatten_dict_gen(src_dict, parent_key, sep))
 
 
-def _flatten_dict_gen(d, parent_key, sep):
-    for k, v in d.items():
-        new_key = parent_key + sep + k if parent_key else k
-        if isinstance(v, MutableMapping):
-            yield from _flatten_dict(v, new_key, sep=sep).items()
+def _flatten_dict_gen(src_dict, parent_key, sep):
+    for key, value in src_dict.items():
+        new_key = parent_key + sep + key if parent_key else key
+        if isinstance(value, MutableMapping):
+            yield from _flatten_dict(value, new_key, sep=sep).items()
         else:
-            yield new_key, v
+            yield new_key, value

@@ -3,14 +3,12 @@ from mlxp.data_structures.dataframe import DataFrame
 from mlxp.launcher import Context, launch
 from mlxp.logger import DefaultLogger
 from mlxp.reader import Reader
-from mlxp.scheduler import Scheduler
 from mlxp.version_manager import GitVM
 
 __all__ = [
     "launch",
     "Reader",
     "DefaultLogger",
-    "Scheduler",
     "ConfigDict",
     "Context",
     "DataFrame",

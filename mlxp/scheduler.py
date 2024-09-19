@@ -5,26 +5,27 @@ import os
 import platform
 import subprocess
 from copy import deepcopy
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 from mlxp.errors import InvalidShellPathError, JobSubmissionError, UnknownSystemError
 
 
-def get_info_null(process_output) -> Dict[str, Any]:
+def _get_info_null(process_output: str) -> Dict[str, Any]:
+    assert isinstance(process_output, str)
     return {}
 
 
-def get_info_OAR(process_output) -> Dict[str, Any]:
+def get_info_oar(process_output: str) -> Dict[str, Any]:
     """Return a dictionary containing the job_id assigned to the run by the scheduler.
 
     :return: A dictionary containing the job_id assigned to the run by the scheduler.
     :rtype: Dict[str,Any]
     """
+    assert isinstance(process_output, str)
     if process_output:
         scheduler_job_id = process_output.split("\n")[-2].split("=")[-1]
         return {"scheduler_job_id": scheduler_job_id}
-    else:
-        return {}
+    return {}
 
 
 SLURM = {
@@ -34,7 +35,7 @@ SLURM = {
     "job_name_cmd": "--job-name=",
     "output_file_cmd": "--output=",
     "error_file_cmd": "--error=",
-    "get_info": get_info_null,
+    "get_info": _get_info_null,
 }
 
 OAR = {
@@ -44,7 +45,7 @@ OAR = {
     "job_name_cmd": "-n ",
     "output_file_cmd": "-O ",
     "error_file_cmd": "-E ",
-    "get_info": get_info_OAR,
+    "get_info": get_info_oar,
 }
 
 
@@ -55,7 +56,7 @@ PBS = {
     "job_name_cmd": "-N ",
     "output_file_cmd": "-o ",
     "error_file_cmd": "-e ",
-    "get_info": get_info_null,
+    "get_info": _get_info_null,
 }
 
 
@@ -66,7 +67,7 @@ SGE = {
     "job_name_cmd": "-N ",
     "output_file_cmd": "-o ",
     "error_file_cmd": "-e ",
-    "get_info": get_info_null,
+    "get_info": _get_info_null,
 }
 
 MWM = {
@@ -76,7 +77,7 @@ MWM = {
     "job_name_cmd": "-N ",
     "output_file_cmd": "-o ",
     "error_file_cmd": "-e ",
-    "get_info": get_info_null,
+    "get_info": _get_info_null,
 }
 
 
@@ -87,14 +88,14 @@ LSF = {
     "job_name_cmd": "-J ",
     "output_file_cmd": "-o ",
     "error_file_cmd": "-e ",
-    "get_info": get_info_null,
+    "get_info": _get_info_null,
 }
 
 
 Schedulers_dict = {"#OAR": OAR, "#SBATCH": SLURM, "#BSUB": LSF, "#MSUB": MWM, "#$": SGE, "#PBS": PBS}
 
 
-class Scheduler(abc.ABC):
+class _Scheduler(abc.ABC):
     """An abstract class whose children allow to submit jobs using a particular job
     scheduler such as OAR or SLURM. Can be used as a parent class of a custom scheduler.
 
@@ -110,12 +111,6 @@ class Scheduler(abc.ABC):
         The command for submitting a job defined in a script to the scheduler.
         (e.g.: 'oarsub -S' for OAR and 'sbatch' for SLURM).
 
-
-    .. py:attribute:: cleanup_cmd
-        :type: str
-
-        A command used in a script to prepare the environment before executing the main code.
-        (e.g.: 'module purge' for SLURM)
 
     .. py:attribute:: option_cmd
         :type: List[str]
@@ -135,28 +130,10 @@ class Scheduler(abc.ABC):
         :type: Any
 
         Path to the shell used for submitting a job using a scheduler. (default '/bin/bash')
-
-    .. py:attribute:: shell_config_cmd
-        :type: bool
-
-        Command for configuring the shell when submitting a job using a scheduler.
-        (e.g.: 'source ~/.bashrc')
     """
 
-    def __init__(
-        self,
-        directive: str,
-        submission_cmd: str,
-        job_name_cmd: str,
-        output_file_cmd: str,
-        error_file_cmd: str,
-        shell_path: str = "",
-        shell_config_cmd: str = "",
-        env_cmd: Union[List[str], str] = "",
-        cleanup_cmd: str = "",
-        option_cmd: Union[List[str], None] = None,
-    ):
-        """Create a scheduler object.
+    def __init__(self, specs: Dict[str, Any]):
+        """Create a scheduler object from a dictionary of specifications.
 
         :param directive: The string that preceeds the command options of a scheduler in
             a script.
@@ -164,31 +141,28 @@ class Scheduler(abc.ABC):
             the scheduler.
         :param shell_path: Path to the shell used for submitting a job using a
             scheduler.
-        :param shell_config_cmd: Command for configuring the shell when submitting a job
-            using a scheduler.
         :param env_cmd: A command for activating the working environment.
-        :param cleanup_cmd: A command for cleaning up the environment before executing
-            code.
         :param option_cmd: A list of strings containing the scheduler's options for the
             job.
         :type directive: str
         :type submission_cmd: str
         :type shell_path: str
-        :type shell_config_cmd: str
         :type env_cmd: str
-        :type cleanup_cmd: str
         :type option_cmd: List[str]
         """
-        self.directive = directive
-        self.cleanup_cmd = cleanup_cmd
-        self.job_name_cmd = job_name_cmd
-        self.output_file_cmd = output_file_cmd
-        self.error_file_cmd = error_file_cmd
-        self.submission_cmd = submission_cmd
-        self.option_cmd = option_cmd
-        self.shell_config_cmd = shell_config_cmd  # Not used anymore 
-        self.shell_path = shell_path
-        self.env_cmd = env_cmd
+
+        for key, value in specs.items():
+            setattr(self, key, value)
+
+        self.directive = specs['directive']
+        self.job_name_cmd = specs['job_name_cmd']
+        self.output_file_cmd = specs['output_file_cmd']
+        self.error_file_cmd = specs['error_file_cmd']
+        self.submission_cmd = specs['submission_cmd']
+        self.option_cmd = specs['option_cmd']
+        self.shell_path = specs['shell_path']
+        self.env_cmd = specs['env_cmd']
+
         self.process_output = None
 
     @abc.abstractmethod
@@ -198,7 +172,7 @@ class Scheduler(abc.ABC):
         :return: The job id assigned by the scheduler to the submited job.
         :rtype: int
         """
-        pass
+        raise NotImplementedError
 
     def make_job_details(self, log_dir: str) -> List[str]:
         """Return a list of three strings specifying the job name, the paths to the
@@ -239,39 +213,21 @@ class Scheduler(abc.ABC):
         cmd = self._make_job(main_cmd, log_dir)
         print(cmd)
 
-        job_path = job_path = os.path.join(log_dir, self._get_script_name())
-        with open(job_path, "w") as f:
-            f.write(cmd)
+        job_path = job_path = os.path.join(log_dir, _get_script_name())
+        with open(job_path, "w") as file:
+            file.write(cmd)
 
         try:
-            chmod_cmd = self._cmd_make_executable(job_path)
+            chmod_cmd = _cmd_make_executable(job_path)
             subprocess.check_call(chmod_cmd, shell=True)
             launch_cmd = f"{self.submission_cmd}  {job_path!r}"
             process_output = subprocess.check_output(launch_cmd, shell=True).decode("utf-8")
             print(process_output)
             print("Job launched!")
-        except subprocess.CalledProcessError as e:
-            print(e.output)
-            raise JobSubmissionError(e)
+        except subprocess.CalledProcessError as error:
+            print(error.output)
+            raise JobSubmissionError(error)
         self.process_output = process_output
-
-    def _get_script_name(self):
-        system = platform.system()
-        if system in ["Linux", "Darwin"]:
-            return "script.sh"
-        elif system == "Windows":
-            return "script.bat"
-        else:
-            raise UnknownSystemError()
-
-    def _cmd_make_executable(self, script):
-        system = platform.system()
-        if system in ["Linux", "Darwin"]:
-            return f"chmod +x {script!r}"
-        elif system == "Windows":
-            return ""
-        else:
-            raise UnknownSystemError()
 
     def _cmd_shell_path(self):
         system = platform.system()
@@ -279,8 +235,7 @@ class Scheduler(abc.ABC):
             return f"#!{self.shell_path}\n"
         elif system == "Windows":
             return ""
-        else:
-            raise UnknownSystemError()
+        raise UnknownSystemError()
 
     def _make_job(self, main_cmd, log_dir):
         job_command = [main_cmd]
@@ -299,158 +254,47 @@ class Scheduler(abc.ABC):
         option_cmd = ["".join(option_cmd)]
 
         # Setting environment
-        if isinstance(self.env_cmd, list):
-            env_cmds = [
-                f"{cmd}\n" for cmd in self.env_cmd
-            ]  # [f"{self.shell_config_cmd}\n", f"{self.cleanup_cmd}\n"]
+        if len(self.env_cmd)>0:
+            env_cmds = [f"{cmd}\n" for cmd in self.env_cmd]
         else:
-            env_cmds = [f"{self.env_cmd}\n"]
-        # try:
-        #    env_cmds += [f"{self.env_cmd}\n"]
-        # except OmegaConfBaseException:
-        #    pass
+            env_cmds = [f"\n"]
 
         cmd = "".join(shell_cmd + option_cmd + env_cmds + job_command)
         return cmd
 
 
-def create_scheduler(scheduler_spec):
+
+def _get_script_name():
+    system = platform.system()
+    if system in ["Linux", "Darwin"]:
+        return "script.sh"
+    elif system == "Windows":
+        return "script.bat"
+    raise UnknownSystemError()
+
+def _cmd_make_executable(script):
+    system = platform.system()
+    if system in ["Linux", "Darwin"]:
+        return f"chmod +x {script!r}"
+    elif system == "Windows":
+        return ""
+    raise UnknownSystemError()
+
+def _create_scheduler(scheduler_spec):
     specs = deepcopy(scheduler_spec)
     class_name = specs.pop("name")
     info_method = specs.pop("get_info")
 
-    class ChildScheduler(Scheduler):
-        def __init__(
-            self, shell_path="/bin/bash", shell_config_cmd="", env_cmd="", cleanup_cmd="", option_cmd=None
-        ):
+    class _ChildScheduler(_Scheduler):
+        def __init__(self, shell_path="/bin/bash", env_cmd="", option_cmd=None):
             specs.update(
-                {
-                    "shell_path": shell_path,
-                    "shell_config_cmd": shell_config_cmd,
-                    "env_cmd": env_cmd,
-                    "cleanup_cmd": cleanup_cmd,
-                    "option_cmd": option_cmd,
-                }
+                {"shell_path": shell_path, "env_cmd": env_cmd, "option_cmd": option_cmd,}
             )
 
-            super().__init__(**specs)
+            super().__init__(specs)
 
         def get_info(self):
             return info_method(self.process_output)
 
-    ChildScheduler.__name__ = class_name
-    globals()[class_name] = ChildScheduler  # Add the subclass to the global namespace
-    # return globals()[subclass_name]
-
-
-#for key, value in Schedulers_dict.items():
-#    create_scheduler(value)
-
-
-# class OARScheduler(Scheduler):
-#     """OAR job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
-
-#     def __init__(
-#         self,
-#         shell_path="/bin/bash",
-#         shell_config_cmd="",
-#         env_cmd="",
-#         cleanup_cmd="",
-#         option_cmd=None,
-#     ):
-#         super().__init__(
-#             directive="#OAR",
-#             submission_cmd="oarsub -S",
-#             job_name_cmd="-n ",
-#             output_file_cmd= "-O ",
-#             error_file_cmd= "-E ",
-#             shell_path=shell_path,
-#             shell_config_cmd=shell_config_cmd,
-#             env_cmd=env_cmd,
-#             cleanup_cmd=cleanup_cmd,
-#             option_cmd=option_cmd,
-#         )
-
-#     def get_info(self) -> Dict[str, Any]:
-#         """Return a dictionary containing the job_id assigned to the run by the
-#         scheduler.
-
-#         :return: A dictionary containing the job_id assigned to the run by the
-#             scheduler.
-#         :rtype: Dict[str,Any]
-#         """
-#         if self.process_output:
-#             scheduler_job_id = self.process_output.split("\n")[-2].split("=")[-1]
-#             return {"scheduler_job_id": scheduler_job_id}
-#         else:
-#             return {}
-
-
-# class SLURMScheduler(Scheduler):
-#     """SLURM job scheduler, see documentation in: https://slurm.schedmd.com/documentation.html."""
-
-#     def __init__(
-#         self,
-#         shell_path="/bin/bash",
-#         shell_config_cmd="",
-#         env_cmd="",
-#         cleanup_cmd="module purge",
-#         option_cmd=None,
-#     ):
-#         super().__init__(
-#             directive="#SBATCH",
-#             submission_cmd="sbatch",
-#             job_name_cmd="--job-name=",
-#             output_file_cmd= "--output=",
-#             error_file_cmd= "--error=",
-#             shell_path=shell_path,
-#             shell_config_cmd=shell_config_cmd,
-#             env_cmd=env_cmd,
-#             cleanup_cmd=cleanup_cmd,
-#             option_cmd=option_cmd,
-#         )
-
-#     def get_info(self) -> Dict[str, Any]:
-#         """Return a dictionary containing the job_id assigned to the run by the
-#         scheduler.
-
-#         :return: A dictionary containing the job_id assigned to the run by the
-#             scheduler.
-#         :rtype: Dict[str,Any]
-#         """
-#         # Not implemented yet!
-#         return {}
-
-
-# class PBSScheduler(Scheduler):
-#     """TORQUE/PBS job scheduler, see documentation in: http://oar.imag.fr/docs/2.5/#ref-user-docs."""
-
-#     def __init__(
-#         self,
-#         shell_path="/bin/bash",
-#         shell_config_cmd="",
-#         env_cmd="",
-#         cleanup_cmd="",
-#         option_cmd=None,
-#     ):
-#         super().__init__(
-#             directive="#PBS",
-#             submission_cmd="qsub",
-
-#             shell_path=shell_path,
-#             shell_config_cmd=shell_config_cmd,
-#             env_cmd=env_cmd,
-#             cleanup_cmd=cleanup_cmd,
-#             option_cmd=option_cmd,
-#         )
-
-#     def get_info(self) -> Dict[str, Any]:
-#         """Return a dictionary containing the job_id assigned to the run by the
-#         scheduler.
-
-#         :return: A dictionary containing the job_id assigned to the run by the
-#             scheduler.
-#         :rtype: Dict[str,Any]
-#         """
-
-#         return {}
+    _ChildScheduler.__name__ = class_name
+    globals()[class_name] = _ChildScheduler  # Add the subclass to the global namespace

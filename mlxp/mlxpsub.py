@@ -1,20 +1,18 @@
-import atexit
 import os
-import signal
 import sys
 import tempfile
 
 import yaml
 
-from mlxp.scheduler import Schedulers_dict
 from mlxp.errors import InvalidSchedulerError
+from mlxp.scheduler import Schedulers_dict
 
 scheduler_env_var = "MLXP_SCHEDULER"
 
 
 def process_bash_script(bash_script_name):
     shebang = ""
-    scheduler = {"option_cmd": [], "env_cmd": [], "name": "NoScheduler", "shell_path": ""}
+    scheduler = {"option_cmd": [], "env_cmd": [], "name": "", "shell_path": ""}
 
     with open(bash_script_name, "r") as script_file:
         for line in script_file:
@@ -35,14 +33,14 @@ def process_bash_script(bash_script_name):
                 if len(splitted_line) > 1:
                     directive = splitted_line[0]
                     option_cmd = " ".join(splitted_line[1:])
-                    
+
                     try:
                         assert directive in Schedulers_dict
-                        scheduler["name"] = directive #Schedulers_dict[directive]["name"]
+                        scheduler["name"] = directive  # Schedulers_dict[directive]["name"]
                         scheduler["option_cmd"].append(option_cmd)
                     except AssertionError:
                         error_msg = directive + " does not correspond to any supported scheduler\n"
-                        error_msg += f"Supported directives are {list(Schedulers_dict.keys())}" 
+                        error_msg += f"Supported directives are {list(Schedulers_dict.keys())}"
                         raise InvalidSchedulerError(error_msg) from None
 
             elif not skip_cmd(line):
@@ -100,10 +98,10 @@ def run_python_script(bash_cmd, bash_script_name, scheduler_file_name):
 
 
 def mlxpsub():
-    """A function for submitting a script to a job scheduler. 
+    """A function for submitting a script to a job scheduler.
     Usage: mlxpsub <script.sh>
     
-    The 'script.sh' must contain the scheduler's options defining 
+    The 'script.sh' must contain the scheduler's options defining
     the resource allocation for each individual job.
     Below is an example of 'script.sh'
 
@@ -123,11 +121,11 @@ def mlxpsub():
 
     The command assumes the script contains at least a python command of the form:
     python <python_file_name.py> options_1=A,B,C option_2=X,Y
-    where <python_file_name.py> is a python file that uses MLXP for launching. 
+    where <python_file_name.py> is a python file that uses MLXP for launching.
     
     MLXP creates a script for each job corresponding to an option setting.
-    Each script is located in a directory of the form parent_log_dir/log_id, 
-    where log_id is automatically assigned by MLXP for each job. 
+    Each script is located in a directory of the form parent_log_dir/log_id,
+    where log_id is automatically assigned by MLXP for each job.
 
     Here is an example of the first created script in 'logs/1/script.sh'
     
@@ -147,27 +145,28 @@ def mlxpsub():
         cd /root/workdir/
         python main.py  optimizer.lr=10. seed=1
     
-    As you can see, MLXP automatically assigns values for 
-    the job's name, stdout and stderr file paths, 
+    As you can see, MLXP automatically assigns values for
+    the job's name, stdout and stderr file paths,
     so there is no need to specify those in the original script 'script.sh'.
-    These scripts contain the same scheduler's options 
-    as in 'script.sh' and a single python command using one specific option setting: optimizer.lr=10. seed=1
-    Additionally, MLXP pre-processes the python command to extract its working directory 
-    and set it explicitly in the newly created script before the python command. 
+    These scripts contain the same scheduler's options as in 'script.sh'
+    and a single python command using one specific option setting: optimizer.lr=10. seed=1
+    Additionally, MLXP pre-processes the python command to extract its working directory
+    and set it explicitly in the newly created script before the python command.
 
     .. note:: 
-        It is also possible to have other commands in the 'script.sh', 
-        for instance to activate an environment: (conda activate my_env). 
-        These commands will be copied from  'script.sh' to  the new created script 
+        It is also possible to have other commands in the 'script.sh',
+        for instance to activate an environment: (conda activate my_env).
+        These commands will be copied from  'script.sh' to  the new created script
         and placed before the python command. Variable assignments and directory changes
         will be systematically ignored.
 
-    To use :samp:`mlxpsub`, MLXP must be installed on both the head node and all compute nodes. 
-    However, application-specific modules do not need to be installed on the head node. 
-    You can avoid installing them on the head node by ensuring that these modules are only 
-    imported within the function that is decorated with the :samp:`mlxp.launch` decorator. 
+    To use :samp:`mlxpsub`, MLXP must be installed on both the head node and all compute nodes.
+    However, application-specific modules do not need to be installed on the head node.
+    You can avoid installing them on the head node by ensuring that these modules are only
+    imported within the function that is decorated with the :samp:`mlxp.launch` decorator.
 
-    In the follwing example, the :samp:`mlxp.launch` decorator is used in the file :samp:`main.py` to decorate the function :samp:`train`.
+    In the follwing example, the :samp:`mlxp.launch` decorator is used
+    in the file :samp:`main.py` to decorate the function :samp:`train`.
     The version below of :samp:`main.py` requires :samp:`torch` to be installed in the head node:
 
 
@@ -191,8 +190,8 @@ def mlxpsub():
             train()
 
 
-    To avoid installing :samp:`torch` on the head node, 
-    you can make the following simple modification to the :samp:`main.py` file:  
+    To avoid installing :samp:`torch` on the head node,
+    you can make the following simple modification to the :samp:`main.py` file:
 
     .. code-block:: python
         :caption: main.py

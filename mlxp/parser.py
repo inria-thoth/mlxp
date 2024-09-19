@@ -4,8 +4,8 @@ import abc
 import ast
 from operator import eq, ge, gt, le, lt, ne
 
-import ply.lex as lex
-import ply.yacc as yacc
+from ply import lex
+from ply import yacc
 from tinydb import Query, where
 from tinydb.queries import QueryInstance
 
@@ -29,7 +29,7 @@ class Parser(abc.ABC):
         :rtype: QueryInstance
         :raises SyntaxError: if the query string does not follow expected syntax.
         """
-        pass
+        raise NotImplementedError
 
 
 class DefaultParser(Parser):
@@ -146,7 +146,7 @@ def _YaccParser():
         ),
     )
 
-    def p_expression__binOp(p):
+    def p_expression__bin_op(expr):
         """Expr : ID EQUAL SCALAR
         | ID NOT_EQUAL SCALAR
         | ID LESS_THAN SCALAR
@@ -154,60 +154,60 @@ def _YaccParser():
         | ID LESS_THAN_OR_EQUAL SCALAR
         | ID GREATER_THAN_OR_EQUAL SCALAR
         """
-        p[0] = _binOp(p[1], p[2], p[3])
+        expr[0] = _bin_op(expr[1], expr[2], expr[3])
 
-    def p_expression_inclusion(p):
+    def p_expression_inclusion(expr):
         """Expr : ID IN LIST"""
-        p[0] = _inclusionOp(p[1], p[3])
+        expr[0] = _inclusion_op(expr[1], expr[3])
 
-    def p_expression_group(p):
+    def p_expression_group(expr):
         """Expr : LPAREN Expr RPAREN"""
-        p[0] = p[2]
+        expr[0] = expr[2]
 
-    def p_expression_and(p):
+    def p_expression_and(expr):
         """Expr : Expr AND Expr"""
-        p[0] = _andOp(p[1], p[3])
+        expr[0] = _and_op(expr[1], expr[3])
 
-    def p_expression_or(p):
+    def p_expression_or(expr):
         """Expr : Expr OR Expr"""
-        p[0] = _orOp(p[1], p[3])
+        expr[0] = _or_op(expr[1], expr[3])
 
-    def p_expression_not(p):
+    def p_expression_not(expr):
         """Expr : NOT Expr"""
-        p[0] = _notOp(p[2])
+        expr[0] = _not_op(expr[2])
 
-    def p_error(p):
+    def p_error(expr):
         raise SyntaxError(" Syntax error in input!")
 
     return yacc.yacc(debug=False, write_tables=0)
 
 
-def _binOp(k, op, v):
-    opf = ops.get(op, None)
+def _bin_op(key, operation, value):
+    opf = ops.get(operation, None)
     if opf is None:
-        print("Unknown operator: {0:s}".format(op))
+        print("Unknown operator: {0:s}".format(operation))
         raise ValueError
         return where(None)
-    _check_searchable_key(k)
-    field = _build_field_struct(k)
-    return opf(field, v)
+    _check_searchable_key(key)
+    field = _build_field_struct(key)
+    return opf(field, value)
 
 
-def _inclusionOp(key, values):
+def _inclusion_op(key, values):
     _check_searchable_key(key)
     field = _build_field_struct(key)
     return field.one_of(values)
 
 
-def _andOp(left, right):
+def _and_op(left, right):
     return (left) & (right)
 
 
-def _orOp(left, right):
+def _or_op(left, right):
     return (left) | (right)
 
 
-def _notOp(expr):
+def _not_op(expr):
     return ~expr
 
 
@@ -217,18 +217,18 @@ def _build_field_struct(key):
     return field
 
 
-def _is_searchable(k):
+def _is_searchable(key):
     for member in SearchableKeys:
-        if k.startswith(member.value):
+        if key.startswith(member.value):
             return True
     return False
 
 
-def _check_searchable_key(k):
-    if _is_searchable(k):
+def _check_searchable_key(key):
+    if _is_searchable(key):
         pass
     else:
         raise InvalidKeyError(
-            f"The key {k} is invalid! Valid keys must start with one of these prefixes: "
+            f"The key {key} is invalid! Valid keys must start with one of these prefixes: "
             + str([member.value for member in SearchableKeys])
         )
