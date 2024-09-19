@@ -4,11 +4,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>mlxp.launcher - MLXP</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -67,7 +67,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -82,22 +82,63 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
@@ -110,6 +151,8 @@
 <label class="overlay toc-overlay" for="__toc">
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -128,7 +171,8 @@
       <div class="theme-toggle-container theme-toggle-header">
         <button class="theme-toggle">
           <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
@@ -186,7 +230,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../mlxp.launching.html">Launcher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../mlxp.logging.html">Logger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../mlxp.reading.html">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../mlxp.scheduling.html">Scheduler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../mlxp.version_managment.html">Version manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../mlxp.data_structures.html">Data structures</a></li>
 </ul>
@@ -212,7 +255,8 @@
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
@@ -222,12 +266,11 @@
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
-        <article role="main">
+        <article role="main" id="furo-main-content">
           <h1>Source code for mlxp.launcher</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The launcher allows launching multiple experiments on a cluster using hydra.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">atexit</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -238,19 +281,25 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
+<span class="kn">import</span> <span class="nn">omegaconf</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">hydra</span> <span class="kn">import</span> <span class="n">version</span>
 <span class="kn">from</span> <span class="nn">hydra._internal.utils</span> <span class="kn">import</span> <span class="n">_run_hydra</span><span class="p">,</span> <span class="n">get_args_parser</span>
 <span class="kn">from</span> <span class="nn">hydra.core.hydra_config</span> <span class="kn">import</span> <span class="n">HydraConfig</span>
 <span class="kn">from</span> <span class="nn">hydra.types</span> <span class="kn">import</span> <span class="n">TaskFunction</span>
-<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
 
-<span class="kn">import</span> <span class="nn">mlxp</span>
 <span class="kn">from</span> <span class="nn">mlxp._internal.configure</span> <span class="kn">import</span> <span class="n">_build_config</span><span class="p">,</span> <span class="n">_process_config_path</span>
-<span class="kn">from</span> <span class="nn">mlxp.data_structures.config_dict</span> <span class="kn">import</span> <span class="n">ConfigDict</span>
+<span class="kn">from</span> <span class="nn">mlxp.data_structures.config_dict</span> <span class="kn">import</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">convert_dict</span>
 <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Status</span>
 <span class="kn">from</span> <span class="nn">mlxp.errors</span> <span class="kn">import</span> <span class="n">InvalidSchedulerError</span><span class="p">,</span> <span class="n">MissingFieldError</span>
 <span class="kn">from</span> <span class="nn">mlxp.logger</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
+<span class="kn">from</span> <span class="nn">mlxp.scheduler</span> <span class="kn">import</span> <span class="n">Schedulers_dict</span><span class="p">,</span> <span class="n">_create_scheduler</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s1">&#39;hydra&#39;</span><span class="p">)</span>
+
+
 
 <span class="n">_UNSPECIFIED_</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 
@@ -278,9 +327,15 @@
         <span class="k">pass</span>
 
 
+<span class="k">def</span> <span class="nf">_clean_dir_on_exit</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="n">_clean_dir</span><span class="p">()</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+
+
 <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">_clean_dir</span><span class="p">)</span>
-<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="n">_clean_dir</span><span class="p">)</span>
-<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">_clean_dir</span><span class="p">)</span>
+<span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="n">_clean_dir_on_exit</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="launch">
@@ -289,6 +344,13 @@
     <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;configs&quot;</span><span class="p">,</span> <span class="n">seeding_function</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">TaskFunction</span><span class="p">],</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a decorator of the main function to be executed.</span>
+<span class="sd">    :samp:`launch` allows composing configurations from multiple configuration files</span>
+<span class="sd">    by leveraging hydra (see hydra-core package).</span>
+<span class="sd">    This function behaves similarly to :samp:`hydra.main` provided in the hydra-core package:</span>
+<span class="sd">    https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.</span>
+<span class="sd">    It expects a path to a configuration file named :samp:`config.yaml`</span>
+<span class="sd">    contained in the directory :samp:`config_path` and returns a decorator.</span>
+<span class="sd">    The returned decorator expects functions with the following signature: :samp:`main(ctx: mlxp.Context)`.</span>
 
 <span class="sd">    :example:</span>
 
@@ -298,12 +360,24 @@
 
 <span class="sd">        @mlxp.launch(config_path=&#39;configs&#39;,</span>
 <span class="sd">                     seeding_function=set_seeds)</span>
-<span class="sd">        def my_func(ctx: mlxp.Context)-&gt;None:</span>
+<span class="sd">        def main(ctx: mlxp.Context)-&gt;None:</span>
 
 <span class="sd">            print(ctx.config)</span>
 
 <span class="sd">        if __name__ == &quot;__main__&quot;:</span>
-<span class="sd">            my_func()</span>
+<span class="sd">            main()</span>
+
+<span class="sd">    Runing the above python code will create an object :samp:`ctx` of type :samp:`mlxp.Context` on the fly</span>
+<span class="sd">    and provide it to the function :samp:`main`. Such object stores information about the run.</span>
+<span class="sd">    In particular, the field :samp:`ctx.config` stores the options contained in the config file &#39;config.yaml&#39;.</span>
+<span class="sd">    Additionally, :samp:`ctx.logger`, provides a logger object of the class :samp:`mlxp.Logger` for logging results of the run.</span>
+<span class="sd">    Just like in hydra, it is also possible to override the configs from the command line and</span>
+<span class="sd">    to sweep over multiple values of a given configuration when executing python code.</span>
+<span class="sd">    See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.</span>
+
+<span class="sd">    This function is necessary to enable MLXP&#39;s functionalities including:</span>
+<span class="sd">        1. Multiple submissions to a cluster queue using :samp:`mlxpsub`</span>
+<span class="sd">        2. Job versioning: Creating a &#39;safe&#39; working directory from which jobs are executed when submitted to a cluster queue, to ensure each job was executed with a specific version of the code.</span>
 
 <span class="sd">    :param config_path: The config path, a directory where the default user configuration and MLXP settings are stored.</span>
 <span class="sd">    :param seeding_function:  A callable for setting the seed of random number generators. It is called with the seed option in &#39;ctx.config.seed&#39; passed to it.</span>
@@ -312,43 +386,6 @@
 <span class="sd">    :return: A decorator of the main function to be executed.</span>
 <span class="sd">    :type: Callable[[TaskFunction], Any]</span>
 
-<span class="sd">    This function allows four main functionalities:</span>
-
-<span class="sd">        1. Composing configurations from multiple files using hydra (see hydra-core package).</span>
-<span class="sd">        This behavior is similar to the decorator hydra.main provided in the hydra-core package:</span>
-<span class="sd">        https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.</span>
-<span class="sd">        The configs are contained in a yaml file &#39;config.yaml&#39; stored in</span>
-<span class="sd">        the directory &#39;config_path&#39; passed as argument to this function.</span>
-<span class="sd">        Unlike hydra.main which decorates functions taking an OmegaConf object,</span>
-<span class="sd">        mlxp.launch  decorates functions with the following signature: main(ctx: mlxp.Context).</span>
-<span class="sd">        The ctx object is created on the fly during the execution of the program</span>
-<span class="sd">        and stores information about the run.</span>
-<span class="sd">        In particular, the field cfg.config stores the options contained in the config file &#39;config.yaml&#39;.</span>
-<span class="sd">        Additionally, cfg.logger, provides a logger object of the class mlxp.Logger for logging results of the run.</span>
-<span class="sd">        Just like in hydra, it is also possible to override the configs from the command line and</span>
-<span class="sd">        to sweep over multiple values of a given configuration when executing python code.</span>
-<span class="sd">        See: https://hydra.cc/docs/intro/ for complete documentation on how to use Hydra.</span>
-
-<span class="sd">        2. Seeding: Additionally, mlxp.launch takes an optional argument &#39;seeding_function&#39;.</span>
-<span class="sd">        By default, &#39;seeding_function&#39; is None and does nothing. If a callable object is passed to it, this object is called with the argument cfg.config.seed</span>
-<span class="sd">        right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code.</span>
-<span class="sd">        In that case, the option &#39;ctx.config.seed&#39; must be none empty.</span>
-
-<span class="sd">        3. Submitting jobs to a cluster queue using a scheduler.</span>
-<span class="sd">        This is achieved by setting the config value scheduler.name to the name of a valid scheduler.</span>
-<span class="sd">        Two job schedulers are currently supported by default: [&#39;OARScheduler&#39;, &#39;SLURMScheduler&#39; ].</span>
-<span class="sd">        It is possible to support other schedulers by</span>
-<span class="sd">        defining a subclass of the abstract class Scheduler.</span>
-
-<span class="sd">        4. Version management: Creating a &#39;safe&#39; working directory when submitting jobs to a cluster.</span>
-<span class="sd">        This functionality sets the working directory to a new location</span>
-<span class="sd">        created by making a copy of the code based on the latest commit</span>
-<span class="sd">        to a separate destination, if it doesn&#39;t exist already. Executing code</span>
-<span class="sd">        from this copy allows separting development code from code deployed in a cluster.</span>
-<span class="sd">        It also allows recovering exactly the code used for a given run.</span>
-<span class="sd">        This behavior can be modified by using a different version manager VersionManager (default GitVM).</span>
-
-<span class="sd">        .. note:: Currently, this functionality expects the executed python file to part of a git repository.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">config_name</span> <span class="o">=</span> <span class="s2">&quot;config&quot;</span>
     <span class="n">version_base</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># by default set the version base for hydra to None.</span>
@@ -361,9 +398,8 @@
             <span class="n">processed_config_path</span> <span class="o">=</span> <span class="n">_process_config_path</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">processed_config_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">cfg_passthrough</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">task_function</span><span class="p">(</span><span class="n">cfg_passthrough</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">cfg_passthrough</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">args_parser</span> <span class="o">=</span> <span class="n">get_args_parser</span><span class="p">()</span>
                 <span class="n">args</span> <span class="o">=</span> <span class="n">args_parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
@@ -371,7 +407,6 @@
                 <span class="n">hydra_defaults</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hydra_defaults_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
                 <span class="n">overrides</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">overrides</span> <span class="o">+</span> <span class="n">hydra_defaults</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;overrides&quot;</span><span class="p">,</span> <span class="n">overrides</span><span class="p">)</span>
-
                 <span class="n">_clean_dir</span><span class="p">()</span>
 
                 <span class="n">_run_hydra</span><span class="p">(</span>
@@ -383,6 +418,9 @@
                 <span class="p">)</span>
 
                 <span class="n">_clean_dir</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">task_function</span><span class="p">(</span><span class="n">cfg_passthrough</span><span class="p">)</span>
+
 
         <span class="k">return</span> <span class="n">decorated_main</span>
 
@@ -391,7 +429,7 @@
         <span class="k">def</span> <span class="nf">decorated_task</span><span class="p">(</span><span class="n">overrides</span><span class="p">):</span>
             <span class="n">co_filename</span> <span class="o">=</span> <span class="n">task_function</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span>
 
-            <span class="n">cfg</span><span class="p">,</span> <span class="n">im_handler</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span>
+            <span class="n">config</span><span class="p">,</span> <span class="n">mlxp_cfg</span><span class="p">,</span> <span class="n">info_cfg</span><span class="p">,</span> <span class="n">im_handler</span> <span class="o">=</span> <span class="n">_build_config</span><span class="p">(</span>
                 <span class="n">config_path</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">co_filename</span><span class="p">,</span> <span class="n">overrides</span><span class="p">,</span> <span class="n">interactive_mode_file</span>
             <span class="p">)</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
@@ -404,79 +442,107 @@
                 <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
                 <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">STARTING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="p">}</span>
-
-            <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
-
-            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_version_manager</span><span class="p">:</span>
-                <span class="n">version_manager</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">version_manager</span><span class="p">)</span>
+            <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_version_manager</span><span class="p">:</span>
+                <span class="n">version_manager</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">(</span><span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">version_manager</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">))(</span>
+                    <span class="o">**</span><span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">version_manager</span>
+                <span class="p">)</span>
                 <span class="n">version_manager</span><span class="o">.</span><span class="n">_set_im_handler</span><span class="p">(</span><span class="n">im_handler</span><span class="p">)</span>
                 <span class="n">work_dir</span> <span class="o">=</span> <span class="n">version_manager</span><span class="o">.</span><span class="n">make_working_directory</span><span class="p">()</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;version_manager&quot;</span><span class="p">:</span> <span class="n">version_manager</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
+                <span class="c1"># cfg.update({&quot;info&quot;: {&quot;version_manager&quot;: version_manager.get_info()}})</span>
+                <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;version_manager&quot;</span><span class="p">:</span> <span class="n">version_manager</span><span class="o">.</span><span class="n">get_info</span><span class="p">()},</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
-            <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;work_dir&quot;</span><span class="p">:</span> <span class="n">work_dir</span><span class="p">}})</span>
+            <span class="c1"># cfg.update({&quot;info&quot;: {&quot;work_dir&quot;: work_dir}})</span>
+            <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;work_dir&quot;</span><span class="p">:</span> <span class="n">work_dir</span><span class="p">},</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span><span class="p">:</span>
+                    <span class="n">scheduler_key</span> <span class="o">=</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">scheduler_key</span> <span class="ow">in</span> <span class="n">Schedulers_dict</span>
+                    <span class="n">_create_scheduler</span><span class="p">(</span><span class="n">Schedulers_dict</span><span class="p">[</span><span class="n">scheduler_key</span><span class="p">])</span>
+                    <span class="n">class_name</span> <span class="o">=</span> <span class="s2">&quot;mlxp.scheduler.&quot;</span> <span class="o">+</span> <span class="n">Schedulers_dict</span><span class="p">[</span><span class="n">scheduler_key</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">(</span><span class="n">class_name</span><span class="p">)(</span><span class="o">**</span><span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Logger is currently disabled.&quot;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;To use the scheduler, the logger must be enabled&quot;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Enabling the logger...&quot;</span><span class="p">)</span>
-                        <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                    <span class="n">error_msg</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; is not a valid scheduler</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="s2">&quot;There are two options to prevent this error from happening:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="s2">&quot; 1) Disable the scheduler by setting mlxp.use_scheduler=False</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="s2">&quot; 2) Configure a valid scheduler: for instance, you can use the interactive mode to select one of the default schedulers</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="s2">&quot;For more information about scheduler configuration, please refer to the documentation&quot;</span>
+                        <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mlxp_cfg</span><span class="p">,</span> <span class="s2">&quot;mlxp&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;use_logger&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="c1"># mlxp_cfg.mlxp.use_logger = True</span>
+                <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                    <span class="n">error_msg</span> <span class="o">=</span> <span class="n">scheduler_key</span> <span class="o">+</span> <span class="s2">&quot; does not correspond to any supported scheduler</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">error_msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Supported schedulers are </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">Schedulers_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="k">raise</span> <span class="n">InvalidSchedulerError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
                     <span class="c1"># scheduler = None</span>
                     <span class="c1"># cfg.mlxp.use_scheduler = False</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">scheduler</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span><span class="p">:</span>
-                <span class="n">logger</span> <span class="o">=</span> <span class="n">_instance_from_config</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_logger</span><span class="p">:</span>
+                <span class="n">logger</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">(</span><span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">))(</span><span class="o">**</span><span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
                 <span class="n">log_id</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">log_id</span>
                 <span class="n">log_dir</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">log_dir</span>
                 <span class="n">parent_log_dir</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">parent_log_dir</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
+                <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_info</span><span class="p">()},</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
                 <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span>
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">log_id</span><span class="p">,</span>
+                    <span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+                    <span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span>
+                    <span class="n">work_dir</span><span class="p">,</span>
+                    <span class="n">parent_log_dir</span><span class="p">,</span>
+                    <span class="n">log_id</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="n">scheduler</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">)</span>
-                <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get_info</span><span class="p">()}})</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+                <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">get_info</span><span class="p">()},</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s2">&quot;config_unresolved&quot;</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># ## Setting up the working directory</span>
                 <span class="n">cur_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
                 <span class="n">_set_work_dir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">)</span>
+                <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="o">.</span><span class="n">value</span><span class="p">},</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)})</span>
+                    <span class="c1"># cfg.update({&quot;info&quot;: _get_mlxp_configs(log_dir)})</span>
+                    <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">),</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span>
+
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUNNING</span><span class="o">.</span><span class="n">value</span><span class="p">}})</span>
-                    <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+                    <span class="c1"># cfg.update({&quot;info&quot;: {&quot;status&quot;: Status.RUNNING.value}})</span>
+
                     <span class="k">if</span> <span class="n">seeding_function</span><span class="p">:</span>
                         <span class="k">try</span><span class="p">:</span>
-                            <span class="k">assert</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                            <span class="k">assert</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
                         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
                             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Missing field: The &#39;config&#39; must contain a field named &#39;seed&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
                             <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;provided as argument to the function &#39;seeding_function&#39; &quot;</span>
                             <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                        <span class="n">seeding_function</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+                        <span class="n">seeding_function</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+                    <span class="c1"># if mlxp_cfg.mlxp.config_read_only:</span>
+                    <span class="c1">#     OmegaConf.set_readonly(config, True)</span>
+                    <span class="c1"># else:</span>
+                    <span class="c1">#     OmegaConf.set_readonly(config, False)</span>
 
-                    <span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">mlxp</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">resolve</span><span class="p">:</span>
+                        <span class="n">OmegaConf</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">as_ConfigDict</span><span class="p">:</span>
+                        <span class="n">config</span> <span class="o">=</span> <span class="n">convert_dict</span><span class="p">(</span>
+                            <span class="n">config</span><span class="p">,</span> <span class="n">src_class</span><span class="o">=</span><span class="n">omegaconf</span><span class="o">.</span><span class="n">dictconfig</span><span class="o">.</span><span class="n">DictConfig</span><span class="p">,</span> <span class="n">dst_class</span><span class="o">=</span><span class="n">ConfigDict</span>
+                        <span class="p">)</span>
+
+                    <span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">mlxp</span><span class="o">=</span><span class="n">mlxp_cfg</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info_cfg</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
                     <span class="n">task_function</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
                     <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
                     <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
@@ -484,11 +550,9 @@
                         <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
                         <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">COMPLETE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                     <span class="p">}</span>
-
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
-
+                    <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span>
 
                     <span class="n">_reset_work_dir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">)</span>
                     <span class="k">return</span> <span class="kc">None</span>
@@ -499,11 +563,9 @@
                         <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">),</span>
                         <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAILED</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                     <span class="p">}</span>
-
-                    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">info</span><span class="p">})</span>
-
+                    <span class="n">OmegaConf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_cfg</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">logger</span><span class="p">:</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">_log_configs</span><span class="p">(</span><span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">)</span>
 
                     <span class="n">_reset_work_dir</span><span class="p">(</span><span class="n">cur_dir</span><span class="p">)</span>
                     <span class="k">raise</span>
@@ -536,7 +598,8 @@
 
 <span class="sd">        A structure containing project-specific options provided by the user.</span>
 <span class="sd">        These options are loaded from a yaml file &#39;config.yaml&#39; contained in the directory &#39;config_path&#39;</span>
-<span class="sd">        provided as argument to the decorator mlxp.launch. It&#39;s content can be overriden from the command line.</span>
+<span class="sd">        provided as argument to the decorator mlxp.launch.</span>
+<span class="sd">        It&#39;s content can be overriden from the command line.</span>
 
 <span class="sd">    .. py:attribute:: mlxp</span>
 <span class="sd">        :type: ConfigDict</span>
@@ -556,9 +619,12 @@
 <span class="sd">        When logging is enabled, these variables are all stored in a uniquely defined directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">config</span><span class="p">:</span> <span class="n">ConfigDict</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">mlxp</span><span class="p">:</span> <span class="n">ConfigDict</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">info</span><span class="p">:</span> <span class="n">ConfigDict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># config: ConfigDict = None</span>
+    <span class="c1"># mlxp: ConfigDict = None</span>
+    <span class="c1"># info: ConfigDict = None</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mlxp</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">info</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">logger</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Logger</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
@@ -568,7 +634,7 @@
 
 <div class="viewcode-block" id="instance_from_dict">
 <a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.instance_from_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">instance_from_dict</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">module</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">mlxp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">instance_from_dict</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an instance of a class based on a dictionary of arguments.</span>
 
 <span class="sd">    :param class_name: The name of the class</span>
@@ -579,38 +645,59 @@
 <span class="sd">        &#39;arguments&#39;.</span>
 <span class="sd">    :rtype: T</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">attr</span> <span class="o">=</span> <span class="n">_import_module</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">arguments</span><span class="p">:</span>
-        <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">attr</span></div>
+    <span class="k">return</span> <span class="n">instantiate</span><span class="p">(</span><span class="n">class_name</span><span class="p">)(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">main_module</span><span class="p">):</span>
-    <span class="n">module</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">main_module</span><span class="p">,</span> <span class="n">module</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-        <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">module</span> <span class="o">=</span> <span class="n">_import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-                <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">module</span> <span class="o">+</span> <span class="n">attr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<div class="viewcode-block" id="instantiate">
+<a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.instantiate">[docs]</a>
+<span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dynamically imports a module and retrieves a class or function in it by name.</span>
 
+<span class="sd">    Given the fully qualified name of a class or function (in the form &#39;module.submodule.ClassName&#39; or</span>
+<span class="sd">    &#39;module.submodule.function_name&#39;), this function imports the module and returns a handle to the class</span>
+<span class="sd">    or function.</span>
 
-<span class="k">def</span> <span class="nf">_instance_from_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">mlxp</span><span class="p">):</span>
-    <span class="n">config_module_name</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">config_module_name</span><span class="p">)</span>
+<span class="sd">    :param class_name: The fully qualified name of the class or function to retrieve.</span>
+<span class="sd">                       This should include the module path and the name,</span>
+<span class="sd">                       e.g., &#39;module.submodule.ClassName&#39; or &#39;module.submodule.function_name&#39;.</span>
+<span class="sd">    :type class_name: str</span>
 
-    <span class="k">return</span> <span class="n">instance_from_dict</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+<span class="sd">    :return: A handle (reference) to the class or function specified by `class_name`.</span>
+<span class="sd">    :rtype: Type or Callable</span>
+
+<span class="sd">    :raises ImportError: If the module cannot be imported.</span>
+<span class="sd">    :raises AttributeError: If the class or function cannot be found in the module.</span>
+<span class="sd">    :raises NameError: If the name cannot be evaluated after attempts to retrieve it.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; MyClass = instantiate(&#39;my_module.MyClass&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; my_instance = MyClass()</span>
+<span class="sd">    &gt;&gt;&gt; my_function = instantiate(&#39;my_module.my_function&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; result = my_function()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Split the module and the class/function name</span>
+    <span class="n">module_name</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">class_name</span><span class="p">)</span>
+
+    <span class="c1"># Ensure the attribute name doesn&#39;t start with a dot</span>
+    <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Import the module dynamically</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+
+        <span class="c1"># Try to get the attribute (class or function)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not be import &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39; &quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">error</span>
+
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">&#39; not found in &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">error</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_set_work_dir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">):</span>
@@ -624,7 +711,6 @@
 
 
 <span class="k">def</span> <span class="nf">_get_mlxp_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
 
     <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;info.yaml&quot;</span><span class="p">)</span>
     <span class="n">configs_info</span> <span class="o">=</span> <span class="p">{}</span>
@@ -643,7 +729,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_configs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">mlxp.enumerations</span> <span class="kn">import</span> <span class="n">Directories</span>
+    
 
     <span class="n">abs_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">Directories</span><span class="o">.</span><span class="n">Metadata</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
     <span class="n">configs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -651,7 +737,7 @@
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">abs_name</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">abs_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">configs</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-
+    <span class="n">configs</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">configs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">configs</span>
 
 
@@ -677,13 +763,13 @@
     <span class="n">hydra_cfg</span> <span class="o">=</span> <span class="n">HydraConfig</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
     <span class="n">overrides</span> <span class="o">=</span> <span class="n">hydra_cfg</span><span class="o">.</span><span class="n">overrides</span><span class="o">.</span><span class="n">task</span>
 
-    <span class="k">def</span> <span class="nf">filter_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">filter_fn</span><span class="p">(</span><span class="n">config_dict</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="p">(</span><span class="s2">&quot;version_manager&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.parent_log_dir&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.forced_log_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;interactive_mode&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+            <span class="p">(</span><span class="s2">&quot;version_manager&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.parent_log_dir&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;logger.forced_log_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;interactive_mode&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="n">filtered_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">,</span> <span class="n">overrides</span><span class="p">))</span>
@@ -724,6 +810,6 @@
 </div><script src="../../_static/documentation_options.js?v=f2a433a1"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../../_static/scripts/furo.js?v=5fa4622c"></script>
     </body>
 </html>

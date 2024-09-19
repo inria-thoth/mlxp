@@ -164,8 +164,8 @@ Just like with `hydra <https://hydra.cc/>`_, we can run the code again with diff
 
 In the above instruction, we added an option :samp:`optimizer.lr=0.01,0.1` which execute the code twice: once using a learning rate of :samp:`0.01` and a second time using :samp:`0.1` . 
 
-Launching jobs to a scheduler
-"""""""""""""""""""""""""""""
+Launching jobs to a scheduler using mlxpsub command
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 
 If you have access to an HPC cluster, then you probably use a job scheduler for submitting jobs. 
 MLXP allows you to combine the 'multirun' capabilities of `hydra <https://hydra.cc/>`_ with job scheduling to easily submit multiple experiments to a cluster. 
@@ -176,8 +176,10 @@ Currently, MLXP supports the following job schedulers:
 
 .. _mlxpsub:
 
-Submitting jobs to a job scheduler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Submitting jobs to a job scheduler using mlxpsub
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Let's say, you'd like to submit multiple jobs into a job scheduler. You can do this easily using the 
 mlxpsub command! 
@@ -206,6 +208,60 @@ You only need to run the following command in the terminal:
 .. code-block:: console
 
   mlxpsub script.sh
+
+
+Requirements for using mlxpsub
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use :samp:`mlxpsub`, MLXP must be installed on both the head node and all compute nodes. 
+        However, application-specific modules do not need to be installed on the head node. 
+        You can avoid installing them on the head node by ensuring that these modules are only 
+        imported within the function that is decorated with the :samp:`mlxp.launch` decorator. In our example, the :samp:`mlxp.launch` decorator is used in the file :samp:`main.py` to decorate the function :samp:`train`. The following version of :samp:`main.py` will require :samp:`torch` and all dependencies of the module :samp:`core` to be installed in the head node:
+
+
+.. code-block:: python
+    :caption: main.py
+
+    
+    import torch
+    from core import DataLoader, OneHiddenLayer
+
+    import mlxp
+
+    @mlxp.launch(config_path='./configs')
+    def train(ctx: mlxp.Context)->None:
+
+        cfg = ctx.config
+        logger = ctx.logger
+
+        ...
+
+    if __name__ == "__main__":
+        train()
+
+
+To avoid installing these modules on the head node, you can make the following simple modification to the :samp:`main.py` file:
+
+.. code-block:: python
+    :caption: main.py
+
+    import mlxp
+
+    @mlxp.launch(config_path='./configs')
+    def train(ctx: mlxp.Context)->None:
+        
+        import torch
+        from core import DataLoader, OneHiddenLayer
+
+        cfg = ctx.config
+        logger = ctx.logger
+
+        ...
+
+    if __name__ == "__main__":
+        train()
+
+
 
 
 What happens under the hood?

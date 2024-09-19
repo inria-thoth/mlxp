@@ -5,11 +5,11 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Logger" href="mlxp.logging.html" /><link rel="prev" title="MLXP package" href="mlxp.html" />
 
-    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Launcher - MLXP</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
     
 
@@ -68,7 +68,7 @@
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -83,22 +83,63 @@
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
     </svg>
   </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
     </svg>
   </symbol>
 </svg>
@@ -111,6 +152,8 @@
 <label class="overlay toc-overlay" for="__toc">
   <div class="visually-hidden">Hide table of contents sidebar</div>
 </label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
 
 
@@ -129,7 +172,8 @@
       <div class="theme-toggle-container theme-toggle-header">
         <button class="theme-toggle">
           <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
@@ -210,11 +254,17 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/mlxp.launching.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
 <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
@@ -224,7 +274,7 @@
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
-        <article role="main">
+        <article role="main" id="furo-main-content">
           <section id="launcher">
 <h1>Launcher<a class="headerlink" href="#launcher" title="Link to this heading">¶</a></h1>
 <section id="module-mlxp.launcher">
@@ -233,7 +283,14 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.launcher.launch">
 <span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">launch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'configs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeding_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#launch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.launch" title="Link to this definition">¶</a></dt>
-<dd><p>Create a decorator of the main function to be executed.</p>
+<dd><p>Create a decorator of the main function to be executed.
+<code class="samp docutils literal notranslate"><span class="pre">launch</span></code> allows composing configurations from multiple configuration files
+by leveraging hydra (see hydra-core package).
+This function behaves similarly to <code class="samp docutils literal notranslate"><span class="pre">hydra.main</span></code> provided in the hydra-core package:
+<a class="reference external" href="https://github.com/facebookresearch/hydra/blob/main/hydra/main.py">https://github.com/facebookresearch/hydra/blob/main/hydra/main.py</a>.
+It expects a path to a configuration file named <code class="samp docutils literal notranslate"><span class="pre">config.yaml</span></code>
+contained in the directory <code class="samp docutils literal notranslate"><span class="pre">config_path</span></code> and returns a decorator.
+The returned decorator expects functions with the following signature: <code class="samp docutils literal notranslate"><span class="pre">main(ctx:</span> <span class="pre">mlxp.Context)</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Example<span class="colon">:</span></dt>
 <dd class="field-odd"><p></p></dd>
@@ -242,14 +299,28 @@
 
 <span class="nd">@mlxp</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;configs&#39;</span><span class="p">,</span>
              <span class="n">seeding_function</span><span class="o">=</span><span class="n">set_seeds</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">my_func</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>Runing the above python code will create an object <code class="samp docutils literal notranslate"><span class="pre">ctx</span></code> of type <code class="samp docutils literal notranslate"><span class="pre">mlxp.Context</span></code> on the fly
+and provide it to the function <code class="samp docutils literal notranslate"><span class="pre">main</span></code>. Such object stores information about the run.
+In particular, the field <code class="samp docutils literal notranslate"><span class="pre">ctx.config</span></code> stores the options contained in the config file ‘config.yaml’.
+Additionally, <code class="samp docutils literal notranslate"><span class="pre">ctx.logger</span></code>, provides a logger object of the class <code class="samp docutils literal notranslate"><span class="pre">mlxp.Logger</span></code> for logging results of the run.
+Just like in hydra, it is also possible to override the configs from the command line and
+to sweep over multiple values of a given configuration when executing python code.
+See: <a class="reference external" href="https://hydra.cc/docs/intro/">https://hydra.cc/docs/intro/</a> for complete documentation on how to use Hydra.</p>
+<dl class="simple">
+<dt>This function is necessary to enable MLXP’s functionalities including:</dt><dd><ol class="arabic simple">
+<li><p>Multiple submissions to a cluster queue using <code class="samp docutils literal notranslate"><span class="pre">mlxpsub</span></code></p></li>
+<li><p>Job versioning: Creating a ‘safe’ working directory from which jobs are executed when submitted to a cluster queue, to ensure each job was executed with a specific version of the code.</p></li>
+</ol>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -264,48 +335,11 @@
 <dd class="field-odd"><p>Callable[[TaskFunction], Any]</p>
 </dd>
 </dl>
-<p>This function allows four main functionalities:</p>
-<blockquote>
-<div><p>1. Composing configurations from multiple files using hydra (see hydra-core package).
-This behavior is similar to the decorator hydra.main provided in the hydra-core package:
-<a class="reference external" href="https://github.com/facebookresearch/hydra/blob/main/hydra/main.py">https://github.com/facebookresearch/hydra/blob/main/hydra/main.py</a>.
-The configs are contained in a yaml file ‘config.yaml’ stored in
-the directory ‘config_path’ passed as argument to this function.
-Unlike hydra.main which decorates functions taking an OmegaConf object,
-mlxp.launch  decorates functions with the following signature: main(ctx: mlxp.Context).
-The ctx object is created on the fly during the execution of the program
-and stores information about the run.
-In particular, the field cfg.config stores the options contained in the config file ‘config.yaml’.
-Additionally, cfg.logger, provides a logger object of the class mlxp.Logger for logging results of the run.
-Just like in hydra, it is also possible to override the configs from the command line and
-to sweep over multiple values of a given configuration when executing python code.
-See: <a class="reference external" href="https://hydra.cc/docs/intro/">https://hydra.cc/docs/intro/</a> for complete documentation on how to use Hydra.</p>
-<p>2. Seeding: Additionally, mlxp.launch takes an optional argument ‘seeding_function’.
-By default, ‘seeding_function’ is None and does nothing. If a callable object is passed to it, this object is called with the argument cfg.config.seed
-right before calling the decorated function. The user-defined callable is meant to set the seed of any random number generator used in the code.
-In that case, the option ‘ctx.config.seed’ must be none empty.</p>
-<p>3. Submitting jobs to a cluster queue using a scheduler.
-This is achieved by setting the config value scheduler.name to the name of a valid scheduler.
-Two job schedulers are currently supported by default: [‘OARScheduler’, ‘SLURMScheduler’ ].
-It is possible to support other schedulers by
-defining a subclass of the abstract class Scheduler.</p>
-<p>4. Version management: Creating a ‘safe’ working directory when submitting jobs to a cluster.
-This functionality sets the working directory to a new location
-created by making a copy of the code based on the latest commit
-to a separate destination, if it doesn’t exist already. Executing code
-from this copy allows separting development code from code deployed in a cluster.
-It also allows recovering exactly the code used for a given run.
-This behavior can be modified by using a different version manager VersionManager (default GitVM).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Currently, this functionality expects the executed python file to part of a git repository.</p>
-</div>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.launcher.Context">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">Context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.config_dict.ConfigDict" title="mlxp.data_structures.config_dict.ConfigDict"><span class="pre">ConfigDict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlxp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.config_dict.ConfigDict" title="mlxp.data_structures.config_dict.ConfigDict"><span class="pre">ConfigDict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.config_dict.ConfigDict" title="mlxp.data_structures.config_dict.ConfigDict"><span class="pre">ConfigDict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mlxp.logging.html#mlxp.logger.Logger" title="mlxp.logger.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/launcher.html#Context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.Context" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">Context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlxp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="mlxp.logging.html#mlxp.logger.Logger" title="mlxp.logger.Logger"><span class="pre">Logger</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/launcher.html#Context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.Context" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The contex object passed to the decorated function when using decorator
 mlxp.launch.</p>
@@ -314,7 +348,8 @@ mlxp.launch.</p>
 <span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="mlxp.data_structures.html#mlxp.data_structures.config_dict.ConfigDict" title="mlxp.data_structures.config_dict.ConfigDict"><span class="pre">ConfigDict</span></a></em><a class="headerlink" href="#mlxp.launcher.Context.config" title="Link to this definition">¶</a></dt>
 <dd><p>A structure containing project-specific options provided by the user.
 These options are loaded from a yaml file ‘config.yaml’ contained in the directory ‘config_path’
-provided as argument to the decorator mlxp.launch. It’s content can be overriden from the command line.</p>
+provided as argument to the decorator mlxp.launch.
+It’s content can be overriden from the command line.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -341,7 +376,7 @@ When logging is enabled, these variables are all stored in a uniquely defined di
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.launcher.instance_from_dict">
-<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instance_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">class_name:</span> <span class="pre">str,</span> <span class="pre">arguments:</span> <span class="pre">~typing.Dict[str,</span> <span class="pre">~typing.Any],</span> <span class="pre">module:</span> <span class="pre">~typing.Any</span> <span class="pre">=</span> <span class="pre">&lt;module</span> <span class="pre">'mlxp'</span> <span class="pre">from</span> <span class="pre">'/opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/mlxp/__init__.py'&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instance_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instance_from_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instance_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">arguments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instance_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instance_from_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Create an instance of a class based on a dictionary of arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -360,15 +395,53 @@ When logging is enabled, these variables are all stored in a uniquely defined di
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="mlxp.launcher.instantiate">
+<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instantiate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instantiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instantiate" title="Link to this definition">¶</a></dt>
+<dd><p>Dynamically imports a module and retrieves a class or function in it by name.</p>
+<p>Given the fully qualified name of a class or function (in the form ‘module.submodule.ClassName’ or
+‘module.submodule.function_name’), this function imports the module and returns a handle to the class
+or function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>class_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The fully qualified name of the class or function to retrieve.
+This should include the module path and the name,
+e.g., ‘module.submodule.ClassName’ or ‘module.submodule.function_name’.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A handle (reference) to the class or function specified by <cite>class_name</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Type or Callable</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ImportError" title="(in Python v3.12)"><strong>ImportError</strong></a> – If the module cannot be imported.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.12)"><strong>AttributeError</strong></a> – If the class or function cannot be found in the module.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NameError" title="(in Python v3.12)"><strong>NameError</strong></a> – If the name cannot be evaluated after attempts to retrieve it.</p></li>
+</ul>
+</dd>
+</dl>
+<section id="example">
+<h3>Example:<a class="headerlink" href="#example" title="Link to this heading">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MyClass</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">(</span><span class="s1">&#39;my_module.MyClass&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_instance</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_function</span> <span class="o">=</span> <span class="n">instantiate</span><span class="p">(</span><span class="s1">&#39;my_module.my_function&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">my_function</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
 </section>
 <section id="module-mlxp.mlxpsub">
 <span id="the-mlxpsub-command"></span><h2>The <a class="reference internal" href="#mlxp.mlxpsub.mlxpsub" title="mlxp.mlxpsub.mlxpsub"><code class="xref py py-class docutils literal notranslate"><span class="pre">mlxpsub</span></code></a> Command<a class="headerlink" href="#module-mlxp.mlxpsub" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.mlxpsub.mlxpsub">
 <span class="sig-prename descclassname"><span class="pre">mlxp.mlxpsub.</span></span><span class="sig-name descname"><span class="pre">mlxpsub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/mlxpsub.html#mlxpsub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.mlxpsub.mlxpsub" title="Link to this definition">¶</a></dt>
-<dd><p>A function for submitting a script to a job scheduler. 
+<dd><p>A function for submitting a script to a job scheduler.
 Usage: mlxpsub &lt;script.sh&gt;</p>
-<p>The ‘script.sh’ must contain the scheduler’s options defining 
+<p>The ‘script.sh’ must contain the scheduler’s options defining
 the resource allocation for each individual job.
 Below is an example of ‘script.sh’</p>
 <dl class="field-list simple">
@@ -390,7 +463,7 @@ Below is an example of ‘script.sh’</p>
 python &lt;python_file_name.py&gt; options_1=A,B,C option_2=X,Y
 where &lt;python_file_name.py&gt; is a python file that uses MLXP for launching.</p>
 <p>MLXP creates a script for each job corresponding to an option setting.
-Each script is located in a directory of the form parent_log_dir/log_id, 
+Each script is located in a directory of the form parent_log_dir/log_id,
 where log_id is automatically assigned by MLXP for each job.</p>
 <p>Here is an example of the first created script in ‘logs/1/script.sh’</p>
 <dl class="field-list simple">
@@ -410,20 +483,67 @@ where log_id is automatically assigned by MLXP for each job.</p>
 <span class="go">python main.py  optimizer.lr=10. seed=1</span>
 </pre></div>
 </div>
-<p>As you can see, MLXP automatically assigns values for 
-the job’s name, stdout and stderr file paths, 
+<p>As you can see, MLXP automatically assigns values for
+the job’s name, stdout and stderr file paths,
 so there is no need to specify those in the original script ‘script.sh’.
-These scripts contain the same scheduler’s options 
-as in ‘script.sh’ and a single python command using one specific option setting: optimizer.lr=10. seed=1
-Additionally, MLXP pre-processes the python command to extract its working directory 
+These scripts contain the same scheduler’s options as in ‘script.sh’
+and a single python command using one specific option setting: optimizer.lr=10. seed=1
+Additionally, MLXP pre-processes the python command to extract its working directory
 and set it explicitly in the newly created script before the python command.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>It is also possible to have other commands in the ‘script.sh’, 
-for instance to activate an environment: (conda activate my_env). 
-These commands will be copied from  ‘script.sh’ to  the new created script 
+<p>It is also possible to have other commands in the ‘script.sh’,
+for instance to activate an environment: (conda activate my_env).
+These commands will be copied from  ‘script.sh’ to  the new created script
 and placed before the python command. Variable assignments and directory changes
 will be systematically ignored.</p>
+</div>
+<p>To use <code class="samp docutils literal notranslate"><span class="pre">mlxpsub</span></code>, MLXP must be installed on both the head node and all compute nodes.
+However, application-specific modules do not need to be installed on the head node.
+You can avoid installing them on the head node by ensuring that these modules are only
+imported within the function that is decorated with the <code class="samp docutils literal notranslate"><span class="pre">mlxp.launch</span></code> decorator.</p>
+<p>In the follwing example, the <code class="samp docutils literal notranslate"><span class="pre">mlxp.launch</span></code> decorator is used
+in the file <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> to decorate the function <code class="samp docutils literal notranslate"><span class="pre">train</span></code>.
+The version below of <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> requires <code class="samp docutils literal notranslate"><span class="pre">torch</span></code> to be installed in the head node:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">import</span> <span class="nn">mlxp</span>
+
+<span class="nd">@mlxp</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">logger</span>
+
+    <span class="o">...</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>To avoid installing <code class="samp docutils literal notranslate"><span class="pre">torch</span></code> on the head node,
+you can make the following simple modification to the <code class="samp docutils literal notranslate"><span class="pre">main.py</span></code> file:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">main.py</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mlxp</span>
+
+<span class="nd">@mlxp</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="s1">&#39;./configs&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">mlxp</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span><span class="o">-&gt;</span><span class="kc">None</span><span class="p">:</span>
+
+    <span class="kn">import</span> <span class="nn">torch</span>
+
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">config</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">logger</span>
+
+    <span class="o">...</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 </dd></dl>
 
@@ -496,6 +616,7 @@ will be systematically ignored.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#mlxp.launcher.instance_from_dict"><code class="docutils literal notranslate"><span class="pre">instance_from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#mlxp.launcher.instantiate"><code class="docutils literal notranslate"><span class="pre">instantiate()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-mlxp.mlxpsub">The <code class="xref py py-class docutils literal notranslate"><span class="pre">mlxpsub</span></code> Command</a><ul>
@@ -516,6 +637,6 @@ will be systematically ignored.</p>
 </div><script src="_static/documentation_options.js?v=10f1778b"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     </body>
 </html>
