@@ -390,14 +390,14 @@ When logging is enabled, these variables are all stored in a uniquely defined di
 ‘arguments’.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>T</p>
+<dd class="field-odd"><p>Type or Callable</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mlxp.launcher.instantiate">
-<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instantiate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instantiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instantiate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mlxp.launcher.</span></span><span class="sig-name descname"><span class="pre">instantiate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.12)"><span class="pre">Callable</span></a></span></span><a class="reference internal" href="_modules/mlxp/launcher.html#instantiate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.launcher.instantiate" title="Link to this definition">¶</a></dt>
 <dd><p>Dynamically imports a module and retrieves a class or function in it by name.</p>
 <p>Given the fully qualified name of a class or function (in the form ‘module.submodule.ClassName’ or
 ‘module.submodule.function_name’), this function imports the module and returns a handle to the class

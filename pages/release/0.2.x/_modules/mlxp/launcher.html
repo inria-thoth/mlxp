@@ -644,7 +644,7 @@
 <span class="sd">    :type arguments: Dict[str,Any]</span>
 <span class="sd">    :return: An instance of a class &#39;class_name&#39; constructed using the arguments in</span>
 <span class="sd">        &#39;arguments&#39;.</span>
-<span class="sd">    :rtype: T</span>
+<span class="sd">    :rtype: Type or Callable</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">instantiate</span><span class="p">(</span><span class="n">class_name</span><span class="p">)(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span></div>
@@ -653,7 +653,7 @@
 
 <div class="viewcode-block" id="instantiate">
 <a class="viewcode-back" href="../../mlxp.launching.html#mlxp.launcher.instantiate">[docs]</a>
-<span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">instantiate</span><span class="p">(</span><span class="n">class_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">T</span><span class="p">,</span><span class="n">Callable</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dynamically imports a module and retrieves a class or function in it by name.</span>
 
 <span class="sd">    Given the fully qualified name of a class or function (in the form &#39;module.submodule.ClassName&#39; or</span>
