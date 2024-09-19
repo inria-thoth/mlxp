@@ -365,13 +365,13 @@ def instance_from_dict(class_name: str, arguments: Dict[str, Any]) -> T:
     :type arguments: Dict[str,Any]
     :return: An instance of a class 'class_name' constructed using the arguments in
         'arguments'.
-    :rtype: T
+    :rtype: Type or Callable
     """
 
     return instantiate(class_name)(**arguments)
 
 
-def instantiate(class_name: str) -> T:
+def instantiate(class_name: str) -> Union[T,Callable]:
     """Dynamically imports a module and retrieves a class or function in it by name.
 
     Given the fully qualified name of a class or function (in the form 'module.submodule.ClassName' or
