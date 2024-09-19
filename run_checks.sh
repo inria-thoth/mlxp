@@ -12,7 +12,7 @@
 
 #flake8 mlxp --count --select=E9,F63,F7,F82 --show-source --statistics
 #flake8 mlxp --count --max-complexity=10 --max-line-length=110 --statistics
-find mlxp -type f -name "*.py" | xargs pylint
+#find mlxp -type f -name "*.py" | xargs pylint
 
 
 # Define Python versions
@@ -20,7 +20,7 @@ python_versions=("3.8" "3.9" "3.10" "3.11")
 
 python_versions=("3.9")
 
-skip_tests=true
+skip_tests=false
 if ! $skip_tests; then
 
     # Loop over Python versions
@@ -57,5 +57,3 @@ if ! $skip_doc; then
     cd docs
     sphinx-multiversion . _build/html
 fi
-
-

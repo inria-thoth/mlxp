@@ -4,7 +4,7 @@ import os
 import sys
 import subprocess
 import mlxp
-
+import time 
 
 from mlxp.reader import Reader
 
@@ -24,7 +24,6 @@ def _delete_directory(log_dir):
 @pytest.fixture
 def launch():
 	# Launching toy experiments
-
 	# Delete directory ./logs/ if it exists 
 	log_dir = os.path.join(tutorial_path,'logs')
 	_delete_directory(log_dir)
@@ -46,15 +45,12 @@ def launch():
 
 	_delete_directory(log_dir)
 
-
 @pytest.fixture
 def reader(launch):
 	# Create reader object 
 
-
 	parent_log_dir = os.path.join(tutorial_path,'logs')
 	reader = mlxp.Reader(parent_log_dir)
-	
 	assert reader.src_dir == os.path.abspath(parent_log_dir)
 
 	# assert that fields is a pandas df that is not empty
