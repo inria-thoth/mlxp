@@ -234,9 +234,7 @@ class MLXPConfig:
 
                     - If untracked files should be added.
                     - If uncommitted changes should be committed.
-                    - If a copy of the current repository based on the latest commit should be made
-                    (if not already existing) to execute the code from there.
-                    Otherwise, code is executed from the current directory.
+                    - If a copy of the current repository based on the latest commit should be made (if not already existing) to execute the code from there. Otherwise, code is executed from the current directory.
 
             2. If 'interactive_mode==False', no interactive mode is used and current options are used:
 

@@ -48,8 +48,7 @@ class VersionManager(abc.ABC):
 
     @abc.abstractmethod
     def get_info(self) -> Dict[str, Any]:
-        """Return a dictionary containing information about the version used for the
-        run.
+        """Return a dictionary containing information about the version used for the run.
 
         :return: Dictionary containing information about the version used for the run.
         :rtype: Dict[str, Any]
@@ -98,16 +97,14 @@ class GitVM(VersionManager):
         self.requirements = ["UNKNOWN"]
 
     def get_info(self) -> Dict[str, Any]:
-        """Return a dictionary containing information about the version used for the
-        run.
+        """Return a dictionary containing information about the version used for the run.
 
         The following information is returned:
         - requirements: the dependencies of the code and their versions. Empty if no requirements file was found.
         - commit_hash: The hash of the latest commit.
         - repo_path: Path to the repository.
 
-        :return: Dictionary containing
-        information about the version used for the run.
+        :return: Dictionary containing information about the version used for the run.
         :rtype: Dict[str, Any]
         """
         return {
@@ -122,8 +119,8 @@ class GitVM(VersionManager):
         Depending on the user's choice, the returned directory is either:
 
         - The current working directory.
-        - A directory under self.parent_work_dir/repo_name/latest_commit_hash.
-        In this case, a copy of the code based on the latest git commit is created and used to run the experiment.
+        - A directory under self.parent_work_dir/repo_name/latest_commit_hash. 
+            In this case, a copy of the code based on the latest git commit is created and used to run the experiment.
 
         :rtype: str
         :return: A path to the target working directory

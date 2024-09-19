@@ -75,8 +75,8 @@ def launch(
     :samp:`launch` allows composing configurations from multiple configuration files
     by leveraging hydra (see hydra-core package).
     This function behaves similarly to :samp:`hydra.main` provided in the hydra-core package:
-        https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.
-    It expects a path to a configuration file named 'config.yaml'
+    https://github.com/facebookresearch/hydra/blob/main/hydra/main.py.
+    It expects a path to a configuration file named :samp:`config.yaml`
     contained in the directory :samp:`config_path` and returns a decorator.
     The returned decorator expects functions with the following signature: :samp:`main(ctx: mlxp.Context)`.
 
@@ -105,8 +105,7 @@ def launch(
 
     This function is necessary to enable MLXP's functionalities including:
         1. Multiple submissions to a cluster queue using :samp:`mlxpsub`
-        2. Job versioning: Creating a 'safe' working directory from which jobs are executed when submitted to a cluster queue,
-        to ensure each job was executed with a specific version of the code.
+        2. Job versioning: Creating a 'safe' working directory from which jobs are executed when submitted to a cluster queue, to ensure each job was executed with a specific version of the code.
 
     :param config_path: The config path, a directory where the default user configuration and MLXP settings are stored.
     :param seeding_function:  A callable for setting the seed of random number generators. It is called with the seed option in 'ctx.config.seed' passed to it.

@@ -32,7 +32,7 @@ if ! $skip_tests; then
             conda create -n mlxp_env_$version python=$version -y
             pip install pytest
             pip install torch
-        fi
+        fic
         #source mlxp_env_$version/bin/activate
         source activate mlxp_env_$version
         

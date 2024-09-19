@@ -170,19 +170,17 @@ class Logger(abc.ABC):
     def load_artifacts(
         self, artifact_name: str, artifact_type: Union[str, None] = None, root: Union[str, None] = None
     ) -> Any:
-        """Restore an artifact from 'log_dir/artifacts/artifact_type/artifact_name' or a
-        user defined directory root.
+        """Restore an artifact from 'log_dir/artifacts/artifact_type/artifact_name' or a user defined directory root.
 
         Raises an error if it fails to do so.
 
         :param artifact_name: Name of the file where the checkpoint is saved.
+        :param root: Absolute path to the log directory (log_dir) (assuming it was created using a logger object). If set to None, then the logger in its own log_dir.
+        :param artifact_type: Type of the artifact to save. If set to None, the method will try to infer the artifact type from the artifact_name.
         :type artifact_name: str (default 'checkpoint')
-        :param root: Absolute path to the log directory (log_dir) (assuming it was created using a logger object).
-        If set to None, then the logger in its own log_dir.
-        :param artifact_type: Type of the artifact to save.
-        If set to None, the method will try to infer the artifact type from the artifact_name.
         :type root: Union[str,None] (default 'None')
         :type artifact_type: Union[str,None] (default 'None')
+        
         return: Any serializable object stored in 'root/artifacts/artifact_type/artifact_name'.
         rtype: Any
         """
@@ -342,16 +340,15 @@ class DefaultLogger(Logger):
         self.log_artifacts(checkpoint, artifact_name=log_name, artifact_type="pickle")
 
     def load_checkpoint(self, log_name, root=None) -> Any:
-        """Restore a checkpoint from 'run_dir/artifacts/pickle/log_name.pkl' or a user
-        defined directory root.
+        """Restore a checkpoint from 'run_dir/artifacts/pickle/log_name.pkl' or a user defined directory root.
 
         Raises an error if it fails to do so.
 
         :param log_name: Name of the file where the checkpoint is saved.
         :type log_name: str (default 'checkpoint')
-        :param root: Absolute path to the checkpoint.
-        If set to None, the logger looks for the checkpoint in 'run_dir/artifacts/pickle'.
+        :param root: Absolute path to the checkpoint. If set to None, the logger looks for the checkpoint in 'run_dir/artifacts/pickle'.
         :type root: Union[str,None] (default 'None')
+        
         return: Any serializable object stored in 'run_dir/artifacts/pickle/last.pkl'.
         rtype: Any
         """
