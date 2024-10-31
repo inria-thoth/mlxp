@@ -163,12 +163,14 @@ class Logger(abc.ABC):
         os.makedirs(subdir, exist_ok=True)
         fname = os.path.join(self.artifacts_dir, artifact_type, artifact_name)
         fname_tmp = fname + "_tmp"
-        while True:
+        trials = 10
+        while trials>0:
             try:
                 self._artifact_types[artifact_type]["save"](artifact, fname_tmp)
                 shutil.move(fname_tmp, fname)
                 break
             except (FileNotFoundError, OSError) as e:
+                trials-=1
                 print(f"{e}. Traying again...")
 
         self._log_artifact_type(artifact_name, artifact_type)
