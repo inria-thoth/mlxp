@@ -42,8 +42,10 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
     default_cfg = _get_default_config(config_path)
 
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
-    if not os.path.exists(mlxp_file):
-        _save_mlxp_file(default_cfg.mlxp, mlxp_file)
+    
+    # Do not create the file by default, not really needed.
+    #if not os.path.exists(mlxp_file):
+    #    _save_mlxp_file(default_cfg.mlxp, mlxp_file)
 
     overrides_mlxp, overrides_config = _process_overrides(overrides)
 
@@ -75,9 +77,13 @@ def _process_overrides(overrides):
 
 
 def _get_mlxp_configs(mlxp_file, default_config_mlxp):
+    valid_keys = list(default_config_mlxp.keys())
+    
     with open(mlxp_file, "r") as file:
         mlxp_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
-    valid_keys = list(default_config_mlxp.keys())
+    _chek_keys(mlxp_config, valid_keys)
+    
+def _chek_keys(mlxp_config, valid_keys):
     for key in mlxp_config["mlxp"].keys():
         try:
             assert key in valid_keys
@@ -86,8 +92,6 @@ def _get_mlxp_configs(mlxp_file, default_config_mlxp):
             msg += f"It contains an invalid field: {key}\n"
             msg += f"Valid fields are {valid_keys}\n"
             raise InvalidConfigFileError(msg) from None
-
-    return mlxp_config
 
 
 def _get_default_config(config_path):
@@ -99,8 +103,12 @@ def _get_default_config(config_path):
     mlxp_file = os.path.join(config_path, "mlxp.yaml")
 
     if os.path.exists(mlxp_file):
-        mlxp_config = _get_mlxp_configs(mlxp_file, default_config["mlxp"])
-        default_config = OmegaConf.merge(default_config, mlxp_config)
+        try:
+            mlxp_config = _get_mlxp_configs(mlxp_file, default_config["mlxp"])
+            default_config = OmegaConf.merge(default_config, mlxp_config)
+        except Exception as e:
+            print(f'Skipping configs in {config_path} due to the following error:')
+            print(e)
 
     return default_config
 
