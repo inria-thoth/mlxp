@@ -277,9 +277,6 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
-<span class="kn">import</span> <span class="nn">git</span>
-<span class="kn">from</span> <span class="nn">git.compat</span> <span class="kn">import</span> <span class="n">defenc</span>
-
 <span class="kn">from</span> <span class="nn">mlxp._internal._interactive_mode</span> <span class="kn">import</span> <span class="n">_bcolors</span><span class="p">,</span> <span class="n">_printc</span>
 
 <span class="n">IGNORE_UNTRACKED_MSG</span> <span class="o">=</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">FAIL</span> <span class="o">+</span> <span class="s2">&quot;Warning:&quot;</span> <span class="o">+</span> <span class="n">_bcolors</span><span class="o">.</span><span class="n">ENDC</span> <span class="o">+</span> <span class="s2">&quot;There are untracked files! </span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -537,7 +534,8 @@
 
 
 <span class="k">def</span> <span class="nf">_disp_untracked_files</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
-
+    <span class="kn">import</span> <span class="nn">git</span>
+    <span class="kn">from</span> <span class="nn">git.compat</span> <span class="kn">import</span> <span class="n">defenc</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">git</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">porcelain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">untracked_files</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_process</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;?? &quot;</span>
@@ -557,7 +555,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_git_repo</span><span class="p">():</span>
-
+    <span class="kn">import</span> <span class="nn">git</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">repo</span> <span class="o">=</span> <span class="n">git</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="n">search_parent_directories</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">git</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">InvalidGitRepositoryError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
