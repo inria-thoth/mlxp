@@ -1,7 +1,7 @@
 import os
 import sys
 import tempfile
-
+import re
 import yaml
 
 from mlxp.errors import InvalidSchedulerError
@@ -12,8 +12,9 @@ scheduler_env_var = "MLXP_SCHEDULER"
 
 def process_bash_script(bash_script_name):
     shebang = ""
-    scheduler = {"option_cmd": [], "env_cmd": [], "name": "", "shell_path": ""}
-
+    scheduler = {"option_cmd": [], "env_cmd": [], "post_cmd":[] , "name": "", "shell_path": ""}
+    inside_python_command = False
+    post_python = False
     with open(bash_script_name, "r") as script_file:
         for line in script_file:
             line = line.strip()
@@ -34,39 +35,50 @@ def process_bash_script(bash_script_name):
                     directive = splitted_line[0]
                     option_cmd = " ".join(splitted_line[1:])
 
-                    try:
-                        assert directive in Schedulers_dict
+                    if directive in Schedulers_dict:
                         scheduler["name"] = directive  # Schedulers_dict[directive]["name"]
                         scheduler["option_cmd"].append(option_cmd)
-                    except AssertionError:
-                        error_msg = directive + " does not correspond to any supported scheduler\n"
-                        error_msg += f"Supported directives are {list(Schedulers_dict.keys())}"
-                        raise InvalidSchedulerError(error_msg) from None
+                        continue
 
-            elif not skip_cmd(line):
-                scheduler["env_cmd"].append(line)
+            if inside_python_command:
+                # Check if this is a continuation of the command (line ends with \)
+                if line.endswith('\\'):
+                    continue  # Skip the continuation
+                else:
+                    inside_python_command = False  # End of multi-line command
+            
+            # Detect a Python command (start of a block)
+            if is_python(line):
+                post_python = True
+                inside_python_command = line.endswith('\\')  # Start block
+                continue  # Skip the Python command line
+            if re.match(r'^\s*\w+\s*=\s*[^=!]', line):
                 continue
+            # Skip `cd` commands
+            if re.match(r'^\s*cd\s+', line):
+                continue
+            
+            # Skip comments starting with `#`
+            if line.startswith('#'):
+                continue
+
+            if post_python:
+                scheduler["post_cmd"].append(line)
+            else:
+                scheduler["env_cmd"].append(line)
 
     configs = {"scheduler": scheduler, "use_scheduler": True}
     return configs, shebang
 
-
-def skip_cmd(line):
+def is_python(line):
     lower_line = line.lower()
     if lower_line.startswith("python ") or lower_line.startswith("python3 "):
         return True
     else:
         if (" python " in lower_line) or (" python3 " in lower_line):
             return True
-
-    # Skip assignment
-    split_eq = line.split("=")
-    if len(split_eq) > 1:
-        return True
-    if line.startswith("cd") or line.startswith("#"):
-        return True
-
     return False
+
 
 
 def handle_launch_cmd(bash_cmd, bash_script_name):

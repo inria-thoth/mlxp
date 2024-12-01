@@ -162,6 +162,7 @@ class _Scheduler(abc.ABC):
         self.option_cmd = specs['option_cmd']
         self.shell_path = specs['shell_path']
         self.env_cmd = specs['env_cmd']
+        self.post_cmd = specs['post_cmd']
 
         self.process_output = None
 
@@ -259,7 +260,12 @@ class _Scheduler(abc.ABC):
         else:
             env_cmds = [f"\n"]
 
-        cmd = "".join(shell_cmd + option_cmd + env_cmds + job_command)
+        if len(self.post_cmd)>0:
+            post_cmd = [f"{cmd}\n" for cmd in self.post_cmd]
+        else:
+            post_cmd = [f"\n"]
+
+        cmd = "".join(shell_cmd + option_cmd + env_cmds + job_command + post_cmd)
         return cmd
 
 
@@ -286,9 +292,9 @@ def _create_scheduler(scheduler_spec):
     info_method = specs.pop("get_info")
 
     class _ChildScheduler(_Scheduler):
-        def __init__(self, shell_path="/bin/bash", env_cmd="", option_cmd=None):
+        def __init__(self, shell_path="/bin/bash", env_cmd="", post_cmd="", option_cmd=None):
             specs.update(
-                {"shell_path": shell_path, "env_cmd": env_cmd, "option_cmd": option_cmd,}
+                {"shell_path": shell_path, "env_cmd": env_cmd, "post_cmd":post_cmd, "option_cmd": option_cmd,}
             )
 
             super().__init__(specs)
