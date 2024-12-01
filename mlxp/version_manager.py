@@ -6,9 +6,6 @@ import os
 import subprocess
 from typing import Any, Dict
 
-import git
-from git.compat import defenc
-
 from mlxp._internal._interactive_mode import _bcolors, _printc
 
 IGNORE_UNTRACKED_MSG = _bcolors.FAIL + "Warning:" + _bcolors.ENDC + "There are untracked files! \n"
@@ -248,7 +245,8 @@ def _disp_uncommited_files(repo):
 
 
 def _disp_untracked_files(repo):
-
+    import git
+    from git.compat import defenc
     status = repo.git.status(porcelain=True, untracked_files=False, as_process=True)
 
     prefix = "?? "
@@ -268,7 +266,7 @@ def _disp_untracked_files(repo):
 
 
 def _get_git_repo():
-
+    import git
     try:
         repo = git.Repo(search_parent_directories=True)
     except git.exc.InvalidGitRepositoryError as error:

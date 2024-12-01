@@ -1,10 +1,10 @@
 # Changes
 
-## 1.0.2 (2024-09-19)
+## 1.0.3 (2024-12-01)
 
 
 ### Bug fixes
 
-- Make mlxp config file optional
+- Do not import git globally
 
 
