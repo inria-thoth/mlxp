@@ -436,6 +436,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">option_cmd</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;option_cmd&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_path</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;shell_path&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_cmd</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;env_cmd&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_cmd</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;post_cmd&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">process_output</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -533,7 +534,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">env_cmds</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">]</span>
 
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shell_cmd</span> <span class="o">+</span> <span class="n">option_cmd</span> <span class="o">+</span> <span class="n">env_cmds</span> <span class="o">+</span> <span class="n">job_command</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post_cmd</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">post_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_cmd</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">post_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">]</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shell_cmd</span> <span class="o">+</span> <span class="n">option_cmd</span> <span class="o">+</span> <span class="n">env_cmds</span> <span class="o">+</span> <span class="n">job_command</span> <span class="o">+</span> <span class="n">post_cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cmd</span>
 
 
@@ -560,9 +566,9 @@
     <span class="n">info_method</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;get_info&quot;</span><span class="p">)</span>
 
     <span class="k">class</span> <span class="nc">_ChildScheduler</span><span class="p">(</span><span class="n">_Scheduler</span><span class="p">):</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell_path</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="n">env_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">option_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell_path</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="n">env_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">post_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">option_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="n">specs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;shell_path&quot;</span><span class="p">:</span> <span class="n">shell_path</span><span class="p">,</span> <span class="s2">&quot;env_cmd&quot;</span><span class="p">:</span> <span class="n">env_cmd</span><span class="p">,</span> <span class="s2">&quot;option_cmd&quot;</span><span class="p">:</span> <span class="n">option_cmd</span><span class="p">,}</span>
+                <span class="p">{</span><span class="s2">&quot;shell_path&quot;</span><span class="p">:</span> <span class="n">shell_path</span><span class="p">,</span> <span class="s2">&quot;env_cmd&quot;</span><span class="p">:</span> <span class="n">env_cmd</span><span class="p">,</span> <span class="s2">&quot;post_cmd&quot;</span><span class="p">:</span><span class="n">post_cmd</span><span class="p">,</span> <span class="s2">&quot;option_cmd&quot;</span><span class="p">:</span> <span class="n">option_cmd</span><span class="p">,}</span>
             <span class="p">)</span>
 
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span>
