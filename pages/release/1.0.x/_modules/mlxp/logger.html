@@ -443,8 +443,16 @@
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">subdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">artifacts_dir</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">,</span> <span class="n">artifact_name</span><span class="p">)</span>
         <span class="n">fname_tmp</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="s2">&quot;_tmp&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;save&quot;</span><span class="p">](</span><span class="n">artifact</span><span class="p">,</span> <span class="n">fname_tmp</span><span class="p">)</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">fname_tmp</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">while</span> <span class="n">trials</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_artifact_types</span><span class="p">[</span><span class="n">artifact_type</span><span class="p">][</span><span class="s2">&quot;save&quot;</span><span class="p">](</span><span class="n">artifact</span><span class="p">,</span> <span class="n">fname_tmp</span><span class="p">)</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">fname_tmp</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">trials</span><span class="o">-=</span><span class="mi">1</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Traying again...&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_artifact_type</span><span class="p">(</span><span class="n">artifact_name</span><span class="p">,</span> <span class="n">artifact_type</span><span class="p">)</span></div>
 
 

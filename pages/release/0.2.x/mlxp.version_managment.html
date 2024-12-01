@@ -284,31 +284,31 @@ generate a deployment version of the code based on the latest git commit.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.version_manager.VersionManager">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.version_manager.</span></span><span class="sig-name descname"><span class="pre">VersionManager</span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#VersionManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.VersionManager" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>An abstract class whose children allow custumizing the working directory of the
 run.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.version_manager.VersionManager.get_info">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#VersionManager.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.VersionManager.get_info" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#VersionManager.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.VersionManager.get_info" title="Link to this definition">¶</a></dt>
 <dd><p>Return a dictionary containing information about the version used for the run.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary containing information about the version used for the run.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>, Any]</p>
+<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, Any]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.version_manager.VersionManager.make_working_directory">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_working_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#VersionManager.make_working_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.VersionManager.make_working_directory" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_working_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#VersionManager.make_working_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.VersionManager.make_working_directory" title="Link to this definition">¶</a></dt>
 <dd><p>Return a path to the target working directory from which runs submitted to a
 cluster in batch mode will be executed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A path to the target working directory</p>
@@ -320,7 +320,7 @@ cluster in batch mode will be executed.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mlxp.version_manager.GitVM">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.version_manager.</span></span><span class="sig-name descname"><span class="pre">GitVM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_work_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_requirements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/version_manager.html#GitVM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.GitVM" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mlxp.version_manager.</span></span><span class="sig-name descname"><span class="pre">GitVM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_work_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_requirements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mlxp/version_manager.html#GitVM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.GitVM" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mlxp.version_manager.VersionManager" title="mlxp.version_manager.VersionManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">VersionManager</span></code></a></p>
 <p>GitVM allows separting development code from code deployed in a cluster and
 allows to recover exactly the code used for a given run.</p>
@@ -328,20 +328,20 @@ allows to recover exactly the code used for a given run.</p>
 if it doesn’t exist already, then sets the working directory to this copy.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxp.version_manager.GitVM.parent_work_dir">
-<span class="sig-name descname"><span class="pre">parent_work_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.version_manager.GitVM.parent_work_dir" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">parent_work_dir</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#mlxp.version_manager.GitVM.parent_work_dir" title="Link to this definition">¶</a></dt>
 <dd><p>The target parent directory of
 the new working directory returned by the version manager</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="mlxp.version_manager.GitVM.compute_requirements">
-<span class="sig-name descname"><span class="pre">compute_requirements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxp.version_manager.GitVM.compute_requirements" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">compute_requirements</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#mlxp.version_manager.GitVM.compute_requirements" title="Link to this definition">¶</a></dt>
 <dd><p>When set to true, the version manager stores a list of requirements and their version.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.version_manager.GitVM.get_info">
-<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#GitVM.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.GitVM.get_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#GitVM.get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.GitVM.get_info" title="Link to this definition">¶</a></dt>
 <dd><p>Return a dictionary containing information about the version used for the run.</p>
 <p>The following information is returned:
 - requirements: the dependencies of the code and their versions. Empty if no requirements file was found.
@@ -352,14 +352,14 @@ the new working directory returned by the version manager</p>
 <dd class="field-odd"><p>Dictionary containing information about the version used for the run.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a>, Any]</p>
+<dd class="field-even"><p>Dict[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, Any]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mlxp.version_manager.GitVM.make_working_directory">
-<span class="sig-name descname"><span class="pre">make_working_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#GitVM.make_working_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.GitVM.make_working_directory" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">make_working_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/mlxp/version_manager.html#GitVM.make_working_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mlxp.version_manager.GitVM.make_working_directory" title="Link to this definition">¶</a></dt>
 <dd><p>Create and return a target working directory.</p>
 <p>Depending on the user’s choice, the returned directory is either:</p>
 <ul class="simple">
@@ -372,7 +372,7 @@ the new working directory returned by the version manager</p>
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A path to the target working directory</p>
