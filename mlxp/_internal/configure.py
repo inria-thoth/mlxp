@@ -81,9 +81,9 @@ def _get_mlxp_configs(mlxp_file, default_config_mlxp):
     
     with open(mlxp_file, "r") as file:
         mlxp_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
-    _chek_keys(mlxp_config, valid_keys)
+    _chek_keys(mlxp_config, valid_keys,_chek_keys)
     
-def _chek_keys(mlxp_config, valid_keys):
+def _chek_keys(mlxp_config, valid_keys,mlxp_file):
     for key in mlxp_config["mlxp"].keys():
         try:
             assert key in valid_keys
