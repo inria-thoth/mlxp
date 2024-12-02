@@ -14,10 +14,13 @@ from mlxp.mlxpsub import scheduler_env_var
 def _update_scheduler_config(mlxp_config):
     if scheduler_env_var in os.environ:
         variable_value = os.environ[scheduler_env_var]
-        with open(variable_value, "r") as file:
-            scheduler_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
-        mlxp_config = OmegaConf.merge(mlxp_config, scheduler_config)
-
+        try:
+            with open(variable_value, "r") as file:
+                scheduler_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
+            mlxp_config = OmegaConf.merge(mlxp_config, scheduler_config)
+        except FileNotFoundError as e:
+            print("No scheduler is configured, continuing...")
+        
     return mlxp_config
 
 
@@ -41,7 +44,7 @@ def _build_config(config_path, config_name, co_filename, overrides, interactive_
             pass
     default_cfg = _get_default_config(config_path)
 
-    mlxp_file = os.path.join(config_path, "mlxp.yaml")
+    #mlxp_file = os.path.join(config_path, "mlxp.yaml")
     
     # Do not create the file by default, not really needed.
     #if not os.path.exists(mlxp_file):

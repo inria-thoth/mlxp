@@ -111,8 +111,6 @@ def run_python_script(bash_cmd, bash_script_name, scheduler_file_name):
         sys.stderr.write("{0}: command not found\n".format(bash_cmd))
     else:
         print(code)
-    del os.environ[scheduler_env_var]
-
 
 def mlxpsub():
     """A function for submitting a script to a job scheduler.
