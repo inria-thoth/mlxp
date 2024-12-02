@@ -437,6 +437,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_path</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;shell_path&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_cmd</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;env_cmd&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">post_cmd</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;post_cmd&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">before_cmd</span><span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s1">&#39;before_cmd&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">process_output</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -512,6 +513,22 @@
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">raise</span> <span class="n">UnknownSystemError</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_main_job_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="n">exec_file</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;cd </span><span class="si">{</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">before_cmd</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">executable</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">exec_file</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">                +mlxp.logger.forced_log_id=</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="se">\</span>
+<span class="s2">                +mlxp.logger.parent_log_dir=</span><span class="si">{</span><span class="n">parent_log_dir</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
+<span class="s2">                +mlxp.use_scheduler=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="se">\</span>
+<span class="s2">                +mlxp.use_version_manager=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="se">\</span>
+<span class="s2">                +mlxp.interactive_mode=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+
     <span class="k">def</span> <span class="nf">_make_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">):</span>
         <span class="n">job_command</span> <span class="o">=</span> <span class="p">[</span><span class="n">main_cmd</span><span class="p">]</span>
 
@@ -566,9 +583,9 @@
     <span class="n">info_method</span> <span class="o">=</span> <span class="n">specs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;get_info&quot;</span><span class="p">)</span>
 
     <span class="k">class</span> <span class="nc">_ChildScheduler</span><span class="p">(</span><span class="n">_Scheduler</span><span class="p">):</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell_path</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="n">env_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">post_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">option_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell_path</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">,</span> <span class="n">env_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">post_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">before_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">option_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="n">specs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;shell_path&quot;</span><span class="p">:</span> <span class="n">shell_path</span><span class="p">,</span> <span class="s2">&quot;env_cmd&quot;</span><span class="p">:</span> <span class="n">env_cmd</span><span class="p">,</span> <span class="s2">&quot;post_cmd&quot;</span><span class="p">:</span><span class="n">post_cmd</span><span class="p">,</span> <span class="s2">&quot;option_cmd&quot;</span><span class="p">:</span> <span class="n">option_cmd</span><span class="p">,}</span>
+                <span class="p">{</span><span class="s2">&quot;shell_path&quot;</span><span class="p">:</span> <span class="n">shell_path</span><span class="p">,</span> <span class="s2">&quot;env_cmd&quot;</span><span class="p">:</span> <span class="n">env_cmd</span><span class="p">,</span> <span class="s2">&quot;post_cmd&quot;</span><span class="p">:</span><span class="n">post_cmd</span><span class="p">,</span> <span class="s2">&quot;before_cmd&quot;</span><span class="p">:</span><span class="n">before_cmd</span><span class="p">,</span> <span class="s2">&quot;option_cmd&quot;</span><span class="p">:</span> <span class="n">option_cmd</span><span class="p">,}</span>
             <span class="p">)</span>
 
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span>

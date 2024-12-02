@@ -492,12 +492,15 @@
                 <span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="n">mlxp_cfg</span><span class="o">.</span><span class="n">mlxp</span><span class="o">.</span><span class="n">use_scheduler</span><span class="p">:</span>
-                <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">_main_job_command</span><span class="p">(</span>
+                <span class="n">exec_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">_get_overrides</span><span class="p">()</span>
+                <span class="n">main_cmd</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">_main_job_command</span><span class="p">(</span>
                     <span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
-                    <span class="n">info_cfg</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">current_file_path</span><span class="p">,</span>
+                    <span class="n">exec_file</span><span class="p">,</span>
                     <span class="n">work_dir</span><span class="p">,</span>
                     <span class="n">parent_log_dir</span><span class="p">,</span>
                     <span class="n">log_id</span><span class="p">,</span>
+                    <span class="n">args</span>
                 <span class="p">)</span>
 
                 <span class="n">scheduler</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">)</span>

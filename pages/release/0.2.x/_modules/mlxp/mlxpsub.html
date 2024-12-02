@@ -283,7 +283,7 @@
 
 <span class="k">def</span> <span class="nf">process_bash_script</span><span class="p">(</span><span class="n">bash_script_name</span><span class="p">):</span>
     <span class="n">shebang</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;option_cmd&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;env_cmd&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;post_cmd&quot;</span><span class="p">:[]</span> <span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;shell_path&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;option_cmd&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;env_cmd&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;post_cmd&quot;</span><span class="p">:[]</span> <span class="p">,</span> <span class="s2">&quot;before_cmd&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;shell_path&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
     <span class="n">inside_python_command</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">post_python</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bash_script_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
@@ -310,6 +310,11 @@
                         <span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">directive</span>  <span class="c1"># Schedulers_dict[directive][&quot;name&quot;]</span>
                         <span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;option_cmd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">option_cmd</span><span class="p">)</span>
                         <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">continue</span> 
+            <span class="c1"># Skip comments starting with `#`</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">inside_python_command</span><span class="p">:</span>
                 <span class="c1"># Check if this is a continuation of the command (line ends with \)</span>
@@ -319,7 +324,10 @@
                     <span class="n">inside_python_command</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># End of multi-line command</span>
             
             <span class="c1"># Detect a Python command (start of a block)</span>
-            <span class="k">if</span> <span class="n">is_python</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+            <span class="n">python_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.*)\b(python[3]?|python[2]?)\b&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">python_match</span><span class="p">:</span>
+                <span class="n">before_python</span> <span class="o">=</span> <span class="n">python_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;before_cmd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">before_python</span>
                 <span class="n">post_python</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">inside_python_command</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">)</span>  <span class="c1"># Start block</span>
                 <span class="k">continue</span>  <span class="c1"># Skip the Python command line</span>
@@ -329,9 +337,7 @@
             <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^\s*cd\s+&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
                 <span class="k">continue</span>
             
-            <span class="c1"># Skip comments starting with `#`</span>
-            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
-                <span class="k">continue</span>
+
 
             <span class="k">if</span> <span class="n">post_python</span><span class="p">:</span>
                 <span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;post_cmd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
