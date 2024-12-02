@@ -163,6 +163,7 @@ class _Scheduler(abc.ABC):
         self.shell_path = specs['shell_path']
         self.env_cmd = specs['env_cmd']
         self.post_cmd = specs['post_cmd']
+        self.before_cmd= specs['before_cmd']
 
         self.process_output = None
 
@@ -238,6 +239,22 @@ class _Scheduler(abc.ABC):
             return ""
         raise UnknownSystemError()
 
+    def _main_job_command(self, executable, exec_file, work_dir, parent_log_dir, job_id, args):
+
+        values = [
+            f"cd {work_dir}",
+            f"{self.before_cmd} {executable} {exec_file} {args} \
+                +mlxp.logger.forced_log_id={job_id}\
+                +mlxp.logger.parent_log_dir={parent_log_dir} \
+                +mlxp.use_scheduler={False}\
+                +mlxp.use_version_manager={False}\
+                +mlxp.interactive_mode={False}",
+        ]
+
+        values = [f"{val}\n" for val in values]
+        return "".join(values)
+
+
     def _make_job(self, main_cmd, log_dir):
         job_command = [main_cmd]
 
@@ -292,9 +309,9 @@ def _create_scheduler(scheduler_spec):
     info_method = specs.pop("get_info")
 
     class _ChildScheduler(_Scheduler):
-        def __init__(self, shell_path="/bin/bash", env_cmd="", post_cmd="", option_cmd=None):
+        def __init__(self, shell_path="/bin/bash", env_cmd="", post_cmd="", before_cmd="", option_cmd=None):
             specs.update(
-                {"shell_path": shell_path, "env_cmd": env_cmd, "post_cmd":post_cmd, "option_cmd": option_cmd,}
+                {"shell_path": shell_path, "env_cmd": env_cmd, "post_cmd":post_cmd, "before_cmd":before_cmd, "option_cmd": option_cmd,}
             )
 
             super().__init__(specs)

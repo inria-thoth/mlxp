@@ -12,7 +12,7 @@ scheduler_env_var = "MLXP_SCHEDULER"
 
 def process_bash_script(bash_script_name):
     shebang = ""
-    scheduler = {"option_cmd": [], "env_cmd": [], "post_cmd":[] , "name": "", "shell_path": ""}
+    scheduler = {"option_cmd": [], "env_cmd": [], "post_cmd":[] , "before_cmd":"", "name": "", "shell_path": ""}
     inside_python_command = False
     post_python = False
     with open(bash_script_name, "r") as script_file:
@@ -39,6 +39,11 @@ def process_bash_script(bash_script_name):
                         scheduler["name"] = directive  # Schedulers_dict[directive]["name"]
                         scheduler["option_cmd"].append(option_cmd)
                         continue
+                    else:
+                        continue 
+            # Skip comments starting with `#`
+            if line.startswith('#'):
+                continue
 
             if inside_python_command:
                 # Check if this is a continuation of the command (line ends with \)
@@ -48,7 +53,10 @@ def process_bash_script(bash_script_name):
                     inside_python_command = False  # End of multi-line command
             
             # Detect a Python command (start of a block)
-            if is_python(line):
+            python_match = re.match(r'^(.*)\b(python[3]?|python[2]?)\b', line)
+            if python_match:
+                before_python = python_match.group(1).strip()
+                scheduler["before_cmd"] = before_python
                 post_python = True
                 inside_python_command = line.endswith('\\')  # Start block
                 continue  # Skip the Python command line
@@ -58,9 +66,7 @@ def process_bash_script(bash_script_name):
             if re.match(r'^\s*cd\s+', line):
                 continue
             
-            # Skip comments starting with `#`
-            if line.startswith('#'):
-                continue
+
 
             if post_python:
                 scheduler["post_cmd"].append(line)

@@ -219,12 +219,15 @@ def launch(
                 logger = None
 
             if mlxp_cfg.mlxp.use_scheduler:
-                main_cmd = _main_job_command(
+                exec_file = os.path.relpath(info_cfg.info.current_file_path, os.getcwd())
+                args = _get_overrides()
+                main_cmd = scheduler._main_job_command(
                     info_cfg.info.executable,
-                    info_cfg.info.current_file_path,
+                    exec_file,
                     work_dir,
                     parent_log_dir,
                     log_id,
+                    args
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
