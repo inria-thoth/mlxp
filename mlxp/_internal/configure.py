@@ -19,7 +19,8 @@ def _update_scheduler_config(mlxp_config):
                 scheduler_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
             mlxp_config = OmegaConf.merge(mlxp_config, scheduler_config)
         except FileNotFoundError as e:
-            print("No scheduler is configured, continuing...")
+           pass
+           #print("MLX: No scheduler is configured, continuing...")
         
     return mlxp_config
 
@@ -68,13 +69,14 @@ def _process_overrides(overrides):
         # overrides_mlxp = OmegaConf.to_container(cfg.hydra.overrides.task, resolve=False)
         overrides_mlxp = OmegaConf.create({"mlxp": overrides.mlxp})
     #        cfg = OmegaConf.merge(cfg, overrides_mlxp)
+        omegaconf.OmegaConf.set_struct(overrides, True)
+        with omegaconf.open_dict(overrides):
+            overrides.pop("mlxp")
+        omegaconf.OmegaConf.set_struct(overrides, False)
     else:
         overrides_mlxp = None
 
-    omegaconf.OmegaConf.set_struct(overrides, True)
-    with omegaconf.open_dict(overrides):
-        overrides.pop("mlxp")
-    omegaconf.OmegaConf.set_struct(overrides, False)
+
 
     return overrides_mlxp, overrides
 
@@ -85,6 +87,7 @@ def _get_mlxp_configs(mlxp_file, default_config_mlxp):
     with open(mlxp_file, "r") as file:
         mlxp_config = OmegaConf.create({"mlxp": yaml.safe_load(file)})
     _chek_keys(mlxp_config, valid_keys,_chek_keys)
+    return mlxp_config
     
 def _chek_keys(mlxp_config, valid_keys,mlxp_file):
     for key in mlxp_config["mlxp"].keys():
@@ -110,7 +113,7 @@ def _get_default_config(config_path):
             mlxp_config = _get_mlxp_configs(mlxp_file, default_config["mlxp"])
             default_config = OmegaConf.merge(default_config, mlxp_config)
         except Exception as e:
-            print(f'Skipping configs in {config_path} due to the following error:')
+            print(f'Skipping configs in {mlxp_file} due to the following error:')
             print(e)
 
     return default_config
