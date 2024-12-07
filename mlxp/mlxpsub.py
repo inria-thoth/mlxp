@@ -16,7 +16,8 @@ def process_bash_script(bash_script_name):
     inside_python_command = False
     post_python = False
     with open(bash_script_name, "r") as script_file:
-        for line in script_file:
+        lines = script_file.readlines()
+        for i, line in enumerate(lines):
             line = line.strip()
 
             if not line:
@@ -48,10 +49,15 @@ def process_bash_script(bash_script_name):
             if inside_python_command:
                 # Check if this is a continuation of the command (line ends with \)
                 if line.endswith('\\'):
+                    if i +1 < len(lines):
+                        if not lines[i+1].strip():
+                            inside_python_command = False
+
                     continue  # Skip the continuation
                 else:
                     inside_python_command = False  # End of multi-line command
-            
+                    continue 
+
             # Detect a Python command (start of a block)
             python_match = re.match(r'^(.*)\b(python[3]?|python[2]?)\b', line)
             if python_match:
