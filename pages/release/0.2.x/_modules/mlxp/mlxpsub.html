@@ -287,7 +287,8 @@
     <span class="n">inside_python_command</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">post_python</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bash_script_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">script_file</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">script_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
@@ -319,10 +320,15 @@
             <span class="k">if</span> <span class="n">inside_python_command</span><span class="p">:</span>
                 <span class="c1"># Check if this is a continuation of the command (line ends with \)</span>
                 <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">+</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                            <span class="n">inside_python_command</span> <span class="o">=</span> <span class="kc">False</span>
+
                     <span class="k">continue</span>  <span class="c1"># Skip the continuation</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">inside_python_command</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># End of multi-line command</span>
-            
+                    <span class="k">continue</span> 
+
             <span class="c1"># Detect a Python command (start of a block)</span>
             <span class="n">python_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.*)\b(python[3]?|python[2]?)\b&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">python_match</span><span class="p">:</span>
