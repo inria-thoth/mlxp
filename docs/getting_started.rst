@@ -29,11 +29,11 @@ In this example, the file :samp:`main.py` contains a function :samp:`my_task` th
    def my_task(ctx: mlxp.Context)->None:
 
      # Displaying user-defined options from './configs/config.yaml
-     print("ctx.config")
+     print(ctx.config)
 
      # Logging information in log directory created by MLXP: (here "./logs/1" )
-     for i in range(ctx.config.num_epoch)
-        ctx.logger.log_metrics({"epoch":i})
+     for i in range(ctx.config.num_epoch):
+        ctx.logger.log_metrics({"epoch":i}, log_name="Quickstart")
 
 
 
