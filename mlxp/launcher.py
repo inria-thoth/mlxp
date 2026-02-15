@@ -507,7 +507,6 @@ def _get_overrides(mlxp_cfg):
     filtered_args = list(filter(filter_fn, overrides))
     
     args = " ".join(filtered_args)
-    print(lol)
     return args
 
 
