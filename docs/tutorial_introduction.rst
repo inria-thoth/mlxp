@@ -19,22 +19,22 @@ The first step is to create a directory 'tutorial' containing the code needed fo
    tutorial/
    ├── configs/
    │   └── config.yaml
-   ├── core.py
+   ├── core_app.py
    ├── main.py
    └── read.py
 
-The directory contains three files: :samp:`core.py`, :samp:`main.py` :samp:`results.py`. It also contains a directory :samp:`configs` that will be used later by MLXP. For now, we will only have a look at the :samp:`core.py` and :samp:`main.py` files.
+The directory contains three files: :samp:`core_app.py`, :samp:`main.py` :samp:`read.py`. It also contains a directory :samp:`configs` that will be used later by MLXP. For now, we will only have a look at the :samp:`core_app.py` and :samp:`main.py` files.
 
 
-The :samp:`core.py` file
+The :samp:`core_app.py` file
 """"""""""""""""""""""""
 
-The file :samp:`core.py` contains a PyTorch implementation of a one hidden layer network :samp:`OneHiddenLayer` as well as a simple data loader :samp:`DataLoader` that we will use during training. 
-In the rest of the tutorial, we will not need to worry about the content of :samp:`core.py`, but let's just have a quick look at this file:
+The file :samp:`core_app.py` contains a PyTorch implementation of a one hidden layer network :samp:`OneHiddenLayer` as well as a simple data loader :samp:`DataLoader` that we will use during training. 
+In the rest of the tutorial, we will not need to worry about the content of :samp:`core_app.py`, but let's just have a quick look at this file:
 
 
 .. code-block:: python
-    :caption: main.py
+    :caption: core_app.py
 
     import torch
     import torch.nn as nn

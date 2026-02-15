@@ -27,8 +27,8 @@ class Dataset(torch.utils.data.Dataset):
 		self.X = torch.normal(mean= torch.zeros(N_samples,d_int,dtype=dtype,device=device),std=1.)
 
 		if normalize:			
-			inv_norm = 1./tr.norm(self.X,dim=1)
-			self.X = tr.einsum('nd,n->nd',self.X,inv_norm)
+			inv_norm = 1./torch.norm(self.X,dim=1)
+			self.X = torch.einsum('nd,n->nd',self.X,inv_norm)
 
 		self.total_size = N_samples
 		

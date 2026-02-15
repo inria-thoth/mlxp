@@ -4,7 +4,7 @@ MLXP Tutorial
 This page presents the main functionalities of MLXP through a tutorial.
 See the following page for more detailed information:
 
--  `Tutorial <https://inria-thoth.github.io/mlxp/tutorial.html>`__
+-  `Tutorial <https://inria-thoth.github.io/mlxp/pages/master/tutorial.html>`__
 
 Requirements
 ------------
