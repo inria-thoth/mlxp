@@ -34,6 +34,7 @@ warnings.filterwarnings('ignore', module='hydra')
 _UNSPECIFIED_: Any = object()
 
 
+
 hydra_defaults_dict = {
     "hydra.mode": "MULTIRUN",
     "hydra.output_subdir": "null",
@@ -220,14 +221,15 @@ def launch(
 
             if mlxp_cfg.mlxp.use_scheduler:
                 exec_file = os.path.relpath(info_cfg.info.current_file_path, os.getcwd())
-                args = _get_overrides()
+                args = _get_overrides(mlxp_cfg)
                 main_cmd = scheduler._main_job_command(
                     info_cfg.info.executable,
                     exec_file,
                     work_dir,
                     parent_log_dir,
                     log_id,
-                    args
+                    args,
+                    mlxp_cfg
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
@@ -462,10 +464,10 @@ def _get_configs(log_dir):
     return configs
 
 
-def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, job_id):
+def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, job_id, mlxp_cfg):
     exec_file = os.path.relpath(current_file_path, os.getcwd())
 
-    args = _get_overrides()
+    args = _get_overrides(mlxp_cfg)
     values = [
         f"cd {work_dir}",
         f"{executable} {exec_file} {args} \
@@ -480,19 +482,48 @@ def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, j
     return "".join(values)
 
 
-def _get_overrides():
+def _get_overrides(mlxp_cfg):
+
     hydra_cfg = HydraConfig.get()
     overrides = hydra_cfg.overrides.task
 
+    mlxp_cfg_dict= convert_dict(mlxp_cfg, src_class=omegaconf.dictconfig.DictConfig, dst_class=dict)
+
+    EXCLUDE_PREFIXES = tuple(flatten_leaf_keys(mlxp_cfg_dict["mlxp"], prefix="mlxp"))
+
+    
     def filter_fn(config_dict):
-        return (
-            ("version_manager" not in config_dict)
-            and ("scheduler" not in config_dict)
-            and ("logger.parent_log_dir" not in config_dict)
-            and ("logger.forced_log_id" not in config_dict)
-            and ("interactive_mode" not in config_dict)
-        )
+         
+        return all(k not in config_dict for k in EXCLUDE_PREFIXES)
+
+        # (
+        #     ("version_manager" not in config_dict)
+        #     and ("scheduler" not in config_dict)
+        #     and ("logger.parent_log_dir" not in config_dict)
+        #     and ("logger.forced_log_id" not in config_dict)
+        #     and ("interactive_mode" not in config_dict)
+        # )
 
     filtered_args = list(filter(filter_fn, overrides))
+    
     args = " ".join(filtered_args)
+    print(lol)
     return args
+
+
+
+
+def flatten_leaf_keys(d, prefix=""):
+    out = []
+    if isinstance(d, dict):
+        for k, v in d.items():
+            p = f"{prefix}.{k}" if prefix else str(k)
+            out.extend(flatten_leaf_keys(v, p))
+    else:
+        # treat non-dict (incl. lists) as leaf
+        out.append(prefix)
+    return out
+
+
+
+

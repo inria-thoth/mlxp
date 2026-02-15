@@ -1,10 +1,10 @@
 # Changes
 
-## 1.0.3 (2024-12-01)
+## 1.0.5 (2026-02-15)
 
 
 ### Bug fixes
 
-- Do not import git globally
+- Correctly filtering mlxp options from overrides when using mlxpsub command
 
 
