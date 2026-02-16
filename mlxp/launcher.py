@@ -228,8 +228,7 @@ def launch(
                     work_dir,
                     parent_log_dir,
                     log_id,
-                    args,
-                    mlxp_cfg
+                    args
                 )
 
                 scheduler.submit_job(main_cmd, log_dir)
@@ -464,23 +463,6 @@ def _get_configs(log_dir):
     return configs
 
 
-def _main_job_command(executable, current_file_path, work_dir, parent_log_dir, job_id, mlxp_cfg):
-    exec_file = os.path.relpath(current_file_path, os.getcwd())
-
-    args = _get_overrides(mlxp_cfg)
-    values = [
-        f"cd {work_dir}",
-        f"{executable} {exec_file} {args} \
-            +mlxp.logger.forced_log_id={job_id}\
-            +mlxp.logger.parent_log_dir={parent_log_dir} \
-            +mlxp.use_scheduler={False}\
-            +mlxp.use_version_manager={False}\
-            +mlxp.interactive_mode={False}",
-    ]
-
-    values = [f"{val}\n" for val in values]
-    return "".join(values)
-
 
 def _get_overrides(mlxp_cfg):
 
@@ -495,14 +477,6 @@ def _get_overrides(mlxp_cfg):
     def filter_fn(config_dict):
          
         return all(k not in config_dict for k in EXCLUDE_PREFIXES)
-
-        # (
-        #     ("version_manager" not in config_dict)
-        #     and ("scheduler" not in config_dict)
-        #     and ("logger.parent_log_dir" not in config_dict)
-        #     and ("logger.forced_log_id" not in config_dict)
-        #     and ("interactive_mode" not in config_dict)
-        # )
 
     filtered_args = list(filter(filter_fn, overrides))
     
