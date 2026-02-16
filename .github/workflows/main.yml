@@ -113,8 +113,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install wheel and smoke import
-        run: python -m pip install --no-index --find-links wheelhouse MLXP
-
+        run: python -m pip install --find-links wheelhouse MLXP &&  python -c "import mlxp;"
+      
       - name: Run tests
         uses: knicknic/os-specific-run@v1.0.3
         with:
