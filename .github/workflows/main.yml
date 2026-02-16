@@ -104,25 +104,23 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
+          pattern: wheels-*
           path: wheelhouse
+          merge-multiple: true
 
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install wheel and smoke import
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install wheelhouse/*.whl
-          python -c "import mlxp"
+        run: python -m pip install --no-index --find-links wheelhouse MLXP
 
       - name: Run tests
         uses: knicknic/os-specific-run@v1.0.3
         with:
-          macos: python -m pip install pytest torch && cd tests && python -m pytest
-          linux: python -m pip install pytest torch && cd tests && python -m pytest
-          windows: python -m pip install pytest torch; cd tests; python -m pytest
+          macos: rm -rf MLXP && python -m pip install pytest torch && cd tests && python -m pytest
+          linux: rm -rf MLXP && python -m pip install pytest torch && cd tests && python -m pytest
+          windows: Remove-Item -Force -Recurse MLXP && python -m pip install pytest && python -m pip install torch && cd tests && python -m pytest
 
   upload_pypi:
     if:  startsWith(github.ref, 'refs/heads/release/')
@@ -131,8 +129,9 @@ jobs:
     steps:   
       - uses: actions/download-artifact@v4
         with:
-          name: wheels-*
+          pattern: wheels-*
           path: dist
+          merge-multiple: true
       - uses: actions/download-artifact@v4
         with:
           name: sdist
