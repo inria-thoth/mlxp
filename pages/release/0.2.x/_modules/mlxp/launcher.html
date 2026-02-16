@@ -491,8 +491,7 @@
                     <span class="n">work_dir</span><span class="p">,</span>
                     <span class="n">parent_log_dir</span><span class="p">,</span>
                     <span class="n">log_id</span><span class="p">,</span>
-                    <span class="n">args</span><span class="p">,</span>
-                    <span class="n">mlxp_cfg</span>
+                    <span class="n">args</span>
                 <span class="p">)</span>
 
                 <span class="n">scheduler</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">main_cmd</span><span class="p">,</span> <span class="n">log_dir</span><span class="p">)</span>
@@ -737,23 +736,6 @@
     <span class="k">return</span> <span class="n">configs</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_main_job_command</span><span class="p">(</span><span class="n">executable</span><span class="p">,</span> <span class="n">current_file_path</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">,</span> <span class="n">parent_log_dir</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">mlxp_cfg</span><span class="p">):</span>
-    <span class="n">exec_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
-
-    <span class="n">args</span> <span class="o">=</span> <span class="n">_get_overrides</span><span class="p">(</span><span class="n">mlxp_cfg</span><span class="p">)</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;cd </span><span class="si">{</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">executable</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">exec_file</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">            +mlxp.logger.forced_log_id=</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="se">\</span>
-<span class="s2">            +mlxp.logger.parent_log_dir=</span><span class="si">{</span><span class="n">parent_log_dir</span><span class="si">}</span><span class="s2"> </span><span class="se">\</span>
-<span class="s2">            +mlxp.use_scheduler=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="se">\</span>
-<span class="s2">            +mlxp.use_version_manager=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="se">\</span>
-<span class="s2">            +mlxp.interactive_mode=</span><span class="si">{</span><span class="kc">False</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
-
-    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_overrides</span><span class="p">(</span><span class="n">mlxp_cfg</span><span class="p">):</span>
 
@@ -768,14 +750,6 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">filter_fn</span><span class="p">(</span><span class="n">config_dict</span><span class="p">):</span>
          
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_dict</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">EXCLUDE_PREFIXES</span><span class="p">)</span>
-
-        <span class="c1"># (</span>
-        <span class="c1">#     (&quot;version_manager&quot; not in config_dict)</span>
-        <span class="c1">#     and (&quot;scheduler&quot; not in config_dict)</span>
-        <span class="c1">#     and (&quot;logger.parent_log_dir&quot; not in config_dict)</span>
-        <span class="c1">#     and (&quot;logger.forced_log_id&quot; not in config_dict)</span>
-        <span class="c1">#     and (&quot;interactive_mode&quot; not in config_dict)</span>
-        <span class="c1"># )</span>
 
     <span class="n">filtered_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">,</span> <span class="n">overrides</span><span class="p">))</span>
     
